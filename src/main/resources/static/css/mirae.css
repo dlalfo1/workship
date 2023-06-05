@@ -1,0 +1,69 @@
+@charset "UTF-8";
+
+/*결재양식선택*/
+.document-content-wrapper{
+    height : 700px;
+    display: flex;
+    margin-top : 10px;
+}
+
+.document-content-wrapper>.document-area>div>span{
+    font-size : 20px;
+    font-weight : bold;
+}
+
+.document-content-wrapper>.category-area>ul>li{
+    margin-top : 10px;
+    padding : 10px;
+    cursor: pointer;
+    height : 60px;
+    font-size : 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    border : 1px solid rgb(224, 224, 224);
+    line-height: 35px;
+}
+
+.document-content-wrapper>.document-area{
+    background-color: white;
+    border : 1px solid rgb(224, 224, 224);
+    border-radius: 5px;
+    padding : 20px;
+    width : 100%;
+}
+
+.document-content-wrapper>.document-area>ul{
+    margin : 30px 0 0 0;
+    display : flex;
+    justify-content: space-between;
+    flex-wrap : wrap;
+}
+
+.document-content-wrapper>.document-area>ul>li{
+    display : flex;
+    align-items: center;
+    width : 30%;
+    height : 120px;
+    font-size : 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    padding : 10px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom : 30px;
+    padding : 20px;
+    border : 1px solid rgb(224, 224, 224);
+    line-height: 35px;
+}
+
+.document-content-wrapper>.document-area>ul>li button{
+    width : 100px;
+    height : 50px;
+    font-size : 16px;
+}
+
+.document-content-wrapper>.document-area>ul>li:hover{
+    background-color: #f4f9fe;
+}
+
