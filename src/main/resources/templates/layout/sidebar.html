@@ -4,13 +4,13 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar" th:fragment="sidebarFrag">
   <ul class="nav">
     <li class="nav-item">
-      <a class="nav-link" href="@{/index.html}">
+      <a class="nav-link" th:href="@{/index.html}">
         <i class="fa-solid fa-border-all menu-icon"></i>
         <span class="menu-title">메인페이지</span>
        </a>
     </li>
         <li class="nav-item">
-       <a class="nav-link" href="@{/project/project.html}">
+       <a class="nav-link" th:href="@{/project/project.html}">
         <i class="fa-solid fa-diagram-project menu-icon"></i>
         <span class="menu-title">프로젝트</span>
        </a>
@@ -84,19 +84,19 @@
       </a>
       <div class="collapse" id="member-basic">
         <ul class="nav flex-coulmn sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="@{/member/memberCreate.html}">사원등록</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="@{/member/member.html}">사원조회</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/member/memberCreate.html}">사원등록</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/member/member.html}">사원조회</a> </li>
         </ul>
       </div>
     </li>
     <li class="nav-item">
-       <a class="nav-link" href="@{/department/dept.html}">
+       <a class="nav-link" th:href="@{/department/dept.html}">
        <i class="fa-solid fa-sitemap menu-icon"></i>
        <span class="menu-title">부서관리</span>
       </a>
     </li>
     <li class="nav-item">
-       <a class="nav-link" href="@{report/report.html}">
+       <a class="nav-link" th:href="@{report/report.html}">
        <i class="fa-solid fa-triangle-exclamation menu-icon"></i>
        <span class="menu-title">신고관리</span>
       </a>

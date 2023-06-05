@@ -6,6 +6,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MvcController {
 
+	@GetMapping("/loginTemp.html")
+	public String loginTemp() {
+		return "loginTemp";
+	}
+	
+	@GetMapping("/temp.html")
+	public String temp() {
+		return "temp/temp";
+	}
+	
 	@GetMapping({"/", "/index.html"})
 	public String welcome() {
 		return "index";
@@ -51,7 +61,7 @@ public class MvcController {
 		return "member/memberCreate";
 	}
 	
-	@GetMapping("/member/member/html")
+	@GetMapping("/member/member.html")
 	public String member() {
 		return "member/member";
 	}
