@@ -29,7 +29,7 @@
         
           <div class="board-main">
             <div class="board-title">
-                <h5>공지사항</h5>
+                <h3>공지사항</h5>
             </div>
             
             <hr>
@@ -51,12 +51,19 @@
                           <td colspan="5">현재 게시글이 없습니다.</td>
                         </tr>
                       </th:block>
+                      
                       <th:block th:if="${not #lists.isEmpty(noticeList)}">
                         <th:block th:each="notice,vs:${noticeList}">
                             <th:block th:if="${notice.noticeState == 1}">
                                 <tr class="list">
-                                  <td th:text="${beginNo - vs.index}"></td>
-                                  <td th:text="${notice.noticeTitle}"></td>
+                                  <td th:text="${beginNo - vs.index}">
+                                    <input type="hidden" name="noticeNo" th:value="${notice.noticeNo}">
+                                  </td>
+                                  <td th:text="${notice.noticeTitle}">
+                                    <a th:href="@{/notice/detail.html(noticeNo=${notice.noticeNo})}">
+                                      <span th:text="${notice.noticeTitle}"></span>
+                                    </a>
+                                  </td>
                                   <td th:text="${notice.memberDTO.memberName}"></td>
                                   <td th:text="${#dates.format(notice.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
                                   <td th:text="${notice.noticeHit}"></td>
@@ -74,9 +81,15 @@
               				<option value="NOTICE_CONTENT">내용</option>
               			</select>
               			<input type="text" name="query" id="query">
-              			<button>조회</button>
+              			<button>검색</button>
               		</form>
+                  <div>
+                    <input type="button" id="btnWrite" value="글쓰기">
+                  </div>
                 </div> <!--/* search_wrap 끝나는 지점 */-->
+              <div class="pagination">
+                
+              </div>
             </div> <!--/* board-table 끝나는 지점 */-->
           </div> <!--/* board-main 끝나는 지점 */-->
 
