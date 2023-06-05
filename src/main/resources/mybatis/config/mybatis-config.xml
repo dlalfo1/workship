@@ -12,7 +12,25 @@
 
   <!-- typeAliases -->
   <typeAliases>
-<!--     <typeAlias alias="BbsDTO" type="com.gdu.workship." />  -->
+		<typeAlias alias="BoardDTO"             type="com.gdu.workship.domain.BoardDTO" />
+		<typeAlias alias="BoardFileDTO"         type="com.gdu.workship.domain.BoardFileDTO" />
+		<typeAlias alias="BoardCommentDTO"      type="com.gdu.workship.domain.BoardCommentDTO" />
+		<typeAlias alias="MailDTO"              type="com.gdu.workship.domain.MailDTO"/>
+		<typeAlias alias="MailToDTO"            type="com.gdu.workship.domain.MailToDTO"/>
+		<typeAlias alias="MailCcDTO"            type="com.gdu.workship.domain.MailCcDTO"/>
+		<typeAlias alias="MailBcDTO"            type="com.gdu.workship.domain.MailBcDTO"/>
+		<typeAlias alias="MailFileDTO"          type="com.gdu.workship.domain.MailFileDTO"/>
+		<typeAlias alias="JobDTO"               type="com.gdu.workship.domain.JobDTO"/>
+		<typeAlias alias="DepartmentDTO"        type="com.gdu.workship.domain.DepartmentDTO"/>
+		<typeAlias alias="MemberDTO"            type="com.gdu.workship.domain.MemberDTO"/>
+		<typeAlias alias="RetiredMemberDTO"     type="com.gdu.workship.domain.RetiredMemberDTO"/>
+		<typeAlias alias="NoticeDTO"            type="com.gdu.workship.domain.NoticeDTO"/>
+		<typeAlias alias="NoticeFileDTO"        type="com.gdu.workship.domain.NoticeFileDTO"/>
+		<typeAlias alias="ReportDTO"            type="com.gdu.workship.domain.ReportDTO"/>
+		<typeAlias alias="ApprovalDTO"          type="com.gdu.workship.domain.ApprovalDTO"/>
+		<typeAlias alias="ApprovalFileDTO"      type="com.gdu.workship.domain.ApprovalFileDTO"/>
+		<typeAlias alias="ApprovalLineDTO"      type="com.gdu.workship.domain.ApprovalLineDTO"/>
+		<typeAlias alias="ApprovalReferenceDTO" type="com.gdu.workship.domain.ApprovalReferenceDTO"/>
   </typeAliases>
 
 </configuration>
