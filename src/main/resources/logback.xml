@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true" scanPeriod="30 seconds">
+
+  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+      <layout class="com.gdu.workship.logback.MyLogbackLayout" />
+    </encoder>
+  </appender>
+	
+	<logger name="com.gdu"             level="DEBUG" />
+
+	<logger name="org.springframework" level="INFO" />
+	<logger name="org.apache.ibatis"   level="INFO" />
+	<logger name="org.mybatis.spring"  level="INFO" />
+	<logger name="com.zaxxer.hikari"   level="INFO" />
+	<logger name="log4jdbc"            level="INFO" />
+	<logger name="jdbc.sqlonly"        level="OFF" />
+	<logger name="jdbc.sqltiming"      level="INFO" />
+	<logger name="jdbc.resultsettable" level="INFO" />
+	<logger name="jdbc.audit"          level="OFF" />
+	<logger name="jdbc.resultset"      level="OFF" />
+	<logger name="jdbc.connection"     level="OFF" />
+
+	<root>
+		<appender-ref ref="console" />
+	</root>
+	
+</configuration>

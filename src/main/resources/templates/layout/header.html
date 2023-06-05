@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="headFrag(title)">
+  <meta charset="UTF-8">
+  <title th:text="${title}"></title>
+  <script th:src="@{/js/lib/jquery-3.6.4.min.js}"></script>
+  <link rel="stylesheet" th:href="@{vendors/feather/feather.css(ver=1.0)}">
+  <link rel="stylesheet" th:href="@{vendors/ti-icons/css/themify-icons.css(ver=1.0)}">
+  <link rel="stylesheet" th:href="@{vendors/datatables.net-bs4/dataTables.bootstrap4.css(ver=1.0)}">
+  <link rel="stylesheet" th:href="@{js/select.dataTables.min.css(ver=1.0)}">
+  <link rel="stylesheet" th:href="@{css/vertical-layout-light/style.css(ver=1.0)}">
+  <link rel="stylesheet" th:href="@{images/favicon.png(ver=1.0)}">
+  <style>
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css');
+  </style>
+</head>
+
+</html>

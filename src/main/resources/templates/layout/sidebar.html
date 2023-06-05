@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<nav class="sidebar sidebar-offcanvas" id="sidebar" th:fragment="sidebarFrag">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" href="@{/index.html}">
+        <i class="fa-solid fa-border-all menu-icon"></i>
+        <span class="menu-title">메인페이지</span>
+       </a>
+    </li>
+        <li class="nav-item">
+       <a class="nav-link" href="@{/project/project.html}">
+        <i class="fa-solid fa-diagram-project menu-icon"></i>
+        <span class="menu-title">프로젝트</span>
+       </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#approval-basic" aria-expanded="false" aria-controls="approval-basic">
+        <i class="fa-regular fa-clipboard menu-icon"></i>
+        <span class="menu-title">전자결재</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="approval-basic">
+        <ul class="nav flex-coulmn sub-menu">
+          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/docList.html}">결재상신</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/approvalList.html}">결재조회</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/referenceList.html}">참조문서</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/saveList.html">임시저장문서</a> </li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#attendance-basic" aria-expanded="false" aria-controls="attendance-basic">
+        <i class="fa-solid fa-clipboard-user menu-icon"></i>
+        <span class="menu-title">근태관리</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="attendance-basic">
+        <ul class="nav flex-coulmn sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="#">출퇴근기록조회</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">연차조회</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">출퇴근기록관리</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">연차관리</a> </li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item">
+       <a class="nav-link" th:href="@{/mail/rlist.html}">
+       <i class="fa-regular fa-envelope menu-icon"></i>
+       <span class="menu-title">메일</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#board-basic" aria-expanded="false" aria-controls="board-basic">
+        <i class="fa-regular fa-rectangle-list menu-icon"></i>
+        <span class="menu-title">게시판</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="board-basic">
+        <ul class="nav flex-coulmn sub-menu">
+          <li class="nav-item"> <a class="nav-link" th:href="@{/notice/noticeMain.html}">공지사항</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/board/board.html}">부서별 게시판</a> </li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item">
+       <a class="nav-link" href="#">
+	        <i class="fa-regular fa-calendar menu-icon"></i>
+	       <span class="menu-title">일정관리</span>
+      </a>
+    </li>
+    <li class="nav-item">
+       <a class="nav-link" href="#">
+	       <i class="fa-solid fa-list-check menu-icon"></i>
+	       <span class="menu-title">ToDoList</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#member-basic" aria-expanded="false" aria-controls="member-basic">
+        <i class="fa-solid fa-user-gear menu-icon"></i>
+        <span class="menu-title">사원관리</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="member-basic">
+        <ul class="nav flex-coulmn sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="@{/member/memberCreate.html}">사원등록</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="@{/member/member.html}">사원조회</a> </li>
+        </ul>
+      </div>
+    </li>
+    <li class="nav-item">
+       <a class="nav-link" href="@{/department/dept.html}">
+       <i class="fa-solid fa-sitemap menu-icon"></i>
+       <span class="menu-title">부서관리</span>
+      </a>
+    </li>
+    <li class="nav-item">
+       <a class="nav-link" href="@{report/report.html}">
+       <i class="fa-solid fa-triangle-exclamation menu-icon"></i>
+       <span class="menu-title">신고관리</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+</html>
