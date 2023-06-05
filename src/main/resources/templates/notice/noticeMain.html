@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
+<script>
+	// 검색어 초기화
+	$(function(){
+		$('#column').on('change', function(){
+			$('#query').val('');
+		})
+	})
+</script>
+<body>
+
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+          <div class="board-main">
+            <div class="board-title">
+                <h5>공지사항</h5>
+            </div>
+            
+            <hr>
+    
+            <div class="board-table">
+                <table class="table" align="center">
+                    <thead>
+                        <tr>
+                            <th>게시글 번호</th>
+                            <th>제목</th>
+                            <th>작성자</th>
+                            <th>작성일</th>
+                            <th>조회수</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <th:block th:if="${#lists.isEmpty(noticeList)}">
+                        <tr> 
+                          <td colspan="5">현재 게시글이 없습니다.</td>
+                        </tr>
+                      </th:block>
+                      <th:block th:if="${not #lists.isEmpty(noticeList)}">
+                        <th:block th:each="notice,vs:${noticeList}">
+                            <th:block th:if="${notice.noticeState == 1}">
+                                <tr class="list">
+                                  <td th:text="${beginNo - vs.index}"></td>
+                                  <td th:text="${notice.noticeTitle}"></td>
+                                  <td th:text="${notice.memberDTO.memberName}"></td>
+                                  <td th:text="${#dates.format(notice.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
+                                  <td th:text="${notice.noticeHit}"></td>
+                                </tr>
+                            </th:block>
+                        </th:block>
+                      </th:block>
+                    </tbody>
+                </table>
+                
+                <div class="search_wrap">
+              		<form id="frmSearch" action="@{/notice/search.do}">
+              			<select name="column" id="column">
+              				<option value="NOTICE_TITLE" selected="selected">제목</option>
+              				<option value="NOTICE_CONTENT">내용</option>
+              			</select>
+              			<input type="text" name="query" id="query">
+              			<button>조회</button>
+              		</form>
+                </div> <!--/* search_wrap 끝나는 지점 */-->
+            </div> <!--/* board-table 끝나는 지점 */-->
+          </div> <!--/* board-main 끝나는 지점 */-->
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>
