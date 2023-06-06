@@ -2,9 +2,6 @@ package com.gdu.workship.domain;
 
 import java.util.Date;
 
-import com.gdu.workship.domain.ApprovalDTO;
-import com.gdu.workship.domain.MemberDTO;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
