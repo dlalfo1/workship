@@ -22,13 +22,205 @@
       <div class="main-panel">
         <div class="content-wrapper">
         
+          <!--/* 임시 */-->
 					<a th:href="@{/loginTemp.html}">로그인창 이동</a>
-  
-        <!--/* 
-          이 안에 div로 잘 구성해서 내용 넣어주시면 됩니다!
-          샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
-          참고할 만 한 html 파일들은 static/pages 에 있습니다!
-        */-->
+					
+					<!--/* 1번째줄 */-->
+          <div class="row">
+          
+            <!--/* 1번째줄 1번째칸 */-->
+            <div class="col-md-4 stretch-card grid-margin">
+        
+              <div class="row">
+              
+                <!--/* 나의 정보 */-->
+                <div class="col-md-12 stretch-card grid-margin mb-3">
+                  <div class="card card-dark-blue">
+                    <div class="card-body">
+                      <p class="card-title text-white">나의 정보</p>                      
+                      <div class="row">
+                        <div class="col-4">
+                          <img class="rounded-circle" th:src="@{/images/faces/face1.jpg}">
+                        </div>
+                        <div class="col-8 text-white text-center">
+                          <h3>사원명</h3>
+                          <p class="text-white font-weight-700 mb-0">부서 / 직급</p>
+                          <p class="text-white font-weight-500 mb-0">이메일</p>
+                          <p class="text-white font-weight-500 mb-0">사원번호</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!--/* 메일정보 */-->
+                <div class="col-md-12 stretch-card grid-margin mb-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <p class="card-title">메일</p>                      
+                      <div class="row">
+                        <div class="col-6">
+                          <p>읽지 않은 메일</p>
+                        </div>
+                        <div class="col-2 text-primary">
+                          <h3>12</h3>
+                        </div>
+                        <div class="col-4">
+                          <input type="button" class="btn btn-inverse-primary btn-sm text-center" value="메일작성">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!--/* 출퇴근기록 */-->
+		            <div class="col-md-12 stretch-card grid-margin">
+		              <div class="card">
+		                <div class="card-body">
+		                  <p class="card-title">출퇴근기록</p>                      
+		                  <div class="row mb-3">
+		                    <div class="col-6">
+		                      <input type="button" class="btn btn-rounded btn-primary btn-md text-white" style="width: 100%;" value="출근">
+		                    </div>
+		                    <div class="col-6 text-center">
+		                      <input type="button" class="btn btn-rounded btn-light btn-md" style="width: 100%;" value="퇴근">
+		                    </div>
+		                  </div>
+		                  <div class="row text-center">
+		                    <div class="col-5">출근시간</div>
+		                    <div class="col-7 text-primary"><h3>08:50:00</h3></div>
+		                  </div>
+		                  <div class="row text-center">
+		                    <div class="col-5">퇴근시간</div>
+		                    <div class="col-7 text-primary"><h3>18:10:00</h3></div>
+		                  </div>
+		                </div>
+		              </div>
+		            </div>
+		            
+              </div>
+              
+            </div> <!--/* 1-1 끝 */-->
+
+            <!--/* 1번째줄 2번째칸 */-->
+            <div class="col-md-8 stretch-card grid-margin transparent">
+
+              <div class="row">
+              
+                <!--/* 공지사항 */-->
+								<div class="col-md-12 stretch-card grid-margin mb-3">
+								  <div class="card">
+								    <div class="card-body">
+								      <p class="card-title">최신공지사항</p>
+								      <table class="table table-hover table-striped">
+								        <thead class="text-center">
+								          <tr>
+								            <th>제목</th>
+								            <th>작성자</th>
+								            <th>작성일</th>
+								          </tr>
+								        </thead>
+								        <tbody>
+								          <tr>
+								            <td>ajax로 받아올 수 있나?</td>
+								            <td class="text-center">이유빈</td>
+								            <td class="text-center">2023-06-05</td>
+								          </tr>
+								          <tr>
+                            <td>그냥 무조건 최신 4개정도만 띄워주고 싶은데</td>
+                            <td class="text-center">이미래</td>
+                            <td class="text-center">2023-06-04</td>
+                          </tr>
+                          <tr>
+                            <td>select로 받아와서 for문 돌리면되잔아..</td>
+                            <td class="text-center">이유빈</td>
+                            <td class="text-center">2023-06-03</td>
+                          </tr>
+                          <tr>
+                            <td>될 듯? 애초에 ajax가 필요하긴 한가?</td>
+                            <td class="text-center">박근희</td>
+                            <td class="text-center">2023-06-03</td>
+                          </tr>
+								        </tbody>
+								      </table>
+								    </div>
+								  </div>
+								</div>
+                
+                <!--/* 프로젝트 */-->
+                <div class="col-md-6 stretch-card grid-margin">
+                  <div class="card">
+                    <div class="card-body">
+                      <p class="card-title">참여 중인 프로젝트</p>
+                      <table class="table table-sm table-bordered">
+                        <thead class="text-center">
+                          <tr style="background-color: #F5F7FF;">
+                            <th>프로젝트명</th>
+                            <th>상태</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>파이널 프로젝트 이것도 걍</td>
+                            <td class="text-center"><label class="badge badge-warning">진행중</label></td>
+                          </tr>
+                          <tr>
+                            <td>세미프로젝트 몽몽 최근등록 3개만?</td>
+                            <td class="text-center"><label class="badge badge-success">완료</label></td>
+                          </tr>
+                          <tr>
+                          <tr>
+                            <td>취뽀 프로젝트 하는 게 편할 듯ㅋ</td>
+                            <td class="text-center"><label class="badge badge-info">기획중</label></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                
+                <!--/* ToDo-List */-->
+	              <div class="col-md-6 stretch-card grid-margin">
+                  <div class="card">
+                    <div class="card-body">
+                      <p class="card-title">ToDoList</p>
+                      <div class="pt-2">
+		                    <ul class="d-flex flex-column todo-list" style="list-style: none;">
+		                      <li>
+		                        <div class="form-check form-check-flat">
+		                          <label class="form-check-label">
+		                            <input class="checkbox" type="checkbox">
+		                            메인 꾸미기 ㅋ 재밌다 ㅋ
+		                          </label>
+		                        </div>
+		                      </li>
+		                      <li class="completed">
+		                        <div class="form-check form-check-flat">
+		                          <label class="form-check-label">
+		                            <input class="checkbox" type="checkbox" checked>
+		                            사실,, 재미없음,, 이제 낼부터 투두리스트
+		                          </label>
+		                        </div>
+		                      </li>
+		                      <li>
+		                        <div class="form-check form-check-flat">
+		                          <label class="form-check-label">
+		                            <input class="checkbox" type="checkbox">
+		                            조져줄게 ㅋ 나만 믿어!
+		                          </label>
+		                        </div>
+		                      </li>
+		                    </ul>
+	                    </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div> <!--/* 1-2 끝 */-->
+            
+            
+          </div> <!--/* 1번째줄 끝 */-->
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
