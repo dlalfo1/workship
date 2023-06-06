@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('workship 받은메일함')}"></head>
+<head th:replace="~{/layout/header::headFrag('workship 스팸메일함')}"></head>
 <link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
-<link rel="stylesheet" th:href="@{/css/mail/rlist.css(var=1.0)}">
 <body>
 
   <div class="container-scroller">
     <!--/* 상단바 */-->
     <nav th:replace="~{/layout/common::topbarFrag}"></nav>
- 
+
     <!--/* 본문영역 */-->
     <div class="container-fluid page-body-wrapper">
       <!--/* 테마설정버튼 영역 */-->
@@ -26,11 +25,8 @@
           샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
           참고할 만 한 html 파일들은 static/pages 에 있습니다!
         */-->
-        	<div>
-        		<span class="title">받은 메일함</span>
-        		<span>전체 메일</span>38
-        		<span>읽은 메일</span>1
-        	</div>
+        
+        	<h3>스팸메일함</h3>
         
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
