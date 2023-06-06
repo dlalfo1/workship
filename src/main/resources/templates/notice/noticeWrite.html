@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
+<script>
+	// 검색어 초기화
+	$(function(){
+		$('#column').on('change', function(){
+			$('#query').val('');
+		})
+	})
+</script>
+<body>
+
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+          <div class="board-main">
+            <div class="board-title">
+             <h3>게시글 작성하기</h3>
+            </div>
+            
+            <hr>
+    
+            <div class="board-table">
+              <div class="inputTitle">
+                <label for="noticeTitle">제목</label>
+                <div><input type="text" name="noticeTitle" id="noticeTitle"></div>
+              </div>
+              <div class="emailId">
+                <label for="emailId">작성자</label>
+                <div><input type="text" name="emailId" id="emailId" th:value=${###}></div>
+              </div>
+              <div class="inputText"></div>
+                
+                
+            </div> <!--/* board-table 끝나는 지점 */-->
+          </div> <!--/* board-main 끝나는 지점 */-->
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

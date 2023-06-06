@@ -29,7 +29,7 @@
         
           <div class="board-main">
             <div class="board-title">
-                <h3>공지사항</h3>
+                <h3>공지사항</h5>
             </div>
             
             <hr>
@@ -74,7 +74,7 @@
                     </tbody>
                 </table>
                 
-                <div class="searchWrap">
+                <div class="search_wrap">
               		<form id="frmSearch" action="@{/notice/search.do}">
               			<select name="column" id="column">
               				<option value="NOTICE_TITLE" selected="selected">제목</option>
@@ -83,13 +83,13 @@
               			<input type="text" name="query" id="query">
               			<button>검색</button>
               		</form>
-                  <div class="writeWrap">
+                  <div>
                     <input type="button" id="btnWrite" value="글쓰기">
                   </div>
                 </div> <!--/* search_wrap 끝나는 지점 */-->
               
               <div class="pagination">
-                <div style="text-align: center;" th:utext="${pagination}"></div>  
+                <div style="text-align: center;" th:value="${pagination}"></div>  
               </div>
             </div> <!--/* board-table 끝나는 지점 */-->
           </div> <!--/* board-main 끝나는 지점 */-->
