@@ -3,6 +3,10 @@
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
 <script>
+	function fnWriteNotice() {
+		location.href = '/notice/write.html';
+	}
+
 	// 검색어 초기화
 	$(function(){
 		$('#column').on('change', function(){
@@ -75,7 +79,7 @@
                 </table>
                 
                 <div class="searchWrap">
-              		<form id="frmSearch" action="@{/notice/search.do}">
+              		<form id="frmSearch" action="@{/notice/searchNoticd.do}">
               			<select name="column" id="column">
               				<option value="NOTICE_TITLE" selected="selected">제목</option>
               				<option value="NOTICE_CONTENT">내용</option>
@@ -84,7 +88,7 @@
               			<button>검색</button>
               		</form>
                   <div class="writeWrap">
-                    <input type="button" id="btnWrite" value="글쓰기">
+                    <input type="button" id="btnWrite" value="글쓰기" onclick="fnWriteNotice()">
                   </div>
                 </div> <!--/* search_wrap 끝나는 지점 */-->
               

@@ -38,7 +38,7 @@
               <div class="page-button">
                 <button type="button" class="btn btn-sm btn-light" onclick="location.href='noticeDetail.bo?boardNo=${b.boardNo - 1}&cpage=${ cpage }'">이전</button>
                 <button type="button" class="btn btn-sm btn-light" onclick="location.href='noticeDetail.bo?boardNo=${b.boardNo + 1}&cpage=${ cpage }'">다음</button>
-                <button type="button" class="btn btn-sm btn-light" onclick="location.href='list.bo?cpage=${cpage}&no=1'">목록</button>
+                <button type="button" class="btn btn-sm btn-light" onclick="location.href='/notice/noticeMain.html'">목록</button>
               </div>
               
               <div class="content-header">
@@ -48,7 +48,7 @@
                   <div th:text="${n.MemberDTO.memberName} + ${n.memberDTO.JobDTO.jobName}"></div>
                   <div class="createDate" th:text="${n.noticeCreatedAt}"></div>
                   <!-- <div class="modiDate" th:text="${n.noticeModifiedAt}"></div>  -->
-                  <div class="noticeHit" th:text="${n.noticeHit}"></div>
+                  <div class="noticeHit">조회수 <span th:text="${n.noticeHit}"></span></div>
                 </div>
               </div>
               
