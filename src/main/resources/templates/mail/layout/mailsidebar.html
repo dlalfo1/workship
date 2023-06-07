@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 	<nav class="mailSidebar" th:fragment="mailSidebarFrag">
 	<div>
-		<h2><strong>메일</strong></h2>
+		<h3><strong>메일</strong></h3>
 		<div class="btnWrite" >
 			<input type="button" value="메일 쓰기" onclick="fnWrite()">
 		</div>
@@ -16,7 +16,7 @@
 				<span class="text">중요</span>
 			</a>
 		</div>
-		<h3><strong>메일함</strong></h3>
+		<h4><strong>메일함</strong></h4>
 		<ul class="list-group">
 		  <li class="list-group-item d-flex justify-content-between align-items-center border-0">
 		    <a th:href="@{/mail/rlist.html}">
@@ -56,7 +56,7 @@
 		</ul>
 	</div>
 		<div class="mailSetting">
-			<i class="fa-solid fa-gear"></i>메일 환경설정 
+			<i class="fa-solid fa-gear"></i> 메일 환경설정 
 		</div>
 	<script>
 		function fnWrite() {

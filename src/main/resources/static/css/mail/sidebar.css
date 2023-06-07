@@ -10,7 +10,7 @@
 	flex-direction: column;
 	justify-content: space-between;
 	width: 300px;
-	padding: 50px 20px;
+	padding: 20px;
 	border-left: 1px solid gray;
 	border-right: 1px solid gray;
 }
@@ -32,7 +32,7 @@ h2, h3 {
 	color: white;
 	background-color: #4B49AC;
 	border-radius: 10px;
-	padding: 10px;
+	padding: 8px 16px;
 	border: none;
 }
 
@@ -40,7 +40,7 @@ h2, h3 {
 	display: flex;
 	justify-content: center;
 	gap: 56px;
-	padding: 20px 30px 60px 30px; 
+	padding: 20px 30px 40px 30px; 
 }
 
 .filter {
@@ -55,7 +55,11 @@ h2, h3 {
 	color: blue;
 }
 
-.text :hover {
+.count:hover {
+	color: blue;
+}
+
+.text:hover {
 	color: black;
 }
 

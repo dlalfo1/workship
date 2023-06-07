@@ -3,6 +3,8 @@
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 메일쓰기')}"></head>
 <link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
+<link rel="stylesheet" th:href="@{/css/mail/write.css(var=1.0)}">
+
 <body>
 
   <div class="container-scroller">
@@ -26,7 +28,45 @@
           참고할 만 한 html 파일들은 static/pages 에 있습니다!
         */-->
         
-        	<h3>메일쓰기</h3>
+        	<div class="info">
+        		<span class="title">메일 쓰기</span>
+        		<span><a class="dlist" th:href="@{/mail/dlist.html}">임시 보관함</a></span>
+        	</div>
+        	<form method="post" th:action="@{/mail/add.do}">
+        		<div class="header">
+        			<button class="btn">보내기</button>
+        			<input class="btn" type="button" value="임시 저장" onclick="fnDraft()">
+        			<input class="btn" type="reset" value="다시 작성">
+        		</div>
+        		<div class="contents">
+        			<div>
+        				<label for="writer">작성자</label>
+        				<input id="writer" name="writer" required="required">
+        			</div>
+        			<div>
+        				<label for="cc">참조</label>
+        				<input id="cc" name="cc">
+        			</div>
+        			<div>
+        				<label for="bc">숨은 참조</label>
+        				<input id="bc" name="cc">
+        			</div>
+        			<div>
+        				<label for="title">제목</label>
+        				<input id="title" name="title" required="required">
+        			</div>
+        			<div>
+        				<label for="file">파일첨부</label>
+        				<input type="button" value="파일첨부" onclick="fnFile()">
+        				<input type="button" value="파일삭제" onclick="fnAllRemove()">
+        				파일목록뿌리기
+        			</div>
+        			<div>
+        				<textarea id="content" name="content"></textarea>
+        			</div>
+        		</div>
+        	</form>
+        	
         
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
@@ -36,6 +76,26 @@
   
   <!--/* footer 영역 */-->
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+<script>
+	$(function(){
+		$('#content').summernote({
+			width: 640,
+			height: 480,
+			lang: 'ko-KR',
+		  	toolbar: [
+		    	['style', ['bold', 'italic', 'underline', 'clear']],
+		    	['font', ['strikethrough', 'superscript', 'subscript']],
+		    	['fontsize', ['fontsize']],
+		    	['color', ['color']],
+		    	['para', ['ul', 'ol', 'paragraph']],
+		    	['table', ['table']],
+				['insert', ['link', 'picture', 'video']],
+				['view', ['fullscreen', 'codeview', 'help']]
+		  	]
+		})
+	})
+</script>
 
 </body>
 </html>

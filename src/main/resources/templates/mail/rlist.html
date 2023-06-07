@@ -26,12 +26,63 @@
           샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
           참고할 만 한 html 파일들은 static/pages 에 있습니다!
         */-->
-        	<div>
+        	
+        	<!-- 메일 제목 및 읽은 메일 체크 -->
+        	<div class="info">
         		<span class="title">받은 메일함</span>
-        		<span>전체 메일</span>38
-        		<span>읽은 메일</span>1
+        		<div class="readMail">
+        			<span>전체 메일</span>38
+        			/ <span>읽은 메일</span>1
+        		</div>
         	</div>
-        
+        	
+        	<div class="main">
+        		<div class="contents">
+        		
+        			<!-- 메일 이동 및 검색창 구현 -->
+        			<div class="contentCheck">
+        			
+        				<!--  -->
+        				<div class="category">
+        					<span>전체선택</span>
+        					<span><strong>중요</strong></span>
+        					<span><strong>읽음</strong></span>
+        					<span><strong>삭제</strong></span>
+        					<span><strong>스팸</strong></span>
+        					<span><strong>답장</strong></span>
+        					<span><strong>전달</strong></span>
+        					<span>정렬</span>
+        				</div>
+        				
+        				<!-- 검색창 구현 -->
+        				<div class="search">
+        					검색창
+        				</div>
+        			</div>
+        			
+        			<!-- 메일리스트 뿌리기 -->
+        			<div class="contentList">
+        				<th:block th:each="mail:${mailList}">
+        				
+        					<!-- 메일이 없는 경우 -->
+        					<th:block th:if>
+        						<h5>받은 메일이 없습니다.</h5>
+        					</th:block>
+        					
+        					<!-- 메일이 있는 경우 -->
+        					<th:block th:if>
+		        				<ul>
+		        					<li></li>
+		        				</ul>        						
+        					</th:block>
+        					
+        				</th:block>
+        			</div>
+        		</div>
+        		
+        		<div class="pagination" th:utext="${pagination}"></div>
+        		
+        	</div>        	   
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
@@ -40,6 +91,21 @@
   
   <!--/* footer 영역 */-->
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+  
+<script>
+
+	$(function(){
+		$('#recordPerPage').on('change', function(){
+			location.href = '/mail/chage/record.do?recordPerPage=' + $(this).val();
+		})
+		let recordPerPage = '${sessionScope.recordPerPage}' == '' ? 10 : '$(sessionScope.recordPerPage)';
+		$('#recordPerPage').val(recordPerPage);
+		$('.sort').on('click', function(){
+			location.href = '/mail/pagination.do?column' + $(this).data('column') + '&order=' + $(this).data('order');
+		})
+	})
+	
+</script>
 
 </body>
 </html>
