@@ -2,6 +2,7 @@ package com.gdu.workship.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/mail")
@@ -24,7 +25,7 @@ public class MailController {
 	 }
 	 
 	 @GetMapping("slist.html")
-	 public String sentMail() {
+	 public String sendMail() {
 		 return "mail/slist";
 	 }
 	 
@@ -41,5 +42,15 @@ public class MailController {
 	 @GetMapping("tlist.html")
 	public String trashMail() {
 		 return "mail/tlist";
+	 }
+	 
+	 @GetMapping("sent.html")
+	public String sentMail() {
+		 return "mail/sent";
+	 }
+	 
+	 @PostMapping("add.do")
+	 public String addMail() {
+		 return "mail/sent";
 	 }
 }

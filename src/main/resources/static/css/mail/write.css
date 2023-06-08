@@ -31,3 +31,34 @@
 	background-color: none;
 	text-decoration: bold;
 }
+
+.contents {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding-top: 16px;
+}
+
+.contents label, files {
+	width: 80px;
+	font-weight: bold;
+}
+
+.contents input[type="text"] {
+	width: 90%;
+	background-color: transparent;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 2px solid gray;
+}
+
+.fileDrag {
+	float: right;
+	width: 92%;
+	border: 1px solid gray;
+}
+
+.filesHeader {
+	color: red;
+}
