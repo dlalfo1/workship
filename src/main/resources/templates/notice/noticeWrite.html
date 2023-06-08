@@ -2,9 +2,9 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
-<script src="$@{summernote-0.8.18-dist/summernote-lite.min.js}"></script>
-<script src="@{/summernote-0.8.18-dist/lang/summernote-ko-KR.min.js}"></script>
-<link rel="stylesheet" href="@{/summernote-0.8.18-dist/summernote-lite.min.css}">
+<script th:src="@{/summernote-0.8.18-dist/summernote-lite.min.js}"></script>
+<script th:src="@{/summernote-0.8.18-dist/lang/summernote-ko-KR.min.js}"></script>
+<link rel="stylesheet" th:href="@{/summernote-0.8.18-dist/summernote-lite.min.css}">
 <script>
 
   function fnFileCheck(vThis){
@@ -70,7 +70,7 @@
   						contentType: false,                  // ajax을 이용한 파일 첨부에서 사용
   						processData: false,                  // ajax을 이용한 파일 첨부에서 사용
   						type: 'post',
-  						url: getContextPath() + '/blog/imageUpload.do',
+  						url: getContextPath() + '/notice/imageUpload.do',
   						data: formData,
   						dataType: 'json',
   						success: function(resData){          // resData = {"src": "/app13/imageLoad/abcdefg.jpg"}
@@ -110,7 +110,7 @@
             <hr>
           
             <div class="board-content">
-              <form id="frmWrite" method="post" enctype="multipart/form-data" th:action="@{/notice/add.do}">
+              <form id="frmWrite" method="post" enctype="multipart/form-data" th:action="@{/notice/addNotice.do}">
                 <div class="inputTitle">
                   <label for="noticeTitle">제목</label>
                   <div><input type="text" name="noticeTitle" id="noticeTitle" required="required"></div>

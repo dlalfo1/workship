@@ -34,7 +34,7 @@
       FROM MEMBER_T
   </select>
   <select id="getMemberList" parameterType="Map" resultMap="MemberMap">
-    SELECT A.MEMBER_NO, A.MEMBER_NAME, A.EMAIL_ID, A.TEL, A.BIRTHDAY, A.JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME, A.DEPT_NAME, A.JOB_NAME
+    SELECT A.MEMBER_NO, A.MEMBER_NAME, A.EMAIL_ID, A.TEL, A.BIRTHDAY, DATE_FORMAT(A.JOINED_AT, '%Y-%m-%d') AS JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME, A.DEPT_NAME, A.JOB_NAME
       FROM (SELECT M.MEMBER_NO, M.MEMBER_NAME, M.EMAIL_ID, M.TEL, M.BIRTHDAY, M.JOINED_AT, M.MODIFIED_AT, M.STATUS, M.DAYOFF_COUNT, M.PW, M.PROFILE_FILE_PATH, M.PROFILE_FILE_NAME, D.DEPT_NAME, J.JOB_NAME
               FROM DEPARTMENT_T D INNER JOIN MEMBER_T M
                 ON D.DEPT_NO = M.DEPT_NO INNER JOIN JOB_T J
@@ -42,5 +42,45 @@
      ORDER BY ${column} ${order}
      LIMIT #{begin}, #{recordPerPage}
   </select>
+  
+  <select id="selectDept" parameterType="int" resultType="DepartmentDTO">
+    SELECT DEPT_NO, DEPT_NAME
+      FROM DEPARTMENT_T
+     WHERE DEPT_NO = #{deptNo}
+  </select>
+  <select id="selectJob" parameterType="int" resultType="JobDTO">
+    SELECT JOB_NO, JOB_NAME
+      FROM JOB_T
+     WHERE JOB_NO = #{jobNo}
+  </select>
+  
+  <insert id="createMember" parameterType="MemberDTO">
+    INSERT INTO MEMBER_T(
+           DEPT_NO
+         , MEMBER_NAME
+         , EMAIL_ID
+         , TEL
+         , BIRTHDAY
+         , JOINED_AT
+         , MODIFIED_AT
+         , STATUS
+         , DAYOFF_COUNT
+         , PW
+         , PROFILE_FILE_PATH
+         , PROFILE_FILE_NAME)
+    VALUES(
+           #{departmentDTO.deptNo}
+         , #{memberName}
+         , #{emailId}
+         , #{tel}
+         , #{birthday}
+         , NOW()
+         , STR_TO_DATE('20230502', '%Y%m%d')
+         , 0
+         , NULL
+         , #{pw}
+         , #{profileFilePath}
+         , #{profileFileName});
+  </insert>
 
 </mapper>

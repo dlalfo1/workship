@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
+<head th:replace="~{/layout/header::headFrag('사원 조회')}"></head>
 <script>
   function fnList() {
 
@@ -71,7 +71,7 @@
                         <td><a th:href="@{/member/modifyMember.do}" th:text="${member.memberName}"></a></td>
                         <td><a th:href="@{/member/modifyMember.do}" th:text="${member.departmentDTO.deptName}"></a></td>
                         <td th:text="${member.jobDTO.jobName}"></td>
-                        <td th:text="${member.joinedAt}"></td>
+                        <td th:text="${#dates.format(member.joinedAt, 'yyyy/MM/dd')}"></td>
                         <td th:text="${member.status}"></td>
                       </tr>
                     </th:block>
