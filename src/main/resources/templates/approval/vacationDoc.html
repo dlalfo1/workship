@@ -2,6 +2,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 메인페이지')}"></head>
+
+
 <body>
 
 
@@ -13,26 +15,100 @@
     <!--/* 본문영역 */-->
     <div class="container-fluid page-body-wrapper">
     
+    
       <!--/* 테마설정버튼 영역 */-->
       <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
       <!--/* 사이드바 영역 */-->
       <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
       
+    
       <!--/* 실제 내용 영역 */-->
       <div class="main-panel">
         <div class="content-wrapper">
         
 					<a th:href="@{/loginTemp.html}">로그인창 이동</a>
   
-          <h1>휴가신청서 ㅎㅇ</h1>
-
+          <table border="1">
+          <tr>
+            <td>휴가신청서</td>
+            <td colspan="5">결재공간</td>
+          </tr>
+          <tr>
+            <td>제목</td>
+            <td colspan="5">
+              <input type="text" id="title" name="title">
+            </td>
+          </tr>
+          <tr>
+            <td>부서</td>
+            <td th:text="${department.deptName}" />
+            <td>작성자</td>
+            <td th:text="${member.memberName}" />
+            <td>작성일</td>
+            <td th:text="${createdAt}" />
+          </tr>
+          <tr>
+            <td>
+              <select name="vacationType">
+                <option value="1">연차</option>
+                <option value="2">정기휴가</option>
+                <option value="3">경조사</option>
+                <option value="4">기타</option>
+              </select>
+            </td>
+            <td>사용시작일</td>
+            <td>
+              <input type="text" id="startDate">
+            </td>
+            <td>사용종료일</td>
+            <td>
+              <input type="text" id="endDate">
+            </td>
+          </tr>
+          </table>
+          <div>
+            <label for="content">내용</label>
+            <textarea id="content" name="content"></textarea>
+          </div>
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
   <!--/* footer 영역 */-->
+  
+<script>
+
+  $('#startDate').datepicker({
+  
+  })
+  
+  $('#endDate').datepicker({
+  
+  })
+
+
+    
+   $('#content').summernote({
+	      width: 640,
+	      height: 480,
+	      lang: 'ko-KR',
+	      toolbar: [
+	        ['style', ['bold', 'italic', 'underline', 'clear']],
+	        ['font', ['strikethrough', 'superscript', 'subscript']],
+	        ['color', ['color']],
+	        
+	        ['fontname', ['fontname']],
+	        ['para', ['ul', 'ol', 'paragraph']],
+	          ['table', ['table']],
+	          ['insert', ['link', 'picture', 'video']],
+	          ['view', ['fullscreen', 'codeview', 'help']],
+	      ]
+  })
+</script>
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+
 
 </body>
 </html>
