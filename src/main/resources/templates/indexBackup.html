@@ -2,6 +2,9 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 메인페이지')}"></head>
+<script th:src="@{/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
+<script th:src="@{/vendors/bootstrap-datepicker/bootstrap-datepicker.kr.min.js}"></script>
+<link rel="stylesheet" th:href="@{/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css(ver=1.0)}">
 <body>
 
   <div class="container-scroller">
@@ -23,7 +26,7 @@
 
           <!--/* 임시 */-->
 					<a th:href="@{/loginTemp.html}">로그인창 이동</a>
-    
+
 					<!--/* 1번째줄 */-->
           <div class="row">
           
