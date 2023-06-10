@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('사원 조회')}"></head>
+<script>
+  function fnList() {
+
+  }
+  $(function(){
+	  fnList();
+  })
+</script>
+<body>
+
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+          <div class="member-main">
+            <div class="member-title">
+                <h3>사원 조회</h3>
+            </div>
+            
+            <div class="gubunTab">
+              <ul>
+               <li><a th:href="@{/member/memberList.do}">전체</a></li>
+                <th:block th:if="${#lists.isEmpty(deptList)}">
+              		<li></li>
+              	</th:block>
+                <th:block th:if="${not #lists.isEmpty(deptList)}">
+                  <th:block th:each="dept:${deptList}">
+              		  <li style="width: 80px;"><a th:href="@{/member/memberList.do(deptNo=${dept.deptNo)dep=${d.deptName}" th:text="${dept.deptName}"></a></li>
+                  </th:block>
+              	</th:block>
+              </ul>
+            </div>
+            
+            <div class="memberList">
+              <table border="1" id="listTable" class="table table-hover" align="center">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">사원번호</th>
+                    <th style="width: 80px;">사원명</th>
+                    <th style="width: 80px;">부서명</th>
+                    <th style="width: 80px;">직위</th>
+                    <th style="width: 100px;">입사일</th>
+                    <th style="width: 80px;">상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <th:block th:if="${#lists.isEmpty(memberList)}">
+                    <tr>
+                      <td colspan="6">현재 사원이 없습니다.</td>
+                    </tr>
+                  </th:block>
+                  <th:block th:if="${not #lists.isEmpty(memberList)}">
+                    <th:block th:each="member:${memberList}">
+                      <tr>
+                        <td class="no"><a th:href="@{/member/modifyMember.do}" th:text="${member.memberNo}"></a></td>
+                        <td><a th:href="@{/member/modifyMember.do}" th:text="${member.memberName}"></a></td>
+                        <td><a th:href="@{/member/modifyMember.do}" th:text="${member.departmentDTO.deptName}"></a></td>
+                        <td th:text="${member.jobDTO.jobName}"></td>
+                        <td th:text="${#dates.format(member.joinedAt, 'yyyy/MM/dd')}"></td>
+                        <td th:text="${member.status}"></td>
+                      </tr>
+                    </th:block>
+                  </th:block>
+                </tbody>
+              </table>
+            </div> <!--/* memberList 끝나는 지점 */-->
+            <div class="searchWrap">
+              <form id="frmSearch" action="@{/member/searchMember.do}">
+                <select name="column" id="column">
+                  <option value="MEMBER_NO">사원번호</option>
+                  <option value="MEMBER_NAME" selected="selected">사원명</option>
+                  <option value="DEPT_NO">부서명</option>
+                </select>
+                <input type="text" name="query" id="query">
+                <button>검색</button>
+              </form>
+            </div>
+            <div class="pagination">
+                <div style="text-align: center;" th:utext="${pagination}"></div>  
+            </div>
+          </div> <!--/* member-main 끝나는 지점 */-->
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>
