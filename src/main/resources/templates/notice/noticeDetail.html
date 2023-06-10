@@ -2,7 +2,11 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
+
 <script>
+  function fnList() {
+	  location.href = '/notice/noticeList.do';
+  }
 	// 검색어 초기화
 	$(function(){
 		$('#column').on('change', function(){
@@ -29,58 +33,59 @@
         
           <div class="board-main">
             <div class="board-title">
-                <h3>공지사항</h3>
+                <h3><a th:href="@{/notice/noticeList.do}">공지사항</a></h3>
             </div>
             
             <hr>
-    
+            
             <div class="board-detail">
               <div class="page-button">
-                <button type="button" class="btn btn-sm btn-light" onclick="location.href='noticeDetail.bo?boardNo=${b.boardNo - 1}&cpage=${ cpage }'">이전</button>
-                <button type="button" class="btn btn-sm btn-light" onclick="location.href='noticeDetail.bo?boardNo=${b.boardNo + 1}&cpage=${ cpage }'">다음</button>
-                <button type="button" class="btn btn-sm btn-light" onclick="location.href='/notice/noticeMain.html'">목록</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm">이전</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm">다음</button>
+                <button type="button" class="btn btn-outline-dark btn-sm" onclick="fnList()">목록</button>
               </div>
-              
-              <div class="content-header">
+            
+            <div class="content-header">
                 <h5 th:text="${n.noticeTitle}"></h5>
                 <div class="profile">
-                  <img th:src="@{/notice/display.do(memberNo=${n.MemberDTO.memberNo})}">
-                  <div th:text="${n.MemberDTO.memberName} + ${n.memberDTO.JobDTO.jobName}"></div>
-                  <div class="createDate" th:text="${n.noticeCreatedAt}"></div>
-                  <!-- <div class="modiDate" th:text="${n.noticeModifiedAt}"></div>  -->
+                  <!--/* <img th:src="@{/notice/display.do(memberNo=${n.MemberDTO.memberNo})}"> */-->
+                  <div th:text="|${n.MemberDTO.memberName} ${n.memberDTO.JobDTO.jobName}|"></div>
+                  <div class="createDate" th:text="${#dates.format(n.noticeCreatedAt, 'yyyy/MM/dd')}"></div>
+                  <!--/* <div class="modiDate" th:text="${#dates.format(n.noticeModifiedAt, 'yyyy/MM/dd')}"></div>  */-->
                   <div class="noticeHit">조회수 <span th:text="${n.noticeHit}"></span></div>
                 </div>
-              </div>
+            </div>
+            
+            <!--/* 게시판 내용 영역 */-->
+            <div class="content-body" th:text="${n.noticeContent}"></div>
               
-              <!--/* 게시판 내용 영역 */-->
-              <div class="content-body" th:text="${n.noticeContent}"></div>
-              
-              <!--/* 다운로드 영역 */-->
-              <div class="attachList">
+            <!--/* 다운로드 영역 */-->
+            <div class="attachList">
                 
                 <th:block th:if="${#lists.isEmpty(noticeFileList)">
                   <div><i class="fa-light fa-arrow-down-to-line fa-1x"></i>첨부된 파일이 없습니다.</div>
                 </th:block>
                 
-                <th:block th:if="${not #lists.isEmpty(noticeFileList)}">
+                <th:block th:unless="${#lists.isEmpty(noticeFileList)}">
                   <th:block th:each="noticeFile:${noticeFileList}">
-                    <div><a th:href="@{/notice/download.do(noticeFileNo=${noticeFile.noticeNo})}"><span th:text="${noticeFile.noticeFileOriginName"></span></a><span>(사이즈)</span></div>
+                    <div><a th:href="@{/notice/download.do(noticeFileNo=${noticeFile.noticeNo})}"><span th:text="${noticeFile.noticeFileOriginName}"></span></a><span>(kb)</span></div>
                     <div><a th:href="@{/notice/downloadAll.do(noticeNo=${n.noticeNo})}">모두 다운로드</a></div>
                   </th:block>
                 </th:block>
-              </div>
-              
-              
-              <div class="write-button">
-                <th:block th:if="${n.MemberDTO.DepartmentDTO.deptName == '인사팀'}">
-                  <button type="button" class="btn btn-sm btn-primary" onclick="location.href='enrollForm.bo?no=1'">새글쓰기</button>
-                </th:block>
-                <th:block th:if="${session.loginId == n.MemberDTO.emailId}">
-                  <button type="button" class="btn btn-sm btn-light">수정</button>
-                  <button type="button" class="btn btn-sm btn-danger">삭제</button>
-                </th:block>
-              </div>
-              
+            </div>
+            
+            <div class="write-button">
+              <!--/* 
+              <th:block th:if=" == '인사팀'}">
+                <button type="button" class="btn btn-sm btn-primary" onclick="location.href='enrollForm.bo?no=1'">새글쓰기</button>
+              </th:block>
+              <th:block th:if="${session.loginId == n.MemberDTO.emailId}">
+                <button type="button" class="btn btn-sm btn-light">수정</button>
+                <button type="button" class="btn btn-sm btn-danger">삭제</button>
+              </th:block>
+               */-->
+            </div>
+            
             </div> <!--/* board-detail 끝나는 지점 */-->
           </div> <!--/* board-main 끝나는 지점 */-->
 

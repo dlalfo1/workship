@@ -33,20 +33,20 @@
         
           <div class="board-main">
             <div class="board-title">
-                <h3>공지사항</h3>
+                <h3><a th:href="@{/notice/noticeList.do}">공지사항</a></h3>
             </div>
             
             <hr>
     
             <div class="board-table">
-                <table class="table" align="center">
+                <table border="1" id="listTable" class="table" align="center">
                     <thead>
                         <tr>
-                            <th>게시글 번호</th>
-                            <th>제목</th>
-                            <th>작성자</th>
-                            <th>작성일</th>
-                            <th>조회수</th>
+                            <th style="width: 50px;">게시글 번호</th>
+                            <th style="width: 100px;">제목</th>
+                            <th style="width: 50px;">작성자</th>
+                            <th style="width: 50px;">작성일</th>
+                            <th style="width: 50px;">조회수</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,36 +56,34 @@
                         </tr>
                       </th:block>
                       
-                      <th:block th:if="${not #lists.isEmpty(noticeList)}">
-                        <th:block th:each="notice,vs:${noticeList}">
-                            <th:block th:if="${notice.noticeState == 1}">
-                                <tr class="list">
-                                  <td th:text="${beginNo - vs.index}">
-                                    <input type="hidden" name="noticeNo" th:value="${notice.noticeNo}">
-                                  </td>
-                                  <td th:text="${notice.noticeTitle}">
-                                    <a th:href="@{/notice/detail.html(noticeNo=${notice.noticeNo})}">
-                                      <span th:text="${notice.noticeTitle}"></span>
-                                    </a>
-                                  </td>
-                                  <td th:text="${notice.memberDTO.memberName}"></td>
-                                  <td th:text="${#dates.format(notice.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
-                                  <td th:text="${notice.noticeHit}"></td>
-                                </tr>
-                            </th:block>
+                      <th:block th:unless="${#lists.isEmpty(noticeList)}">
+                        <th:block th:each="notice:${noticeList}">
+                          <th:block th:if="${notice.noticeState == 1}">
+                            <tr class="list">
+                              <td th:text="${notice.noticeNo}">
+                                <input type="hidden" name="noticeNo" th:value="${notice.noticeNo}">
+                              </td>
+                              <td>
+                                <a th:href="@{/notice/noticeDetail.html(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeTitle}"></a>
+                              </td>
+                              <td th:text="${notice.memberDTO.memberName}"></td>
+                              <td th:text="${#dates.format(notice.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
+                              <td th:text="${notice.noticeHit}"></td>
+                            </tr>
+                          </th:block>
                         </th:block>
                       </th:block>
                     </tbody>
                 </table>
                 
                 <div class="searchWrap">
-              		<form id="frmSearch" action="@{/notice/searchNoticd.do}">
+              		<form id="frmSearch" th:action="@{/notice/noticeList.do}">
               			<select name="column" id="column">
               				<option value="NOTICE_TITLE" selected="selected">제목</option>
               				<option value="NOTICE_CONTENT">내용</option>
               			</select>
               			<input type="text" name="query" id="query">
-              			<button>검색</button>
+              			<button type="submit">검색</button>
               		</form>
                   <div class="writeWrap">
                     <input type="button" id="btnWrite" value="글쓰기" onclick="fnWriteNotice()">
