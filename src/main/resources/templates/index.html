@@ -79,20 +79,47 @@
 		                  <p class="card-title">출퇴근기록</p>                      
 		                  <div class="row mb-3">
 		                    <div class="col-6">
-		                      <input type="button" class="btn btn-rounded btn-primary btn-md text-white" style="width: 100%;" value="출근">
+		                      <input type="button" onclick="fnAStart()" class="btn btn-rounded btn-primary btn-md text-white" style="width: 100%;" value="출근">
 		                    </div>
 		                    <div class="col-6 text-center">
-		                      <input type="button" class="btn btn-rounded btn-light btn-md" style="width: 100%;" value="퇴근">
+		                      <input type="button" onclick="fnAEnd()" class="btn btn-rounded btn-light btn-md" style="width: 100%;" value="퇴근">
 		                    </div>
 		                  </div>
-		                  <div class="row text-center">
-		                    <div class="col-5">출근시간</div>
-		                    <div class="col-7 text-primary"><h3>08:50:00</h3></div>
+		                  <div>
+			                  <div class="row text-center">
+			                    <div class="col-5">출근시간</div>
+			                    <div class="col-7 text-primary"><h3 id="aStartTime"></h3></div>
+			                  </div>
+			                  <div class="row text-center">
+			                    <div class="col-5">퇴근시간</div>
+			                    <div class="col-7 text-primary"><h3 id="aEndTime"></h3></div>
+			                  </div>
 		                  </div>
-		                  <div class="row text-center">
-		                    <div class="col-5">퇴근시간</div>
-		                    <div class="col-7 text-primary"><h3>18:10:00</h3></div>
-		                  </div>
+		                  <script>
+                        function fnAStart(){
+                          $.ajax({
+                        	  type: 'get',
+                        	  url: ,
+                        	  data: ,
+                        	  dataType: ,
+                        	  success: function(resData){
+                        		  
+                        	  }
+                          })
+                        };
+                        
+                        function fnAEnd(){
+                        	$.ajax({
+	                          type: 'get',
+	                          url: ,
+	                          data: ,
+	                          dataType: ,
+	                          success: function(resData){
+	                            
+	                          }
+	                        })
+                        };
+                      </script>
 		                </div>
 		              </div>
 		            </div>
