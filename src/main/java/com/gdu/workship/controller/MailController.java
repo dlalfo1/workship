@@ -44,6 +44,11 @@ public class MailController {
 		 return "mail/tlist";
 	 }
 	 
+	 @GetMapping("address.html")
+	 public String mailAddress() {
+		 return "mail/address";
+	 }
+	 
 	 @GetMapping("sent.html")
 	public String sentMail() {
 		 return "mail/sent";

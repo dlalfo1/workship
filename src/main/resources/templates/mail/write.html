@@ -32,6 +32,7 @@
         		<span><a class="dlist" th:href="@{/mail/dlist.html}">임시 보관함</a></span>
         	</div>
         	
+        	
         	<form method="post" enctype="multipart/form-data" th:action="@{/mail/add.do}">
         		<div class="header">
         			<button class="btn">보내기</button>
@@ -40,11 +41,17 @@
         		</div>
         		
         		<div class="contents">
-        			<div>
-        				<label for="writer">받는사람</label>
-        				<input type="text" id="writer" name="writer" required="required">
+        			<div class="toMail">
+        				<label for="addressee">받는사람</label>
+        				<input type="text" id="addressee" name="addressee" required="required">
+        				<span><input type="button" value="주소록" class="btnAddress" onclick="fnAddress()"></span>
         			</div>
-        			
+        			<script>
+        				function fnAddress(){
+        					location.href = '/mail/address.html';
+        				}
+        			</script>
+        			        			
         			<div>
         				<label for="cc">참조</label>
         				<input type="text" id="cc" name="cc">
@@ -63,31 +70,43 @@
         			<div>
         				<div>
 	        				<label for="files">파일 첨부</label>
+	        				<input type="button" value="파일 첨부" onclick="fnUploadFile()">
 	        				<input type="button" value="전체 삭제" onclick="fnRemoveAll()">
-	        				<input type="file" id="files" name="files" multiple="multiple" class="files">        				
+	        				<input type="file" id="files" name="files" multiple="multiple" onchange="fnFileCheck(this)" style="display:none">     				
         				</div>
         				<div class="fileDrag" id="fileDrag">
-        					<div id="plzDrag">파일을 마우스로 끌어 오세요</div>
         					<div class="filesHeader">
+	        					<input type="checkbox" name="chkAll" class="screenOut">
 	        					<div class="filesTitle">
 	        						<span class="text">파일명</span>
 	        					</div>
 	        					<div class="AllSize">
 	        						<span class="text">총용량</span>
-	        						<span class="fileSize">0</span>
+	        						<span class="fileSize">0(KB)</span>
 	        					</div>
-        					</div>
-	       					<ul id="fileList">파일 리스트 뿌리기</ul>
+	        				</div>		
+       						<div id="fileList">
+       							<i class="fa-solid fa-file-circle-plus"></i>파일을 마우스로 끌어 오세요
+       						</div>		
         				</div>
         			</div>
+        			
         			<script>
-        			function fnFileCheck(vThis){
+        			
+        			function fnRemoveAll(){
+        				$()
+        			}
+        			
+        			function fnUploadFile(){
 
         				let maxSize = 1024 * 1024 * 10;
 
         				let files = vThis.files;
 
         				$('#fileList').empty();
+        				
+        		
+        				
         				$.each(files, function(i, file){
         					
         					if(file.size > maxSize){
@@ -96,12 +115,23 @@
         						$('#fileList').text('첨부 파일의 목록이 이 곳에 표시됩니다');
         						return;
         					}
+        					
+        					let fileSize = Math.ceil(file.size / 1024);
+        					
+        					
+	
+        					$('#fileList').append('<input type="checkbox">');        					
+        					$('#fileList').append('<span class="filesTitle">' + file.name + '</span>');
+        					$('#fileList').append('<span class="AllSize">' + fileSize + 'KB' + '</span>');
+        		
+        				})        	
+        				
+        				
 
-        					$('#fileList').append('<div>' + file.name + '</div>');        					
-        				})        				
-        			}
-					/*         			
-        				const dataTransfer = new DataTransfer();
+
+        			}       		
+        			
+        			/* 	const dataTransfer = new DataTransfer();
         				
         				$("#files").change(function(){
         					let fileArr = document.getElementById("files").files
@@ -134,7 +164,7 @@
         					document.getElementById("files").files=dataTransfer.files;
         				}) */
         			</script>
-        			
+ 
         			<div>
         				<textarea id="content" name="content" class="content"></textarea>
         			</div>

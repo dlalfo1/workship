@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship 받은메일함')}"></head>
+<link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
+<link rel="stylesheet" th:href="@{/css/mail/rlist.css(var=1.0)}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css">
+<body>
+
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+ 
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+   		<nav th:replace="~{/mail/layout/mailsidebar::mailSidebarFrag}"></nav>
+        <div class="content-wrapper">
+        <!--/* 
+          이 안에 div로 잘 구성해서 내용 넣어주시면 됩니다!
+          샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
+          참고할 만 한 html 파일들은 static/pages 에 있습니다!
+        */-->
+        	
+        	<div>
+        	<div class="nav-item">
+		      <a class="nav-link" data-toggle="collapse" href="#dept-basic" aria-expanded="false" aria-controls="dept-basic">
+		        <span class="menu-title">부서</span>
+		        <i class="menu-arrow"></i>
+		        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#212529" width="16px" height="16px">
+				  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+				</svg>
+		      </a>
+		      <div id="dept-basic">
+		        <ul class="nav flex-coulmn sub-menu">
+		          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/docList.html}">개발부</a> </li>
+		          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/approvalList.html}">인사부</a> </li>
+		          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/referenceList.html}">총무부</a> </li>
+		        </ul>
+		      </div>
+		    </div>
+				        		
+        		<div>
+	        		<div class="search">
+	        			검색창 구현
+	        		</div>
+	        		
+	        		<div class="result">
+	        			조회된 사원 출력
+	        		</div>
+        		</div>
+        		
+        		<div class="addressee">
+        			<div class="toNormal">
+        				받는 사람
+        			</div>
+        			<div class="cc">
+        				참조
+        			</div>
+        			<div class="bc">
+        				숨은 참조
+        			</div>
+        		</div>
+        		
+        	</div>
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>
