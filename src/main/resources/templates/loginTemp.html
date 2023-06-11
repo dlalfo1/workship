@@ -13,7 +13,7 @@ function fnLogin(){
   $('#frmLogin').on('submit', function(event){
     
    // 아이디, 비밀번호 공백 검사
-   if($('#id').val() == '' || $('#pw').val() == ''){
+   if($('#emailId').val() == '' || $('#pw').val() == ''){
      alert('아이디와 비밀번호를 모두 입력하세요.');
      event.preventDefault();
      return;
@@ -21,7 +21,7 @@ function fnLogin(){
    
    // 아이디 기억을 체크하면 rememberId 쿠키에 입력된 아이디를 저장
    if($('#chkRememberId').is(':checked')){
-     $.cookie('rememberId', $('#id').val());
+     $.cookie('rememberId', $('#emailId').val());
    } else {
      $.cookie('rememberId', '');
    }
@@ -43,10 +43,10 @@ function fnDisplayRememberIdAndAutologin(){
   // rememberId 쿠키에 저장된 아이디를 가져와서 표시
   let rememberId = $.cookie('rememberId');
   if(rememberId == ''){
-    $('#id').val('');
+    $('#emailId').val('');
     $('#chkRememberId').prop('checked', false);
   } else {
-    $('#id').val(rememberId);
+    $('#emailId').val(rememberId);
     $('#chkRememberId').prop('checked', true);
   }
   
@@ -83,7 +83,8 @@ $(function(){
                 <img src="images/workship.png" alt="logo">
               </div>
               <!--/* 로그인 */-->
-              <form class="pt-3" id="frmLogin" method="post" th:action="@{frmLogin}">
+              <form class="pt-3" id="frmLogin" method="post" action="${contextPath}/templates/loginTemp.html">
+              	<input type="hidden" name="url" value="${url}">
                 <div class="form-group">
                   <input type="email" class="form-control form-control-lg" name="emailId" id="emailId" placeholder="아이디를 입력하세요.">
                 </div>
