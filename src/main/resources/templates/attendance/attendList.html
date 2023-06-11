@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('workship 메인페이지')}"></head>
+<head th:replace="~{/layout/header::headFrag('workship 출퇴근기록조회')}"></head>
 <body>
 
 
@@ -47,13 +47,13 @@
                     </script>
                   </div>
                   <div class="row">
-                        <div class="col-5">출근시간</div>
-                        <div class="col-7 text-primary"><h3>08:50:00</h3></div>
-                      </div>
-                      <div class="row">
-                        <div class="col-5">퇴근시간</div>
-                        <div class="col-7 text-primary"><h3>18:10:00</h3></div>
-                      </div>
+                     <div class="col-5">출근시간</div>
+                     <div class="col-7 text-primary"><h3 th:text="$"></h3></div>
+                   </div>
+                   <div class="row">
+                     <div class="col-5">퇴근시간</div>
+                     <div class="col-7 text-primary"><h3></h3></div>
+                   </div>
                   <p></p>
                 </div>
               </div>
