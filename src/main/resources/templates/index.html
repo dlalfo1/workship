@@ -24,6 +24,8 @@
           <!--/* 임시 */-->
           <a th:href="@{/loginTemp2.html}">임시 로그인창 이동</a>
 					<a th:href="@{/loginTemp.html}">로그인창 이동</a>
+					<p th:if="${session.loginMember == null}">로그인 안 된 상태</p>
+					<p th:if="${session.loginMember != null}">로그인 되어있는 상태</p>
     
 					<!--/* 1번째줄 */-->
           <div class="row">

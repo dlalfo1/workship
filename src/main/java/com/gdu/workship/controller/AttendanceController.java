@@ -22,15 +22,17 @@ public class AttendanceController {
 
 	private final AttendanceService attendanceService;
 	
-	/* @GetMapping("/attendList.html")
+	@GetMapping("/attendList.html")
 	public String attendList() {
-		return "attendance/attendList";
-	} */
+		return "attendance/attendList2";
+	}
 	
+	/*
 	@GetMapping("/attendList.do")
 	public void attendList(HttpServletRequest request, Model model) {
 		
 	}
+	*/
 	
 	@ResponseBody
 	@GetMapping(value="/aStart.do", produces="application/json")
