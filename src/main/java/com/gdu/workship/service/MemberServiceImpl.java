@@ -44,6 +44,51 @@ public class MemberServiceImpl implements MemberService {
     
     int recordPerPage = 10;
 
+    // 파라미터 column이 전달되지 않는 경우 column=MEMBER_NO로 처리한다.
+    Optional<String> opt2 = Optional.ofNullable(request.getParameter("column"));
+    String column = opt2.orElse("M.MEMBER_NO");
+    
+    // 파라미터 query가 전달되지 않는 경우 query=""로 처리한다. (query가 없으면 null값, 처음 화면이동 요청..)
+    Optional<String> opt3 = Optional.ofNullable(request.getParameter("query"));
+    String query = opt3.orElse("");
+    
+    
+    // DB로 보낼 Map 만들기
+    Map<String, Object> map = new HashMap<String, Object>();
+                                                // LIMIT #{begin}, #{recordPerPage}
+    map.put("begin", pageUtil.getBegin());      // begin은 0부터 시작한다. (PageUtil.java 참고)
+    map.put("recordPerPage", recordPerPage);    // end 대신 recordPerPage를 전달한다.
+    map.put("column", column);
+    map.put("query", query);
+    // PageUtil(Pagination에 필요한 모든 정보) 계산하기
+    pageUtil.setPageUtil(page, (column.isEmpty() && query.isEmpty()) ? totalRecord : memberMapper.getMemberSearchCount(map), recordPerPage);
+    System.out.println(totalRecord);
+    // begin ~ end 사이의 목록 가져오기
+    List<MemberDTO> memberList = memberMapper.getMemberList(map);
+    List<DepartmentDTO> deptList = memberMapper.getDeptList();
+    System.out.println(memberList);
+    // pagination.jsp로 전달할(forward)할 정보 저장하기
+    model.addAttribute("memberList", memberList);
+    model.addAttribute("deptList", deptList);
+    if(column.isEmpty() || query.isEmpty()) {
+      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/memberList.do"));
+    } else {
+      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/memberList.do?column=" + column + "&query=" + query));
+    }
+  }
+  
+  /*@Override
+  public Map<String, Object> loadMemberList2(HttpServletRequest request) {
+
+    // 파라미터 page가 전달되지 않는 경우 page=1로 처리한다.
+    Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
+    int page = Integer.parseInt(opt1.orElse("1"));
+    
+    // 전체 레코드 개수를 구한다.
+    int totalRecord = memberMapper.getMemberCount();
+    
+    int recordPerPage = 10;
+
     // 파라미터 order가 전달되지 않는 경우 order=ASC로 처리한다.
     Optional<String> opt3 = Optional.ofNullable(request.getParameter("order"));
     String order = opt3.orElse("ASC");
@@ -65,16 +110,20 @@ public class MemberServiceImpl implements MemberService {
     
     // begin ~ end 사이의 목록 가져오기
     List<MemberDTO> memberList = memberMapper.getMemberList(map);
+    List<DepartmentDTO> deptList = memberMapper.getDeptList();
     
+    Map<String, Object> result = new HashMap<String, Object>();
     // pagination.jsp로 전달할(forward)할 정보 저장하기
-    model.addAttribute("memberList", memberList);
-    model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/memberList.do?column=" + column + "&order=" + order));
+    result.put("memberList", memberList);
+    result.put("deptList", deptList);
+    result.put("pagination", pageUtil.getPagination(request.getContextPath() + "/member/memberList.do?column=" + column + "&order=" + order));
     switch(order) {
-    case "ASC" : model.addAttribute("order", "DESC"); break;  // 현재 ASC 정렬이므로 다음 정렬은 DESC이라고 Jsp에 알려준다.
-    case "DESC": model.addAttribute("order", "ASC"); break;
+    case "ASC" : result.put("order", "DESC"); break;  // 현재 ASC 정렬이므로 다음 정렬은 DESC이라고 Jsp에 알려준다.
+    case "DESC": result.put("order", "ASC"); break;
     }
-
-  }
+    
+    return result;
+  }*/
   
   @Override
   public int addMember(MultipartHttpServletRequest request) {
