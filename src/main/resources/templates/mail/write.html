@@ -26,7 +26,7 @@
           샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
           참고할 만 한 html 파일들은 static/pages 에 있습니다!
         */-->
-        
+
         	<div class="info">
         		<span class="title">메일 쓰기</span>
         		<span><a class="dlist" th:href="@{/mail/dlist.html}">임시 보관함</a></span>
@@ -52,17 +52,17 @@
         				}
         			</script>
         			        			
-        			<div>
+        			<div class="contentBox">
         				<label for="cc">참조</label>
         				<input type="text" id="cc" name="cc">
         			</div>
         			
-        			<div>
+        			<div class="contentBox">
         				<label for="bc">숨은 참조</label>
         				<input type="text" id="bc" name="bc">
         			</div>
         			
-        			<div>
+        			<div class="contentBox">
         				<label for="title">제목</label>
         				<input type="text" id="title" name="title" required="required">
         			</div>
@@ -70,9 +70,9 @@
         			<div>
         				<div>
 	        				<label for="files">파일 첨부</label>
-	        				<input type="button" value="파일 첨부" onclick="fnUploadFile()">
+	        				<input type="button" value="파일 첨부" onclick="fnUploadFile()" style="display:none">
 	        				<input type="button" value="전체 삭제" onclick="fnRemoveAll()">
-	        				<input type="file" id="files" name="files" multiple="multiple" onchange="fnFileCheck(this)" style="display:none">     				
+	        				<input type="file" id="files" name="files" multiple="multiple" onchange=" fnFileCheck(this)">     				
         				</div>
         				<div class="fileDrag" id="fileDrag">
         					<div class="filesHeader">
@@ -85,9 +85,9 @@
 	        						<span class="fileSize">0(KB)</span>
 	        					</div>
 	        				</div>		
-       						<div id="fileList">
+       						<ul id="fileList">
        							<i class="fa-solid fa-file-circle-plus"></i>파일을 마우스로 끌어 오세요
-       						</div>		
+       						</ul>		
         				</div>
         			</div>
         			
@@ -97,7 +97,7 @@
         				$()
         			}
         			
-        			function fnUploadFile(){
+        			function fnFileCheck(vThis){
 
         				let maxSize = 1024 * 1024 * 10;
 
@@ -117,17 +117,14 @@
         					}
         					
         					let fileSize = Math.ceil(file.size / 1024);
-        					
-        					
-	
-        					$('#fileList').append('<input type="checkbox">');        					
+							
+        					$('#fileList').append('<li>');
+        					$('#fileList').append('<input type="checkbox">');         					
         					$('#fileList').append('<span class="filesTitle">' + file.name + '</span>');
         					$('#fileList').append('<span class="AllSize">' + fileSize + 'KB' + '</span>');
+        					$('#fileList').append('</li>');
         		
-        				})        	
-        				
-        				
-
+        				})        
 
         			}       		
         			

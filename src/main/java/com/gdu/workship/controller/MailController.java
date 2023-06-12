@@ -58,4 +58,7 @@ public class MailController {
 	 public String addMail() {
 		 return "mail/sent";
 	 }
+	 
+	/* @GetMapping("/search.do") */
+	 
 }
