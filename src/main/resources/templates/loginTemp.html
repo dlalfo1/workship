@@ -2,6 +2,75 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 로그인페이지')}"></head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script th:inline="javascript">
+	
+//$.cookie() : jquery-cookie 라이브러리가 필요함
+
+// 로그인하기
+function fnLogin(){
+  
+  $('#frmLogin').on('submit', function(event){
+    
+   // 아이디, 비밀번호 공백 검사
+   if($('#emailId').val() == '' || $('#pw').val() == ''){
+     alert('아이디와 비밀번호를 모두 입력하세요.');
+     event.preventDefault();
+     return;
+   }
+   
+   // 아이디 기억을 체크하면 rememberId 쿠키에 입력된 아이디를 저장
+   if($('#chkRememberId').is(':checked')){
+     $.cookie('rememberId', $('#emailId').val());
+   } else {
+     $.cookie('rememberId', '');
+   }
+   
+   // 자동 로그인 체크 여부 확인
+   if($('#chkAutologin').is(':checked')){
+     $.cookie('autologin', 'true');
+   } else {
+     $.cookie('autologin', 'false');
+   }
+    
+  });
+  
+}
+
+// 쿠키에 기억된 아이디와 자동 로그인 상태 보여주기
+function fnDisplayRememberIdAndAutologin(){
+  
+  // rememberId 쿠키에 저장된 아이디를 가져와서 표시
+  let rememberId = $.cookie('rememberId');
+  if(rememberId == ''){
+    $('#emailId').val('');
+    $('#chkRememberId').prop('checked', false);
+  } else {
+    $('#emailId').val(rememberId);
+    $('#chkRememberId').prop('checked', true);
+  }
+  
+  // autologin 쿠키에 저장된 값에 따라 자동 로그인 체크 상태 변경
+  let autologin = $.cookie('autologin');
+  if(autologin == 'true'){
+    $('#chkAutoLogin').prop('checked', true);
+  } else {
+    $('#chkAutoLogin').prop('checked', false);
+  }
+  
+	// 자동 로그인 체크 여부에 따라 로그인 처리
+	if($.cookie('autoLogin') == 'true'){
+	  $('#frmLogin').submit();
+	}
+}
+
+$(function(){
+  fnLogin();
+  fnDisplayRememberIdAndAutologin();
+});
+		
+	
+</script>
 <body>
 
   <div class="container-scroller">
@@ -13,20 +82,28 @@
               <div class="brand-logo">
                 <img src="images/workship.png" alt="logo">
               </div>
-              <form class="pt-3">
+              <!--/* 로그인 */-->
+              <form class="pt-3" id="frmLogin" method="post" th:action="@{/login/loginTemp.do}">
+              	<input type="hidden" name="url" th:value="@{/}">
                 <div class="form-group">
-                  <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="아이디를 입력하세요.">
+                  <input type="email" class="form-control form-control-lg" name="emailId" id="emailId" placeholder="아이디를 입력하세요.">
                 </div>
                 <div class="form-group">
-                  <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="비밀번호를 입력하세요.">
+                  <input type="password" class="form-control form-control-lg" name="pw" id="pw" placeholder="비밀번호를 입력하세요.">
                 </div>
                 <div class="mt-3">
                   <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">로그인</button>
                 </div>
                 <div class="my-2 d-flex justify-content-between align-items-center">
+                    <div class="form-check">
+                    <label class="form-check-label text-muted">
+                      <input type="checkbox" class="form-check-input" id="chkRememberId">
+                      이메일 저장
+                    </label>
+                  </div>
                   <div class="form-check">
                     <label class="form-check-label text-muted">
-                      <input type="checkbox" class="form-check-input">
+                      <input type="checkbox" class="form-check-input" id="chkAutoId">
                       자동 로그인
                     </label>
                   </div>

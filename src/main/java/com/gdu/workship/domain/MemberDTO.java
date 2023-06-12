@@ -24,6 +24,6 @@ public class MemberDTO {
 	private String pw;
 	private String profileFilePath;
 	private String profileFileName;
-  private String autologinId;
-  private Date setAutologinExpiredAt;
+	private String autologinId;
+	private Date setAutologinExpiredAt;
 }
