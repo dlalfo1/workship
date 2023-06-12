@@ -4,15 +4,34 @@
 <head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
 
 <script>
+  var frm;
+  
+  $(function(){
+	    frm = $('#frmBtn');
+	    // 검색어 초기화
+	    $('#column').on('change', function(){
+	      $('#query').val('');
+	    })
+  })
+  
   function fnList() {
 	  location.href = '/notice/noticeList.do';
   }
-	// 검색어 초기화
-	$(function(){
-		$('#column').on('change', function(){
-			$('#query').val('');
-		})
-	})
+  function fnWrite() {
+	  location.href = '/notice/write.html';
+  }
+  function fnEdit() {
+	  frm.attr('action', '/notice/editNotice.html');
+    frm.submit();
+  }
+  function fnRemove() {
+    if(confirm('게시글을 삭제하면 모든 첨부 파일이 함께 삭제됩니다. 그래도 삭제하시겠습니까?') == false){
+        return;
+      }
+    frm.attr('action', '/notice/removeNotice.do');
+    frm.submit();
+  }
+	
 </script>
 <body>
 
@@ -40,8 +59,8 @@
             
             <div class="board-detail">
               <div class="page-button">
-                <button type="button" class="btn btn-outline-secondary btn-sm">이전</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm">다음</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" th:onclick="location.href='noticeDetail.html?noticeNo=${n.noticeNo - 1}&cpage=${ cpage }'">이전</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" th:onclick="location.href='noticeDetail.html?noticeNo=${n.noticeNo + 1}&cpage=${ cpage }'">다음</button>
                 <button type="button" class="btn btn-outline-dark btn-sm" onclick="fnList()">목록</button>
               </div>
             
@@ -50,40 +69,46 @@
                 <div class="profile">
                   <!--/* <img th:src="@{/notice/display.do(memberNo=${n.MemberDTO.memberNo})}"> */-->
                   <div th:text="|${n.MemberDTO.memberName} ${n.memberDTO.JobDTO.jobName}|"></div>
-                  <div class="createDate" th:text="${#dates.format(n.noticeCreatedAt, 'yyyy/MM/dd')}"></div>
+                  <div class="createDate" th:text="${#dates.format(n.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></div>
                   <!--/* <div class="modiDate" th:text="${#dates.format(n.noticeModifiedAt, 'yyyy/MM/dd')}"></div>  */-->
                   <div class="noticeHit">조회수 <span th:text="${n.noticeHit}"></span></div>
                 </div>
             </div>
             
             <!--/* 게시판 내용 영역 */-->
-            <div class="content-body" th:text="${n.noticeContent}"></div>
+            <div class="content-body" th:utext="${n.noticeContent}"></div>
+            
+            <hr>
               
             <!--/* 다운로드 영역 */-->
             <div class="attachList">
-                
-                <th:block th:if="${#lists.isEmpty(noticeFileList)">
-                  <div><i class="fa-light fa-arrow-down-to-line fa-1x"></i>첨부된 파일이 없습니다.</div>
+              <th:block th:if="${#lists.isEmpty(noticeFileList)}">
+                <div><i class="fa-light fa-arrow-down-to-line fa-1x"></i>첨부된 파일이 없습니다.</div>
+              </th:block>
+              
+              <th:block th:unless="${#lists.isEmpty(noticeFileList)}">
+                <th:block th:each="noticeFile:${noticeFileList}">
+                  <div><a th:href="@{/notice/download.do(noticeFileNo=${noticeFile.noticeFileNo})}"><span th:text="${noticeFile.noticeFileOriginName}"></span></a><span>(kb)</span></div>
                 </th:block>
-                
-                <th:block th:unless="${#lists.isEmpty(noticeFileList)}">
-                  <th:block th:each="noticeFile:${noticeFileList}">
-                    <div><a th:href="@{/notice/download.do(noticeFileNo=${noticeFile.noticeNo})}"><span th:text="${noticeFile.noticeFileOriginName}"></span></a><span>(kb)</span></div>
-                    <div><a th:href="@{/notice/downloadAll.do(noticeNo=${n.noticeNo})}">모두 다운로드</a></div>
-                  </th:block>
-                </th:block>
+                  <div><a th:href="@{/notice/downloadAll.do(noticeNo=${n.noticeNo})}">모두 다운로드</a></div>
+              </th:block>
             </div>
             
             <div class="write-button">
-              <!--/* 
-              <th:block th:if=" == '인사팀'}">
-                <button type="button" class="btn btn-sm btn-primary" onclick="location.href='enrollForm.bo?no=1'">새글쓰기</button>
-              </th:block>
-              <th:block th:if="${session.loginId == n.MemberDTO.emailId}">
-                <button type="button" class="btn btn-sm btn-light">수정</button>
-                <button type="button" class="btn btn-sm btn-danger">삭제</button>
-              </th:block>
-               */-->
+              <form id="frmBtn" method="post">
+                <input type="hidden" name="noticeNo" th:value="${n.noticeNo}">
+                <!--/* 
+                <th:block th:if="${session.deptName == '인사팀'}">
+                </th:block>
+                 */-->
+                  <button type="button" class="btn btn-primary btn-rounded btn-sm" onclick="fnWrite()">새글쓰기</button>
+                <!--/* 
+                <th:block th:if="${session.loginId == n.MemberDTO.emailId}">
+                </th:block>
+                 */-->
+                  <button type="button" class="btn btn-outline-secondary btn-rounded btn-sm" th:onclick="fnEdit()">수정</button>
+                  <button type="button" class="btn btn-danger btn-rounded btn-sm" th:onclick="fnRemove()">삭제</button>
+                </form>
             </div>
             
             </div> <!--/* board-detail 끝나는 지점 */-->
