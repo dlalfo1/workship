@@ -27,12 +27,11 @@ public class AttendanceController {
 		return "attendance/attendList2";
 	}
 	
-	/*
 	@GetMapping("/attendList.do")
-	public void attendList(HttpServletRequest request, Model model) {
-		
+	public String attendList2(@RequestParam("memberNo") int memberNo, Model model) {
+		attendanceService.getAttendanceToday(memberNo, model);
+		return "attendance/attendList";
 	}
-	*/
 	
 	@ResponseBody
 	@GetMapping(value="/aStart.do", produces="application/json")

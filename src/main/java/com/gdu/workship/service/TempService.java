@@ -21,15 +21,12 @@ public class TempService {
 		String url = request.getParameter("url");
 		String id = request.getParameter("id");
 		String pw = request.getParameter("pw");
-		
-		System.out.println(id + pw);
+
 		MemberDTO memberDTO = new MemberDTO();
 		memberDTO.setEmailId(id);
 		memberDTO.setPw(pw);
 		MemberDTO loginMemberDTO = tempMapper.getMemberDTO(memberDTO);
-		
-		System.out.println(loginMemberDTO.getEmailId());
-		
+
 		HttpSession session = request.getSession();
 		session.setAttribute("loginMember", loginMemberDTO);
 		
