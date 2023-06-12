@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship 받은메일함')}"></head>
+<link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
+<link rel="stylesheet" th:href="@{/css/mail/rlist.css(var=1.0)}">
+
+<body>
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+ 
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+   		<nav th:replace="~{/mail/layout/mailsidebar::mailSidebarFrag}"></nav>
+        <div class="content-wrapper">
+        <!--/* 
+          이 안에 div로 잘 구성해서 내용 넣어주시면 됩니다!
+          샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
+          참고할 만 한 html 파일들은 static/pages 에 있습니다!
+        */-->
+        	
+        	<!-- 메일 제목 및 읽은 메일 체크 -->
+        	<div class="info">
+        		<span class="title">받은 메일함</span>
+        		<div class="readMail">
+        			<span>전체 메일</span> 38 / <span>읽은 메일</span> 1
+        		</div>
+        	</div>
+        	
+        	<form id="frmList" method="post" action="@{/mail/search.do}">
+        		<div class="contents">	        		
+        			<!-- 메일 이동 및 검색창 구현 -->
+        			<div class="contentCheck">
+        			
+        				<!-- 메일 이동 -->
+        				<div class="category">
+        					<div>
+        						<label for="chkAll" id="lblChkAll"></label>
+        						<input type="checkbox" id="chkAll" class="screenOut">
+        					</div>
+        					<div>
+        						<label for="chkStar" id="lblChkStar"></label>
+        						<input type="button" value="중요" id="chkStar" onclick="fnStar()">
+        					</div>
+        					<div>
+        						<label for="chkRead" id="lblChkRead"></label>
+        						<input type="button" value="읽음" id="chkRead" onclick="fnRead()">
+        					</div>
+        					<div>
+        						<label for="chkRemove" id="lblChkRemove"></label>
+        						<input type="button" value="삭제" id="chkRemove" onclick="fnRemove()">
+        					</div>
+        					<div>
+        						<label for="chkSpam" id="lblChkSpam"></label>
+        						<input type="button" value="스팸" id="chkSpam" onclick="fnSpam()">
+        					</div>
+        					<div>
+        						<label for="chkReply" id="lblChkReply"></label>
+        						<input type="button" value="답장" id="chkReply" onclick="fnReply()">
+        					</div>
+        					<div>
+        						<label for="chkForward" id="lblChkForward"></label>
+        						<input type="button" value="전달" id="chkForward" onclick="fnForward()">
+        					</div>
+        					<select name="column" id="column">
+        						<option value="columnSort">정렬</option>
+        						<option value="mailDateDesc">최신 메일순</option>
+        						<option value="mailDateAsc">오래된 메일순</option>
+        					</select>
+        				</div>
+       					<div class="search">
+       						<select name="searchColumn" id="searchColumn">
+       							<option value="mailTo">받는사람</option>
+       							<option value="mailTitle">메일제목</option>
+       						</select>
+       						<input list="auto_complete" type="text" name="searchQuery" id="searchQuery">
+	        				<button><i class="fa-solid fa-magnifying-glass"></i></button>
+       					</div>
+        			</div>
+        			
+        			<!-- 메일리스트 뿌리기 -->
+        			<div class="contentList">
+       					<!-- 화면확인용  -->
+       					<ul>
+        					<li class="mailContent">
+        						<div class="mailCheck">
+	        						<div>
+	        							<label for="chkOne" class="lblChkOne"></label>
+	        							<input type="checkbox" id="chkOne" class="chkOne screenOut" name="mailList">
+	        						</div>
+	        						<div class="mailStar" id="mailStar">
+	        							<input type="radio" name="mailStar" value="Y" id="starState"><label for="starState">★</label>
+	        						</div>
+	     							<div class="mailRead" id="mailRead">
+	        							<input type="radio" name="mailRead" value="Y" id="readState"><label for="readState"><i class="fa-solid fa-envelope-open"></i></label>
+	        						</div>        						
+        						</div>
+        						<div>보낸사람</div>
+        						<div>메일제목</div>
+        						<div>받은시간</div>
+        					</li>
+        				</ul>        
+        				
+        				
+       					
+       					
+       					<div class="searchResult">
+       						<datalist id="auto_complete">조회된메일출력</datalist>
+       					</div>	        					
+        				<th:block th:each="rmail:${rmailList}">
+        					<!-- 메일이 없는 경우 -->
+        					<th:block th:if="${empty rmailList}">
+        						<h5>받은 메일이 없습니다.</h5>
+        					</th:block>
+        					
+        					<!-- 메일이 있는 경우 -->
+        					<th:block th:if="${not empty rmailList}">
+		        				<ul>
+		        					<li class="rmailContent">
+		        						<div class="rmailCheck">
+			        						<div>
+			        							<label for="chkOne${rmail.mailNo}" class="lblChkOne" th:text="${rmail.mailNo}"></label>
+			        							<input type="checkbox" id="chkOne${rmail.mailNo}" class="chkOne screenOut" name="mailList" value="${rmail.mailNo}">
+			        						</div>
+			        						<div class="mailStar" id="mailStar">
+			        							<input type="radio" name="mailStar" value="Y" id="starState"><label for="starState">★</label>
+			        						</div>
+			     							<div class="mailRead" id="mailRead">
+			        							<input type="radio" name="mailRead" value="Y" id="readState"><label for="readState"><i class="fa-solid fa-envelope-open"></i></label>
+			        						</div>		        						
+		        						</div>
+		        						<div th:text="${rmail.emailId}">보낸사람</div>
+		        						<div th:text="${rmail.mailTitle}">메일제목</div>
+		        						<div th:text="${rmail.mailDate}">받은시간</div>
+		        					</li>
+		        				</ul>        						
+        					</th:block>
+        					
+        				</th:block>
+        			</div>
+        			<script>
+        				$('input[name="mailStar"]').on('change', function(){
+        					var rating = $(this).val();
+        				})
+        			</script>
+        		</div> 		
+        		
+        		<div class="pagination" th:utext="${pagination}"></div>
+        		<script>
+					$(function(){
+						$('#recordPerPage').on('change', function(){
+							location.href = '/mail/chage/record.do?recordPerPage=' + $(this).val();
+						})
+						let recordPerPage = '${sessionScope.recordPerPage}' == '' ? 10 : '$(sessionScope.recordPerPage)';
+						$('#recordPerPage').val(recordPerPage);
+						$('.sort').on('click', function(){
+							location.href = '/mail/pagination.do?column' + $(this).data('column') + '&order=' + $(this).data('order');
+						})
+					})					
+				</script>
+        	</form>
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+  
+</body>
+</html>
