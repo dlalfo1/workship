@@ -18,23 +18,17 @@
       AND DATE = DATE(NOW())
   </select>
   
-	<select id="getMonthlyAttendance" parameterType="int" resultType="AttendanceDTO">
-	  SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, ATTENDANCE, ASTARTTIME-AENDTIME AS WORKTIME
+	<select id="getMonthlyAttendList" parameterType="int" resultType="AttendanceDTO">
+	  SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
 	    FROM ATTENDANCE_T
 	   WHERE MEMBER_NO = #{memberNo}
 	     AND MONTH(DATE) = MONTH(NOW())
+	   ORDER BY DATE DESC
 	</select>
+	
 	<insert id="addDateIntoAttendance" parameterType="int">
 	  INSERT INTO ATTENDANCE_T
 	  VALUES (#{memberNo}, DATE(NOW()), NULL, NULL)
 	</insert>
-	
-	<update id="addAStartTime" parameterType="int">
-	  UPDATE ATTENDANCE_T
-	     SET ASTARTTIME = CURTIME()
-	   WHERE MEMBER_NO = #{memberNo}
-	     AND DATE = DATE(NOW())
-	</update>
-
 
 </mapper>
