@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship 임시로그인페이지')}"></head>
+<body>
+
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-center auth px-0">
+        <div class="row w-100 mx-0">
+          <div class="col-lg-4 mx-auto">
+            <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+              <div class="brand-logo">
+                <img src="images/workship.png" alt="logo">
+              </div>
+              <form class="pt-3" id="frmLogin" method="post" th:action="@{/tempLogin.do}">
+                <input type="hidden" name="url" th:value="@{/}">
+                <div class="form-group">
+                  <input type="email" class="form-control form-control-lg" name="id" placeholder="아이디를 입력하세요.">
+                </div>
+                <div class="form-group">
+                  <input type="password" class="form-control form-control-lg" name="pw" placeholder="비밀번호를 입력하세요.">
+                </div>
+                <div class="mt-3">
+                  <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">로그인</button>
+                </div>
+                <div class="my-2 d-flex justify-content-between align-items-center">
+                  <div class="form-check">
+                    <label class="form-check-label text-muted">
+                      <input type="checkbox" class="form-check-input">
+                      자동 로그인
+                    </label>
+                  </div>
+                  <a href="#" class="auth-link text-black">비밀번호 찾기</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

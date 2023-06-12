@@ -11,6 +11,11 @@ public class MvcController {
 		return "loginTemp";
 	}
 	
+	@GetMapping("/loginTemp2.html")
+	public String loginTemp2() {
+		return "temp/loginTemp2";
+	}
+	
 	@GetMapping("/temp.html")
 	public String temp() {
 		return "temp/temp";
