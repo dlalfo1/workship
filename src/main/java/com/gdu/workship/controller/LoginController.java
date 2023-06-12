@@ -34,6 +34,6 @@ public class LoginController {
 	  @GetMapping("/logoutTemp.do")
 	  public String logout(HttpServletRequest request, HttpServletResponse response) {
 	    loginService.logout(request, response);
-	    return "redirect:/loginTemp.html";
+	    return "redirect:/";
 	  }
 }
