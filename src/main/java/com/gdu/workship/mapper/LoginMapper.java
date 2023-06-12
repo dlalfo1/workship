@@ -10,5 +10,6 @@ public interface LoginMapper {
 	  public int insertMemberAccess(String emailId);
 	  public int insertAutologin(MemberDTO memberDTO);
 	  public int deleteAutologin(String emailId);
-	  public MemberDTO slectMemberByMemberDTO(MemberDTO memberDTO);
+	  public MemberDTO getMemberDTO(MemberDTO memberDTO);
+	  
 }

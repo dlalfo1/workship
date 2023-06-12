@@ -83,8 +83,8 @@ $(function(){
                 <img src="images/workship.png" alt="logo">
               </div>
               <!--/* 로그인 */-->
-              <form class="pt-3" id="frmLogin" method="post" action="${contextPath}/templates/loginTemp.html">
-              	<input type="hidden" name="url" value="${url}">
+              <form class="pt-3" id="frmLogin" method="post" th:action="@{/login/loginTemp.do}">
+              	<input type="hidden" name="url" th:value="@{/}">
                 <div class="form-group">
                   <input type="email" class="form-control form-control-lg" name="emailId" id="emailId" placeholder="아이디를 입력하세요.">
                 </div>
