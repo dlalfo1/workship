@@ -264,7 +264,10 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
   
   @Override
   public MemberDTO goWrtie(HttpSession session, Model model) {
-    String emailId = (String) session.getAttribute("loginId");
+    MemberDTO member = new MemberDTO();
+    member = (MemberDTO) session.getAttribute("loginMember");
+    String emailId = member.getEmailId();
+    System.out.println(noticeBoardMapper.getMemberByEmail(emailId));
     return noticeBoardMapper.getMemberByEmail(emailId);
   }
   

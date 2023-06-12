@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.service.NoticeBoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -66,7 +67,8 @@ public class NoticeBoardController {
   
 	@GetMapping("/notice/write.html")
 	public String write(HttpSession session, Model model) {
-	  model.addAttribute("m" ,noticeBoardService.goWrtie(session, model));
+	  MemberDTO member = noticeBoardService.goWrtie(session, model);
+	  model.addAttribute("member", member);
 		return "notice/noticeWrite";
 	}
 	

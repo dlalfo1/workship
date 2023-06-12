@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -39,6 +40,11 @@ public class MemberController {
   public String addMember(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
     memberService.addMember(request);
     return "redirect:/member/member.html";
+  }
+  
+  @GetMapping("/member/editMember.html")
+  public String editMember(@RequestParam("memberNo") int memberNo, Model model) {
+    return "/member/memberDetail";
   }
 
 }

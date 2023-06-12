@@ -61,9 +61,9 @@
                   <th:block th:if="${not #lists.isEmpty(memberList)}">
                     <th:block th:each="member:${memberList}">
                       <tr>
-                        <td class="no"><a th:href="@{/member/modifyMember.do}" th:text="${member.memberNo}"></a></td>
-                        <td><a th:href="@{/member/modifyMember.do}" th:text="${member.memberName}"></a></td>
-                        <td><a th:href="@{/member/modifyMember.do}" th:text="${member.departmentDTO.deptName}"></a></td>
+                        <td class="no"><a th:href="@{/member/editMember.html}" th:text="${member.memberNo}"></a></td>
+                        <td><a th:href="@{/member/editMember.html}" th:text="${member.memberName}"></a></td>
+                        <td><a th:href="@{/member/editMember.html}" th:text="${member.departmentDTO.deptName}"></a></td>
                         <td th:text="${member.jobDTO.jobName}"></td>
                         <td th:text="${#dates.format(member.joinedAt, 'yyyy/MM/dd')}"></td>
                         <td th:text="${member.status}"></td>
