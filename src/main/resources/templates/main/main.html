@@ -21,9 +21,6 @@
       <div class="main-panel">
         <div class="content-wrapper">
 
-          <!--/* 임시 */-->
-          <a th:href="@{/loginTemp.html}">로그인창 이동</a>
-    
           <!--/* 1번째줄 */-->
           <div class="row">
           
@@ -42,10 +39,10 @@
                           <img class="rounded-circle" th:src="@{/images/faces/face1.jpg}">
                         </div>
                         <div class="col-8 text-white text-center">
-                          <h3>사원명</h3>
-                          <p class="text-white font-weight-700 mb-0">부서 / 직급</p>
-                          <p class="text-white font-weight-500 mb-0">이메일</p>
-                          <p class="text-white font-weight-500 mb-0">사원번호</p>
+                          <h3 th:text="${session.loginMember.memberName}"></h3>
+                          <p class="text-white font-weight-700 mb-0" th:text="|${session.loginMember.departmentDTO.deptName} / ${session.loginMember.jobDTO.jobName}|"></p>
+                          <p class="text-white font-weight-500 mb-0" th:text="${session.loginMember.emailId}"></p>
+                          <p class="text-white font-weight-500 mb-0" th:text="|사원번호 : ${session.loginMember.memberNo}|"></p>
                         </div>
                       </div>
                     </div>
@@ -58,10 +55,10 @@
                     <div class="card-body">
                       <p class="card-title">메일</p>                      
                       <div class="row">
-                        <div class="col-6">
+                        <div class="col-5">
                           <p>읽지 않은 메일</p>
                         </div>
-                        <div class="col-2 text-primary">
+                        <div class="col-3 text-primary">
                           <h3>12</h3>
                         </div>
                         <div class="col-4">
@@ -97,17 +94,17 @@
                       </div>
                       <script th:inline="javascript">
                       function fnAStart(){
-                          $.ajax({
-                            type: 'get',
-                            url: '/attendance/aStart.do',
-                            /*data: 'memberNo=${session.memberDTO.memberNo}', */
-                            data: 'memberNo=1',
-                            dataType: 'json',
-                            success: function(resData){
-                              $('#aStartTime').text('[[${resData.aStartTime}]]');
-                            }
-                          })
-                        };
+                    	  var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
+                        $.ajax({
+                          type: 'get',
+                          url: '/attendance/aStart.do',
+                          data: 'memberNo=' + memberNo,
+                          dataType: 'json',
+                          success: function(resData){
+                            $('#aStartTime').text('${resData.aStartTime}');
+                          }
+                        })
+                      };
                         
                         /* function fnAEnd(){
                           $.ajax({

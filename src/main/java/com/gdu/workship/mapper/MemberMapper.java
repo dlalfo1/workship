@@ -18,4 +18,6 @@ public interface MemberMapper {
   public DepartmentDTO selectDept(int deptNo);
   public JobDTO selectJob(int jobNo);
   public int createMember(MemberDTO member);
+  
+
 }

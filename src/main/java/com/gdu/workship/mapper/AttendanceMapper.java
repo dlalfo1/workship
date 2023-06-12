@@ -13,5 +13,5 @@ public interface AttendanceMapper {
 	public void addDateIntoAttendance(int memberNo);
 	public int addAStartTime(int memberNo);
 	public AttendanceDTO getAttendanceToday(int memberNo);
-	public List<AttendanceDTO> getMonthlyAttendance(int memberNo);
+	public List<AttendanceDTO> getMonthlyAttendList(int memberNo);
 }
