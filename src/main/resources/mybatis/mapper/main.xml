@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace는 @Mapper를 지정한다. -->
+<mapper namespace="com.gdu.workship.mapper.MainMapper">
+
+  <update id="addAStartTime" parameterType="int">
+    UPDATE ATTENDANCE_T
+       SET ASTARTTIME = CURTIME()
+     WHERE MEMBER_NO = #{memberNo}
+       AND DATE = DATE(NOW())
+  </update>
+
+</mapper>

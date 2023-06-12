@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace는 @Mapper를 지정한다. -->
+<mapper namespace="com.gdu.workship.mapper.TempMapper">
+
+  <resultMap type="MemberDTO" id="MemberMap">
+    <id column="MEMBER_NO" property="memberNo"/>
+    <result column="MEMBER_NAME" property="memberName"/>
+    <result column="EMAIL_ID" property="emailId"/>
+    <result column="TEL" property="tel"/>
+    <result column="BIRTHDAY" property="birthday"/>
+    <result column="JOINED_AT" property="joinedAt"/>
+    <result column="MODIFIED_AT" property="modifiedAt"/>
+    <result column="STATUS" property="status"/>
+    <result column="DAYOFF_COUNT" property="dayoffCount"/>
+    <result column="PW" property="pw"/>
+    <result column="PROFILE_FILE_PATH" property="profileFilePath"/>
+    <result column="PROFILE_FILE_NAME" property="profileFileName"/>
+    <association javaType="JobDTO" property="jobDTO">
+      <id column="JOB_NO" property="jobNo"/>
+      <result column="JOB_NAME" property="jobName"/>
+    </association>
+    <association javaType="DepartmentDTO" property="departmentDTO">
+      <id column="DEPT_NO" property="deptNo"/>
+      <result column="DEPT_NAME" property="deptName"/>
+    </association>
+  </resultMap>
+
+  <select id="getMemberDTO" parameterType="MemberDTO" resultMap="MemberMap">
+    SELECT A.MEMBER_NO, A.MEMBER_NAME, A.EMAIL_ID, A.TEL, A.BIRTHDAY, A.JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME, A.DEPT_NAME, A.JOB_NAME
+      FROM (SELECT M.MEMBER_NO, M.MEMBER_NAME, M.EMAIL_ID, M.TEL, M.BIRTHDAY, M.JOINED_AT, M.MODIFIED_AT, M.STATUS, M.DAYOFF_COUNT, M.PW, M.PROFILE_FILE_PATH, M.PROFILE_FILE_NAME, D.DEPT_NAME, J.JOB_NAME
+              FROM DEPARTMENT_T D INNER JOIN MEMBER_T M
+                ON D.DEPT_NO = M.DEPT_NO INNER JOIN JOB_T J
+                ON J.JOB_NO = M.JOB_NO) A
+     WHERE A.EMAIL_ID = #{emailId}
+       AND A.PW = #{pw}
+  </select>
+
+</mapper>
