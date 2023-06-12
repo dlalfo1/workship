@@ -26,11 +26,11 @@ public class NoticeBoardController {
 
   private final NoticeBoardService noticeBoardService;
   
-//  @GetMapping("/notice/noticeList.do")
-//  public String noticeMain(HttpServletRequest request, Model model) {
-//    noticeBoardService.loadNoticeBoardList(request, model);
-//    return "notice/noticeMain";
-//  }
+  @GetMapping("/notice/noticeList.do")
+  public String noticeMain(HttpServletRequest request, Model model) {
+    noticeBoardService.loadNoticeBoardList(request, model);
+    return "notice/noticeMain";
+  }
   @GetMapping(value="/notice/noticeList2.do", produces="application/json")
   @ResponseBody
   public Map<String, Object> noticeMain2(HttpServletRequest request) {

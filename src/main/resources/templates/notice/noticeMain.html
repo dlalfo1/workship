@@ -18,10 +18,10 @@
 </style>
 <script th:inline="javascript">
   
-  var loginId = sessionStorage.getItem("loginId");
-  var page = 1;
+  // var loginId = sessionStorage.getItem("loginId");
+  // var page = 1;
   
-  function fnLoadNoticeList() {
+  /* function fnLoadNoticeList() {
     // 게시글 리스트 불러오기
     $.ajax({
     	type: 'get',
@@ -93,7 +93,7 @@
     if (day.length < 2) day = '0' + day; 
     
     return [year, month, day].join('/');
-  }
+  } */
 
 	function fnWriteNotice() {
 		location.href = '/notice/write.html';
@@ -120,7 +120,7 @@
       }
     }
     
-    fnLoadNoticeList();
+    // fnLoadNoticeList();
     // 검색어 초기화
 		$('#column').on('change', function(){
 			$('#query').val('');
@@ -177,10 +177,10 @@
                             <tr class="list">
                               <td th:text="${notice.noticeNo}"></td>
                               <!--/* 본인이 작성한 공지사항은 조회수가 증가하지 않는다. */-->
-                              <td th:if="${session.loginId == notice.memberDTO.emailId}">
+                              <td th:if="${session.loginMember.emailId == notice.memberDTO.emailId}">
                                 <a th:href="@{/notice/increaseHit.do(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeTitle}"></a>
                               </td>
-                              <td th:unless="${session.loginId == notice.memberDTO.emailId}">
+                              <td th:unless="${session.loginMember.emailId == notice.memberDTO.emailId}">
                                 <a th:href="@{/notice/noticeDetail.html(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeTitle}"></a>
                               </td>
                               <td th:text="|${notice.memberDTO.memberName} ${notice.memberDTO.jobDTO.jobName}|"></td>
@@ -203,7 +203,7 @@
               			<button type="submit">검색</button>
               		</form>
                   <div class="writeWrap">
-                    <input type="button" class="btn btn-primary btn-md" id="btnWrite" value="글쓰기" onclick="fnWriteNotice()">
+                    <input type="button" class="btn btn-primary btn-rounded btn-md" id="btnWrite" value="글쓰기" onclick="fnWriteNotice()">
                   </div>
                 </div> <!--/* search_wrap 끝나는 지점 */-->
               

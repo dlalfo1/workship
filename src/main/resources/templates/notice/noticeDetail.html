@@ -88,7 +88,7 @@
               
               <th:block th:unless="${#lists.isEmpty(noticeFileList)}">
                 <th:block th:each="noticeFile:${noticeFileList}">
-                  <div><a th:href="@{/notice/download.do(noticeFileNo=${noticeFile.noticeFileNo})}"><span th:text="${noticeFile.noticeFileOriginName}"></span></a><span>(kb)</span></div>
+                  <div><i class="mdi mdi-download"></i><a th:href="@{/notice/download.do(noticeFileNo=${noticeFile.noticeFileNo})}"><span th:text="${noticeFile.noticeFileOriginName}"></span></a><span>(kb)</span></div>
                 </th:block>
                   <div><a th:href="@{/notice/downloadAll.do(noticeNo=${n.noticeNo})}">모두 다운로드</a></div>
               </th:block>
