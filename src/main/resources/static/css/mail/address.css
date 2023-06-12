@@ -1,0 +1,116 @@
+@charset "UTF-8";
+
+.content-wrapper {
+	background-color: white;
+}
+
+.allContents {
+	border: 2px solid gray;
+}
+
+.addressBox {
+	display: flex;
+	padding: 24px;
+	gap: 16px;
+	height: 50%;
+}
+
+.department {
+	border: 2px solid gray;
+	flex: 0.3;
+	text-align: center;
+}
+
+.nav-link {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
+
+.menu-title {
+	font-size: 24px;
+	color: black;
+	white-space: nowrap;
+	
+}
+
+.nav {
+	display: flex;
+	flex-direction: column;
+}
+
+.nav-item {
+	list-style : none;
+	font-weight: bold;
+	font-size: 16px;
+	text-align: center;
+}
+
+.searchBox {
+	flex: 1;
+	text-align: center;
+}
+
+.search {
+	display: flex;
+	gap: 4px;
+}
+
+.search button {
+	background-color: transparent;
+	border: 1px solid gray;
+	border-radius: 5px;
+}
+
+#query:focus {
+	outline: none;
+	border: 1px solid gray;
+}
+
+.searchResult {
+	padding-top: 16px;
+	border: 2px solid gray;
+}
+
+.addressee {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	border: 2px solid gray;
+	flex: 1;
+}
+
+.toNormal, .cc, .bc {
+	display: flex;
+	padding: 8px;
+}
+
+.btnBox {
+	display: flex;
+	flex-direction: column;
+}
+
+.btnChoice, .btnCancel {
+	background-color: transparent;
+	border: none;
+}
+
+.result {
+	border: 1px solid gray;
+	flex: 1;
+}
+
+.addChoice {
+	display: flex; 
+	justify-content: center;
+	gap: 80px;
+}
+
+.choiceResult {
+	background-color: #4B49AC;
+	color: white;
+	padding: 8px 24px;
+	font-size: 16px;
+	font-weight: bold;
+	border-radius: 5px;
+}
