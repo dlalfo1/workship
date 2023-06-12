@@ -28,7 +28,7 @@
 	
 	<insert id="addDateIntoAttendance" parameterType="int">
 	  INSERT INTO ATTENDANCE_T
-	  VALUES (#{memberNo}, DATE(NOW()), NULL, NULL)
+	  VALUES (#{memberNo}, DATE(NOW()), NULL, NULL, NULL, NULL)
 	</insert>
 
 </mapper>
