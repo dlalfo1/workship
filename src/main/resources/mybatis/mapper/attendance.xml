@@ -10,12 +10,19 @@
 	 SELECT MEMBER_NO
 	   FROM MEMBER_T
 	</select>
-	
-	<select id="getMonthlyAttendance" resultType="AttendanceDTO">
-	  SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME
-	    FROM MEMBER_T
+	 
+  <select id="getAttendanceToday" parameterType="int" resultType="AttendanceDTO">
+   SELECT ASTARTTIME, AENDTIME
+     FROM ATTENDANCE_T
+    WHERE MEMBER_NO = #{memberNo}
+      AND DATE = DATE(NOW())
+  </select>
+  
+	<select id="getMonthlyAttendance" parameterType="int" resultType="AttendanceDTO">
+	  SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, ATTENDANCE, ASTARTTIME-AENDTIME AS WORKTIME
+	    FROM ATTENDANCE_T
 	   WHERE MEMBER_NO = #{memberNo}
-	     AND MONTH(DATE) = #{thisMonth}
+	     AND MONTH(DATE) = MONTH(NOW())
 	</select>
 	<insert id="addDateIntoAttendance" parameterType="int">
 	  INSERT INTO ATTENDANCE_T
@@ -28,12 +35,6 @@
 	   WHERE MEMBER_NO = #{memberNo}
 	     AND DATE = DATE(NOW())
 	</update>
-	
-	<select id="getAttendanceToday" parameterType="int" resultType="AttendanceDTO">
-	 SELECT ASTARTTIME, AENDTIME
-	   FROM ATTENDANCE_T
-	  WHERE MEMBER_NO = #{memberNo}
-	    AND DATE = DATE(NOW())
-	</select>
+
 
 </mapper>

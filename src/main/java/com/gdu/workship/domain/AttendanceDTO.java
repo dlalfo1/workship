@@ -1,5 +1,6 @@
 package com.gdu.workship.domain;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -13,7 +14,8 @@ import lombok.NoArgsConstructor;
 public class AttendanceDTO {
 	private int memberNo;
 	private Date date;
-	private Timestamp astarttime;
-	private Timestamp aendtime;
+	private Time astarttime;
+	private Time aendtime;
+	private String attendance;
 	private int worktime;
 }

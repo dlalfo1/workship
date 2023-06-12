@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import com.gdu.workship.domain.AttendanceDTO;
 import com.gdu.workship.mapper.AttendanceMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -31,4 +32,19 @@ public class AttendanceServiceImpl implements AttendanceService {
 		return map;
 	}
 	
+	@Override
+	public void getAttendList2(int memberNo, Model model) {
+		model.addAttribute("attendToday", attendanceMapper.getAttendanceToday(memberNo));
+		model.addAttribute("attendanceList", attendanceMapper.getMonthlyAttendance(memberNo));
+	}
+	
+	@Override
+	public void getAttendanceToday(int memberNo, Model model) {
+		
+	}
+	
+	@Override
+	public void getMonthlyAttendance(int memberNo, Model model) {
+		model.addAttribute("attendance", attendanceMapper.getMonthlyAttendance(memberNo));
+	}
 }

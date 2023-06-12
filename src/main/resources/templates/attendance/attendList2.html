@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('workship 출퇴근기록조회')}"></head>
+<head th:replace="~{/layout/header::headFrag('workship 임시출퇴근기록조회')}"></head>
 <body>
 
 
@@ -23,7 +23,7 @@
         <div class="content-wrapper">
         
         <p th:text="${session.loginMember.memberNo}"></p>
-        <p>${session.loginMember.memberNo}</p>
+        <a th:href="@{/attendance/attendList.do(memberNo=${session.loginMember.memberNo})}">개인 페이지로 이동</a>
           
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
