@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gdu.workship.domain.MemberDTO;
@@ -63,14 +62,14 @@ public class LoginServiceImpl implements LoginService {
 			}
 		}
 		
-		/*
+		
 		else {
 			
 			try {
 				response.setContentType("text/html; charset=UTF-8");
 				PrintWriter out = response.getWriter();
 				out.println("<script>");
-				out.println("alert('일치하는 회원 정보가 없습니다.);");
+				out.println("alert('일치하는 회원 정보가 없습니다.');");
 				out.println("location.href='" + request.getContextPath() + "/loginTemp.html';");
 				out.println("</script>");
 				out.flush();
@@ -80,7 +79,7 @@ public class LoginServiceImpl implements LoginService {
 				e.printStackTrace();
 			}
 		}
-		*/
+		
 	}	
 	  /*
 	  public void autologin(HttpServletRequest request, HttpServletResponse response) {
@@ -119,7 +118,6 @@ public class LoginServiceImpl implements LoginService {
 	    String id = (String) session.getAttribute("loginId");
 	    loginMapper.deleteAutologin(id);
 	    
-	    session.invalidate();
 		
 	}
 

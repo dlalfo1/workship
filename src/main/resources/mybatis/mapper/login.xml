@@ -38,5 +38,12 @@
      WHERE A.EMAIL_ID = #{emailId}
        AND A.PW = #{pw}
   </select>
+  
+  <update id="deleteAutologin" parameterType="String">
+    UPDATE MEMBER_T
+       SET AUTOLOGIN_ID = NULL
+         , AUTOLOGIN_EXPIRED_AT = NULL
+     WHERE EMAIL_ID = #{emailId}
+  </update>
 
 </mapper>
