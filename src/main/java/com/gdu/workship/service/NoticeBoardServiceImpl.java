@@ -15,6 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -85,6 +86,7 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     }
   }
   
+  /*
   @Override
   public Map<String, Object> loadNoticeBoardList2(HttpServletRequest request) {
     Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
@@ -125,7 +127,7 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     }
     return result;
   }
-  
+  */
 
   @Override
   public int increaseHit(int noticeNo) {
@@ -258,6 +260,12 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     
     // 응답
     return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
+  }
+  
+  @Override
+  public MemberDTO goWrtie(HttpSession session, Model model) {
+    String emailId = (String) session.getAttribute("loginId");
+    return noticeBoardMapper.getMemberByEmail(emailId);
   }
   
   @Transactional

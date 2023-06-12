@@ -29,11 +29,11 @@ public class MemberController {
   return "member/member";
   }
 
-  @GetMapping(value="/member/memberList2.do", produces="application/josn")
-  @ResponseBody
-  public Map<String, Object> memberList2(HttpServletRequest request) {
-    return memberService.loadMemberList2(request);
-  }
+  // @GetMapping(value="/member/memberList2.do", produces="application/josn")
+  // @ResponseBody
+  // public Map<String, Object> memberList2(HttpServletRequest request) {
+  //  return memberService.loadMemberList2(request);
+  // }
 
   @PostMapping("/member/addMember.do")
   public String addMember(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {

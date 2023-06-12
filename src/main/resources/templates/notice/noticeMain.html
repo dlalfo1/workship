@@ -17,83 +17,6 @@
   }
 </style>
 <script th:inline="javascript">
-  
-  // var loginId = sessionStorage.getItem("loginId");
-  // var page = 1;
-  
-  /* function fnLoadNoticeList() {
-    // 게시글 리스트 불러오기
-    $.ajax({
-    	type: 'get',
-    	url: '/notice/noticeList2.do',
-    	data: 'page=' + page,
-    	dataType: 'json',
-    	success: function(resData){
-    		console.log(resData);
-    		
-    		let noticeBoardList = $('#noticeBoardList');
-    		noticeBoardList.empty();  
-        
-        if(resData.noticeList === 0){
-        	noticeBoardList.append('<tr><td colspan="5">현재 게시글이 없습니다.</td></tr>');
-        } else {
-          $.each(resData.noticeList, function(i, notice){ 
-            let str = '<tr>';
-            str += '<td>' + notice.noticeNo + '</td>';
-            if(loginId == notice.memberDTO.emailId) {
-            	str += '<td><a class="titleLink" href="/notice/increaseHit.do?noticeNo=' + notice.noticeNo +'">' + notice.noticeTitle + '</a></td>';
-            } else {
-              str += '<td><a class="titleLink" href="/notice/noticeDetail.html?noticeNo=' + notice.noticeNo +'">' + notice.noticeTitle + '</a></td>';
-            }
-            str += '<td>' + notice.memberDTO.memberName + ' ' + notice.memberDTO.jobDTO.jobName + '</td>';
-            str += '<td>' + fnDateFormat(notice.noticeCreatedAt) + '</td>';
-            str += '<td>' + notice.noticeHit + '</td>';
-            noticeBoardList.append(str);
-            
-            $('.pagination').empty();
-            var pageUtil = resData.pagination;
-            var str2 = '<div>';
-            // 이전 블록
-            if(pageUtil.beginPage == 1){
-              str2 += '<span class="invisible">◀</span>';
-            } else {
-              str2 += '<span class="enable_link pagination" data-page="' + (pageUtil.beginPage - 1) + '">◀</span>';
-            }
-            // 페이지 번호
-            for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
-              if(p == page){
-                str2 += '<strong class="pagination">' + p + '</strong>';
-              } else {
-                str2 += '<span class="enable_link pagination" data-page="' + p + '">' + p + '</span>';
-              }
-            }
-            // 다음 블록
-            if(pageUtil.endPage == pageUtil.totalPage){
-              str2 += '<span class="invisible">▶</span>';
-            } else {
-              str2 += '<span class="enable_link pagination" data-page="' + (pageUtil.endPage + 1) + '">▶</span>';
-            }
-            str2 += '</div>';
-            $('.pagination').append(str2);
-            
-            
-          })
-        }
-    		
-    	}
-    })
-  }
-  function fnDateFormat(nCreatedAt) {
-	  var d = new Date(nCreatedAt),
-    year = d.getFullYear(),
-    month = '' + (d.getMonth() + 1), 
-    day = '' + d.getDate();
-    
-    if (month.length < 2) month = '0' + month; 
-    if (day.length < 2) day = '0' + day; 
-    
-    return [year, month, day].join('/');
-  } */
 
 	function fnWriteNotice() {
 		location.href = '/notice/write.html';
@@ -120,7 +43,6 @@
       }
     }
     
-    // fnLoadNoticeList();
     // 검색어 초기화
 		$('#column').on('change', function(){
 			$('#query').val('');

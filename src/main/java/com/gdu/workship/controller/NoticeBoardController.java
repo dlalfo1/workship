@@ -3,6 +3,7 @@ package com.gdu.workship.controller;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +32,11 @@ public class NoticeBoardController {
     noticeBoardService.loadNoticeBoardList(request, model);
     return "notice/noticeMain";
   }
-  @GetMapping(value="/notice/noticeList2.do", produces="application/json")
+  /*@GetMapping(value="/notice/noticeList2.do", produces="application/json")
   @ResponseBody
   public Map<String, Object> noticeMain2(HttpServletRequest request) {
     return noticeBoardService.loadNoticeBoardList2(request);
-  }
+  }*/
   
   @GetMapping("/notice/increaseHit.do")
   public String increseHit(@RequestParam(value="noticeNo", required=false, defaultValue="0") int noticeNo) {
@@ -64,7 +65,8 @@ public class NoticeBoardController {
   }
   
 	@GetMapping("/notice/write.html")
-	public String write() {
+	public String write(HttpSession session, Model model) {
+	  model.addAttribute("m" ,noticeBoardService.goWrtie(session, model));
 		return "notice/noticeWrite";
 	}
 	

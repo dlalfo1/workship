@@ -3,9 +3,6 @@
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('사원 조회')}"></head>
 <script>
-  $(function(){
-	  fnList();
-  })
 </script>
 <body>
 
@@ -32,7 +29,7 @@
             <div class="gubunTab">
               <ul>
                <li><a th:href="@{/member/memberList.do}">전체</a></li>
-                <!--/* <li><a onclick="fnMemberList()">전체</a></li>  */-->
+                <!--/* <li><a onclick="fnMemberList()">전체</a></li> */-->
                 <th:block th:if="${#lists.isEmpty(deptList)}">
               	</th:block>
                 <th:block th:if="${not #lists.isEmpty(deptList)}">

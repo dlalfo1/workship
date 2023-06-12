@@ -77,7 +77,7 @@ public class MemberServiceImpl implements MemberService {
     }
   }
   
-  @Override
+  /*@Override
   public Map<String, Object> loadMemberList2(HttpServletRequest request) {
 
     // 파라미터 page가 전달되지 않는 경우 page=1로 처리한다.
@@ -123,7 +123,7 @@ public class MemberServiceImpl implements MemberService {
     }
     
     return result;
-  }
+  }*/
   
   @Override
   public int addMember(MultipartHttpServletRequest request) {
