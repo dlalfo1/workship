@@ -58,15 +58,15 @@
                       <td colspan="6">현재 사원이 없습니다.</td>
                     </tr>
                   </th:block>
-                  <th:block th:if="${not #lists.isEmpty(memberList)}">
+                  <th:block th:unless="${#lists.isEmpty(memberList)}">
                     <th:block th:each="member:${memberList}">
                       <tr>
-                        <td class="no"><a th:href="@{/member/editMember.html}" th:text="${member.memberNo}"></a></td>
-                        <td><a th:href="@{/member/editMember.html}" th:text="${member.memberName}"></a></td>
-                        <td><a th:href="@{/member/editMember.html}" th:text="${member.departmentDTO.deptName}"></a></td>
+                        <td class="no"><a th:text="${member.memberNo}"></a></td>
+                        <td><a th:href="@{/member/editMember.html(memberNo=${member.memberNo})}" th:text="${member.memberName}"></a></td>
+                        <td><a th:text="${member.departmentDTO.deptName}"></a></td>
                         <td th:text="${member.jobDTO.jobName}"></td>
                         <td th:text="${#dates.format(member.joinedAt, 'yyyy/MM/dd')}"></td>
-                        <td th:text="${member.status}"></td>
+                        <td th:text="${member.status}"></td> 
                       </tr>
                     </th:block>
                   </th:block>

@@ -67,9 +67,9 @@ public class MemberServiceImpl implements MemberService {
     List<MemberDTO> memberList = memberMapper.getMemberList(map);
     List<DepartmentDTO> deptList = memberMapper.getDeptList();
     System.out.println(memberList);
-    // pagination.jsp로 전달할(forward)할 정보 저장하기
     model.addAttribute("memberList", memberList);
     model.addAttribute("deptList", deptList);
+    // pagination.jsp로 전달할(forward)할 정보 저장하기
     if(column.isEmpty() || query.isEmpty()) {
       model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/memberList.do"));
     } else {
