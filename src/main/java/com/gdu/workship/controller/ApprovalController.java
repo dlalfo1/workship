@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.gdu.workship.domain.DepartmentDTO;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 public class ApprovalController {
   
+  // 선택 문서 작성화면으로 넘어가기
   @GetMapping("/documentList.html")
   public String documentList(String form, HttpSession session, Model model) {
    // 세션에 memberDTO저장하기 전, 내가 저장해보기
@@ -63,6 +65,11 @@ public class ApprovalController {
     
     return result;
  
+  }
+  
+  @PostMapping("/addApprovalVacation.do")
+  public String addApprovalVacation() {
+    return "approval/approvallist";
   }
 
 }
