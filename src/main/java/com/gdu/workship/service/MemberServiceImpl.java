@@ -24,7 +24,6 @@ import com.gdu.workship.domain.JobDTO;
 import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.mapper.MemberMapper;
 import com.gdu.workship.util.MyFileUtil;
-import com.gdu.workship.util.MyFileUtilTest;
 import com.gdu.workship.util.PageUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,7 @@ public class MemberServiceImpl implements MemberService {
 
   private final MemberMapper memberMapper;
   private final PageUtil pageUtil;
-  private final MyFileUtilTest myFileUtilTest;
+  private final MyFileUtil myFileUtil;
   
   @Override
   public void loadMemberList(HttpServletRequest request, Model model) {
@@ -163,7 +162,7 @@ public class MemberServiceImpl implements MemberService {
     if(file != null && file.isEmpty() == false) {
       
       try {
-        String path = myFileUtilTest.getPath();
+        String path = myFileUtil.getPath();
         
         File dir = new File(path);
         if(dir.exists() == false) {
@@ -270,7 +269,7 @@ public class MemberServiceImpl implements MemberService {
     if(file != null && file.isEmpty() == false) {
       
       try {
-        String path = myFileUtilTest.getPath();
+        String path = myFileUtil.getPath();
         
         File dir = new File(path);
         if(dir.exists() == false) {
