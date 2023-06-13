@@ -45,5 +45,25 @@
          , AUTOLOGIN_EXPIRED_AT = NULL
      WHERE EMAIL_ID = #{emailId}
   </update>
+  
+  <select id="selectAutologin" parameterType="String" resultType="MemberDTO">
+    SELECT EMAIL_ID
+      FROM MEMBER_T
+     WHERE AUTOLOGIN_ID = #{autologinId}
+       AND AUTOLOGIN_EXPIRED_AT > SYSDATE
+  </select>
+  
+  <update id="insertAutologin" parameterType="MemberDTO">
+    UPDATE MEMBER_T
+       SET AUTOLOGIN_ID = #{autologinId}
+         , AUTOLOGIN_EXPIRED_AT = #{autologinExpiredAt}
+     WHERE ID = #{emailId}
+  </update>
+  
+   <update id="updateMemberAccess" parameterType="MemberDTO">
+    UPDATE MEMBER_T
+       SET AUTOLOGIN_EXPIRED_AT = NOW()
+     WHERE EMAIL_ID = #{emailId}
+  </update>
 
 </mapper>
