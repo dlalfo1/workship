@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 public interface MainService {
 
 	public void main(HttpSession session, Model model);
-	public Map<String, Object> astart(int memberNo);
+	public Map<String, Object> aStart(int memberNo);
+	public Map<String, Object> aEnd(int memberNo);
 	
 }

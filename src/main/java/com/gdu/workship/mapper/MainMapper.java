@@ -10,8 +10,12 @@ import com.gdu.workship.domain.NoticeDTO;
 @Mapper
 public interface MainMapper {
 
-	public int addAStartTime(int memberNo);
-	public List<NoticeDTO> getRecentNoticeList();
+	// 출퇴근기록
 	public AttendanceDTO getAttendanceToday(int memberNo);
+	public int addAStartTime(int memberNo);
+	public int addEndTime(int memberNo);
+	
+	// 공지사항
+	public List<NoticeDTO> getRecentNoticeList();
 	
 }

@@ -16,7 +16,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 	@Override
 	public void addDateIntoAttendance() {
 		for(int memberNo : attendanceMapper.getAllMemberNo()) {
-			System.out.println(memberNo + "    ");
 			attendanceMapper.addDateIntoAttendance(memberNo);
 		}
 	}

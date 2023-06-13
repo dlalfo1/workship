@@ -1,7 +1,7 @@
 package com.gdu.workship.service;
 
 import java.sql.Time;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class MainServiceImpl implements MainService {
 
 	private final MainMapper mainMapper;
-	private final AttendanceMapper attendanceMapper;
 	
 	@Override
 	public void main(HttpSession session, Model model) {
@@ -33,30 +32,34 @@ public class MainServiceImpl implements MainService {
 		model.addAttribute("attendanceToday", attendanceToday);
 	}
 	
-	/*
 	@Override
-	public Map<String, Object> astart(int memberNo) {
-		Map<String, Object> map = new HashMap<>();
-		mainMapper.addAStartTime(memberNo);
-		map.put("result", attendanceMapper.getAttendanceToday(memberNo).getAstarttime());
-		return map;
-	}
-	*/
-	
-	@Override
-	public Map<String, Object> astart(int memberNo) {
+	public Map<String, Object> aStart(int memberNo) {
 		AttendanceDTO current = mainMapper.getAttendanceToday(memberNo);
-		System.out.println("@@@@@@@@@@@" + current.getMemberNo() + "@@@@@@@@@@");
-		Time time = current.getAstarttime();
-		System.out.println("****************" + time + "************");
 		Map<String, Object> map = new HashMap<>();
-		if(time == null) {
+		if(current == null) {
 			mainMapper.addAStartTime(memberNo);
 			map.put("result", mainMapper.getAttendanceToday(memberNo).getAstarttime());
 		} else {
 			map.put("result", "fail");
 		}
-		System.out.println("%%%%%%%%%%%%%%%" + map.get("result") + "%%%%%%%%%%");
+		return map;
+	}
+	
+	@Override
+	public Map<String, Object> aEnd(int memberNo) {
+		AttendanceDTO current = mainMapper.getAttendanceToday(memberNo);
+		Date startTime = current.getAstarttime();
+		Date endTime = current.getAendtime();
+		Map<String, Object> map = new HashMap<>();
+		if(startTime == null) {
+			map.put("result", "noStart");
+		} else if(endTime != null) {
+			map.put("result", "alreadyEnd");
+		} else {
+			mainMapper.addEndTime(memberNo);
+			
+			map.put("result", mainMapper.getAttendanceToday(memberNo).getAendtime());
+		}
 		return map;
 	}
 	

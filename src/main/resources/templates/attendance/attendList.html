@@ -48,11 +48,11 @@
                   </div>
                   <div class="row">
                     <div class="col-5">출근시간</div>
-                    <div class="col-7 text-primary"><h3 th:text="${attendToday.astarttime}"></h3></div>
+                    <div class="col-7 text-primary"><h3 th:text="${attendToday?.astarttime}"></h3></div>
                   </div>
                   <div class="row">
                     <div class="col-5">퇴근시간</div>
-                    <div class="col-7 text-primary"><h3 th:text="${attendToday.aendtime}"></h3></div>
+                    <div class="col-7 text-primary"><h3 th:text="${attendToday?.aendtime}"></h3></div>
                   </div>
                 </div>
               </div>
