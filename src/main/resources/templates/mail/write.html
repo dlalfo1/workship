@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship 메일쓰기')}"></head>
+<link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
+<link rel="stylesheet" th:href="@{/css/mail/write.css(var=1.0)}">
+
+<body>
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+   		<nav th:replace="~{/mail/layout/mailsidebar::mailSidebarFrag}"></nav>
+        <div class="content-wrapper">
+        <!--/* 
+          이 안에 div로 잘 구성해서 내용 넣어주시면 됩니다!
+          샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
+          참고할 만 한 html 파일들은 static/pages 에 있습니다!
+        */-->
+
+        	<div class="info">
+        		<span class="title">메일 쓰기</span>
+        		<span><a class="dlist" th:href="@{/mail/dlist.html}">임시 보관함</a></span>
+        	</div>
+        	
+        	
+        	<form method="post" enctype="multipart/form-data" th:action="@{/mail/add.do}">
+        		<div class="header">
+        			<button class="btn">보내기</button>
+        			<input class="btn" type="button" value="임시 저장" onclick="fnDraft()">
+        			<input class="btn" type="reset" value="다시 작성">
+        		</div>
+        		
+        		<div class="contents">
+        			<div class="toMail">
+        				<label for="addressee">받는사람</label>
+        				<input type="text" id="addressee" name="addressee" required="required">
+        				<span><input type="button" value="주소록" class="btnAddress" onclick="fnAddress()"></span>
+        			</div>
+        			<script>
+        				function fnAddress(){
+        					location.href = '/mail/address.html';
+        				}
+        			</script>
+        			        			
+        			<div class="contentBox">
+        				<label for="cc">참조</label>
+        				<input type="text" id="cc" name="cc">
+        			</div>
+        			
+        			<div class="contentBox">
+        				<label for="bc">숨은 참조</label>
+        				<input type="text" id="bc" name="bc">
+        			</div>
+        			
+        			<div class="contentBox">
+        				<label for="title">제목</label>
+        				<input type="text" id="title" name="title" required="required">
+        			</div>
+        			
+        			<div>
+        				<div>
+	        				<label for="files">파일 첨부</label>
+	        				<input type="button" value="파일 첨부" onclick="fnUploadFile()" style="display:none">
+	        				<input type="button" value="전체 삭제" onclick="fnRemoveAll()">
+	        				<input type="file" id="files" name="files" multiple="multiple" onchange=" fnFileCheck(this)">     				
+        				</div>
+        				<div class="fileDrag" id="fileDrag">
+        					<div class="filesHeader">
+	        					<input type="checkbox" name="chkAll" class="screenOut">
+	        					<div class="filesTitle">
+	        						<span class="text">파일명</span>
+	        					</div>
+	        					<div class="AllSize">
+	        						<span class="text">총용량</span>
+	        						<span class="fileSize">0(KB)</span>
+	        					</div>
+	        				</div>		
+       						<ul id="fileList">
+       							<i class="fa-solid fa-file-circle-plus"></i>파일을 마우스로 끌어 오세요
+       						</ul>		
+        				</div>
+        			</div>
+        			
+        			<script>
+        			
+        			function fnRemoveAll(){
+        				$()
+        			}
+        			
+        			function fnFileCheck(vThis){
+
+        				let maxSize = 1024 * 1024 * 10;
+
+        				let files = vThis.files;
+
+        				$('#fileList').empty();
+        				
+        		
+        				
+        				$.each(files, function(i, file){
+        					
+        					if(file.size > maxSize){
+        						alert('각 첨부파일의 최대 크기는 10MB입니다.');
+        						$(vThis).val(''); 
+        						$('#fileList').text('첨부 파일의 목록이 이 곳에 표시됩니다');
+        						return;
+        					}
+        					
+        					let fileSize = Math.ceil(file.size / 1024);
+							
+        					$('#fileList').append('<li>');
+        					$('#fileList').append('<input type="checkbox">');         					
+        					$('#fileList').append('<span class="filesTitle">' + file.name + '</span>');
+        					$('#fileList').append('<span class="AllSize">' + fileSize + 'KB' + '</span>');
+        					$('#fileList').append('</li>');
+        		
+        				})        
+
+        			}       		
+        			
+        			/* 	const dataTransfer = new DataTransfer();
+        				
+        				$("#files").change(function(){
+        					let fileArr = document.getElementById("files").files
+        					
+        					if(fileArr != null && fileArr.length > 0) {
+        						for(var i=0; i< fileArr.length; i++) {
+        							dataTransfer.items.add(fileArr[i])
+        						}
+     							document.getElementById("files").files = dataTransfer.files;
+        					}
+        				})
+        			
+        				const fileDrag = document.getElementById("fileDrag")
+        				
+        				fileDrag.addEventListener("drgover", function(e){
+        					e.preventDefault();
+        				})
+        				
+        				fileDrag.addEventListener("drop", function(e){
+        					e.preventDefault();
+        					
+        					arr = event.dataTransfer.files;
+        					addFileList(arr)
+        					for(var i=0; i < arr.length; i++) {
+        						dataTransger.items.add(arr[i])
+        					}
+        					
+        					$('#plzDrag').css('display', "none")
+        					$('.filesHeader').css('display', 'flex')
+        					document.getElementById("files").files=dataTransfer.files;
+        				}) */
+        			</script>
+ 
+        			<div>
+        				<textarea id="content" name="content" class="content"></textarea>
+        			</div>
+					<script>
+						$('#content').summernote({
+							width: '100%',
+							height: 480,
+							lang: 'ko-KR',
+						  	toolbar: [
+						    	['style', ['bold', 'italic', 'underline', 'clear']],
+						    	['font', ['strikethrough', 'superscript', 'subscript']],
+						    	['fontsize', ['fontsize']],
+						    	['color', ['color']],
+						    	['para', ['ul', 'ol', 'paragraph']],
+						    	['table', ['table']],
+								['view', ['fullscreen', 'codeview', 'help']]
+						  	]
+						})
+					</script>
+        		</div>
+        	</form>
+        	
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->		      
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

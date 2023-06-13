@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MyFileUtil {
+public class MyFileUtilTest {
 
   // 경로 구분자
 	private String sep = Matcher.quoteReplacement(File.separator);

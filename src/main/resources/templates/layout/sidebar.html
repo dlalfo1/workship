@@ -4,7 +4,7 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar" th:fragment="sidebarFrag">
   <ul class="nav">
     <li class="nav-item">
-      <a class="nav-link" th:href="@{/index.html}">
+      <a class="nav-link" th:href="@{/main/main.html}">
         <i class="fa-solid fa-border-all menu-icon"></i>
         <span class="menu-title">메인페이지</span>
        </a>
@@ -38,7 +38,7 @@
       </a>
       <div class="collapse" id="attendance-basic">
         <ul class="nav flex-coulmn sub-menu">
-          <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendList.html}">출퇴근기록조회</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendList.do(memberNo=${session.loginMember.memberNo})}">출퇴근기록조회</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">연차조회</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">출퇴근기록관리</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">연차관리</a> </li>

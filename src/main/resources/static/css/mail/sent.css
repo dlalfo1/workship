@@ -1,0 +1,29 @@
+@charset "UTF-8";
+
+.content-wrapper {
+	background-color: white;
+}
+
+.sent {
+	padding-top: 100px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.text {
+	text-align: center;
+}
+
+.btn {
+	display: flex;
+	justify-content: center;
+	gap: 48px;
+}
+
+.btn input[type="button"] {
+	background-color: white;
+	border-radius: 5px;
+	padding: 10px;
+	border: 1px solid;
+}
