@@ -62,7 +62,12 @@
                           <h3>12</h3>
                         </div>
                         <div class="col-4">
-                          <input type="button" class="btn btn-inverse-primary btn-sm text-center" value="메일작성">
+                          <input type="button" onclick="fnWriteMail()" class="btn btn-inverse-primary btn-sm text-center" value="메일작성">
+                          <script>
+                            function fnWriteMail(){
+                            	location.href = '/mail/write.html';
+                            }
+                          </script>
                         </div>
                       </div>
                     </div>
@@ -84,12 +89,12 @@
                       </div>
                       <div>
                         <div class="row text-center">
-                          <div class="col-5">출근시간</div>
-                          <div class="col-7 text-primary"><h3 id="aStartTime"></h3></div>
+                          <div class="col-5"><h3>출근시간</h3></div>
+                          <div class="col-7 text-primary"><h3 id="aStartTime" th:text="${attendanceToday.astarttime}"></h3></div>
                         </div>
                         <div class="row text-center">
-                          <div class="col-5">퇴근시간</div>
-                          <div class="col-7 text-primary"><h3 id="aEndTime"></h3></div>
+                          <div class="col-5"><h3>퇴근시간</h3></div>
+                          <div class="col-7 text-primary"><h3 id="aEndTime" th:text="${attendanceToday.aendtime}"></h3></div>
                         </div>
                       </div>
                       <script th:inline="javascript">
@@ -97,11 +102,16 @@
                     	  var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
                         $.ajax({
                           type: 'get',
-                          url: '/attendance/aStart.do',
+                          url: '/main/aStart.do',
                           data: 'memberNo=' + memberNo,
                           dataType: 'json',
                           success: function(resData){
-                            $('#aStartTime').text('${resData.aStartTime}');
+                        	  var result = resData.result;
+                        	  if(result == 'fail') {
+                        		  alert('이미 출근 처리되었습니다.');
+                        	  } else {
+                        		  $('#aStartTime').text(result);
+                        	  }
                           }
                         })
                       };
@@ -139,32 +149,24 @@
                       <table class="table table-hover table-striped">
                         <thead class="text-center">
                           <tr>
-                            <th>제목</th>
-                            <th>작성자</th>
-                            <th>작성일</th>
+                            <th width="60%">제목</th>
+                            <th width="15%">작성자</th>
+                            <th width="25%">작성일</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <td>ajax로 받아올 수 있나?</td>
-                            <td class="text-center">이유빈</td>
-                            <td class="text-center">2023-06-05</td>
-                          </tr>
-                          <tr>
-                            <td>그냥 무조건 최신 4개정도만 띄워주고 싶은데</td>
-                            <td class="text-center">이미래</td>
-                            <td class="text-center">2023-06-04</td>
-                          </tr>
-                          <tr>
-                            <td>select로 받아와서 for문 돌리면되잔아..</td>
-                            <td class="text-center">이유빈</td>
-                            <td class="text-center">2023-06-03</td>
-                          </tr>
-                          <tr>
-                            <td>될 듯? 애초에 ajax가 필요하긴 한가?</td>
-                            <td class="text-center">박근희</td>
-                            <td class="text-center">2023-06-03</td>
-                          </tr>
+                          <th:block th:each="notice:${noticeList}">
+                            <tr id="notice" th:onclick="fnNoticeDetail([[${notice.noticeNo}]])">
+                              <td th:text="${notice.noticeTitle}"></td>
+                              <td class="text-center" th:text="${notice.memberDTO.memberName}"></td>
+                              <td class="text-center" th:text="${#dates.format(notice.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
+                            </tr>
+                            <script th:inline="javascript">
+                              function fnNoticeDetail(noticeNo){
+                            	  location.href = '/notice/noticeDetail.html?noticeNo=' + noticeNo;
+                              }
+                            </script>
+                          </th:block>
                         </tbody>
                       </table>
                     </div>

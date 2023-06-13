@@ -6,6 +6,54 @@
 <!-- namespace는 @Mapper를 지정한다. -->
 <mapper namespace="com.gdu.workship.mapper.MainMapper">
 
+  <resultMap type="NoticeDTO" id="NoticeMap">
+    <id column="NOTICE_NO" property="noticeNo"/>
+    <result column="NOTICE_TITLE" property="noticeTitle"/>
+    <result column="NOTICE_CONTENT" property="noticeContent"/>
+    <result column="NOTICE_CREATED_AT" property="noticeCreatedAt"/>
+    <result column="NOTICE_MODIFIED_AT" property="noticeModifiedAt"/>
+    <result column="NOTICE_HIT" property="noticeHit"/>
+    <result column="NOTICE_STATE" property="noticeState"/>
+    <association javaType="MemberDTO" property="memberDTO">
+      <id column="MEMBER_NO" property="memberNo"/>
+      <result column="MEMBER_NAME" property="memberName"/>
+      <result column="EMAIL_ID" property="emailId"/>
+      <result column="TEL" property="tel"/>
+      <result column="BIRTHDAY" property="birthday"/>
+      <result column="JOINED_AT" property="joinedAt"/>
+      <result column="MODIFIED_AT" property="modifiedAt"/>
+      <result column="STATUS" property="status"/>
+      <result column="DAYOFF_COUNT" property="dayoffCount"/>
+      <result column="PW" property="pw"/>
+      <result column="PROFILE_FILE_PATH" property="profileFilePath"/>
+      <result column="PROFILE_FILE_NAME" property="profileFileName"/>
+      <association javaType="JobDTO" property="jobDTO">
+        <id column="JOB_NO" property="jobNo"/>
+        <result column="JOB_NAME" property="jobName"/>
+      </association>
+      <association javaType="DepartmentDTO" property="departmentDTO">
+        <id column="DEPT_NO" property="deptNo"/>
+        <result column="DEPT_NAME" property="deptName"/>
+      </association>
+    </association>
+  </resultMap>
+  
+    <select id="getRecentNoticeList" resultMap="NoticeMap">
+    SELECT A.NOTICE_NO, A.MEMBER_NAME, A.NOTICE_TITLE, A.NOTICE_CONTENT, A.NOTICE_CREATED_AT, A.NOTICE_MODIFIED_AT, A.NOTICE_HIT, A.NOTICE_STATE
+      FROM (SELECT N.NOTICE_NO, M.MEMBER_NAME, N.NOTICE_TITLE, N.NOTICE_CONTENT, N.NOTICE_CREATED_AT, N.NOTICE_MODIFIED_AT, N.NOTICE_HIT, N.NOTICE_STATE
+              FROM NOTICE_BOARD_T N RIGHT OUTER JOIN MEMBER_T M
+                ON M.MEMBER_NO = N.MEMBER_NO) A
+     ORDER BY N.NOTICE_NO DESC
+     LIMIT 0, 4
+  </select>
+  
+    <select id="getAttendanceToday" parameterType="int" resultType="AttendanceDTO">
+   SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
+     FROM ATTENDANCE_T
+    WHERE MEMBER_NO = #{memberNo}
+      AND DATE = DATE(NOW())
+  </select>
+  
   <update id="addAStartTime" parameterType="int">
     UPDATE ATTENDANCE_T
        SET ASTARTTIME = CURTIME()
