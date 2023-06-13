@@ -311,8 +311,7 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
           /* HDD에 첨부 파일 저장하기 */
           
           // 첨부 파일의 저장 경로
-          String path = "C:" + File.separator + "storage" + File.separator + "final";
-          System.out.println(path);
+          String path = myFileUtilTest.getPath();
           // 첨부 파일의 저장 경로가 없으면 만들기
           File dir = new File(path);
           if(dir.exists() == false) {

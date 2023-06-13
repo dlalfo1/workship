@@ -18,6 +18,7 @@ public interface MemberMapper {
   public DepartmentDTO selectDept(int deptNo);
   public JobDTO selectJob(int jobNo);
   public int createMember(MemberDTO member);
-  
-
+  public MemberDTO getMemberByNo(int memberNo);
+  public int modifyMember(MemberDTO member);
+  public int removeMember(int memberNo);
 }

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,25 +27,43 @@ public class MemberController {
   
   @GetMapping("/member/memberList.do") 
   public String memberList(HttpServletRequest request, Model model) {
-  memberService.loadMemberList(request, model);
-  return "member/member";
+    memberService.loadMemberList(request, model);
+    return "member/member";
   }
 
-  // @GetMapping(value="/member/memberList2.do", produces="application/josn")
-  // @ResponseBody
-  // public Map<String, Object> memberList2(HttpServletRequest request) {
-  //  return memberService.loadMemberList2(request);
-  // }
-
+  @GetMapping(value="/member/memberList2.do", produces="application/josn")
+  @ResponseBody
+  public Map<String, Object> memberList2(HttpServletRequest request) {
+   return memberService.loadMemberList2(request);
+   }
+  
   @PostMapping("/member/addMember.do")
   public String addMember(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
-    memberService.addMember(request);
-    return "redirect:/member/member.html";
+    redirectAttributes.addFlashAttribute("addReuslt", memberService.addMember(request));
+    return "redirect:/member/memberList.do";
   }
   
-  @GetMapping("/member/editMember.html")
+  @GetMapping("/member/memberDetail.html")
   public String editMember(@RequestParam("memberNo") int memberNo, Model model) {
+    memberService.memberDetail(memberNo, model);
     return "/member/memberDetail";
+  }
+  
+  @PostMapping("/member/modifyMember.do")
+  public String modifyMember(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
+    System.out.println(memberService.modifyMember(request));
+    redirectAttributes.addFlashAttribute("modifyResult", memberService.modifyMember(request));
+    return "redirect:/member/memberList.do";
+  }
+  @GetMapping("/member/display.do")
+  public ResponseEntity<byte[]> display(@RequestParam("memberNo") int memberNo) {
+    return memberService.display(memberNo);
+  }
+  
+  @PostMapping("/member/removeMember.do")
+  public String removeMember(@RequestParam("memberNo") int memberNo, RedirectAttributes redirectAttributes) {
+    redirectAttributes.addFlashAttribute("removeResult", memberService.removeMember(memberNo));
+    return "redirect:/member/memberList.do";
   }
 
 }

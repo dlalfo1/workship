@@ -2,7 +2,37 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('사원 조회')}"></head>
-<script>
+<script th:inline="javascript">
+  $(function(){
+    // 사원 등록 결과 메시지
+    let addResult = /*[[${addResult}]]*/ null;
+      if(addResult !== null){
+        if(addResult === 1) {
+          alert('사원이 정상적으로 등록되었습니다.');
+        } else {
+          alert('사원 등록에 실패했습니다.');
+      }
+	  
+	  // 사원 정보 수정 결과 메시지
+    let modifyResult = /*[[${modifyResult}]]*/ null;
+    console.log(modifyResult);
+      if(modifyResult !== null){
+        if(modifyResult === 1) {
+          alert('사원 정보가 수정되었습니다.');
+        } else {
+          alert('사원 정보 수정에 실패했습니다.');
+        }
+      }
+    // 사원 정보 삭제 결과 메시지
+    let removeResult = /*[[${removeResult}]] */ null;   // removeResult가 전달되지 않는 경우 null을 사용한다.
+      if(removeResult !== null){
+        if(removeResult === 1) {
+          alert('사원 정보가 삭제되었습니다.');
+        } else {
+          alert('사원 삭제에 실패했습니다.');
+        }
+      }
+  }
 </script>
 <body>
 
@@ -34,11 +64,29 @@
               	</th:block>
                 <th:block th:if="${not #lists.isEmpty(deptList)}">
                   <th:block th:each="dept:${deptList}">
-              		  <li style="width: 80px;"><a th:href="@{/member/memberList.do(column=D.DEPT_NAME, query=${dept.deptName})}" th:text="${dept.deptName}"></a></li>
+              		  <li style="width: 80px;"><a th:text="${dept.deptName}" th:onclick="fnLoadListByDept([[${dept.deptName}]])"></a></li>
                   </th:block>
               	</th:block>
               </ul>
             </div>
+            <script th:inline="javascript">
+              function fnLoadListByDept(deptName) {
+                $.ajax({
+              	  type: 'get',
+              	  url: '/member/memberList2.do',
+              	  data: 'column=D.DEPT_NAME' + '&query=' + deptName,
+              	  dataType: 'json',
+              	  success: function(resData) {
+              		
+              	  
+              	  }
+
+                })
+            	  
+              }
+            
+            </script>
+            
             
             <div class="memberList">
               <table border="1" id="listTable" class="table table-hover" align="center">
@@ -62,11 +110,20 @@
                     <th:block th:each="member:${memberList}">
                       <tr>
                         <td class="no"><a th:text="${member.memberNo}"></a></td>
-                        <td><a th:href="@{/member/editMember.html(memberNo=${member.memberNo})}" th:text="${member.memberName}"></a></td>
+                        <td><a th:href="@{/member/memberDetail.html(memberNo=${member.memberNo})}" th:text="${member.memberName}"></a></td>
                         <td><a th:text="${member.departmentDTO.deptName}"></a></td>
                         <td th:text="${member.jobDTO.jobName}"></td>
                         <td th:text="${#dates.format(member.joinedAt, 'yyyy/MM/dd')}"></td>
-                        <td th:text="${member.status}"></td> 
+                        <!--/* <td th:text="${member.status}"></td>  */-->
+                        <td>
+                          <th:block th:switch="${member.status}">
+                            <span th:case="0">재직</span>
+                            <span th:case="1">출장</span>
+                            <span th:case="2">교육</span>
+                            <span th:case="3">휴가</span>
+                            <span th:case="4">퇴직</span>
+                          </th:block>
+                        </td>
                       </tr>
                     </th:block>
                   </th:block>
@@ -74,11 +131,11 @@
               </table>
             </div> <!--/* memberList 끝나는 지점 */-->
             <div class="searchWrap">
-              <form id="frmSearch" action="@{/member/searchMember.do}">
+              <form id="frmSearch" th:action="@{/member/memberList.do}">
                 <select name="column" id="column">
-                  <option value="MEMBER_NO">사원번호</option>
-                  <option value="MEMBER_NAME" selected="selected">사원명</option>
-                  <option value="DEPT_NO">부서명</option>
+                  <option value="M.MEMBER_NO">사원번호</option>
+                  <option value="M.MEMBER_NAME" selected="selected">사원명</option>
+                  <option value="D.DEPT_NAME">부서명</option>
                 </select>
                 <input type="text" name="query" id="query">
                 <button>검색</button>
