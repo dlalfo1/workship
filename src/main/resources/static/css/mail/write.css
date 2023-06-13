@@ -1,0 +1,88 @@
+@charset "UTF-8";
+
+.content-wrapper {
+	background-color: white;
+}
+
+.info {
+	display: flex;
+	align-items: flex-end;
+	gap: 16px;
+}
+
+.toMail {
+	display: flex;
+	gap: 8px;
+}
+
+.btnAddress {
+	background-color: transparent;
+}
+
+.title {
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.dlist {
+	color: gray;
+	text-decoration: none;
+}
+
+.dlist:hover {
+	text-decoration: none;
+	color: gray;
+}
+
+.header {
+	border-top: 2px solid gray;
+	border-bottom: 2px solid gray;
+}
+
+.btn {
+	background-color: none;
+	text-decoration: bold;
+}
+
+.contents {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding-top: 16px;
+}
+
+.contents label, files {
+	width: 80px;
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+.contents input[type="text"] {
+	width: 100%;
+	background-color: transparent;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 2px solid gray;
+}
+
+.contentBox {
+	display: flex;
+}
+
+.fileDrag {
+	float: right;
+	width: calc(100% - 88px);
+	border: 1px solid gray;
+}
+
+.filesHeader{
+	display: flex;
+	justify-content: space-between;
+	border-bottom: 1px solid gray;
+	padding: 4px;
+}
+
+li {
+	list-style: none;
+}

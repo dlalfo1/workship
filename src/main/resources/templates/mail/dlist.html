@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('workship 메인페이지')}"></head>
+<head th:replace="~{/layout/header::headFrag('workship 임시보관함')}"></head>
+<link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
 <body>
 
   <div class="container-scroller">
-
     <!--/* 상단바 */-->
     <nav th:replace="~{/layout/common::topbarFrag}"></nav>
-  
+
     <!--/* 본문영역 */-->
     <div class="container-fluid page-body-wrapper">
-    
       <!--/* 테마설정버튼 영역 */-->
       <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
       <!--/* 사이드바 영역 */-->
@@ -19,13 +18,22 @@
       
       <!--/* 실제 내용 영역 */-->
       <div class="main-panel">
+   		<nav th:replace="~{/mail/layout/mailsidebar::mailSidebarFrag}"></nav>
         <div class="content-wrapper">
-        임시메인
+        <!--/* 
+          이 안에 div로 잘 구성해서 내용 넣어주시면 됩니다!
+          샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
+          참고할 만 한 html 파일들은 static/pages 에 있습니다!
+        */-->
+        
+        	<h3>임시보관함</h3>
+        
+
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
-
+  
   <!--/* footer 영역 */-->
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 

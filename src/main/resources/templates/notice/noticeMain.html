@@ -2,16 +2,53 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
-<script>
+<style>
+  .blind {
+    display: none;
+  }
+  .invisible {
+    visibility: hidden;
+  }
+  .enable_link {
+    cursor: pointer;
+  }
+  .pagination {
+    margin: 0 5px;
+  }
+</style>
+<script th:inline="javascript">
+
 	function fnWriteNotice() {
 		location.href = '/notice/write.html';
 	}
 
-	// 검색어 초기화
+	
 	$(function(){
+    // 게시글 달기 결과 메시지
+    let addResult = /*[[${addResult}]]*/ null;  // addResult가 전달되지 않는 경우 null을 사용한다.
+    if(addResult !== null){
+      if(addResult === 1) {
+        alert('게시글이 작성되었습니다.');
+      } else {
+        alert('게시글 작성에 실패했습니다.');
+      }
+    }
+    
+    let removeResult = /*[[${removeResult}]]*/ null;  // addResult가 전달되지 않는 경우 null을 사용한다.
+    if(removeResult !== null){
+      if(removeResult === 1) {
+        alert('게시글이 삭제되었습니다.');
+      } else {
+        alert('게시글 삭제에 실패했습니다.');
+      }
+    }
+    
+    // 검색어 초기화
 		$('#column').on('change', function(){
 			$('#query').val('');
 		})
+		
+		
 	})
 </script>
 <body>
@@ -49,7 +86,7 @@
                             <th style="width: 50px;">조회수</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="noticeBoardList">
                       <th:block th:if="${#lists.isEmpty(noticeList)}">
                         <tr> 
                           <td colspan="5">현재 게시글이 없습니다.</td>
@@ -60,13 +97,15 @@
                         <th:block th:each="notice:${noticeList}">
                           <th:block th:if="${notice.noticeState == 1}">
                             <tr class="list">
-                              <td th:text="${notice.noticeNo}">
-                                <input type="hidden" name="noticeNo" th:value="${notice.noticeNo}">
+                              <td th:text="${notice.noticeNo}"></td>
+                              <!--/* 본인이 작성한 공지사항은 조회수가 증가하지 않는다. */-->
+                              <td th:if="${session.loginMember.emailId == notice.memberDTO.emailId}">
+                                <a th:href="@{/notice/increaseHit.do(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeTitle}"></a>
                               </td>
-                              <td>
+                              <td th:unless="${session.loginMember.emailId == notice.memberDTO.emailId}">
                                 <a th:href="@{/notice/noticeDetail.html(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeTitle}"></a>
                               </td>
-                              <td th:text="${notice.memberDTO.memberName}"></td>
+                              <td th:text="|${notice.memberDTO.memberName} ${notice.memberDTO.jobDTO.jobName}|"></td>
                               <td th:text="${#dates.format(notice.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
                               <td th:text="${notice.noticeHit}"></td>
                             </tr>
@@ -86,12 +125,12 @@
               			<button type="submit">검색</button>
               		</form>
                   <div class="writeWrap">
-                    <input type="button" id="btnWrite" value="글쓰기" onclick="fnWriteNotice()">
+                    <input type="button" class="btn btn-primary btn-rounded btn-md" id="btnWrite" value="글쓰기" onclick="fnWriteNotice()">
                   </div>
                 </div> <!--/* search_wrap 끝나는 지점 */-->
               
               <div class="pagination">
-                <div style="text-align: center;" th:utext="${pagination}"></div>  
+                <div id="pagination2" style="text-align: center;" th:utext="${pagination}"></div>  
               </div>
             </div> <!--/* board-table 끝나는 지점 */-->
           </div> <!--/* board-main 끝나는 지점 */-->
