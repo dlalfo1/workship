@@ -2,6 +2,7 @@ package com.gdu.workship.controller;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -27,11 +28,12 @@ public class MainController {
 		mainService.main(session, model);
 		return "main/main";
 	}
-	
+
 	@ResponseBody
 	@GetMapping(value="/aStart.do", produces="application/json")
 	public Map<String, Object> aStart(@RequestParam("memberNo") int memberNo) {
 		return mainService.astart(memberNo);
 	}
+
 	
 }

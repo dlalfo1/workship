@@ -9,10 +9,16 @@
 	<select id="getAllMemberNo" resultType="int">
 	 SELECT MEMBER_NO
 	   FROM MEMBER_T
+	  ORDER BY MEMBER_NO
 	</select>
-	 
+	
+  <insert id="addDateIntoAttendance" parameterType="int">
+    INSERT INTO ATTENDANCE_T
+    VALUES (#{memberNo}, DATE(NOW()), NULL, NULL, NULL, NULL)
+  </insert>
+  
   <select id="getAttendanceToday" parameterType="int" resultType="AttendanceDTO">
-   SELECT ASTARTTIME, AENDTIME
+   SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
      FROM ATTENDANCE_T
     WHERE MEMBER_NO = #{memberNo}
       AND DATE = DATE(NOW())
@@ -23,12 +29,8 @@
 	    FROM ATTENDANCE_T
 	   WHERE MEMBER_NO = #{memberNo}
 	     AND MONTH(DATE) = MONTH(NOW())
+	     <![CDATA[AND DAY(DATE) < DAY(NOW())]]>
 	   ORDER BY DATE DESC
 	</select>
-	
-	<insert id="addDateIntoAttendance" parameterType="int">
-	  INSERT INTO ATTENDANCE_T
-	  VALUES (#{memberNo}, DATE(NOW()), NULL, NULL, NULL, NULL)
-	</insert>
 
 </mapper>

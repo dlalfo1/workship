@@ -48,7 +48,7 @@
   </select>
   
     <select id="getAttendanceToday" parameterType="int" resultType="AttendanceDTO">
-   SELECT ASTARTTIME, AENDTIME
+   SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
      FROM ATTENDANCE_T
     WHERE MEMBER_NO = #{memberNo}
       AND DATE = DATE(NOW())

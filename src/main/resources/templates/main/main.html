@@ -90,11 +90,11 @@
                       <div>
                         <div class="row text-center">
                           <div class="col-5"><h3>출근시간</h3></div>
-                          <div class="col-7 text-primary"><h3 id="aStartTime"></h3></div>
+                          <div class="col-7 text-primary"><h3 id="aStartTime" th:text="${attendanceToday.astarttime}"></h3></div>
                         </div>
                         <div class="row text-center">
                           <div class="col-5"><h3>퇴근시간</h3></div>
-                          <div class="col-7 text-primary"><h3 id="aEndTime"></h3></div>
+                          <div class="col-7 text-primary"><h3 id="aEndTime" th:text="${attendanceToday.aendtime}"></h3></div>
                         </div>
                       </div>
                       <script th:inline="javascript">
@@ -106,7 +106,12 @@
                           data: 'memberNo=' + memberNo,
                           dataType: 'json',
                           success: function(resData){
-                            $('#aStartTime').text(resData.aStartTime);
+                        	  var result = resData.result;
+                        	  if(result == 'fail') {
+                        		  alert('이미 출근 처리되었습니다.');
+                        	  } else {
+                        		  $('#aStartTime').text(result);
+                        	  }
                           }
                         })
                       };
