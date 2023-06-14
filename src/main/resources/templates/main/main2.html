@@ -98,43 +98,43 @@
                         </div>
                       </div>
                       <script th:inline="javascript">
-                      function fnAStart(){
-                    	  var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
-                        $.ajax({
-                          type: 'get',
-                          url: '/main/aStart.do',
-                          data: 'memberNo=' + memberNo,
-                          dataType: 'json',
-                          success: function(resData){
-                        	  var result = resData.result;
-                        	  if(result == 'fail') {
-                        		  alert('이미 출근 처리되었습니다.');
-                        	  } else {
-                        		  $('#aStartTime').text(result.substr(11, 8));
-                        	  }
-                          }
-                        })
-                      };
-                      
-                      function fnAEnd(){
-                         var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
-                         $.ajax({
-                           type: 'get',
-                           url: '/main/aEnd.do',
-                           data: 'memberNo=' + memberNo,
-                           dataType: 'json',
-                           success: function(resData){
-                             var result = resData.result;
-                             if(result == 'noStart') {
-                               alert('출근 처리가 되지 않았습니다.');
-                             } else if(result == 'alreadyEnd'){
-                            	 alert('이미 퇴근 처리되었습니다.');
-                             } else {
-                            	 $('#aEndTime').text(result.substr(11, 8));
-                             }
-                           }
-                         })
-                       };
+	                      function fnAStart(){
+	                    	  var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
+	                        $.ajax({
+	                          type: 'get',
+	                          url: '/main/aStart.do',
+	                          data: 'memberNo=' + memberNo,
+	                          dataType: 'json',
+	                          success: function(resData){
+	                        	  var result = resData.result;
+	                        	  if(result == 'fail') {
+	                        		  alert('이미 출근 처리되었습니다.');
+	                        	  } else {
+	                        		  $('#aStartTime').text(result.substr(11, 8));
+	                        	  }
+	                          }
+	                        })
+	                      };
+	                      
+	                      function fnAEnd(){
+	                         var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
+	                         $.ajax({
+	                           type: 'get',
+	                           url: '/main/aEnd.do',
+	                           data: 'memberNo=' + memberNo,
+	                           dataType: 'json',
+	                           success: function(resData){
+	                             var result = resData.result;
+	                             if(result == 'noStart') {
+	                               alert('출근 처리가 되지 않았습니다.');
+	                             } else if(result == 'alreadyEnd'){
+	                            	 alert('이미 퇴근 처리되었습니다.');
+	                             } else {
+	                            	 $('#aEndTime').text(result.substr(11, 8));
+	                             }
+	                           }
+	                         })
+	                       };
                       </script>
                     </div>
                   </div>

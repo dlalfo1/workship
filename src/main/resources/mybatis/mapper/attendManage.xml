@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace는 @Mapper를 지정한다. -->
+<mapper namespace="com.gdu.workship.mapper.AttendManageMapper">
+
+  <resultMap type="AttendManageDTO" id="AttendManageMap">
+    <result column="DATE" property="date"></result>
+    <result column="ASTARTTIME" property="astarttime"></result>
+    <result column="AENDTIME" property="aendtime"></result>
+    <result column="WORKTIME" property="worktime"></result>
+    <result column="ATTENDANCE" property="attendance"></result>
+    <association javaType="MemberDTO" property="memberDTO">
+      <id column="MEMBER_NO" property="memberNo"/>
+      <result column="MEMBER_NAME" property="memberName" />
+    </association>
+  </resultMap>
+
+  <select id="getTodaysCount" resultType="int">
+    SELECT COUNT(*)
+      FROM ATTENDANCE_T
+     WHERE DATE = DATE(NOW())
+  </select>
+  
+  <select id="getAllAttendanceToday" resultMap="AttendManageMap">
+    SELECT M.MEMBER_NO, M.MEMBER_NAME, A.DATE, A.ASTARTTIME, A.AENDTIME, A.WORKTIME, A.ATTENDANCE
+      FROM ATTENDANCE_T A INNER JOIN MEMBER_T M
+        ON A.MEMBER_NO = M.MEMBER_NO
+     WHERE DATE = DATE(NOW())
+     ORDER BY MEMBER_NO DESC
+  </select>
+  
+</mapper>

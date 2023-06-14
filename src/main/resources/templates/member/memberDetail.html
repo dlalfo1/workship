@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('사원 정보 수정')}"></head>
+<script th:inline="javascript">
+  var frm;
+  
+  function isImageFile(file) {
+      var ext = file.name.split(".").pop().toLowerCase(); // 파일명에서 확장자를 가져온다. 
+      return ($.inArray(ext, ["jpg", "jpeg", "png"]) === -1) ? false : true;  // 베열에 요소가 없을 경우 -1 반환 : false
+  }
+    
+  function isOverSize(file) {
+      var maxSize = 3 * 1024 * 1024; // 3MB로 제한 
+      return (file.size > maxSize) ? true : false;
+  }
+
+  function fnPreview() {
+    $('#attachImage').on('change', function(event) {
+      
+        var file = event.target.files[0];
+        if(file) {
+          if(isImageFile(file) == false){
+            alert('이미지 파일이 아닙니다.');
+            $('#attachImage').val('');
+            $('#imagePreview').attr("src", '');
+            return;
+          }
+          if(isOverSize(file) == true){
+            alert('첨부파일이 3MB를 초과했습니다.');
+            $('#attachImage').val('');
+            $('#imagePreview').attr("src", '');
+            return;
+          }
+          
+          var reader = new FileReader(); 
+          reader.onload = function(e) {
+            $('#imagePreview').attr('src', e.target.result);
+          }
+          reader.readAsDataURL(file);
+        } else {
+          $('#imagePreview').attr('src', '/images/faces/face1.jpg');
+        }
+
+    })
+  }
+  
+  function fnModifyMember() {
+	  $('#btnModify').on('click', function(){
+      frm.attr('action', '/member/modifyMember.do');
+      frm.submit();
+    })      
+  }
+  
+  function fnRemoveMember() {
+	  if(confirm('사원 정보를 정말로 삭제하시겠습니까?' + '\n' + '삭제후 필요한 정보만 퇴직 사원으로 저장됩니다.') == false){
+	        return;
+    }
+    frm.attr('action', '/member/removeMember.do');
+    frm.submit();
+  }
+  
+  function fnCancel() {
+    history.back();
+  }
+  $(function(){
+    fnPreview();
+    
+    // 사원의 부서, 직위, 상태 db값으로 selected
+    let deptNo = /*[[${m.departmentDTO.deptNo}]]*/ null;
+    let jobNo = /*[[${m.jobDTO.jobNo}]]*/ null;
+    let status = /*[[${m.status}]]*/ null; 
+    $('.dept').val(deptNo).prop("selected", true);
+    $('.job').val(jobNo).prop("selected", true);
+    $('.status').val(status).prop("selected", true);
+    
+    frm = $('#frmDetail');
+  })
+</script>
+<body>
+
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+          <div class="member-main">
+            <div class="member-title">
+                <h3>사원 상세보기</h3>
+            </div>
+            
+            <div class="formWrap">
+              <form id="frmDetail" method="post" enctype="multipart/form-data">
+              
+                <div class="profileImage">
+                  <div class="imageFile">
+                    <img class="rounded-circle" th:src="@{/member/display.do(memberNo=${m.memberNo})}" alt="profileImage" id="imagePreview" width="200px" height="200px">
+                  </div>  
+                  <div class="attachImage">
+                    <input type="file" class="form-control-file" id="attachImage" name="attachImage" accept=".jpg, .png">
+                  </div>
+                </div>
+                
+                <div class="inputMemberNo">
+                    <label for="memberNo">사원번호</label>
+                    <input type="text" class="form-control p-input" id="memberNo" name="memberNo" th:value="${m.memberNo}" readonly>
+                </div>
+                <div class="inputEmail">
+                    <label for="emailId">이메일</label>
+                    <input type="text" class="form-control p-input" id="emailId" name="emailId" th:value="${m.emailId}" readonly>
+                </div>
+                <div class="inputJoinedAt">
+                    <label for="joinedAt">입사일</label>
+                    <input type="text" class="form-control p-input" id="joinedAt" name="joinedAt" th:value="${#dates.format(m.joinedAt, 'yyyy/MM/dd')}" readonly>
+                </div>
+                <div class="inputName">
+                    <label for="memberName">이름</label>
+                    <input type="text" class="form-control p-input" id="memberName" name="memberName" th:value="${m.memberName}">
+                </div>
+                <div class="inputTel">
+                    <label for="tel">휴대폰</label>
+                    <input type="text" class="form-control p-input" id="tel" name="tel" th:value="${m.tel}" placeholder="-를 제외한 숫자만 입력해주세요">
+                </div>
+                <div class="inputbirth">
+                    <label for="birthday">생년월일</label>
+                    <input type="text" class="form-control p-input" id="birthday" name="birthday" th:value="${m.birthday}" placeholder="yyyymmdd">
+                </div>
+                <div class="inputDeptJob">
+                  <div>부서/직위 선택</div>
+                  <div>
+                    <select name="deptNo" class="dept" required>
+                      <option value="">부서 선택</option>
+                      <option value="1">인사팀</option>
+                      <option value="2">총무팀</option>
+                      <option value="3">개발팀</option>
+                    </select>          
+                    <select name="jobNo" class="job" required>
+                      <option value="">직위 선택</option>
+                      <option value="6">사원</option>
+                      <option value="5">대리</option>
+                      <option value="4">과장</option>
+                      <option value="3">차장</option>
+                      <option value="2">부장</option>
+                    </select>
+                    <div class="inputStatus">
+                      <div>직원 상태 선택</div>
+                      <select name="status" class="status" required>
+                        <option value="">상태 선택</option>
+                        <option value="0">재직</option>
+                        <option value="1">출장</option>
+                        <option value="2">교육</option>
+                        <option value="3">휴가</option>
+                        <option value="4">퇴직</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="tempPw">
+                  <div>임시 비밀번호</div>
+                  <input type="password" class="form-control p-input" id="pw" name="pw" th:value="${m.pw}" placeholder="임시 비밀번호를 입력해주세요" required> 
+                </div>
+                <div class="col-12">
+                    <button type="button" class="btn btn-primary btn-rounded" id="btnModify" th:onclick="fnModifyMember()">수정하기</button>
+                    <button type="button" class="btn btn-danger btn-rounded" id="btnRemove" th:onclick="fnRemoveMember()">삭제하기</button>
+                    <button type="button" class="btn btn-secondary btn-rounded" id="btnCancel" th:onclick="fnCancel()">취소하기</button>
+                </div>
+              </form>
+            </div> <!--/* formWrap 끝나는 지점 */-->
+          </div> <!--/* member-main 끝나는 지점 */-->
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

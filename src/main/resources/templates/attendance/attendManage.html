@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship 출퇴근기록조회')}"></head>
+<body>
+  <div class="container-scroller">
+
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+  
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+    
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+          <div class="row">
+						<div class="col-md-12 stretch-card grid-margin">
+							<div class="card">
+							  <div class="card-body">
+								  <p class="card-title">조회결과</p>
+									<table class="table table-striped text-center">
+										<thead>
+										  <tr>
+										    <th width="5%">사원번호</th>
+										    <th width="10%">사원명</th>
+											  <th width="15%">날짜</th>
+											  <th width="15%">출근시간</th>
+											  <th width="15%">퇴근시간</th>
+											  <th width="15%">근무시간</th>
+											  <th width="5%">근태</th>
+											  <th width="5%">수정</th>
+										  </tr>
+										</thead>
+										<tbody id="attendanceListTableBody">
+										  <th:block th:each="attendance:${attendanceList}">
+										    <tr>
+										      <td th:text="${attendance?.memberDTO.memberNo}"></td>
+										      <td th:text="${attendance?.memberDTO.memberName}"></td>
+										      <td th:text="${#dates.format(attendance?.date, 'YYYY-MM-dd')}"></td>
+										      <td th:text="${#dates.format(attendance?.astarttime, 'HH:mm:ss')}"></td>
+										      <td th:text="${#dates.format(attendance?.aendtime, 'HH:mm:ss')}"></td>
+										      <td th:text="${#dates.format(attendance?.worktime, 'HH:mm:ss')}"></td>
+										      <td th:text="${attendance?.attendance}"></td>
+										      <td>수정버튼</td>
+										    </tr>
+									    </th:block>
+										</tbody>
+										<tfoot>
+										  <tr>
+										    <td colspan="8" class="pagination" th:utext="${pagination}"></td>
+										  </tr>
+										</tfoot>
+									</table>
+									<script>
+									 
+									</script>
+							  </div>
+							</div>
+						</div>
+          </div>
+          
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

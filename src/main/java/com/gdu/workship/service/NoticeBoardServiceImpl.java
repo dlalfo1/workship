@@ -27,7 +27,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -35,7 +34,7 @@ import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.domain.NoticeDTO;
 import com.gdu.workship.domain.NoticeFileDTO;
 import com.gdu.workship.mapper.NoticeBoardMapper;
-import com.gdu.workship.util.MyFileUtilTest;
+import com.gdu.workship.util.MyFileUtil;
 import com.gdu.workship.util.PageUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -46,7 +45,7 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
 
   private final NoticeBoardMapper noticeBoardMapper;
   private final PageUtil pageUtil;
-  private final MyFileUtilTest myFileUtilTest;
+  private final MyFileUtil myFileUtil;
   
   @Override
   public void loadNoticeBoardList(HttpServletRequest request, Model model) {
@@ -194,14 +193,14 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
   @Override
   public ResponseEntity<Resource> downloadAll(int noticeNo) {
     
-    String tempPath = myFileUtilTest.getTempPath();
+    String tempPath = myFileUtil.getTempPath();
     File dir = new File(tempPath);
     if(dir.exists() == false) {
       dir.mkdirs();
     }
     
     // zip 파일의 이름
-    String tempFileName = myFileUtilTest.getTempFileName();
+    String tempFileName = myFileUtil.getTempFileName();
     
     // zip 파일의 File 객체
     File zFile = new File(tempPath, tempFileName);
@@ -311,8 +310,7 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
           /* HDD에 첨부 파일 저장하기 */
           
           // 첨부 파일의 저장 경로
-          String path = "C:" + File.separator + "storage" + File.separator + "final";
-          System.out.println(path);
+          String path = myFileUtil.getPath();
           // 첨부 파일의 저장 경로가 없으면 만들기
           File dir = new File(path);
           if(dir.exists() == false) {
@@ -324,7 +322,7 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
           originName = originName.substring(originName.lastIndexOf("\\") + 1);  // IE는 전체 경로가 오기 때문에 마지막 역슬래시 뒤에 있는 파일명만 사용한다.
           
           // 첨부 파일의 저장 이름
-          String filesystemName = myFileUtilTest.getFilesystemName(originName);
+          String filesystemName = myFileUtil.getFilesystemName(originName);
           
           // 첨부 파일의 File 객체 (HDD에 저장할 첨부 파일)
           File file = new File(dir, filesystemName);
@@ -442,7 +440,7 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
           originName = originName.substring(originName.lastIndexOf("\\") + 1);  // IE는 전체 경로가 오기 때문에 마지막 역슬래시 뒤에 있는 파일명만 사용한다.
           
           // 첨부 파일의 저장 이름
-          String filesystemName = myFileUtilTest.getFilesystemName(originName);
+          String filesystemName = myFileUtil.getFilesystemName(originName);
           
           // 첨부 파일의 File 객체 (HDD에 저장할 첨부 파일)
           File file = new File(dir, filesystemName);
