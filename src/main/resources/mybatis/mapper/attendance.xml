@@ -5,24 +5,27 @@
 
 <!-- namespace는 @Mapper를 지정한다. -->
 <mapper namespace="com.gdu.workship.mapper.AttendanceMapper">
-	
-	<select id="getAllMemberNo" resultType="int">
-	 SELECT MEMBER_NO
-	   FROM MEMBER_T
-	  ORDER BY MEMBER_NO
-	</select>
-	
-  <insert id="addDateIntoAttendance" parameterType="int">
-    INSERT INTO ATTENDANCE_T
-    VALUES (#{memberNo}, DATE(NOW()), NULL, NULL, NULL, NULL)
-  </insert>
-  
+
   <select id="getAttendanceToday" parameterType="int" resultType="AttendanceDTO">
    SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
      FROM ATTENDANCE_T
     WHERE MEMBER_NO = #{memberNo}
       AND DATE = DATE(NOW())
   </select>
+  
+  <insert id="addAStartTime" parameterType="Map">
+    INSERT INTO ATTENDANCE_T
+    VALUES (#{memberNo}, DATE(NOW()), #{time}, NULL, NULL, #{attendance})
+  </insert>
+  
+  <update id="addEndTime" parameterType="Map">
+    UPDATE ATTENDANCE_T
+       SET AENDTIME = #{time}
+         , WORKTIME = TIMEDIFF(TIME(#{time}), ASTARTTIME)
+         , ATTENDANCE = #{attendance}
+     WHERE MEMBER_NO = #{memberNo}
+       AND DATE = DATE(NOW())
+  </update>
   
 	<select id="getMonthlyAttendList" parameterType="int" resultType="AttendanceDTO">
 	  SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
@@ -32,5 +35,45 @@
 	    <!-- <![CDATA[AND DAY(DATE) < DAY(NOW())]]> --> 
 	   ORDER BY DATE DESC
 	</select>
+	
+	<select id="getMonthlyAttendanceInfo" parameterType="Map" resultType="int">
+	 SELECT COUNT(*)
+	   FROM ATTENDANCE_T
+	  WHERE MEMBER_NO = #{memberNo}
+	    AND ATTENDANCE LIKE '%${query}%'
+      AND MONTH(DATE) = MONTH(NOW())
+	</select>
+	
+	<select id="getMonthlyWorktime" parameterType="int" resultType="date">
+	 SELECT IFNULL(WORKTIME, '00:00:00')
+	   FROM ATTENDANCE_T
+	  WHERE MEMBER_NO = #{memberNo}
+	    AND MONTH(DATE) = MONTH(NOW())
+	</select>
+    
+  <select id="getAllMemberNo" resultType="int">
+   SELECT MEMBER_NO
+     FROM MEMBER_T
+    ORDER BY MEMBER_NO
+  </select>
+  
+  <select id="getAttendanceYesterday" parameterType="int" resultType="AttendanceDTO">
+   SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
+     FROM ATTENDANCE_T
+    WHERE MEMBER_NO = #{memberNo}
+      AND DATE = DATE(NOW()) - 1
+  </select>
+  
+  <insert id="addAbsent" parameterType="int">
+    INSERT INTO ATTENDANCE_T
+    VALUES (#{memberNo}, DATE(NOW()) - 1, '00:00:00', '00:00:00', '00:00:00', '결근')
+  </insert>
+  
+  <update id="updateError" parameterType="int">
+    UPDATE ATTENDANCE_T
+       SET ATTENDANCE = '퇴근미처리'
+     WHERE MEMBER_NO = #{memberNo}
+       AND DATE = DATE(NOW()) - 1
+  </update>
 
 </mapper>

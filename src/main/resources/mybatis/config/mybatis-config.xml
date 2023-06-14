@@ -36,6 +36,7 @@
     <typeAlias alias="ProjectWorkDTO"       type="com.gdu.workship.domain.ProjectWorkDTO"/>
     <typeAlias alias="ProjectWorkFileDTO"   type="com.gdu.workship.domain.ProjectWorkFileDTO"/>
     <typeAlias alias="AttendanceDTO"        type="com.gdu.workship.domain.AttendanceDTO"/>
+    <typeAlias alias="AttendManageDTO"      type="com.gdu.workship.domain.AttendManageDTO"/>
   </typeAliases>
 
 </configuration>

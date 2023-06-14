@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttendanceDTO {
-	private int memberNo;
+public class AttendManageDTO {
+	private MemberDTO memberDTO;
 	private Date date;
 	private Date astarttime;
 	private Date aendtime;

@@ -15,9 +15,9 @@ public class AttendanceScheduler {
 
 	private final AttendanceService attendanceService;
 	
-	@Scheduled(cron="0 58 12 ? * MON-FRI")
+	@Scheduled(cron="0 0 3 ? * MON-FRI")
 	 public void addDateIntoAttendance() {
-		 attendanceService.addDateIntoAttendance();
+		 attendanceService.updateAllScehduler();
 	 }
 	
 }
