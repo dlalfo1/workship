@@ -53,9 +53,9 @@ function fnDisplayRememberIdAndAutologin(){
   // autologin 쿠키에 저장된 값에 따라 자동 로그인 체크 상태 변경
   let autologin = $.cookie('autologin');
   if(autologin == 'true'){
-    $('#chkAutoLogin').prop('checked', true);
+    $('#chkAutologin').prop('checked', true);
   } else {
-    $('#chkAutoLogin').prop('checked', false);
+    $('#chkAutologin').prop('checked', false);
   }
   
   // 자동 로그인 체크 여부에 따라 로그인 처리
@@ -103,7 +103,7 @@ $(function(){
                   </div>
                   <div class="form-check">
                     <label class="form-check-label text-muted">
-                      <input type="checkbox" class="form-check-input" id="chkAutoId">
+                      <input type="checkbox" class="form-check-input" name="chkAutologinId" id="chkAutologinId">
                       자동 로그인
                     </label>
                   </div>

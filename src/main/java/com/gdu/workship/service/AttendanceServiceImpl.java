@@ -16,14 +16,13 @@ public class AttendanceServiceImpl implements AttendanceService {
 	@Override
 	public void addDateIntoAttendance() {
 		for(int memberNo : attendanceMapper.getAllMemberNo()) {
-			System.out.println(memberNo + "    ");
 			attendanceMapper.addDateIntoAttendance(memberNo);
 		}
 	}
 	
 	@Override
 	public void getAttendList(int memberNo, Model model) {
-		model.addAttribute("attendToday", attendanceMapper.getAttendanceToday(memberNo));
+		model.addAttribute("attendanceToday", attendanceMapper.getAttendanceToday(memberNo));
 		model.addAttribute("attendanceList", attendanceMapper.getMonthlyAttendList(memberNo));
 	}
 	

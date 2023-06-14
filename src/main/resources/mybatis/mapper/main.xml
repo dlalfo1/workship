@@ -41,24 +41,30 @@
     <select id="getRecentNoticeList" resultMap="NoticeMap">
     SELECT A.NOTICE_NO, A.MEMBER_NAME, A.NOTICE_TITLE, A.NOTICE_CONTENT, A.NOTICE_CREATED_AT, A.NOTICE_MODIFIED_AT, A.NOTICE_HIT, A.NOTICE_STATE
       FROM (SELECT N.NOTICE_NO, M.MEMBER_NAME, N.NOTICE_TITLE, N.NOTICE_CONTENT, N.NOTICE_CREATED_AT, N.NOTICE_MODIFIED_AT, N.NOTICE_HIT, N.NOTICE_STATE
-              FROM NOTICE_BOARD_T N RIGHT OUTER JOIN MEMBER_T M
+              FROM NOTICE_BOARD_T N INNER JOIN MEMBER_T M
                 ON M.MEMBER_NO = N.MEMBER_NO) A
      ORDER BY N.NOTICE_NO DESC
      LIMIT 0, 4
   </select>
   
-    <select id="getAttendanceToday" parameterType="int" resultType="AttendanceDTO">
+  <select id="getAttendanceToday" parameterType="int" resultType="AttendanceDTO">
    SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
      FROM ATTENDANCE_T
     WHERE MEMBER_NO = #{memberNo}
       AND DATE = DATE(NOW())
   </select>
   
-  <update id="addAStartTime" parameterType="int">
+  <insert id="addAStartTime" parameterType="Map">
+    INSERT INTO ATTENDANCE_T
+    VALUES (#{memberNo}, DATE(NOW()), #{time}, NULL, NULL, #{attendance})
+  </insert>
+  
+  <update id="addEndTime" parameterType="Map">
     UPDATE ATTENDANCE_T
-       SET ASTARTTIME = CURTIME()
+       SET AENDTIME = #{time}
+         , WORKTIME = TIMEDIFF(TIME(#{time}), ASTARTTIME)
+         , ATTENDANCE = #{attendance}
      WHERE MEMBER_NO = #{memberNo}
        AND DATE = DATE(NOW())
   </update>
-
 </mapper>

@@ -26,13 +26,19 @@ public class MainController {
 	@GetMapping("/main.html")
 	public String main(HttpSession session, Model model) {
 		mainService.main(session, model);
-		return "main/main";
+		return "main/main2";
 	}
 
 	@ResponseBody
 	@GetMapping(value="/aStart.do", produces="application/json")
 	public Map<String, Object> aStart(@RequestParam("memberNo") int memberNo) {
-		return mainService.astart(memberNo);
+		return mainService.aStart(memberNo);
+	}
+	
+	@ResponseBody
+	@GetMapping(value="/aEnd.do", produces="application/json")
+	public Map<String, Object> aEnd(@RequestParam("memberNo") int memberNo) {
+		return mainService.aEnd(memberNo);
 	}
 
 	
