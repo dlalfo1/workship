@@ -27,7 +27,7 @@ public class AutologinIntercepter implements HandlerInterceptor {
 
     HttpSession session = request.getSession();
     
-    if(session != null && session.getAttribute("emailId") == null) {  // 로그인이 되어 있는가?
+    if(session != null && session.getAttribute("loginMember") == null) {  // 로그인이 되어 있는가?
       
       Cookie cookie = WebUtils.getCookie(request, "autologinId");
       

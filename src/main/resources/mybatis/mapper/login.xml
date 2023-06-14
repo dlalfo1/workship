@@ -56,8 +56,8 @@
   <update id="insertAutologin" parameterType="MemberDTO">
     UPDATE MEMBER_T
        SET AUTOLOGIN_ID = #{autologinId}
-         , AUTOLOGIN_EXPIRED_AT = #{autologinExpiredAt}
-     WHERE ID = #{emailId}
+         , AUTOLOGIN_EXPIRED_AT = #{setAutologinExpiredAt}
+     WHERE EMAIL_ID = #{emailId}
   </update>
   
    <update id="updateMemberAccess" parameterType="MemberDTO">

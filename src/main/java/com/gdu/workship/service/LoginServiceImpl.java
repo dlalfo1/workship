@@ -39,12 +39,11 @@ public class LoginServiceImpl implements LoginService {
 		memberDTO.setPw(pw);
 		
 		MemberDTO loginMemberDTO = loginMapper.getMemberDTO(memberDTO);
-		
 		if(loginMemberDTO != null) {
 			
 			autologin(request, response);
 				HttpSession session = request.getSession();
-				session.setAttribute("loginId", emailId);
+				session.setAttribute("loginMember", loginMemberDTO);
 				
 			int updateResult = loginMapper.updateMemberAccess(emailId);
 			if(updateResult == 0) {
@@ -84,7 +83,7 @@ public class LoginServiceImpl implements LoginService {
 				PrintWriter out = response.getWriter();
 				out.println("<script>");
 				out.println("alert('일치하는 회원 정보가 없습니다.');");
-				out.println("location.href='" + request.getContextPath() + "/loginTemp.html';");
+				out.println("location.href='" + request.getContextPath() + "/index.html';");
 				out.println("</script>");
 				out.flush();
 				out.close();
@@ -107,10 +106,9 @@ public class LoginServiceImpl implements LoginService {
 	 @Override
 	public void autologin(HttpServletRequest request, HttpServletResponse response) {
 	    String id = request.getParameter("emailId");
-	    String chkAutologin = request.getParameter("chkAutologin");
-	    
+	    String chkAutologinId = request.getParameter("chkAutologinId");
 	    // 자동 로그인을 체크한 경우
-	    if(chkAutologin != null) {
+	    if(chkAutologinId != null) {
 	      
 	      // session의 id를 가져온다.
 	      HttpSession session = request.getSession();
@@ -120,7 +118,7 @@ public class LoginServiceImpl implements LoginService {
 	      MemberDTO memberDTO = new MemberDTO();
 	      memberDTO.setEmailId(id);
 	      memberDTO.setAutologinId(sessionId);
-	      memberDTO.setSetAutologinExpiredAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 15));
+	      memberDTO.setSetAutologinExpiredAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30));
 	                                    // 현재 + 15일 : java.sql.Date 클래스를 이용해서 작업을 수행한다.
 	                                    // java.sql.Date 클래스는 타임스탬프를 이용해서 날짜를 생성한다.
 	      
@@ -129,8 +127,8 @@ public class LoginServiceImpl implements LoginService {
 	      
 	      // session id를 쿠키에 저장하기
 	      Cookie cookie = new Cookie("autologinId", sessionId);
-	      cookie.setMaxAge(60 * 60 * 24 * 15);      // 초 단위로 15일 지정
-	      cookie.setPath(request.getContextPath()); // 애플리케이션의 모든 URL에서 autologinId 쿠키를 확인할 수 있다.
+	      cookie.setMaxAge(60 * 60 * 24 * 30);      // 초 단위로 15일 지정
+	      cookie.setPath("/"); // 애플리케이션의 모든 URL에서 autologinId 쿠키를 확인할 수 있다.
 	      response.addCookie(cookie);
 	      
 	    }
@@ -143,7 +141,7 @@ public class LoginServiceImpl implements LoginService {
 	      // autologinId 쿠키 삭제하기
 	      Cookie cookie = new Cookie("autologinId", "");
 	      cookie.setMaxAge(0);                       // 쿠키 유지시간을 0초로 설정
-	      cookie.setPath(request.getContextPath());  // autologinId 쿠키의 path와 동일하게 설정
+	      cookie.setPath("/");  // autologinId 쿠키의 path와 동일하게 설정
 	      response.addCookie(cookie);
 	      
 	    }

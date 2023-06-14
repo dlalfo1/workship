@@ -21,7 +21,7 @@ public class PreventLoginIntercepter implements HandlerInterceptor {
     HttpSession session = request.getSession();
     
     // 로그인 여부 확인
-    if(session != null && session.getAttribute("emailId") != null) {
+    if(session != null && session.getAttribute("loginMember") != null) {
       
       // 응답
       response.setContentType("text/html; charset=UTF-8");
