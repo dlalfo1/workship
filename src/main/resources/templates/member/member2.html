@@ -4,110 +4,36 @@
 <head th:replace="~{/layout/header::headFrag('사원 조회')}"></head>
 <script th:inline="javascript">
 
-  function fnLoadListByDept(deptNo) {
-    $.ajax({
-      type: 'get',
-      url: '/member/memberList2.do',
-      data: 'column=D.DEPT_NO' + '&query=' + deptNo,
-      dataType: 'json',
-      success: function(resData) {
-        let memberListbody = $('#memberListbody');
-          
-        memberListbody.empty();  
-        
-        if(resData.memberList === 0){
-          memberListbody.append('<tr><td colspan="6">현재 사원이 없습니다.</td></tr>');
+  $(function(){
+	  let addResult = /*[[${addResult}]]*/ null;
+      if(addResult !== null){
+        if(addResult === 1) {
+          alert('사원이 정상적으로 등록되었습니다.');
         } else {
-            console.log(resData.memberList);                      
-          $.each(resData.memberList, function(i, member){ 
-            let str = '<tr>';
-            str += '<td>' + member.memberNo + '</td>';
-            str += '<td><a href="/member/memberDetail.html?memberNo=' + member.memberNo +'">' + member.memberName + '</td>';
-            str += '<td>' + member.departmentDTO.deptName + '</td>';
-            str += '<td>' + member.jobDTO.jobName + '</td>';
-            str += '<td>' + fnDateFormat(member.joinedAt) + '</td>';
-            str += '<td>' + member.status + '</td>';
-            str += '</tr>'
-          	memberListbody.append(str);
-            
-          })
+          alert('사원 등록에 실패했습니다.');
         }
-        
-        $('#ajaxPagination').empty();
-        var pageUtil = resData.pagination; 
-        console.log(pageUtil);
-        var str2 = '<div>';
-        // 이전 블록
-        if(pageUtil.beginPage == 1){
-          str2 += '<span class="invisible">◀</span>';
-        } else {
-          str2 += '<span class="enable_link pagination" data-page="' + (pageUtil.beginPage - 1) + '">◀</span>';
-        }
-        // 페이지 번호
-        for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
-          if(p == page){
-            str2 += '<strong class="pagination">' + p + '</strong>';
+      }
+   // 사원 정보 수정 결과 메시지
+      let modifyResult = /*[[${modifyResult}]]*/ null;
+      console.log(modifyResult);
+        if(modifyResult !== null){
+          if(modifyResult === 1) {
+            alert('사원 정보가 수정되었습니다.');
           } else {
-            str2 += '<span class="enable_link pagination" data-page="' + p + '">' + p + '</span>';
+            alert('사원 정보 수정에 실패했습니다.');
           }
         }
-        // 다음 블록
-        if(pageUtil.endPage == pageUtil.totalPage){
-          str2 += '<span class="invisible">▶</span>';
-        } else {
-          str2 += '<span class="enable_link pagination" data-page="' + (pageUtil.endPage + 1) + '">▶</span>';
+      // 사원 정보 삭제 결과 메시지
+      let removeResult = /*[[${removeResult}]] */ null;   // removeResult가 전달되지 않는 경우 null을 사용한다.
+        if(removeResult !== null){
+          if(removeResult === 1) {
+            alert('사원 정보가 삭제되었습니다.');
+          } else {
+            alert('사원 삭제에 실패했습니다.');
+          }
         }
-        str2 += '</div>';
-        console.log(str2);
-        $('#ajaxPagination').append(str2);
-        
-      }
-
-    })
-    
-  }
-  function fnDateFormat(nCreatedAt) {
-    var d = new Date(nCreatedAt),
-    year = d.getFullYear(),
-    month = '' + (d.getMonth() + 1), 
-    day = '' + d.getDate();
-    
-    if (month.length < 2) month = '0' + month; 
-    if (day.length < 2) day = '0' + day; 
-    
-    return [year, month, day].join('/');
-  } 
-
-  $(function(){
-	  // 사원 등록 성공 메시지
-    let addResult = /*[[${addResult}]]*/ null;
-    if(addResult !== null){
-      if(addResult === 1) {
-        alert('사원이 정상적으로 등록되었습니다.');
-      } else {
-        alert('사원 등록에 실패했습니다.');
-      }
-    }  
-	  // 사원 정보 수정 결과 메시지
-    let modifyResult = /*[[${modifyResult}]]*/ null;
-    console.log(modifyResult);
-    if(modifyResult !== null){
-      if(modifyResult === 1) {
-        alert('사원 정보가 수정되었습니다.');
-      } else {
-        alert('사원 정보 수정에 실패했습니다.');
-      }
-    }
-    // 사원 정보 삭제 결과 메시지
-    let removeResult = /*[[${removeResult}]] */ null;   // removeResult가 전달되지 않는 경우 null을 사용한다.
-    if(removeResult !== null){
-      if(removeResult === 1) {
-        alert('사원 정보가 삭제되었습니다.');
-      } else {
-        alert('사원 삭제에 실패했습니다.');
-      }
-    }
   })
+
 </script>
 <body>
 
@@ -139,7 +65,7 @@
               	</th:block>
                 <th:block th:if="${not #lists.isEmpty(deptList)}">
                   <th:block th:each="dept:${deptList}">
-              		  <li style="width: 80px;"><a href="javascript:void(0);" th:text="${dept.deptName}" th:onclick="fnLoadListByDept([[${dept.deptNo}]])"></a></li>
+              		  <li style="width: 80px;"><input type="button" th:value="${dept.deptName}" th:onclick="fnLoadListByDept([[${dept.deptNo}]])"></li>
                   </th:block>
               	</th:block>
               </ul>
@@ -186,6 +112,45 @@
                   </th:block>
                 </tbody>
               </table>
+              <script th:inline="javascript">
+                function fnLoadListByDept(deptNo) {
+                  $.ajax({
+                    type: 'get',
+                    url: '/member/memberList2.do',
+                    data: 'column=D.DEPT_NO' + '&query=' + deptNo,
+                    dataType: 'json',
+                    success: function(resData) {
+                      let memberListbody = $('#memberList');
+                        
+                      memberListbody.empty();  
+                      
+                      if(resData.memberList === 0){
+                        memberListbody.append('<tr><td colspan="6">현재 사원이 없습니다.</td></tr>');
+                      } else {
+                          console.log(resData.memberList);                      
+                        $.each(resData.memberList, function(i, member){ 
+                          let str = '<tr>';
+                          str += '<td>' + member.memberNo + '</td>';
+                          str += '<td>' + member.memberName + '</td>';
+                          str += '<td>' + member.departmentDTO.deptName + '</td>';
+                          str += '<td>' + member.jobDTO.jobName + '</td>';
+                          str += '<td>' + fnDateFormat(member.joinedAt) + '</td>';
+                          str += '<td>' + member.status + '</td>';
+                          str += '</tr>'
+                          loadMemberList.append(str);
+                          
+                          
+                          
+                        })
+                      }
+                    
+                    }
+  
+                  })
+                  
+                }
+            
+                </script>
             </div> <!--/* memberList 끝나는 지점 */-->
             <div class="searchWrap">
               <form id="frmSearch" th:action="@{/member/memberList.do}">
@@ -199,7 +164,7 @@
               </form>
             </div>
             <div class="pagination">
-                <div id="ajaxPagination" style="text-align: center;" th:utext="${pagination}"></div>  
+                <div style="text-align: center;" th:utext="${pagination}"></div>  
             </div>
           </div> <!--/* member-main 끝나는 지점 */-->
 
