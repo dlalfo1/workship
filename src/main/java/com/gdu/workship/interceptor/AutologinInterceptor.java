@@ -9,11 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.WebUtils;
 
-import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.mapper.LoginMapper;
 
 @Component
-public class AutologinIntercepter implements HandlerInterceptor {
+public class AutologinInterceptor implements HandlerInterceptor {
 
   // 로그인이 안 된 상태이고,
   // 쿠키에 autologinId 값이 존재하는 경우에
@@ -31,12 +30,12 @@ public class AutologinIntercepter implements HandlerInterceptor {
       
       Cookie cookie = WebUtils.getCookie(request, "autologinId");
       
-      if(cookie != null) {  // 쿠키 autologinId가 존재하는가?
+      if(cookie != null) {  // 쿠키 autologinId가 w존재하는가?
         
-        String autologinId = cookie.getValue();
-        MemberDTO loginUserDTO = loginMapper.selectAutologin(autologinId);
-        if(loginUserDTO != null) {
-          session.setAttribute("emailId", loginUserDTO.getEmailId());
+        String autologinId =  (String) cookie.getValue();
+        String emailId = loginMapper.selectAutologin(autologinId);
+        if(emailId != null) {
+          session.setAttribute("emailId", emailId);
         }
         
       }

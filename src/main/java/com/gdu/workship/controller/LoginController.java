@@ -26,7 +26,7 @@ public class LoginController {
 	    model.addAttribute("url", url == null ? request.getContextPath() : url);
 	    return "templates/loginTemp";
 	  }*/
-	  @PostMapping("/loginTemp.do")
+	  @PostMapping("/main.do")
 	  public void login(HttpServletRequest request, HttpServletResponse response) {
 		 loginService.login(request, response);
 	  }
@@ -35,5 +35,9 @@ public class LoginController {
 	  public String logout(HttpServletRequest request, HttpServletResponse response) {
 	    loginService.logout(request, response);
 	    return "redirect:/";
+	  }
+	  @GetMapping("/findPassword.do")  // 비밀번호 찾기 화면으로 이동
+	  public String findPwForm() {
+	    return "login/findPassword";
 	  }
 }
