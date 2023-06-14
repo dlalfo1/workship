@@ -6,6 +6,6 @@ public interface AttendanceService {
 
 	public void addDateIntoAttendance();
 	public void getMonthlyAttendance(int memberNo, Model model);
-	public void getAttendList(int memberNo, Model model);
+	public void getAttencePage(int memberNo, Model model);
 	
 }

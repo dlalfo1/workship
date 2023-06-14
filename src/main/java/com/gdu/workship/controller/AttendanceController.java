@@ -18,8 +18,8 @@ public class AttendanceController {
 	private final AttendanceService attendanceService;
 	
 	@GetMapping("/attendList.do")
-	public String attendList(@RequestParam("memberNo") int memberNo, Model model) {
-		attendanceService.getAttendList(memberNo, model);
+	public String attendanceMain(@RequestParam("memberNo") int memberNo, Model model) {
+		attendanceService.getAttencePage(memberNo, model);
 		return "attendance/attendList";
 	}
 	

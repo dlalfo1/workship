@@ -21,7 +21,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 	
 	@Override
-	public void getAttendList(int memberNo, Model model) {
+	public void getAttencePage(int memberNo, Model model) {
 		model.addAttribute("attendanceToday", attendanceMapper.getAttendanceToday(memberNo));
 		model.addAttribute("attendanceList", attendanceMapper.getMonthlyAttendList(memberNo));
 	}
