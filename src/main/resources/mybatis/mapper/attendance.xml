@@ -29,7 +29,7 @@
 	    FROM ATTENDANCE_T
 	   WHERE MEMBER_NO = #{memberNo}
 	     AND MONTH(DATE) = MONTH(NOW())
-	     <![CDATA[AND DAY(DATE) < DAY(NOW())]]>
+	    <!-- <![CDATA[AND DAY(DATE) < DAY(NOW())]]> --> 
 	   ORDER BY DATE DESC
 	</select>
 

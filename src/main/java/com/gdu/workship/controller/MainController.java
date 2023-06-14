@@ -26,7 +26,7 @@ public class MainController {
 	@GetMapping("/main.html")
 	public String main(HttpSession session, Model model) {
 		mainService.main(session, model);
-		return "main/main";
+		return "main/main2";
 	}
 
 	@ResponseBody

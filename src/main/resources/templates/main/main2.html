@@ -25,12 +25,12 @@
           <div class="row">
           
             <!--/* 1번째줄 1번째칸 */-->
-            <div class="col-md-4 stretch-card grid-margin">
+            <div class="col-md-4 grid-margin">
         
               <div class="row">
               
                 <!--/* (끝!) 나의 정보 */-->
-                <div class="col-md-12 stretch-card grid-margin mb-3">
+                <div class="col-md-12 grid-margin mb-3">
                   <div class="card card-dark-blue">
                     <div class="card-body">
                       <p class="card-title text-white">나의 정보</p>                      
@@ -50,7 +50,7 @@
                 </div>
                 
                 <!--/* 메일정보 */-->
-                <div class="col-md-12 stretch-card grid-margin mb-3">
+                <div class="col-md-12 grid-margin mb-3">
                   <div class="card">
                     <div class="card-body">
                       <p class="card-title">메일</p>                      
@@ -75,7 +75,7 @@
                 </div>
                 
                 <!--/* (끝!) 출퇴근기록 */-->
-                <div class="col-md-12 stretch-card grid-margin">
+                <div class="col-md-12 grid-margin">
                   <div class="card">
                     <div class="card-body">
                       <p class="card-title">출퇴근기록</p>                      
@@ -90,11 +90,11 @@
                       <div>
                         <div class="row text-center">
                           <div class="col-5"><h3>출근시간</h3></div>
-                          <div class="col-7 text-primary"><h3 id="aStartTime" th:text="${attendanceToday?.astarttime}"></h3></div>
+                          <div class="col-7 text-primary"><h3 id="aStartTime" th:text="${#dates.format(attendanceToday?.astarttime, 'HH:mm:ss')}"></h3></div>
                         </div>
                         <div class="row text-center">
                           <div class="col-5"><h3>퇴근시간</h3></div>
-                          <div class="col-7 text-primary"><h3 id="aEndTime" th:text="${attendanceToday?.aendtime}"></h3></div>
+                          <div class="col-7 text-primary"><h3 id="aEndTime" th:text="${#dates.format(attendanceToday?.aendtime, 'HH:mm:ss')}"></h3></div>
                         </div>
                       </div>
                       <script th:inline="javascript">
@@ -110,7 +110,7 @@
                         	  if(result == 'fail') {
                         		  alert('이미 출근 처리되었습니다.');
                         	  } else {
-                        		  $('#aStartTime').text(result);
+                        		  $('#aStartTime').text(result.substr(11, 8));
                         	  }
                           }
                         })
@@ -130,7 +130,7 @@
                              } else if(result == 'alreadyEnd'){
                             	 alert('이미 퇴근 처리되었습니다.');
                              } else {
-                            	 $('#aEndTime').text(result);
+                            	 $('#aEndTime').text(result.substr(11, 8));
                              }
                            }
                          })

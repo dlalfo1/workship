@@ -54,14 +54,16 @@
       AND DATE = DATE(NOW())
   </select>
   
-  <insert id="addAStartTime" parameterType="int">
+  <insert id="addAStartTime" parameterType="Map">
     INSERT INTO ATTENDANCE_T
-    VALUES (#{memberNo}, DATE(NOW()), CURTIME(), NULL, NULL, NULL)
+    VALUES (#{memberNo}, DATE(NOW()), #{time}, NULL, NULL, #{attendance})
   </insert>
   
-  <update id="addEndTime" parameterType="int">
+  <update id="addEndTime" parameterType="Map">
     UPDATE ATTENDANCE_T
-       SET AENDTIME = CURTIME()
+       SET AENDTIME = #{time}
+         , WORKTIME = TIMEDIFF(TIME(#{time}), ASTARTTIME)
+         , ATTENDANCE = #{attendance}
      WHERE MEMBER_NO = #{memberNo}
        AND DATE = DATE(NOW())
   </update>
