@@ -1,5 +1,6 @@
 package com.gdu.workship.domain;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
