@@ -142,7 +142,7 @@ public class LoginServiceImpl implements LoginService {
 	      Cookie cookie = new Cookie("autologinId", "");
 	      cookie.setMaxAge(0);                       // 쿠키 유지시간을 0초로 설정
 	      cookie.setPath("/");  // autologinId 쿠키의 path와 동일하게 설정
-	      response.addCookie(cookie);
+	      response.addCookie(cookie); 
 	      
 	    }
 
