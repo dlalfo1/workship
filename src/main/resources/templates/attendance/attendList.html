@@ -44,89 +44,97 @@
                       setInterval(clock, 1000);
                     </script>
                   </div>
-                  <div class="row">
+                  <div class="row" style="height: 40px;">
                     <div class="col-5">출근시간</div>
-                    <div class="col-7 text-primary"><h3 th:text="${#dates.format(attendanceToday?.astarttime, 'HH:mm:ss')}"></h3></div>
-                  </div>
-                  <div class="row">
+                    <div class="col-7 text-primary"><h3 id="aStartTime" th:text="${#dates.format(attendanceToday?.astarttime, 'HH:mm:ss')}"></h3></div>
+                  </div> <!-- 출근시간 -->
+                  <div class="row" style="height: 40px;">
                     <div class="col-5">퇴근시간</div>
-                    <div class="col-7 text-primary"><h3 th:text="${#dates.format(attendanceToday?.aendtime, 'HH:mm:ss')}"></h3></div>
+                    <div class="col-7 text-primary"><h3 id="aEndTime" th:text="${#dates.format(attendanceToday?.aendtime, 'HH:mm:ss')}"></h3></div>
                   </div>
                   <div class="row">
 	                  <div class="col-6">
-	                    <input type="button" onclick="fnAStart()" class="btn btn-inverse-primary btn-md" style="width: 100%;" value="출근">
+	                    <input type="button" onclick="fnAStart()" class="btn btn-outline-primary btn-md" style="width: 100%;" value="출근">
 	                  </div>
 	                  <div class="col-6 text-center">
-	                    <input type="button" onclick="fnAEnd()" class="btn btn-outline-primary btn-md" style="width: 100%;" value="퇴근">
+	                    <input type="button" onclick="fnAEnd()" class="btn btn-inverse-primary btn-md" style="width: 100%;" value="퇴근">
 	                  </div>
                   </div>
-	                <script th:inline="javascript">
+ 	                <script th:inline="javascript">
 	                  function fnAStart(){
 	                    var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
-	                    $.ajax({
-	                      type: 'get',
-	                      url: '/main/aStart.do',
-	                      data: 'memberNo=' + memberNo,
-	                      dataType: 'json',
-	                      success: function(resData){
-	                        var result = resData.result;
-	                        if(result == 'fail') {
-	                          alert('이미 출근 처리되었습니다.');
-	                        } else {
-	                          $('#aStartTime').text(result.substr(11, 8));
-	                        }
-	                      }
+	                    new Promise(function(resolve, reject){
+                        $.ajax({
+                           type: 'get',
+                           url: '/attendance/aStart.do',
+                           data: 'memberNo=' + memberNo,
+                           dataType: 'json',
+                           success: function(resData){
+                        	   resolve();
+                             var result = resData.result;
+                             if(result == 'fail') {
+                               alert('이미 출근 처리되었습니다.');
+                             } else {
+                               $('#aStartTime').text(result.substr(11, 8));
+                             }
+                           }
+                         });
+	                    }).then(function(){
+	                    	location.href = '/attendance/attendList.do?memberNo=' + memberNo;
 	                    })
 	                  };
 	                  
 	                  function fnAEnd(){
-	                     var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
-	                     $.ajax({
-	                       type: 'get',
-	                       url: '/main/aEnd.do',
-	                       data: 'memberNo=' + memberNo,
-	                       dataType: 'json',
-	                       success: function(resData){
-	                         var result = resData.result;
-	                         if(result == 'noStart') {
-	                           alert('출근 처리가 되지 않았습니다.');
-	                         } else if(result == 'alreadyEnd'){
-	                           alert('이미 퇴근 처리되었습니다.');
-	                         } else {
-	                           $('#aEndTime').text(result.substr(11, 8));
-	                         }
-	                       }
-	                     })
-	                   };
+											var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
+											new Promise(function(resolve, reject){
+												$.ajax({
+													type: 'get',
+													url: '/attendance/aEnd.do',
+													data: 'memberNo=' + memberNo,
+													dataType: 'json',
+													success: function(resData){
+														resolve();
+														var result = resData.result;
+														if(result == 'noStart') {
+														  alert('출근 처리가 되지 않았습니다.');
+														} else if(result == 'alreadyEnd') {
+														  alert('이미 퇴근 처리되었습니다.');
+														} else {
+														  $('#aEndTime').text(result.substr(11, 8));
+														}
+													}
+												}).then(function(){
+											    location.href = '/attendance/attendList.do?memberNo=' + memberNo;
+											})
+										})
+									};
 	                </script>
                 </div>
               </div>
             </div>
             
-            <!--/* 이번달 출근정보 */-->
+            <!--/* (끝!) 이번달 출근정보 */-->
             <div class="col-md-4 stretch-card grid-margin mb-3">
               <div class="card">
                 <div class="card-body">
                   <p class="card-title">이번달 출근 정보</p>
                   <table class="table table-sm table-borderless text-center">
+                    <tr><td colspan="8" height="20px"></td></tr>
                     <tr>
-                      <th>정상</th>
-                      <th>지각</th>
-                      <th>조퇴</th>
-                      <th>결근</th>
+                      <th colspan="2" width="25%">정상</th>
+                      <th colspan="2" width="25%">지각</th>
+                      <th colspan="2" width="25%">조퇴</th>
+                      <th colspan="2" width="25%">결근</th>
                     </tr>
                     <tr>
-                      <td><h3 class="text-secondary">0</h3></td>
-                      <td><h3 class="text-secondary">0</h3></td>
-                      <td><h3 class="text-secondary">0</h3></td>
-                      <td><h3 class="text-secondary">0</h3></td>
+                      <th:block th:each="info:${attendanceInfo}">
+                      <td colspan="2"><h3 class="text-secondary" th:text="${info}"></h3></td>
+                      </th:block>
                     </tr>
+                    <tr><td colspan="8" height="20px"></td></tr>
                     <tr>
-                      <td colspan="4"></td>
-                    </tr>
-                    <tr>
-                      <th colspan="2">총 근무시간</th>
-                      <td colspan="2"><h3 class="text-secondary">0시간 0분</h3></td>
+                      <th colspan="3">근무시간</th>
+                      <td colspan="5"><h3 class="text-secondary" th:text="${worktime}"></h3></td>
                     </tr>
                   </table>
                 </div>

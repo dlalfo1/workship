@@ -2,7 +2,6 @@ package com.gdu.workship.controller;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -26,7 +25,7 @@ public class MainController {
 	@GetMapping("/main.html")
 	public String main(HttpSession session, Model model) {
 		mainService.main(session, model);
-		return "main/main2";
+		return "main/main";
 	}
 
 	@ResponseBody

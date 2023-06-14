@@ -1,11 +1,19 @@
 package com.gdu.workship.service;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.ui.Model;
 
 public interface AttendanceService {
 
-	public void addDateIntoAttendance();
-	public void getMonthlyAttendance(int memberNo, Model model);
-	public void getAttencePage(int memberNo, Model model);
+	public void getAttendancePage(int memberNo, Model model);
+	public Map<String, Object> aStart(int memberNo);
+	public Map<String, Object> aEnd(int memberNo);
+	
+	public void updateAllScehduler();
+	
+	public void getAttendManagePage(HttpServletRequest request, Model model);
 	
 }
