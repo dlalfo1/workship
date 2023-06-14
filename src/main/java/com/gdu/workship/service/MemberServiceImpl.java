@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.gdu.workship.domain.DepartmentDTO;
 import com.gdu.workship.domain.JobDTO;
 import com.gdu.workship.domain.MemberDTO;
+import com.gdu.workship.domain.RetiredMemberDTO;
 import com.gdu.workship.mapper.MemberMapper;
 import com.gdu.workship.util.MyFileUtil;
 import com.gdu.workship.util.PageUtil;
@@ -85,24 +86,18 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public Map<String, Object> loadMemberList2(HttpServletRequest request) {
 
-    // 파라미터 page가 전달되지 않는 경우 page=1로 처리한다.
     Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
     int page = Integer.parseInt(opt1.orElse("1"));
-    
-    // 전체 레코드 개수를 구한다.
     int totalRecord = memberMapper.getMemberCount();
     
-    int recordPerPage = 20;
-
-    // 파라미터 column이 전달되지 않는 경우 column=MEMBER_NO로 처리한다.
+    int recordPerPage = 5;
+    
     Optional<String> opt2 = Optional.ofNullable(request.getParameter("column"));
     String column = opt2.orElse("A.MEMBER_NO");
     
-    // 파라미터 query가 전달되지 않는 경우 query=""로 처리한다. (query가 없으면 null값, 처음 화면이동 요청..)
     Optional<String> opt3 = Optional.ofNullable(request.getParameter("query"));
     String query = opt3.orElse("");
     
-    // DB로 보낼 Map 만들기
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("column", column);
     map.put("query", query);
@@ -110,21 +105,51 @@ public class MemberServiceImpl implements MemberService {
     map.put("recordPerPage", recordPerPage);    // end 대신 recordPerPage를 전달한다.
     pageUtil.setPageUtil(page, (column.isEmpty() && query.isEmpty()) ? totalRecord : memberMapper.getMemberSearchCount(map), recordPerPage);
     map.put("begin", pageUtil.getBegin());      // begin은 0부터 시작한다. (PageUtil.java 참고)
-    
-    // begin ~ end 사이의 목록 가져오기
+
     List<MemberDTO> memberList = memberMapper.getMemberList(map);
     List<DepartmentDTO> deptList = memberMapper.getDeptList();
     
     Map<String, Object> result = new HashMap<String, Object>();
-    // pagination.jsp로 전달할(forward)할 정보 저장하기
+    result.put("query", query);
     result.put("memberList", memberList);
     result.put("deptList", deptList);
-    // pagination.jsp로 전달할(forward)할 정보 저장하기
-    if(column.isEmpty() || query.isEmpty()) {
-      result.put("pagination", pageUtil.getPagination(request.getContextPath() + "/member/memberList.do"));
-    } else {
-      result.put("pagination", pageUtil.getPagination(request.getContextPath() + "/member/memberList.do?column=" + column + "&query=" + query));
-    }
+    
+    result.put("pageUtil", pageUtil);
+    result.put("pagination", pageUtil.getPagination("/member/memberList2.do?column=" + column + "&query=" + query));
+    System.out.println(result.get("pageUtil"));
+    System.out.println(result);
+    System.out.println(pageUtil.getBeginPage());
+    System.out.println(pageUtil.getEndPage());
+    System.out.println(pageUtil.getTotalPage());
+    return result;
+  }
+  
+  @Override
+  public Map<String, Object> loadRetiredMemberList(HttpServletRequest request) {
+    Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
+    int page = Integer.parseInt(opt1.orElse("1"));
+    int totalRecord = memberMapper.getRetiredMemberCount();
+    
+    int recordPerPage = 5;
+    
+    Map<String, Object> map = new HashMap<String, Object>();
+    // PageUtil(Pagination에 필요한 모든 정보) 계산하기
+    map.put("recordPerPage", recordPerPage);    // end 대신 recordPerPage를 전달한다.
+    pageUtil.setPageUtil(page, totalRecord, recordPerPage);
+    map.put("begin", pageUtil.getBegin());      // begin은 0부터 시작한다. (PageUtil.java 참고)
+
+    List<RetiredMemberDTO> retiredMemberList = memberMapper.getRetiredMemberList();
+    
+    Map<String, Object> result = new HashMap<String, Object>();
+    result.put("memberList", retiredMemberList);
+    
+    result.put("pageUtil", pageUtil);
+    result.put("pagination", pageUtil.getPagination("/member/retiredMemberList.do"));
+    System.out.println(result.get("pageUtil"));
+    System.out.println(result);
+    System.out.println(pageUtil.getBeginPage());
+    System.out.println(pageUtil.getEndPage());
+    System.out.println(pageUtil.getTotalPage());
     return result;
   }
   

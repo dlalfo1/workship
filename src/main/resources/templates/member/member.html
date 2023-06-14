@@ -2,70 +2,201 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('사원 조회')}"></head>
+<style>
+  .blind {
+    display: none;
+  }
+  .hidden {
+    visibility: hidden;
+  }
+  .enable_link {
+    cursor: pointer;
+  }
+  .pagination {
+    margin: 0 5px;
+    display: flex;
+  }
+</style>
 <script th:inline="javascript">
-
+  var page = 1;
+  var dept;
   function fnLoadListByDept(deptNo) {
+	  if(deptNo !== undefined) {
+		  query = deptNo;
+	  }
     $.ajax({
       type: 'get',
       url: '/member/memberList2.do',
-      data: 'column=D.DEPT_NO' + '&query=' + deptNo,
+      data: 'column=D.DEPT_NO' + '&query=' + query + '&page=' + page,
       dataType: 'json',
       success: function(resData) {
-        let memberListbody = $('#memberListbody');
-          
-        memberListbody.empty();  
-        
-        if(resData.memberList === 0){
-          memberListbody.append('<tr><td colspan="6">현재 사원이 없습니다.</td></tr>');
-        } else {
-            console.log(resData.memberList);                      
-          $.each(resData.memberList, function(i, member){ 
-            let str = '<tr>';
-            str += '<td>' + member.memberNo + '</td>';
-            str += '<td><a href="/member/memberDetail.html?memberNo=' + member.memberNo +'">' + member.memberName + '</td>';
-            str += '<td>' + member.departmentDTO.deptName + '</td>';
-            str += '<td>' + member.jobDTO.jobName + '</td>';
-            str += '<td>' + fnDateFormat(member.joinedAt) + '</td>';
-            str += '<td>' + member.status + '</td>';
-            str += '</tr>'
-          	memberListbody.append(str);
-            
-          })
-        }
-        
-        $('#ajaxPagination').empty();
-        var pageUtil = resData.pagination; 
+        $('#pagination').empty();
+        var pageUtil = resData.pageUtil; 
         console.log(pageUtil);
+        console.log('beginPage :' + pageUtil.beginPage);
+        console.log('endPage :' + pageUtil.endPage);
+        console.log('totalPage :' + pageUtil.totalPage);
+        if(page > pageUtil.endPage) {
+        	page = pageUtil.endPage
+        }
+        console.log('page :' + page);
         var str2 = '<div>';
         // 이전 블록
         if(pageUtil.beginPage == 1){
-          str2 += '<span class="invisible">◀</span>';
+          str2 += '<span class="hidden">◀</span>';
         } else {
-          str2 += '<span class="enable_link pagination" data-page="' + (pageUtil.beginPage - 1) + '">◀</span>';
+          str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + (pageUtil.beginPage - 1) + '">◀</span>';
         }
         // 페이지 번호
         for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
           if(p == page){
-            str2 += '<strong class="pagination">' + p + '</strong>';
+            str2 += '<strong style="display:inline" class="pagination">' + p + '</strong>';
           } else {
-            str2 += '<span class="enable_link pagination" data-page="' + p + '">' + p + '</span>';
+            str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + p + '">' + p + '</span>';
           }
         }
         // 다음 블록
         if(pageUtil.endPage == pageUtil.totalPage){
-          str2 += '<span class="invisible">▶</span>';
+          str2 += '<span class="hidden">▶</span>';
         } else {
-          str2 += '<span class="enable_link pagination" data-page="' + (pageUtil.endPage + 1) + '">▶</span>';
+          str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + (pageUtil.endPage + 1) + '">▶</span>';
         }
         str2 += '</div>';
         console.log(str2);
-        $('#ajaxPagination').append(str2);
+        $('#pagination').append(str2);
         
       }
 
+    }).then(function(){
+    	  $.ajax({
+  	      type: 'get',
+  	      url: '/member/memberList2.do',
+  	      data: 'column=D.DEPT_NO' + '&query=' + query + '&page=' + page,
+  	      dataType: 'json',
+  	      success: function(resData) {
+  	    	  let memberListbody = $('#memberListbody');
+        
+  	    	  memberListbody.empty();  
+        
+  	    	  if(resData.memberList === 0){
+  	    		  memberListbody.append('<tr><td colspan="6">현재 사원이 없습니다.</td></tr>');
+            } else {
+              $.each(resData.memberList, function(i, member){ 
+                let str = '<tr>';
+                let status;
+                switch(member.status){ 
+                  case 0: status = '재직'; break; 
+                  case 1: status = '교육'; break; 
+                  case 2: status = '출장'; break; 
+                  case 3: status = '휴가'; break; 
+                  case 4: status = '퇴직'; break; 
+                  default: status = '';
+                }
+                str += '<td>' + member.memberNo + '</td>';
+                str += '<td><a href="/member/memberDetail.html?memberNo=' + member.memberNo +'">' + member.memberName + '</td>';
+                str += '<td>' + member.departmentDTO.deptName + '</td>';
+                str += '<td>' + member.jobDTO.jobName + '</td>';
+                str += '<td>' + fnDateFormat(member.joinedAt) + '</td>';
+                str += '<td>' + status + '</td>';
+                str += '</tr>'
+                memberListbody.append(str);
+            
+              })
+            }
+  	      }
+    	  })
     })
     
   }
+  
+  function fnLoadRetiredList(){
+	  $.ajax({
+          type: 'get',
+          url: '/member/retiredMemberList.do',
+          data: 'page=' + page,
+          dataType: 'json',
+          success: function(resData) {
+            let memberListbody = $('#memberListbody');
+            let memberhead = $('#memberhead');
+        
+            memberhead.empty();  
+            memberListbody.empty();
+            
+            let head = '<tr>';
+            head += '<th>사원번호</th>';
+            head += '<th>사원명</th>';
+            head += '<th>전화번호</th>';
+            head += '<th>입사일</th>';
+            head += '<th>퇴사일</th>';
+            head += '</tr>'
+            memberhead.append(head);
+        
+            if(resData.memberList === 0){
+              memberListbody.append('<tr><td colspan="6">현재 사원이 없습니다.</td></tr>');
+            } else {
+              $.each(resData.memberList, function(i, member){
+                let str = '<tr>';
+                str += '<td>' + member.retiredMemberNo + '</td>';
+                str += '<td>'+ member.memberName +'</td>';
+                str += '<td>' + member.tel + '</td>';
+                str += '<td>' + fnDateFormat(member.joinedAt) + '</td>';
+                str += '<td>' + fnDateFormat(member.modifiedAt) + '</td>';
+                str += '</tr>'
+                memberListbody.append(str);
+                
+              })
+            }
+
+              $('#pagination').empty();
+    	        var pageUtil = resData.pageUtil; 
+    	        console.log(pageUtil);
+    	        console.log('beginPage :' + pageUtil.beginPage);
+    	        console.log('endPage :' + pageUtil.endPage);
+    	        console.log('totalPage :' + pageUtil.totalPage);
+    	        if(page > pageUtil.endPage) {
+    	          page = pageUtil.endPage
+    	        }
+    	        console.log('page :' + page);
+    	        var str2 = '<div>';
+    	        // 이전 블록
+    	        if(pageUtil.beginPage == 1){
+    	          str2 += '<span class="hidden">◀</span>';
+    	        } else {
+    	          str2 += '<span style="display:inline" class="enable_link pagination data-page="' + (pageUtil.beginPage - 1) + '">◀</span>';
+    	        }
+    	        // 페이지 번호
+    	        for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
+    	          if(p == page){
+    	            str2 += '<strong style="display:inline" class="pagination">' + p + '</strong>';
+    	          } else {
+    	            str2 += '<span style="display:inline" class="enable_link pagination" data-page="' + p + '">' + p + '</span>';
+    	          }
+    	        }
+    	        // 다음 블록
+    	        if(pageUtil.endPage == pageUtil.totalPage){
+    	          str2 += '<span class="hidden">▶</span>';
+    	        } else {
+    	          str2 += '<span style="display:inline" class="enable_link pagination" data-page="' + (pageUtil.endPage + 1) + '">▶</span>';
+    	        }
+    	        str2 += '</div>';
+    	        console.log(str2);
+    	        $('#pagination').append(str2);
+	        
+	      }
+
+	    })
+  }
+  
+  function fnChangePage(){
+      $(document).on('click', '.enable_link', function(){
+        page = $(this).data('page');
+        query = $(this).data('query');
+        console.log(page);
+        console.log(query);
+        fnLoadListByDept(query);
+      })
+  }
+  
   function fnDateFormat(nCreatedAt) {
     var d = new Date(nCreatedAt),
     year = d.getFullYear(),
@@ -108,6 +239,7 @@
       }
     }
   })
+  fnChangePage();
 </script>
 <body>
 
@@ -133,7 +265,7 @@
             
             <div class="gubunTab">
               <ul>
-               <li><a th:href="@{/member/memberList.do}">전체</a></li>
+               <li style="width: 80px;"><a th:href="@{/member/memberList.do}">전체</a></li>
                 <!--/* <li><a onclick="fnMemberList()">전체</a></li> */-->
                 <th:block th:if="${#lists.isEmpty(deptList)}">
               	</th:block>
@@ -142,19 +274,20 @@
               		  <li style="width: 80px;"><a href="javascript:void(0);" th:text="${dept.deptName}" th:onclick="fnLoadListByDept([[${dept.deptNo}]])"></a></li>
                   </th:block>
               	</th:block>
+                <li style="width: 80px;"><a href="javascript:void(0);" th:onclick="fnLoadRetiredList()">퇴직자</a></li>
               </ul>
             </div>
             
             <div class="memberList">
               <table border="1" id="listTable" class="table table-hover" align="center">
-                <thead>
+                <thead id="memberhead">
                   <tr>
                     <th style="width: 50px;">사원번호</th>
                     <th style="width: 80px;">사원명</th>
                     <th style="width: 80px;">부서명</th>
                     <th style="width: 80px;">직위</th>
                     <th style="width: 100px;">입사일</th>
-                    <th style="width: 80px;">상태</th>
+                    <th style="width: 80px;" class="status">상태</th>
                   </tr>
                 </thead>
                 <tbody id="memberListbody">
@@ -198,8 +331,9 @@
                 <button>검색</button>
               </form>
             </div>
-            <div class="pagination">
-                <div id="ajaxPagination" style="text-align: center;" th:utext="${pagination}"></div>  
+            <div>
+              <div id="pagination" style="text-align: center;" th:utext="${pagination}"></div>
+              <!--/* <div class="pagination" style="text-align: center;" th:utext="${pagination}"></div> */-->
             </div>
           </div> <!--/* member-main 끝나는 지점 */-->
 

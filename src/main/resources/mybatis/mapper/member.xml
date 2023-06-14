@@ -71,6 +71,15 @@
     </where>
   </select>
   
+  <select id="getRetiredMemberCount" resultType="int">
+    SELECT COUNT(*)
+      FROM RETIRED_MEMBER_T
+  </select>
+  <select id="getRetiredMemberList" resultType="RetiredMemberDTO">
+    SELECT RETIRED_MEMBER_NO, MEMBER_NAME, TEL, JOINED_AT, RETIRED_AT
+      FROM RETIRED_MEMBER_T
+  </select>
+  
   <select id="selectDept" parameterType="int" resultType="DepartmentDTO">
     SELECT DEPT_NO, DEPT_NAME
       FROM DEPARTMENT_T

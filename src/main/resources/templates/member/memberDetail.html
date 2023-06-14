@@ -61,13 +61,10 @@
   }
   
   function fnCancel() {
-    $('#btnCancel').on('click', function(){
-      history.back();
-    })
+    history.back();
   }
   $(function(){
     fnPreview();
-    fnCancel();
     
     // 사원의 부서, 직위, 상태 db값으로 selected
     let deptNo = /*[[${m.departmentDTO.deptNo}]]*/ null;
@@ -161,8 +158,9 @@
                         <option value="">상태 선택</option>
                         <option value="0">재직</option>
                         <option value="1">출장</option>
-                        <option value="2">휴가</option>
-                        <option value="3">퇴직</option>
+                        <option value="2">교육</option>
+                        <option value="3">휴가</option>
+                        <option value="4">퇴직</option>
                       </select>
                     </div>
                   </div>

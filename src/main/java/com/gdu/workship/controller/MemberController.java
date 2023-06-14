@@ -35,7 +35,13 @@ public class MemberController {
   @ResponseBody
   public Map<String, Object> memberList2(HttpServletRequest request) {
    return memberService.loadMemberList2(request);
-   }
+  }
+  
+  @GetMapping(value="/member/retiredMemberList.do", produces="application/json")
+  @ResponseBody
+  public Map<String, Object> retiredMemberList(HttpServletRequest request) {
+    return memberService.loadRetiredMemberList(request);
+  }
   
   @PostMapping("/member/addMember.do")
   public String addMember(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
