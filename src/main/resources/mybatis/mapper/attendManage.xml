@@ -18,6 +18,31 @@
     </association>
   </resultMap>
 
+  <select id="getAllMemberNo" resultType="int">
+   SELECT MEMBER_NO
+     FROM MEMBER_T
+    ORDER BY MEMBER_NO
+  </select>
+  
+  <select id="getAttendanceYesterday" parameterType="int" resultType="AttendanceDTO">
+   SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
+     FROM ATTENDANCE_T
+    WHERE MEMBER_NO = #{memberNo}
+      AND DATE = DATE(NOW()) - 1
+  </select>
+  
+  <insert id="addAbsent" parameterType="int">
+    INSERT INTO ATTENDANCE_T
+    VALUES (#{memberNo}, DATE(NOW()) - 1, '00:00:00', '00:00:00', '00:00:00', '결근')
+  </insert>
+  
+  <update id="updateError" parameterType="int">
+    UPDATE ATTENDANCE_T
+       SET ATTENDANCE = '퇴근미처리'
+     WHERE MEMBER_NO = #{memberNo}
+       AND DATE = DATE(NOW()) - 1
+  </update>
+
   <select id="getTodaysCount" resultType="int">
     SELECT COUNT(*)
       FROM ATTENDANCE_T
