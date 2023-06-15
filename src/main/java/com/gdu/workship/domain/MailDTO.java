@@ -18,4 +18,7 @@ public class MailDTO {
    private String mailCategory;
    private String mailStar;
    private Date mailDate;
+   private MailToDTO mailToDTO;
+   private MailCcDTO mailCcDTO;
+   private MailBcDTO mailBcDTO;
 }
