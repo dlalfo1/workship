@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MailDTO {
-	private int mailNo;
-	private MemberDTO memberDTO;
-	private String mailTitle;
-	private String mailContent;
-	private String mailHasFile;
-	private String mailCategory;
-	private Date mailDate;
+   private int mailNo;
+   private MemberDTO memberDTO;
+   private String mailTitle;
+   private String mailContent;
+   private String mailHasFile;
+   private String mailCategory;
+   private String mailStar;
+   private Date mailDate;
 }

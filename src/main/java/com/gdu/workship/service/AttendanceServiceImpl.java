@@ -3,12 +3,10 @@ package com.gdu.workship.service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -105,9 +103,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 				Map<String, Object> parameter = new HashMap<>();
 				String attendance = "";
 				LocalDateTime now = LocalDateTime.now();
-				if(attendNow.equals("정상") && now.getHour() > 6) attendance = "정상";
-				if(attendNow.equals("정상") && now.getHour() < 6) attendance = "조퇴";
-				if(attendNow.equals("지각") && now.getHour() > 18) attendance = "지각";
+				if(attendNow.equals("정상") && now.getHour() >= 18) attendance = "정상";
+				if(attendNow.equals("정상") && now.getHour() < 18) attendance = "조퇴";
+				if(attendNow.equals("지각") && now.getHour() >= 18) attendance = "지각";
 				if(attendNow.equals("지각") && now.getHour() < 18) attendance = "지각/조퇴";
 				parameter.put("memberNo", memberNo);
 				parameter.put("time", now);
