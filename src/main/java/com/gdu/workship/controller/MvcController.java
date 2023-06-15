@@ -30,12 +30,11 @@ public class MvcController {
 	public String welcome() {
 		return "index";
 	}
-	
-	@GetMapping("/mail/rlist.html")
-	public String mailMain() {
-		return "mail/rlist";
-	}
-	
+
+	/*
+	 * @GetMapping("/mail/rlist.html") public String mailMain() { return
+	 * "mail/rlist"; }
+	 */
 	@GetMapping("/approval/docList.html")
 	public String approvalDocList() {
 		return "approval/docList";

@@ -1,64 +1,37 @@
 package com.gdu.workship.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.gdu.workship.service.MailService;
+
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @RequestMapping("/mail")
 @Controller
 public class MailController {
-
+	
+	// field
+	private final MailService mailService;
+	
+	 @GetMapping("/list.html")
+	 public String mailList(HttpServletRequest request, Model model) {
+		 mailService.getMailRlist(request, model);
+		 return "mail/" + request.getParameter("mailCategory"); 
+	 }
+	 
 	 @GetMapping("/write.html")
-	 public String writeMail() {
+	 public String mailWrite() {
 		 return "mail/write";
 	 }
 	 
-	 @GetMapping("/noread.html")
-	 public String noreadMail() {
-		 return "mail/noread";
-	 }
-	 
-	 @GetMapping("/starred.html")
-	 public String starredMail() {
-		 return "mail/starred";
-	 }
-	 
-	 @GetMapping("slist.html")
-	 public String sendMail() {
-		 return "mail/slist";
-	 }
-	 
-	 @GetMapping("dlist.html")
-	 public String draftMail() {
-		 return "mail/dlist";
-	 }
-	 
-	 @GetMapping("plist.html")
-	 public String spamMail() {
-		 return "mail/plist";
-	 }
-	 
-	 @GetMapping("tlist.html")
-	public String trashMail() {
-		 return "mail/tlist";
-	 }
-	 
-	 @GetMapping("address.html")
-	 public String mailAddress() {
+	 @GetMapping("/address.html")
+	 public String mailAddr() {
 		 return "mail/address";
 	 }
-	 
-	 @GetMapping("sent.html")
-	public String sentMail() {
-		 return "mail/sent";
-	 }
-	 
-	 @PostMapping("add.do")
-	 public String addMail() {
-		 return "mail/sent";
-	 }
-	 
-	/* @GetMapping("/search.do") */
-	 
 }

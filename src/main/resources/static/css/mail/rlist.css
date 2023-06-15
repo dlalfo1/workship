@@ -62,14 +62,13 @@ li {
 	display: flex;
 }
 
-.mailContent {
+.rmailCheck {
+	display: flex;
+	gap: 32px;
+}
+.rmailContent {
 	display: flex;
 	justify-content: space-between;
-}
-
-.mailCheck {
-	display: flex;
-	gap: 24px;
 }
 
 input[type="radio"] {
