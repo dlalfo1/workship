@@ -25,12 +25,12 @@
           <div class="row">
           
             <!--/* 1번째줄 1번째칸 */-->
-            <div class="col-md-4 stretch-card grid-margin">
+            <div class="col-md-4 grid-margin">
         
               <div class="row">
               
-                <!--/* 나의 정보 */-->
-                <div class="col-md-12 stretch-card grid-margin mb-3">
+                <!--/* (끝!) 나의 정보 */-->
+                <div class="col-md-12 grid-margin mb-3">
                   <div class="card card-dark-blue">
                     <div class="card-body">
                       <p class="card-title text-white">나의 정보</p>                      
@@ -50,7 +50,7 @@
                 </div>
                 
                 <!--/* 메일정보 */-->
-                <div class="col-md-12 stretch-card grid-margin mb-3">
+                <div class="col-md-12 grid-margin mb-3">
                   <div class="card">
                     <div class="card-body">
                       <p class="card-title">메일</p>                      
@@ -74,8 +74,8 @@
                   </div>
                 </div>
                 
-                <!--/* 출퇴근기록 */-->
-                <div class="col-md-12 stretch-card grid-margin">
+                <!--/* (끝!) 출퇴근기록 */-->
+                <div class="col-md-12 grid-margin">
                   <div class="card">
                     <div class="card-body">
                       <p class="card-title">출퇴근기록</p>                      
@@ -90,31 +90,51 @@
                       <div>
                         <div class="row text-center">
                           <div class="col-5"><h3>출근시간</h3></div>
-                          <div class="col-7 text-primary"><h3 id="aStartTime" th:text="${attendanceToday.astarttime}"></h3></div>
+                          <div class="col-7 text-primary"><h3 id="aStartTime" th:text="${#dates.format(attendanceToday?.astarttime, 'HH:mm:ss')}"></h3></div>
                         </div>
                         <div class="row text-center">
                           <div class="col-5"><h3>퇴근시간</h3></div>
-                          <div class="col-7 text-primary"><h3 id="aEndTime" th:text="${attendanceToday.aendtime}"></h3></div>
+                          <div class="col-7 text-primary"><h3 id="aEndTime" th:text="${#dates.format(attendanceToday?.aendtime, 'HH:mm:ss')}"></h3></div>
                         </div>
                       </div>
                       <script th:inline="javascript">
-                      function fnAStart(){
-                    	  var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
-                        $.ajax({
-                          type: 'get',
-                          url: '/main/aStart.do',
-                          data: 'memberNo=' + memberNo,
-                          dataType: 'json',
-                          success: function(resData){
-                        	  var result = resData.result;
-                        	  if(result == 'fail') {
-                        		  alert('이미 출근 처리되었습니다.');
-                        	  } else {
-                        		  $('#aStartTime').text(result);
-                        	  }
-                          }
-                        })
-                      };
+	                      function fnAStart(){
+	                    	  var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
+	                        $.ajax({
+	                          type: 'get',
+	                          url: '/main/aStart.do',
+	                          data: 'memberNo=' + memberNo,
+	                          dataType: 'json',
+	                          success: function(resData){
+	                        	  var result = resData.result;
+	                        	  if(result == 'fail') {
+	                        		  alert('이미 출근 처리되었습니다.');
+	                        	  } else {
+	                        		  $('#aStartTime').text(result.substr(11, 8));
+	                        	  }
+	                          }
+	                        })
+	                      };
+	                      
+	                      function fnAEnd(){
+	                         var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
+	                         $.ajax({
+	                           type: 'get',
+	                           url: '/main/aEnd.do',
+	                           data: 'memberNo=' + memberNo,
+	                           dataType: 'json',
+	                           success: function(resData){
+	                             var result = resData.result;
+	                             if(result == 'noStart') {
+	                               alert('출근 처리가 되지 않았습니다.');
+	                             } else if(result == 'alreadyEnd'){
+	                            	 alert('이미 퇴근 처리되었습니다.');
+	                             } else {
+	                            	 $('#aEndTime').text(result.substr(11, 8));
+	                             }
+	                           }
+	                         })
+	                       };
                       </script>
                     </div>
                   </div>
@@ -129,7 +149,7 @@
 
               <div class="row">
               
-                <!--/* 공지사항 */-->
+                <!--/* (끝!) 공지사항 */-->
                 <div class="col-md-12 stretch-card grid-margin mb-3">
                   <div class="card">
                     <div class="card-body">
@@ -143,17 +163,24 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <th:block th:each="notice:${noticeList}">
-                            <tr id="notice" th:onclick="fnNoticeDetail([[${notice.noticeNo}]])">
-                              <td th:text="${notice.noticeTitle}"></td>
-                              <td class="text-center" th:text="${notice.memberDTO.memberName}"></td>
-                              <td class="text-center" th:text="${#dates.format(notice.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
-                            </tr>
-                            <script th:inline="javascript">
-                              function fnNoticeDetail(noticeNo){
-                            	  location.href = '/notice/noticeDetail.html?noticeNo=' + noticeNo;
-                              }
-                            </script>
+		                      <th:block th:if="${#lists.isEmpty(noticeList)}">
+		                        <tr> 
+		                          <td class="text-center" colspan="3">등록된 최신 공지사항이 없습니다.</td>
+		                        </tr>
+		                      </th:block>
+		                      <th:block th:unless="${#lists.isEmpty(noticeList)}">
+	                          <th:block th:each="notice:${noticeList}">
+	                            <tr id="notice" th:onclick="fnNoticeDetail([[${notice?.noticeNo}]])">
+	                              <td th:text="${notice?.noticeTitle}"></td>
+	                              <td class="text-center" th:text="${notice?.memberDTO.memberName}"></td>
+	                              <td class="text-center" th:text="${#dates.format(notice?.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
+	                            </tr>
+	                            <script th:inline="javascript">
+	                              function fnNoticeDetail(noticeNo){
+	                            	  location.href = '/notice/noticeDetail.html?noticeNo=' + noticeNo;
+	                              }
+	                            </script>
+	                          </th:block>
                           </th:block>
                         </tbody>
                       </table>

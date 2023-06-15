@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MvcController {
 
+	/* 지워도 되겠지?
 	@GetMapping("/loginTemp.html")
 	public String loginTemp() {
 		return "loginTemp";
@@ -25,16 +26,21 @@ public class MvcController {
 	public String temp() {
 		return "temp/temp";
 	}
+	*/
 	
 	@GetMapping({"/", "/index.html"})
 	public String welcome() {
 		return "index";
 	}
+<<<<<<< HEAD
 
 	/*
 	 * @GetMapping("/mail/rlist.html") public String mailMain() { return
 	 * "mail/rlist"; }
 	 */
+=======
+	
+>>>>>>> main
 	@GetMapping("/approval/docList.html")
 	public String approvalDocList() {
 		return "approval/docList";
