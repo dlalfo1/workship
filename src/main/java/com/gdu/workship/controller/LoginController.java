@@ -1,5 +1,6 @@
 package com.gdu.workship.controller;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,4 +41,12 @@ public class LoginController {
 	  public String findPwForm() {
 	    return "login/findPassword";
 	  }
+	  
+	  public void setCookie(HttpServletResponse response) {
+	    Cookie cookie = new Cookie("cookieName", "cookieValue");
+	    cookie.setMaxAge(0); 
+	    cookie.setPath("/"); 
+	    response.addCookie(cookie);
+	  }
+
 }

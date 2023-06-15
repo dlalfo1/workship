@@ -83,7 +83,7 @@ $(function(){
                 <img src="images/workship.png" alt="logo">
               </div>
               <!--/* 로그인 */-->
-              <form class="pt-3" id="frmLogin" method="post" th:action="@{/login/main.do}">
+              <form class="pt-3" id="frmLogin" name="frmLogin" method="post" th:action="@{/login/main.do}">
                 <input type="hidden" name="url" th:value="@{/main/main.html}">
                 <div class="form-group">
                   <input type="email" class="form-control form-control-lg" name="emailId" id="emailId" placeholder="아이디를 입력하세요.">
@@ -96,13 +96,13 @@ $(function(){
                 </div>
                 <div class="my-2 d-flex justify-content-between align-items-center">
                     <div class="form-check">
-                    <label class="form-check-label text-muted">
-                      <input type="checkbox" class="form-check-input" id="chkRememberId">
+                    <label class="form-check-label text-muted" for="chkRememberId">
+                      <input type="checkbox" class="form-check-input" id="chkRememberId" name="chkRememberId">
                       이메일 저장
                     </label>
                   </div>
                   <div class="form-check">
-                    <label class="form-check-label text-muted">
+                    <label class="form-check-label text-muted" for="chkAutologinId">
                       <input type="checkbox" class="form-check-input" name="chkAutologinId" id="chkAutologinId">
                       자동 로그인
                     </label>
