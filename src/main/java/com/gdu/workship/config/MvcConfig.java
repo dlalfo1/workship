@@ -13,7 +13,7 @@ public class MvcConfig implements WebMvcConfigurer {
     	 registry.addInterceptor(new LoginInterceptor())
          .addPathPatterns("/**") // 인터셉터를 적용할 경로 패턴을 지정합니다.
          .excludePathPatterns("/css/*") // 인터셉터에서 제외할 경로 패턴을 지정합니다.
-    	 .excludePathPatterns("/js/*") // 인터셉터에서 제외할 경로 패턴을 지정합니다.
+    	 .excludePathPatterns("/js/*") 
     	 .excludePathPatterns("/images/*")
     	 .excludePathPatterns("/pages/*")
     	 ; // 인터셉터에서 제외할 경로 패턴을 지정합니다.
