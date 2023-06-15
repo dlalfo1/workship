@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NoticeDTO {
+	
 	private int noticeNo;
 	private MemberDTO memberDTO;
 	private String noticeTitle;
@@ -18,4 +19,8 @@ public class NoticeDTO {
 	private Date noticeModifiedAt;
 	private int noticeHit;
 	private int noticeState;
+
+  private int prevNo;
+  private int nextNo;
+  
 }

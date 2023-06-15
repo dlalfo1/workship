@@ -47,7 +47,7 @@
                   <div class="row" style="height: 40px;">
                     <div class="col-5">출근시간</div>
                     <div class="col-7 text-primary"><h3 id="aStartTime" th:text="${#dates.format(attendanceToday?.astarttime, 'HH:mm:ss')}"></h3></div>
-                  </div> <!-- 출근시간 -->
+                  </div>
                   <div class="row" style="height: 40px;">
                     <div class="col-5">퇴근시간</div>
                     <div class="col-7 text-primary"><h3 id="aEndTime" th:text="${#dates.format(attendanceToday?.aendtime, 'HH:mm:ss')}"></h3></div>
@@ -142,11 +142,86 @@
             </div>
             
             <!--/* 검색 조건 설정 */-->
-            <div class="col-md-4 stretch-card grid-margin mb-3">
+            <div class="col-md-4 grid-margin mb-3">
               <div class="card">
                 <div class="card-body">
-                  <p class="card-title"></p>
+                  <p class="card-title">검색 조건 설정</p>
+                  <div style="margin-bottom: 0.5rem; padding-left: 1rem;">기간 설정</div>
+                  <div class="text-center mb-2">
+                    <input type="text" id="startDate" name="startDate" style="width: 40%;">
+                    <label for="startDate"><i class="fa-regular fa-calendar" style="margin-left:-30px;"></i></label>
+                    <span>&nbsp;&nbsp;~&nbsp;&nbsp;</span>
+                    <input type="text" id="endDate" name="endDate" style="width: 40%;">
+                    <label for="endDate"><i class="fa-regular fa-calendar" style="margin-left:-30px;"></i></label>
+                  </div>
+                  <div style="padding-left: 1rem;">근태</div>
+                  <div class="row" style="padding-left: 1.3rem;">
+                    <div class="form-check" style="justify-content: space-between;">
+                      <label for="checkAll" class="form-check-label">
+                      <input type="checkbox" class="form-check-input" id="checkAll">
+                      전체&nbsp;&nbsp;
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <label for="normal" class="form-check-label" style="justify-content: space-between;">
+	                    <input type="checkbox" name="attendance" class="form-check-input checkOne" id="normal">
+	                    정상&nbsp;&nbsp;
+	                    </label>
+                    </div>
+                    <div class="form-check">
+                      <label for="late" class="form-check-label" style="justify-content: space-between;">
+                      <input type="checkbox" name="attendance" class="form-check-input checkOne" id="late">
+                      지각&nbsp;&nbsp;
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <label for="early" class="form-check-label" style="justify-content: space-between;">
+                      <input type="checkbox" name="attendance" class="form-check-input checkOne" id="early">
+                      조퇴&nbsp;&nbsp;
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <label for="absent" class="form-check-label" style="justify-content: space-between;">
+                      <input type="checkbox" name="attendance" class="form-check-input checkOne" id="absent">
+                      결근&nbsp;&nbsp;
+                      </label>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <input type="button" class="btn btn-sm btn-primary btn-rounded" value="조회">
+                  </div>
                 </div>
+                <script>
+                  $('#startDate').datepicker({
+                	  maxDate: 0
+                  });
+
+                  $('#endDate').datepicker({
+                    maxDate: 0,
+                    onClose: function(selectedDate){
+                    	console.log(selectedDate);
+                    }
+                  });
+                  
+                  function fnCheckAll(){
+                	  $('#checkAll').on('click', function(){
+                		  $('.checkOne').prop('checked', $(this).prop('checked'));
+                	  })
+                  };
+                  
+                  function fnCheckOne(){
+                	  let chkOne = $('.checkOne');
+                	  chkOne.on('click', function(){
+                		  let chkCnt = 0;
+                		  for(let i = 0; i < chkOne.length; i++){
+                			  chkCnt += $(chkOne[i]).prop('checked');
+                		  }
+                		  $('#checkAll').prop('checked', chkCnt == chkOne.length);
+                	  })
+                  };
+                  fnCheckAll();
+                  fnCheckOne();
+                </script>
               </div>
             </div>
 
