@@ -37,9 +37,5 @@ public class AttendManageServiceImpl implements AttendManageService {
 	public void getAttendManagePage(HttpServletRequest request, Model model) {
 		
 	}
-	@Override
-	public Map<String, Object> manageSearch(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 }
