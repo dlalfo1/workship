@@ -17,8 +17,6 @@
 		<typeAlias alias="BoardCommentDTO"      type="com.gdu.workship.domain.BoardCommentDTO" />
 		<typeAlias alias="MailDTO"              type="com.gdu.workship.domain.MailDTO"/>
 		<typeAlias alias="MailToDTO"            type="com.gdu.workship.domain.MailToDTO"/>
-		<typeAlias alias="MailCcDTO"            type="com.gdu.workship.domain.MailCcDTO"/>
-		<typeAlias alias="MailBcDTO"            type="com.gdu.workship.domain.MailBcDTO"/>
 		<typeAlias alias="MailFileDTO"          type="com.gdu.workship.domain.MailFileDTO"/>
 		<typeAlias alias="JobDTO"               type="com.gdu.workship.domain.JobDTO"/>
 		<typeAlias alias="DepartmentDTO"        type="com.gdu.workship.domain.DepartmentDTO"/>

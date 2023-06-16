@@ -22,11 +22,6 @@ public interface AttendanceMapper {
 	public List<Date> getMonthlyWorktime(int memberNo);
 	
 	public List<AttendanceDTO> searchAttendance(Map<String, Object> map);
-	
-	// 스케줄러 - 1
-	public List<Integer> getAllMemberNo();
-	public AttendanceDTO getAttendanceYesterday(int memberNo);
-	public int addAbsent(int memberNo);
-	public int updateError(int memberNo);
+	public int searchCount(Map<String, Object> map);
 	
 }
