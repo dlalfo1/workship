@@ -87,8 +87,8 @@
   <select id="getNoticeList" parameterType="Map" resultMap="NoticeMap">
     SELECT A.NOTICE_NO, A.MEMBER_NAME, A.NOTICE_TITLE, A.NOTICE_CONTENT, A.NOTICE_CREATED_AT, A.NOTICE_MODIFIED_AT, A.NOTICE_HIT, A.NOTICE_STATE, A.JOB_NAME
       FROM (SELECT N.NOTICE_NO, M.MEMBER_NAME, N.NOTICE_TITLE, N.NOTICE_CONTENT, N.NOTICE_CREATED_AT, N.NOTICE_MODIFIED_AT, N.NOTICE_HIT, N.NOTICE_STATE, J.JOB_NAME
-              FROM NOTICE_BOARD_T N RIGHT OUTER JOIN MEMBER_T M
-                ON M.MEMBER_NO = N.MEMBER_NO LEFT OUTER JOIN JOB_T J
+              FROM NOTICE_BOARD_T N INNER JOIN MEMBER_T M
+                ON M.MEMBER_NO = N.MEMBER_NO INNER JOIN JOB_T J
                 ON M.JOB_NO = J.JOB_NO
            <where>
            <!-- 전달된 column 그대로 부를 수 있다. mybatis.org 동적 sql 참고-->
@@ -141,6 +141,17 @@
      WHERE NOTICE_FILE_NO = #{noticeFileNo}
   </select>
   
+  <!-- 이전글, 다음글 -->
+  <select id="prevAndNextBoard" parameterType="int" resultType="NoticeDTO">
+    SELECT A.NOTICE_NO, A.NEXTNO, A.PREVNO
+      FROM(SELECT N.NOTICE_NO
+              , LAG(N.NOTICE_NO, 1, 0) OVER(ORDER BY N.NOTICE_NO DESC) AS NEXTNO
+              , LEAD(N.NOTICE_NO, 1, 0) OVER(ORDER BY N.NOTICE_NO DESC) AS PREVNO
+           FROM NOTICE_BOARD_T N INNER JOIN MEMBER_T M
+             ON M.MEMBER_NO = N.MEMBER_NO INNER JOIN JOB_T J
+             ON M.JOB_NO = J.JOB_NO) A
+    WHERE A.NOTICE_NO = #{noticeNo}
+  </select>
   
   <insert id="addNotice" useGeneratedKeys="true" keyProperty="noticeNo" parameterType="NoticeDTO">
     INSERT INTO NOTICE_BOARD_T (

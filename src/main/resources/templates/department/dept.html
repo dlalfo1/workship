@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('부서 관리')}"></head>
+<script th:inline="javascript">
+  $(function() {
+	  let addResult = /*[[${addResult}]]*/ null;
+	  if(addResult !== null){
+      if(addResult === 1) {
+        alert('부서 등록을 성공했습니다.');
+      } else {
+        alert('부서 등록을 실패했습니다.');
+      }
+    }
+    
+    let removeResult = /*[[${removeResult}]]*/ null;
+    if(removeResult !== null){
+      if(removeResult === 1) {
+        alert('부서 삭제를 성공했습니다.');
+      } else {
+        alert('부서 삭제를 실패했습니다.');
+      }
+    }
+  })
+
+</script>
+<body>
+
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <a th:href="@{/department/deptList.html}">부서 관리</a>
+          
+          <div class="row">
+            <div class="col-md-12 stretch-card grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-title">부서 추가</p>
+                  <form method="post" id="createDept" class="form-inline" th:action="@{/department/addDept.do}">
+                  <label for="inputDeptName" class="col-sm-1 col-form-label">부서명</label>
+                  <input type="text" class="form-control mb-2 mr-sm-2 col-sm-4" id="inputDeptName" name="deptName" placeholder="부서명을 적어주세요.">
+                  <div id="msg" style="display: block;"></div>
+                  <button type="button" id="btnAdd" class="btn btn-primary mb-2">부서 추가</button>
+                  <button type="reset" class="btn btn-outline-info mb-2">다시 입력</button>
+                  
+                  </form>
+                  <script>
+                    var deptPass = false;
+                  
+                    $('#inputDeptName').on('keyup', function(){
+                	    let inputDeptName = $(this).val();
+                	    var regDept = /^[가-힣]{3,9}$/;
+                	    
+                	    if(inputDeptName.length == 0){
+              	        $('#msg').text('');
+              	        deptPass = false;
+                	    } else if(regDept.test($('#inputDeptName').val())){
+              	        $('#msg').text('부서명이 정상적으로 작성되었습니다.').css('color', '#0000FF').css('font-size', '14px');
+              	        deptPass = true;
+                	    } else {
+              	        $('#msg').text('부서명은 한글로 3~9글자까지 가능합니다.').css('color', '#FF0000').css('font-size', '14px');
+              	        deptPass = false;
+                	    }
+                    })
+                    $('#btnAdd').on('click', function(event){
+                    	if(confirm('새 부서 등록을 하시겠습니까?') == false) {
+                    		event.preventDefault();
+                    		return;
+                    	}
+                    	if(deptPass == false){
+                        alert('부서명을 확인하세요.')
+                        event.preventDefault();
+                        return;
+                      }
+                    	$('#createDept').submit();
+                    })
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-12 stretch-card grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-title">부서 조회</p>
+                  <table class="table table-sm table-striped text-center">
+                    <thead>
+                      <tr>
+                        <th width="20%">부서번호</th>
+                        <th width="20%">부서명</th>
+                        <th width="20%">부서장</th>
+                        <th width="20%">구성원 수</th>
+                        <th width="20%">관리</th>
+                      </tr>
+                    </thead>
+                    <tbody id="departmentListBody">
+                      <th:block th:each="dept:${deptList}">
+                        <tr>
+                          <td th:text="${dept.deptNo}"></td>
+                          <td class="inputDeptName" th:text="${dept.deptName}"></td>
+                          <td th:text="${dept.deptHead}"></td>
+                          <td th:text="|${dept.memberCount} 명|"></td>
+                          <td>
+                            <button type="button" id="btnEdit" class="btn btn-outline-secondary btn-sm">수정</button>
+                            <button type="button" id="btnRemove" class="btn btn-outline-danger btn-sm" th:onclick="fnRemoveDept([[${dept}]])">삭제</button>
+                          </td>
+                        </tr>
+                      </th:block>
+                    </tbody>
+                  </table>
+                  <script>
+                    function fnRemoveDept(dept) {
+                    	console.log(dept);
+                    	let deptName = dept.deptName;
+                    	let deptNo = dept.deptNo;
+                    	if(dept.memberCount != 0) {
+                    		alert('부서에 구성원이 있다면 삭제할 수 없습니다.');
+                    		return;
+                    	} else {
+                    		if(confirm(deptName + '을(를) 삭제하시겠습니까?')) {
+                    			location.href = '/department/removeDept.do?deptNo=' + deptNo;
+                    		} else {
+                    			return;
+                    		}
+                    	}
+                    }
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+            
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

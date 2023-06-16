@@ -24,87 +24,105 @@
 	  if(deptNo !== undefined) {
 		  query = deptNo;
 	  }
-    $.ajax({
-      type: 'get',
-      url: '/member/memberList2.do',
-      data: 'column=D.DEPT_NO' + '&query=' + query + '&page=' + page,
-      dataType: 'json',
-      success: function(resData) {
-        $('#pagination').empty();
-        var pageUtil = resData.pageUtil; 
-        console.log(pageUtil);
-        console.log('beginPage :' + pageUtil.beginPage);
-        console.log('endPage :' + pageUtil.endPage);
-        console.log('totalPage :' + pageUtil.totalPage);
-        if(page > pageUtil.endPage) {
-        	page = pageUtil.endPage
-        }
-        console.log('page :' + page);
-        var str2 = '<div>';
-        // 이전 블록
-        if(pageUtil.beginPage == 1){
-          str2 += '<span class="hidden">◀</span>';
-        } else {
-          str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + (pageUtil.beginPage - 1) + '">◀</span>';
-        }
-        // 페이지 번호
-        for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
-          if(p == page){
-            str2 += '<strong style="display:inline" class="pagination">' + p + '</strong>';
-          } else {
-            str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + p + '">' + p + '</span>';
+	  
+	  new Promise(function(resolve, reject){
+      $.ajax({
+        type: 'get',
+        url: '/member/memberList2.do',
+        data: 'column=D.DEPT_NO' + '&query=' + query + '&page=' + page,
+        dataType: 'json',
+        success: function(resData) {
+          $('#pagination').empty();
+          var pageUtil = resData.pageUtil; 
+          console.log(pageUtil);
+          console.log('beginPage :' + pageUtil.beginPage);
+          console.log('endPage :' + pageUtil.endPage);
+          console.log('totalPage :' + pageUtil.totalPage);
+          if(page > pageUtil.totalPage) {
+          	page = pageUtil.totalPage
           }
-        }
-        // 다음 블록
-        if(pageUtil.endPage == pageUtil.totalPage){
-          str2 += '<span class="hidden">▶</span>';
-        } else {
-          str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + (pageUtil.endPage + 1) + '">▶</span>';
-        }
-        str2 += '</div>';
-        console.log(str2);
-        $('#pagination').append(str2);
-        
-      }
-
-    }).then(function(){
-    	  $.ajax({
-  	      type: 'get',
-  	      url: '/member/memberList2.do',
-  	      data: 'column=D.DEPT_NO' + '&query=' + query + '&page=' + page,
-  	      dataType: 'json',
-  	      success: function(resData) {
-  	    	  let memberListbody = $('#memberListbody');
-        
-  	    	  memberListbody.empty();  
-        
-  	    	  if(resData.memberList === 0){
-  	    		  memberListbody.append('<tr><td colspan="6">현재 사원이 없습니다.</td></tr>');
+          console.log('page :' + page);
+          var str2 = '<div>';
+          // 이전 블록
+          if(pageUtil.beginPage == 1){
+            str2 += '<span class="hidden">◀</span>';
+          } else {
+            str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + (pageUtil.beginPage - 1) + '">◀</span>';
+          }
+          // 페이지 번호
+          for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
+            if(p == page){
+              str2 += '<strong style="display:inline" class="pagination">' + p + '</strong>';
             } else {
-              $.each(resData.memberList, function(i, member){ 
-                let str = '<tr>';
-                let status;
-                switch(member.status){ 
-                  case 0: status = '재직'; break; 
-                  case 1: status = '교육'; break; 
-                  case 2: status = '출장'; break; 
-                  case 3: status = '휴가'; break; 
-                  case 4: status = '퇴직'; break; 
-                  default: status = '';
-                }
-                str += '<td>' + member.memberNo + '</td>';
-                str += '<td><a href="/member/memberDetail.html?memberNo=' + member.memberNo +'">' + member.memberName + '</td>';
-                str += '<td>' + member.departmentDTO.deptName + '</td>';
-                str += '<td>' + member.jobDTO.jobName + '</td>';
-                str += '<td>' + fnDateFormat(member.joinedAt) + '</td>';
-                str += '<td>' + status + '</td>';
-                str += '</tr>'
-                memberListbody.append(str);
-            
-              })
+              str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + p + '">' + p + '</span>';
             }
-  	      }
-    	  })
+          }
+          // 다음 블록
+          if(pageUtil.endPage == pageUtil.totalPage){
+            str2 += '<span class="hidden">▶</span>';
+          } else {
+            str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + (pageUtil.endPage + 1) + '">▶</span>';
+          }
+          str2 += '</div>';
+          console.log(str2);
+          $('#pagination').append(str2);
+          
+          resolve();
+          
+        }
+  
+      })
+		  
+	  }).then(function(){
+  	  $.ajax({
+	      type: 'get',
+	      url: '/member/memberList2.do',
+	      data: 'column=D.DEPT_NO' + '&query=' + query + '&page=' + page,
+	      dataType: 'json',
+	      success: function(resData) {
+	    	  let memberListbody = $('#memberListbody');
+	    	  let memberhead = $('#memberhead');
+	          
+          memberhead.empty();  
+          memberListbody.empty();
+
+          let head = '<tr>';
+          head += '<th style="width: 50px;">사원번호</th>';
+          head += '<th style="width: 80px;">사원명</th>';
+          head += '<th style="width: 80px;">부서명</th>';
+          head += '<th style="width: 80px;">직위</th>';
+          head += '<th style="width: 100px;">입사일</th>';
+          head += '<th style="width: 80px;">상태</th>';
+          head += '</tr>'
+          memberhead.append(head);
+          
+	    	  if(resData.memberList === 0){
+	    		  memberListbody.append('<tr><td colspan="6">현재 사원이 없습니다.</td></tr>');
+          } else {
+            $.each(resData.memberList, function(i, member){ 
+              let str = '<tr>';
+              let status;
+              switch(member.status){ 
+                case 0: status = '재직'; break; 
+                case 1: status = '교육'; break; 
+                case 2: status = '출장'; break; 
+                case 3: status = '휴가'; break; 
+                case 4: status = '퇴직'; break; 
+                default: status = '';
+              }
+              str += '<td>' + member.memberNo + '</td>';
+              str += '<td><a href="/member/memberDetail.html?memberNo=' + member.memberNo +'">' + member.memberName + '</td>';
+              str += '<td>' + member.departmentDTO.deptName + '</td>';
+              str += '<td>' + member.jobDTO.jobName + '</td>';
+              str += '<td>' + fnDateFormat(member.joinedAt) + '</td>';
+              str += '<td>' + status + '</td>';
+              str += '</tr>'
+              memberListbody.append(str);
+          
+            })
+          }
+	      }
+  	  })
     })
     
   }
@@ -137,8 +155,8 @@
               $.each(resData.memberList, function(i, member){
                 let str = '<tr>';
                 str += '<td>' + member.retiredMemberNo + '</td>';
-                str += '<td>'+ member.memberName +'</td>';
-                str += '<td>' + member.tel + '</td>';
+                str += '<td>' + member.memberName +'</td>';
+                str += '<td>' + fnTelFormat(member.tel) + '</td>';
                 str += '<td>' + fnDateFormat(member.joinedAt) + '</td>';
                 str += '<td>' + fnDateFormat(member.modifiedAt) + '</td>';
                 str += '</tr>'
@@ -191,8 +209,8 @@
       $(document).on('click', '.enable_link', function(){
         page = $(this).data('page');
         query = $(this).data('query');
-        console.log(page);
-        console.log(query);
+        console.log('page : ' + page);
+        console.log('query : ' + query);
         fnLoadListByDept(query);
       })
   }
@@ -208,6 +226,24 @@
     
     return [year, month, day].join('/');
   } 
+  
+  function fnTelFormat(tel) {
+	  // 특수문자 제거
+	  const value = tel.replace(/[^0-9]/g, '');
+	  
+	  // 00 OR 000 지정
+	  const firstLength = value.length > 9 ? 3 : 2;
+
+	  // ({2,3}) - ({3,4}) - ({4})
+	  return [
+	    // 첫번째 구간 (00 or 000)
+	    value.slice(0, firstLength),
+	    // 두번째 구간 (000 or 0000)
+	    value.slice(firstLength, value.length - 4),
+	    // 남은 마지막 모든 숫자
+	    value.slice(value.length - 4),
+	  ].join('-');
+	}
 
   $(function(){
 	  // 사원 등록 성공 메시지

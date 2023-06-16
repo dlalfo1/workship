@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace는 @Mapper를 지정한다. -->
+<mapper namespace="com.gdu.workship.mapper.DepartmentMapper">
+  
+  <select id="getDeptList" resultType="DepartmentDTO">
+    SELECT A.DEPT_NO, A.DEPT_NAME, A.MEMBER_COUNT
+      FROM (SELECT D.DEPT_NO, D.DEPT_NAME, COUNT(M.DEPT_NO) AS MEMBER_COUNT
+              FROM DEPARTMENT_T D LEFT OUTER JOIN MEMBER_T M
+                ON D.DEPT_NO = M.DEPT_NO
+             GROUP BY D.DEPT_NO) A
+     ORDER BY A.DEPT_NO ASC
+  </select>
+  <select id="getDeptHeadList" resultType="DepartmentDTO">
+    SELECT D.DEPT_NO, D.DEPT_NAME, CONCAT(M.MEMBER_NAME, ' ' , J.JOB_NAME) AS DEPT_HEAD
+      FROM DEPARTMENT_T D INNER JOIN MEMBER_T M 
+        ON D.DEPT_NO = M.DEPT_NO INNER JOIN JOB_T J 
+        ON J.JOB_NO = M.JOB_NO
+     WHERE M.JOINED_AT = (
+                          SELECT MIN(JOINED_AT)
+                          FROM MEMBER_T
+                          WHERE DEPT_NO = D.DEPT_NO
+                         )
+     ORDER BY D.DEPT_NO ASC
+  </select>
+  
+  <select id="checkDept" parameterType="String" resultType="DepartmentDTO">
+    SELECT *
+      FROM DEPARTMENT_T
+     WHERE DEPT_NAME = #{deptName}
+  </select>
+  
+  <insert id="addDept" useGeneratedKeys="true" keyProperty="deptNo" parameterType="DepartmentDTO">
+    INSERT INTO DEPARTMENT_T(
+          DEPT_NAME
+      ) VALUES (
+          #{deptName}
+      )
+  </insert>
+  
+  <delete id="removeDept" parameterType="int">
+    DELETE
+      FROM DEPARTMENT_T
+     WHERE DEPT_NO = #{deptNo}
+  </delete>
+  
+</mapper>

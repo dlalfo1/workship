@@ -18,4 +18,7 @@ public class NoticeDTO {
 	private Date noticeModifiedAt;
 	private int noticeHit;
 	private int noticeState;
+	
+  private int prevNo;
+  private int nextNo;
 }

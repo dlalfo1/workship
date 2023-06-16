@@ -5,9 +5,10 @@
 
 <script th:inline="javascript">
   var frm;
+  var noticeNo = /*[[${n.noticeNo}]]*/ null;
   
   $(function(){
-    let modifyResult = /*[[${modifyResult}]]*/ null;  // addResult가 전달되지 않는 경우 null을 사용한다.
+    let modifyResult = /*[[${modifyResult}]]*/ null;
     if(modifyResult !== null){
       if(modifyResult === 1) {
         alert('게시글이 수정되었습니다.');
@@ -21,7 +22,34 @@
     $('#column').on('change', function(){
       $('#query').val('');
     })
+    
+    fnPrev();
+    fnNext();
   })
+  
+  function fnPrev(){
+	  $('#btnPrev').on('click', function(event){
+		  let prevNo = /*[[${prevNo}]]*/ null;
+		  if(prevNo == noticeNo) {
+			  alert('더 이상 이전 글이 없습니다.');
+			  event.preventDefault();
+			  return;
+		  }
+		  location.href='/notice/noticeDetail.html?noticeNo=' + prevNo;
+	  })
+  }
+  
+  function fnNext(){
+    $('#btnNext').on('click', function(){
+      let nextNo = /*[[${nextNo}]]*/ null;
+        if(nextNo == noticeNo) {
+          alert('더 이상 다음 글이 없습니다.');
+          event.preventDefault();
+          return;
+        }
+        location.href='/notice/noticeDetail.html?noticeNo=' + nextNo ;
+      })
+  }
   
   function fnList() {
 	  location.href = '/notice/noticeList.do';
@@ -68,8 +96,8 @@
             
             <div class="board-detail">
               <div class="page-button">
-                <button type="button" class="btn btn-outline-secondary btn-sm" th:onclick="location.href='noticeDetail.html?noticeNo=${n.noticeNo - 1}&cpage=${ cpage }'">이전</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm" th:onclick="location.href='noticeDetail.html?noticeNo=${n.noticeNo + 1}&cpage=${ cpage }'">다음</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnPrev">이전</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnNext">다음</button>
                 <button type="button" class="btn btn-outline-dark btn-sm" onclick="fnList()">목록</button>
               </div>
             
