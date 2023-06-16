@@ -2,6 +2,7 @@ package com.gdu.workship.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import com.gdu.workship.domain.AttendanceDTO;
-import com.gdu.workship.mapper.AttendanceMapper;
+import com.gdu.workship.mapper.AttendManageMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class AttendManageServiceImpl implements AttendManageService {
 
-	private final AttendanceMapper attendManageMapper;
+	private final AttendManageMapper attendManageMapper;
 	
 	@Override
 	public void updateAllScehduler() {
@@ -36,4 +37,5 @@ public class AttendManageServiceImpl implements AttendManageService {
 	public void getAttendManagePage(HttpServletRequest request, Model model) {
 		
 	}
+
 }

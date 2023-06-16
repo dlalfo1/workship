@@ -26,76 +26,74 @@
 	          <div class="card">
 	            <div class="card-body">
 	              <p class="card-title">조회 조건 설정</p>
-	              <form id="frmManageSearch" th:action="@{/attendance/attendManageList.do}">
-									<table class="table table-sm table-borderless" style="width: 90%; float: none; margin: 0 auto;">
-										<tr>
-											<th class="text-center" width="20%">기간</th>
-											<td colspan="2">
-												<div class="text-center">
-													<input class="datepick" type="text" id="startDate" name="startDate">
-													<label for="startDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
-													<span class="font-weight-bold">&nbsp;&nbsp;~&nbsp;&nbsp;</span>
-													<input class="datepick" type="text" id="endDate" name="endDate">
-													<label for="endDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
+								<table class="table table-sm table-borderless" style="width: 90%; float: none; margin: 0 auto;">
+									<tr>
+										<th class="text-center" width="20%">기간</th>
+										<td colspan="2">
+											<div class="text-center">
+												<input class="datepick" type="text" id="startDate" name="startDate">
+												<label for="startDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
+												<span class="font-weight-bold">&nbsp;&nbsp;~&nbsp;&nbsp;</span>
+												<input class="datepick" type="text" id="endDate" name="endDate">
+												<label for="endDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th class="text-center" width="20%">근태</th>
+										<td colspan="2">
+											<div class="row form-group" style="justify-content: space-between; float: none; margin: 0 auto;">
+												<div class="form-check" style="justify-content: space-between;">
+													<label for="checkAll" class="form-check-label">
+													<input type="checkbox" class="form-check-input" id="checkAll">
+													전체&nbsp;&nbsp;
+													</label>
 												</div>
-											</td>
-										</tr>
-										<tr>
-											<th class="text-center" width="20%">근태</th>
-											<td colspan="2">
-												<div class="row form-group" style="justify-content: space-between; float: none; margin: 0 auto;">
-													<div class="form-check" style="justify-content: space-between;">
-														<label for="checkAll" class="form-check-label">
-														<input type="checkbox" class="form-check-input" id="checkAll">
-														전체&nbsp;&nbsp;
-														</label>
-													</div>
-													<div class="form-check">
-														<label for="normal" class="form-check-label" style="justify-content: space-between;">
-														<input type="checkbox" name="attendance" class="form-check-input checkOne" id="normal" value="정상">
-														정상&nbsp;&nbsp;
-														</label>
-													</div>
-													<div class="form-check">
-														<label for="late" class="form-check-label" style="justify-content: space-between;">
-														<input type="checkbox" name="attendance" class="form-check-input checkOne" id="late" value="지각">
-														지각&nbsp;&nbsp;
-														</label>
-													</div>
-													<div class="form-check">
-														<label for="early" class="form-check-label" style="justify-content: space-between;">
-														<input type="checkbox" name="attendance" class="form-check-input checkOne" id="early" value="조퇴">
-														조퇴&nbsp;&nbsp;
-														</label>
-													</div>
-													<div class="form-check">
-														<label for="absent" class="form-check-label" style="justify-content: space-between;">
-														<input type="checkbox" name="attendance" class="form-check-input checkOne" id="absent" value="결근">
-														결근&nbsp;&nbsp;
-														</label>
-													</div>
-													<div class="form-check">
-														<label for="absent" class="form-check-label" style="justify-content: space-between;">
-														<input type="checkbox" name="attendance" class="form-check-input checkOne" id="error" value="퇴근미처리">
-														퇴근미처리
-														</label>
-													</div>
+												<div class="form-check">
+													<label for="normal" class="form-check-label" style="justify-content: space-between;">
+													<input type="checkbox" name="attendance" class="form-check-input checkOne" id="normal" value="정상">
+													정상&nbsp;&nbsp;
+													</label>
 												</div>
-											</td>
-										</tr>
-										<tr>
-											<th class="text-center" width="20%">사원명</th>
-											<td width="70%">
-												<div class="text-ceonter">
-												 <input type="text" class="form-control" name="query" id="query" placeholder="사원명을 입력하세요.">
+												<div class="form-check">
+													<label for="late" class="form-check-label" style="justify-content: space-between;">
+													<input type="checkbox" name="attendance" class="form-check-input checkOne" id="late" value="지각">
+													지각&nbsp;&nbsp;
+													</label>
 												</div>
-											</td>
-											<td width="10%">
-											  <input type="button" class="btn btn-primary" value="검색" onclick="fnSearch()">
-											</td>
-										</tr>
-									</table>
-								</form>
+												<div class="form-check">
+													<label for="early" class="form-check-label" style="justify-content: space-between;">
+													<input type="checkbox" name="attendance" class="form-check-input checkOne" id="early" value="조퇴">
+													조퇴&nbsp;&nbsp;
+													</label>
+												</div>
+												<div class="form-check">
+													<label for="absent" class="form-check-label" style="justify-content: space-between;">
+													<input type="checkbox" name="attendance" class="form-check-input checkOne" id="absent" value="결근">
+													결근&nbsp;&nbsp;
+													</label>
+												</div>
+												<div class="form-check">
+													<label for="absent" class="form-check-label" style="justify-content: space-between;">
+													<input type="checkbox" name="attendance" class="form-check-input checkOne" id="error" value="퇴근미처리">
+													퇴근미처리
+													</label>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th class="text-center" width="20%">사원명</th>
+										<td width="70%">
+											<div class="text-ceonter">
+											 <input type="text" class="form-control" name="query" id="query" placeholder="사원명을 입력하세요.">
+											</div>
+										</td>
+										<td width="10%">
+										  <input type="button" class="btn btn-primary" value="검색" onclick="fnSearch()">
+										</td>
+									</tr>
+								</table>
 	            </div>
 	          </div>
 	        </div>

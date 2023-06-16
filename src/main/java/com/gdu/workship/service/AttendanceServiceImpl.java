@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -18,6 +19,7 @@ import org.springframework.ui.Model;
 import com.gdu.workship.domain.AttendanceDTO;
 import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.mapper.AttendanceMapper;
+import com.gdu.workship.util.PageUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class AttendanceServiceImpl implements AttendanceService {
 
 	private final AttendanceMapper attendanceMapper;
+	private final PageUtil pageUtil;
 	
 	@Override
 	public void getAttendancePage(int memberNo, Model model) {
@@ -123,27 +126,26 @@ public class AttendanceServiceImpl implements AttendanceService {
 		HttpSession session = request.getSession();
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("loginMember");
 		int memberNo = memberDTO.getMemberNo();
-		String nowStr = LocalDate.now().toString();
+		LocalDate now = LocalDate.now();
+		String thismonthStr = LocalDate.of(now.getYear(), now.getMonthValue(), 1).toString();
 		String startDateStr = request.getParameter("startDate");
-		if(startDateStr.isBlank()) startDateStr = nowStr;
+		if(startDateStr.isBlank()) startDateStr = thismonthStr;
 		int startyear = Integer.parseInt(startDateStr.substring(0, 4));
 		int startmonth = Integer.parseInt(startDateStr.substring(5, 7));
-		int startday = Integer.parseInt("01");
+		int startday = Integer.parseInt(startDateStr.substring(8, 10));
 		LocalDate startDate = LocalDate.of(startyear, startmonth, startday);
 		String endDateStr = request.getParameter("endDate");
+		String nowStr = now.toString();
 		if(endDateStr.isBlank()) endDateStr = nowStr;
 		int endyear = Integer.parseInt(endDateStr.substring(0, 4));
 		int endmonth = Integer.parseInt(endDateStr.substring(5, 7));
 		int endday = Integer.parseInt(endDateStr.substring(8, 10));
 		LocalDate endDate = LocalDate.of(endyear, endmonth, endday);
-		String[] attendanceArr = request.getParameterValues("attendance");
+		String[] attendanceTemp = request.getParameterValues("attendance");
+		String[] attendanceArr = attendanceTemp[0].split(",");
 		String attendance = "";
 		int length = attendanceArr.length;
 		for(int i = 0; i < length; i++) {
-			attendanceArr[i] = attendanceArr[i].replace("normal", "정상");
-			attendanceArr[i] = attendanceArr[i].replace("late", "지각");
-			attendanceArr[i] = attendanceArr[i].replace("early", "조퇴");
-			attendanceArr[i] = attendanceArr[i].replace("absent", "결근");
 			attendanceArr[i] = "'" + attendanceArr[i] + "'";
 		}
 		for(int i = 0; i < length - 1; i++) {
@@ -158,10 +160,20 @@ public class AttendanceServiceImpl implements AttendanceService {
 		parameter.put("startDate", startDate);
 		parameter.put("endDate", endDate);
 		parameter.put("attendance", attendance);
+		int recordPerPage = 5;
+		int searchRecord = attendanceMapper.searchCount(parameter);
+		Optional<String> pageStr = Optional.ofNullable(request.getParameter("page"));
+		int page = Integer.parseInt(pageStr.orElse("1"));
+		pageUtil.setPageUtil(page, searchRecord, recordPerPage);
+		parameter.put("begin", pageUtil.getBegin());
+		parameter.put("recordPerPage", recordPerPage);
 		List<AttendanceDTO> list = attendanceMapper.searchAttendance(parameter);
 		Map<String, Object> map = new HashMap<>();
 		if(list.isEmpty()) map.put("result", "noResult");
-		else map.put("result", list);
+		else {
+			map.put("result", list);
+			map.put("pageUtil", pageUtil);
+		}
 		return map;
 	}
 	
