@@ -6,8 +6,11 @@
   $(function() {
 	  let addResult = /*[[${addResult}]]*/ null;
 	  if(addResult !== null){
+		  console.log('addResult:' + addResult);
       if(addResult === 1) {
         alert('부서 등록을 성공했습니다.');
+      } else if(addResult === 2) {
+        alert('이미 동일한 부서명이 존재합니다.');
       } else {
         alert('부서 등록을 실패했습니다.');
       }
@@ -21,8 +24,12 @@
         alert('부서 삭제를 실패했습니다.');
       }
     }
+    
+  fnEditDept();
+  fnModify();
+  fnModifyReg();
   })
-
+  
 </script>
 <body>
 
@@ -52,7 +59,7 @@
                   <input type="text" class="form-control mb-2 mr-sm-2 col-sm-4" id="inputDeptName" name="deptName" placeholder="부서명을 적어주세요.">
                   <div id="msg" style="display: block;"></div>
                   <button type="button" id="btnAdd" class="btn btn-primary mb-2">부서 추가</button>
-                  <button type="reset" class="btn btn-outline-info mb-2">다시 입력</button>
+                  <button type="button" id="btnReset" class="btn btn-outline-info mb-2">다시 입력</button>
                   
                   </form>
                   <script>
@@ -85,6 +92,10 @@
                       }
                     	$('#createDept').submit();
                     })
+                    $('#btnReset').on('click', function(){
+                    	$('#inputDeptName').val('');
+                    	$('#msg').text('');
+                    })
                   </script>
                 </div>
               </div>
@@ -108,20 +119,116 @@
                     </thead>
                     <tbody id="departmentListBody">
                       <th:block th:each="dept:${deptList}">
-                        <tr>
+                        <tr class="trTag">
                           <td th:text="${dept.deptNo}"></td>
                           <td class="inputDeptName" th:text="${dept.deptName}"></td>
                           <td th:text="${dept.deptHead}"></td>
                           <td th:text="|${dept.memberCount} 명|"></td>
                           <td>
-                            <button type="button" id="btnEdit" class="btn btn-outline-secondary btn-sm">수정</button>
-                            <button type="button" id="btnRemove" class="btn btn-outline-danger btn-sm" th:onclick="fnRemoveDept([[${dept}]])">삭제</button>
+                            <form id="frmBtn">
+                              <button type="button" id="btnEdit" class="btn btn-outline-secondary btn-sm btnEdit">수정</button>
+                              <input type="hidden" class="inputHiddenDeptName" name="deptName">
+                              <input type="hidden" class="inputHiddenDeptNo" name="deptNo" th:value="${dept.deptNo}">
+                              <button type="button" id="btnRemove" class="btn btn-outline-danger btn-sm" th:onclick="fnRemoveDept([[${dept}]])">삭제</button>
+                            </form>
                           </td>
                         </tr>
                       </th:block>
                     </tbody>
                   </table>
                   <script>
+                    function fnEditDept() {
+                    	$('.btnEdit').on('click', function(){
+                    		// 부서명을 input 태그로
+                    	  var tdDeptName = $(this).parents('.trTag').children('.inputDeptName');
+                    		// console.log('tdDeptName: ' + tdDeptName.text());
+                    		var inputDeptName = tdDeptName.text();
+                    		var inputTag = $('<input>').attr({
+                		      type: 'text',
+                		      class: 'form-control col-xs-2 inputModify',
+                		      value: inputDeptName
+                		    });
+                    		
+                    		tdDeptName.empty().append(inputTag);
+
+                    		inputTag.focus();
+                    		
+                    		// 수정 버튼을 완료 버튼으로
+                    		var tdBtn = $(this).parent();
+                    		var btnEdit = $(this);
+                    	  var btnModify = $('<button>').attr({
+                    		  type: 'button',
+                    		  class: 'btn btn-outline-secondary btn-sm btnModify'
+                    	  });
+                    	  btnEdit.remove();
+                    	  tdBtn.prepend(btnModify.text('완료'));
+                    		
+                    	  let str = '<div class="modifyMsg" style="display: none"></div>';
+                    	  tdDeptName.append(str);
+                    	  
+                    	  $(document).on('keyup', '.inputModify', function(){
+                          let keyupDeptName = $(this).val();
+                          console.log('keyupDeptName : ' + keyupDeptName);
+                          var regDept = /^[가-힣]{3,9}$/;
+                          
+                          let modifyMsg = $(this).children('div');
+                          
+                          if(keyupDeptName.length == 0){
+                            $('.modifyMsg').text('');
+                            modifyMsg.attr("style", "display: none;");
+                          } else if(regDept.test($('.inputModify').val())){
+                            modifyMsg.attr("style", "display: block;");
+                            modifyMsg.text('부서명이 정상적으로 작성되었습니다.').css('color', '#0000FF').css('font-size', '8px');
+                          } else {
+                            modifyMsg.attr("style", "display: block;");
+                            modifyMsg.text('부서명은 한글로 3~9글자까지 가능합니다.').css('color', '#FF0000').css('font-size', '8px');
+                          }
+                        })
+                    	})
+                    	
+                    }
+                    
+                    function fnModify(){
+                    	$(document).on('click', '.btnModify', function(){
+                    		// console.log('inputname : ' + $(this).parent().parent().parent().children('.inputDeptName').find('input').val());
+                    		// 수정용 <input type="text">
+                    		var btnHiddenName = $(this).parent().parent().parent().children('.inputDeptName').find('input');
+                    		
+                    		// 수정용 <input type="text"> 의 밸류값(..팀)
+                    		var hiddenName = btnHiddenName.val();
+                    		// console.log('hiddenName' + hiddenName);
+                    		
+                    		// 완료 버튼의 형제중 inputHiddenDeptName 과 inputHiddenDeptNo를 찾아준다.
+                    		var inputHiddenDeptName = $(this).parent().find('.inputHiddenDeptName');
+                    		var inputHiddenDeptNo = $(this).parent().find('.inputHiddenDeptNo');
+                    		
+                    		// inputHiddenDeptName의 value에 hiddenName을 넣어준다.
+                    		$(this).next().val(hiddenName);
+                    		var paramDeptName = $(this).next().val();
+                    		var paramDeptNo = inputHiddenDeptNo.val();
+                    		// console.log('inputDeptName : ' + inputDeptName);
+                    		// console.log('inputDeptNo : ' + inputDeptNo);
+                      	$.ajax({
+                      		type: 'post',
+                      		url: '/department/modifyDept.do',
+                      		data: 'deptNo=' + paramDeptNo + '&deptName=' + paramDeptName,
+                      		dataType: 'json',
+                      		success: function(resData){
+                      			if(resData.isModify){
+                              alert('부서명이 수정되었습니다.');
+                            } else {
+                            	alert('부서명 수정을 실패했습니다.\n부서명을 확인해주세요.');
+                            }
+                          	location.href = '/department/deptList.html';
+                      		}
+                      	})
+                    	})
+                    }
+                    
+                    function fnModifyReg() {
+                    	
+                    }
+                    
                     function fnRemoveDept(dept) {
                     	console.log(dept);
                     	let deptName = dept.deptName;

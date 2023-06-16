@@ -22,7 +22,7 @@
      WHERE M.JOINED_AT = (
                           SELECT MIN(JOINED_AT)
                           FROM MEMBER_T
-                          WHERE DEPT_NO = D.DEPT_NO
+                          WHERE DEPT_NO = D.DEPT_NO AND JOB_NO = 2
                          )
      ORDER BY D.DEPT_NO ASC
   </select>
@@ -41,6 +41,12 @@
       )
   </insert>
   
+  <update id="modifyDept" parameterType="DepartmentDTO">
+    UPDATE DEPARTMENT_T
+       SET DEPT_NAME = #{deptName}
+     WHERE DEPT_NO = #{deptNo}
+  </update>
+
   <delete id="removeDept" parameterType="int">
     DELETE
       FROM DEPARTMENT_T
