@@ -16,10 +16,10 @@ public interface BoardMapper {
 	
 	public int increaseHit(int boardNo);
 	
-    public BoardDTO getboardByNo(int boardNo);
-    public List<BoardFileDTO> getboardFileList(int boardNo);
+    public BoardDTO getBoardByNo(int boardNo);
+    public List<BoardFileDTO> getBoardFileList(int boardNo);
   
-    public BoardFileDTO getboardFileByNo(int boardFileNo);
+    public BoardFileDTO getBoardFileByNo(int boardFileNo);
   
     public int addBoard(BoardDTO boardDTO);
     public int addBoardFile(BoardFileDTO boardFileDTO);
