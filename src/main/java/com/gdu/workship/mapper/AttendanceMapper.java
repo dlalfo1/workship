@@ -21,6 +21,8 @@ public interface AttendanceMapper {
 	public int getMonthlyAttendanceInfo(Map<String, Object> map);
 	public List<Date> getMonthlyWorktime(int memberNo);
 	
+	public List<AttendanceDTO> searchAttendance(Map<String, Object> map);
+	
 	// 스케줄러 - 1
 	public List<Integer> getAllMemberNo();
 	public AttendanceDTO getAttendanceYesterday(int memberNo);

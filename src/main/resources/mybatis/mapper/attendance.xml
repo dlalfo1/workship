@@ -50,6 +50,15 @@
 	  WHERE MEMBER_NO = #{memberNo}
 	    AND MONTH(DATE) = MONTH(NOW())
 	</select>
+	
+	<select id="searchAttendance" parameterType="Map" resultType="AttendanceDTO">
+   SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
+     FROM ATTENDANCE_T
+    WHERE DATE BETWEEN #{startDate} AND #{endDate}
+      AND MEMBER_NO = #{memberNo}
+      AND ATTENDANCE IN (${attendance})
+    ORDER BY DATE DESC
+	</select>
     
   <select id="getAllMemberNo" resultType="int">
    SELECT MEMBER_NO

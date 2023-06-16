@@ -11,6 +11,4 @@ public class DepartmentDTO {
 	private int deptNo;
 	private String deptName;
 	
-	private int memberCount;
-	private String deptHead;
 }
