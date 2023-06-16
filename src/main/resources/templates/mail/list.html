@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship 메일')}"></head>
+<link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
+<link rel="stylesheet" th:href="@{/css/mail/list.css(var=1.0)}">
+
+<body>
+  <div class="container-scroller">
+  
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+ 
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+    
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>
+      
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+      
+   		<nav th:replace="~{/mail/layout/mailsidebar::mailSidebarFrag}"></nav>
+   		
+        <div class="content-wrapper">
+        <!--/* 
+          이 안에 div로 잘 구성해서 내용 넣어주시면 됩니다!
+          샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
+          참고할 만 한 html 파일들은 static/pages 에 있습니다!
+        */-->
+        	
+        	<!-- 메일 제목 및 읽은 메일 체크 -->
+        	<form id="frmList" th:action="@{/mail/list.html}">
+        	
+	        	<div class="info">
+	        		<th:block th:if="${mailCategory == 'NOREAD'}">
+		        		<span class="title">안읽은 메일함</span>	        			
+	        		</th:block>
+	        		<th:block th:if="${mailCategory == 'STARRED'}">
+		        		<span class="title">중요 메일함</span>	        			
+	        		</th:block>
+	        		<th:block th:if="${mailCategory == 'INBOX'}">
+		        		<span class="title">받은 메일함</span>	        			
+	        		</th:block>
+	        		<th:block th:if="${mailCategory == 'SENT'}">
+		        		<span class="title">보낸 메일함</span>	        			
+	        		</th:block>
+	        		<th:block th:if="${mailCategory == 'DRAFTS'}">
+		        		<span class="title">임시 보관함</span>	        			
+	        		</th:block>
+	        		<th:block th:if="${mailCategory == 'SPAM'}">
+		        		<span class="title">스팸 메일함</span>	        			
+	        		</th:block>
+	        		<th:block th:if="${mailCategory == 'TRASH'}">
+		        		<span class="title">휴지통</span>	        			
+	        		</th:block>
+	        		<div class="totalMail">
+	        			<span>전체 메일</span><span th:text="${totalRecord}"></span>
+	        		</div>
+	        	</div>
+	        	
+        		<div class="contents">
+        		
+        			<!-- 메일 이동 및 검색창 구현 -->
+        			<div class="contentCheck">
+        			
+        				<!-- 메일 이동 -->
+        				<div class="category">
+        					<div>
+        						<label for="chk_all" id="lbl_chk_all"></label>
+        						<input type="checkbox" id="chk_all" class="screen_out">
+        					</div>
+        					<div>
+        						<label for="btnStar" id="lblBtnStar"></label>
+        						<input type="button" value="중요" id="chkStar" onclick="fnStar()">
+        					</div>
+        					<div>
+        						<label for="btnRead" id="lblBtnRead"></label>
+        						<input type="button" value="읽음" id="chkRead" onclick="fnRead()">
+        					</div>
+        					<div>
+        						<label for="btnRemove" id="lblBtnRemove"></label>
+        						<input type="button" value="삭제" id="chkRemove" onclick="fnRemove()">
+        					</div>
+        					<div>
+        						<label for="btnSpam" id="lblBtnSpam"></label>
+        						<input type="button" value="스팸" id="chkSpam" onclick="fnSpam()">
+        					</div>
+        					<div>
+        						<label for="btnReply" id="lblBtnReply"></label>
+        						<input type="button" value="답장" id="chkReply" onclick="fnReply()">
+        					</div>
+        					<div>
+        						<label for="btnorward" id="lblBtnForward"></label>
+        						<input type="button" value="전달" id="chkForward" onclick="fnForward()">
+        					</div>
+        				</div>
+        				
+       					<div class="search">
+       						<select name="column" id="column">
+       							<th:block th:if="${mailCategory == 'SENT' or mailCategory == 'DRAFTS'}">
+	       							<option value="T.MAIL_TO">받는사람</option>							
+       							</th:block>
+       							<th:block th:unless="${mailCategory == 'SENT' or mailCategory == 'DRAFTS'}">
+       								<option value="E.EMAIL_ID">보낸사람</option>   
+       							</th:block>
+       							<option value="M.MAIL_TITLE">메일제목</option>
+       						</select>
+       						<input list="auto_complete" type="text" name="query" id="query">
+       						
+       						
+	        				<button type='submit'><i class="fa-solid fa-magnifying-glass"></i></button>
+       					</div>
+        			</div>
+        		</div>
+        		
+        		<!-- 메일리스트 뿌리기 -->
+       			<div class="contentList">
+      					<div class="searchResult">
+      						<datalist id="auto_complete"></datalist>
+      					</div>	    
+      					    					
+      					<!-- 메일이 없는 경우 -->
+      					<th:block th:if="${#lists.isEmpty(mailList)}">
+      						<h3 class="noMail">보관 메일이 없습니다.</h3>
+      					</th:block>
+      					
+      					<!-- 메일이 있는 경우 -->
+      					<th:block th:unless="${#lists.isEmpty(mailList)}">
+
+        					<!-- 보낸 메일 --> 
+        					<th:block th:if="${mailCategory == 'SENT' or mailCategory == 'DRAFTS'}">
+        						<th:block th:each="mail:${mailList}">
+	       							<ul>
+			        					<li class="mailContent">
+			        						<div class="mailCheck">
+				        						<div>
+				        							<label th:for="|chk_one${mail?.mailNo}|" class="lbl_chk_one"></label>
+				        							<input type="checkbox" th:id="|chk_one${mail?.mailNo}|" class="chk_one screen_out" name="mailList" th:value="${mail?.mailNo}">
+				        						</div>
+				        						<div class="mailAttach" id="mailAttach">
+				     								<th:block th:if="${mail?.mailHasFile == 'Y'}">
+					        							<input type="radio" name="mailAttach" value="Y" id="attachState"><label for="attachState"><i class="fa-solid fa-paperclip"></i></label>
+				     								</th:block>
+				        						</div>	     						
+			        						</div>
+			        						<div class="contentMail">
+				        						<div class="contentMailEmail" style="width:25%" th:text="${mail?.mailToDTO.mailTo}"></div>
+				        						<div class="contentMailTitle" th:text="${mail?.mailTitle}"></div>				        						
+				        						<div class="contentMailDate" th:text="${#dates.format(mail?.mailDate, 'yyyy/MM/dd')}"></div>		
+			        						</div>
+			        					</li>
+			        				</ul>
+        						</th:block>
+      						</th:block>
+
+      						<!-- 받는 메일 -->
+       						<th:block th:unless="${mailCategory == 'SENT' or mailCategory == 'DRAFTS'}"> 
+       							<th:block th:each="mail:${mailList}">        							
+			        				<ul>
+			        					<li class="mailContent">
+ 			        						<div class="mailCheck">
+				        						<div>
+				        							<label th:for="|chk_one${mail?.mailNo}|" class="lbl_chk_one"></label>
+				        							<input type="checkbox" th:id="|chk_one${mail?.mailNo}|" class="chk_one screen_out" name="mailList" th:value="${mail?.mailNo}">
+				        						</div>
+	 			        						<div class="mailStar" id="mailStar">
+				        							<th:block th:if="${mail?.mailToDTO.mailToStar == 'N'}">
+					        							<input type="radio" name="mailStar" value="N" id="starState"><label for="starState">☆</label>		        							
+				        							</th:block>
+				        							<th:block th:if="${mail?.mailToDTO.mailToStar == 'Y'}">
+				        								<input type="radio" name="mailStar" value="Y" id="starState"><label for="starState">★</label>	
+				        							</th:block>
+				        						</div>
+				     							<div class="mailRead" id="mailRead">
+				     								<th:block th:if="${mail?.mailToDTO.mailToStatus == 'N'}">
+				     									<input type="radio" name="mailRead" value="N" id="readState"><label for="readState"><i class="fa-solid fa-envelope"></i></label>
+				     								</th:block>
+				     								<th:block th:if="${mail?.mailToDTO.mailToStatus == 'Y'}">
+					        							<input type="radio" name="mailRead" value="Y" id="readState"><label for="readState"><i class="fa-solid fa-envelope-open"></i></label>
+				     								</th:block>
+				        						</div>		
+				        						<div class="mailAttach" id="mailAttach">
+				     								<th:block th:if="${mail?.mailHasFile == 'Y'}">
+					        							<input type="radio" name="mailAttach" value="Y" id="attachState"><label for="attachState"><i class="fa-solid fa-paperclip"></i></label>
+				     								</th:block>
+				        						</div>	        						
+			        						</div>
+			        						<div class="contentMail">
+				        						<div class="contentMailEmail" style="width:25%" th:text="${mail?.memberDTO.emailId}"></div>
+				        						<div class="contentMailTitle" th:text="${mail?.mailTitle}"></div>
+				        						<div class="contentMailDate" th:text="${#dates.format(mail?.mailDate, 'yyyy/MM/dd')}"></div>		
+			        						</div>
+			        					</li>
+			        				</ul>
+       							</th:block>
+     						</th:block>
+       							
+       				</th:block>
+       			</div>
+       			
+        	</form>
+        	
+        	<div class="pagination" th:utext="${pagination}"></div>
+        	
+        	<script>
+				
+				$(function(){
+					fnChkAll();
+					fnChkOne();
+					fnRemoveList();
+				})
+				
+				// 전체선택 체크박스
+				function fnChkAll(){
+					$('#chk_all').on('click', function(){
+						$('.chk_one').prop('checked', $(this).prop('checked'));
+					})
+				}
+				
+				// 개별선택 체크박스
+				function fnChkOne(){
+					let chkOne = $('.chk_one');  // 모든 개별선택
+					chkOne.on('click', function(){
+						let chkCnt = 0;
+						for(let i = 0; i < chkOne.length; i++){
+							chkCnt += $(chkOne[i]).prop('checked');
+						}
+						$('#chk_all').prop('checked', chkCnt == chkOne.length);
+					})
+				}
+				
+				// 선택 항목 삭제
+				function fnRemoveList(){
+					$('#frm_remove_list').on('submit', function(event){
+						if($('.chk_one:checked').length == 0){
+							alert('선택된 게시글이 없습니다.');
+							event.preventDefault();
+							return;
+						}
+						if(confirm('선택한 게시글을 모두 삭제할까요?') == false){
+							event.preventDefault();
+							return;
+						}
+					})
+				}
+				
+			</script>
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+  
+</body>
+</html>

@@ -1,36 +1,38 @@
 package com.gdu.workship.controller;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gdu.workship.service.MailService;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@RequestMapping("/mail")
 @Controller
 public class MailController {
 	
 	// field
 	private final MailService mailService;
 	
-	 @GetMapping("/list.html")
+	 @GetMapping("/mail/list.html")
 	 public String mailList(HttpServletRequest request, Model model) {
-		 mailService.getMailRlist(request, model);
-		 return "mail/" + request.getParameter("mailCategory"); 
+		 mailService.getMailList(request, model);
+		 return "mail/list"; 
 	 }
 	 
-	 @GetMapping("/write.html")
+	 @GetMapping("/mail/write.html")
 	 public String mailWrite() {
 		 return "mail/write";
 	 }
 	 
-	 @GetMapping("/address.html")
+	 @GetMapping("/mail/address.html")
 	 public String mailAddr() {
 		 return "mail/address";
 	 }

@@ -15,6 +15,7 @@ public class MailDTO {
 	private String mailTitle;
 	private String mailContent;
 	private String mailHasFile;
-	private String mailCategory;
 	private Date mailDate;
+	private String mailCategory;
+	private MailToDTO mailToDTO;
 }

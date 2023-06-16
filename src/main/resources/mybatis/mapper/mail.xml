@@ -11,20 +11,18 @@
 		<result column="MAIL_TITLE" property="mailTitle"/>
 		<result column="MAIL_CONTENT" property="mailContent"/>
 		<result column="MAIL_HAS_FILE" property="mailHasFile"/>
-		<result column="MAIL_CATEGORY" property="mailCategory"/>
 		<result column="MAIL_DATE" property="mailDate"/>
+		<result column="MAIL_CATEGORY" property="mailCategory"/>
 		<association javaType="MemberDTO" property="memberDTO">
 			<id column="EMAIL_ID" property="emailId"/>
-	        <result column="MEMBER_NO" property="memberNo"/>
-	        <result column="MEMBER_NAME" property="memberName"/>
-	        <association javaType="JobDTO" property="jobDTO">
-	        	<id column="JOB_NO" property="jobNo"/>
-	            <result column="JOB_NAME" property="jobName"/>
-	     	</association>
-	      	<association javaType="DepartmentDTO" property="departmentDTO">
-	       		<id column="DEPT_NO" property="deptNo"/>
-	        	<result column="DEPT_NAME" property="deptName"/>
-	      	</association>	   
+		</association>
+		<association javaType="MailToDTO" property="mailToDTO">
+			<id column="MAIL_TO_NO" property="mailToNo"/>
+		<result column="MAIL_TO" property="mailTo"/>
+		<result column="MAIL_TO_ROLE" property="mailToRole"/>
+		<result column="MAIL_TO_CATEGORY" property="mailToCategory"/>
+		<result column="MAIL_TO_STATUS" property="mailToStatus"/>
+		<result column="MAIL_TO_STAR" property="mailToStar"/>
 		</association>
 	</resultMap>
 	
@@ -37,206 +35,138 @@
 			<id column="MAIL_NO" property="mailNo"/>
 		</association>
 	</resultMap>
-	
-	<resultMap type="MailToDTO" id="MailToMap">
-		<id column="MAIL_TO_NO" property="mailToNo"/>
-		<result column="MAIL_TO" property="mailTo"/>
-		<result column="MAIL_CATEGORY" property="mailCategory"/>
-		<result column="MAIL_STATUS" property="mailStatus"/>
-		<result column="MAIL_STAR" property="mailStar"/>
-		<association javaType="MailDTO" property="mailDTO">
-			<id column="MAIL_NO" property="mailNo"/>
-			<result column="MAIL_TITLE" property="mailTitle"/>
-			<result column="MAIL_CONTENT" property="mailContent"/>
-			<result column="MAIL_HAS_FILE" property="mailHasFile"/>
-			<result column="MAIL_DATE" property="mailDate"/>
-			<association javaType="MemberDTO" property="memberDTO">
-				<id column="EMAIL_ID" property="emailId"/>
-			</association>
-		</association>
-	</resultMap>
-	
-	<resultMap type="MailCcDTO" id="MailCcMap">
-		<id column="MAIL_CC_NO" property="mailCcNo"/>
-		<result column="MAIL_CC_TO" property="mailCcTo"/>
-		<result column="MAIL_CATEGORY" property="mailCategory"/>
-		<result column="MAIL_STATUS" property="mailStatus"/>
-		<result column="MAIL_STAR" property="mailStar"/>
-		<association javaType="MailDTO" property="MailDTO">
-			<id column="MAIL_NO" property="mailNo"/>
-			<result column="MAIL_TITLE" property="mailTitle"/>
-			<result column="MAIL_CONTENT" property="mailContent"/>
-			<result column="MAIL_HAS_FILE" property="mailHasFile"/>
-			<result column="MAIL_DATE" property="mailDate"/>
-			<association javaType="MemberDTO" property="memberDTO">
-				<id column="EMAIL_ID" property="emailId"/>
-			</association>
-		</association>
-	</resultMap>
-	
-	<resultMap type="MailBcDTO" id="MailBcMap">
-		<id column="MAIL_BC_NO" property="mailBcNo"/>
-		<result column="MAIL_BC_TO" property="mailBcTo"/>
-		<result column="MAIL_CATEGORY" property="mailCategory"/>
-		<result column="MAIL_STATUS" property="mailStatus"/>
-		<result column="MAIL_STAR" property="mailStar"/>
-		<association javaType="MailDTO" property="MailDTO">
-			<id column="MAIL_NO" property="mailNo"/>
-			<result column="MAIL_TITLE" property="mailTitle"/>
-			<result column="MAIL_CONTENT" property="mailContent"/>
-			<result column="MAIL_HAS_FILE" property="mailHasFile"/>
-			<result column="MAIL_DATE" property="mailDate"/>
-			<association javaType="MemberDTO" property="memberDTO">
-				<id column="EMAIL_ID" property="emailId"/>
-			</association>
-		</association>
-	</resultMap>
 
-	<!-- 받은메일 리스트 -->
- 	<select id="getMailToRlist" parameterType="Map" resultMap="MailToMap">
-		SELECT A.EMAIL_ID, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_CATEGORY, A.MAIL_STATUS, A.MAIL_STAR
-		  FROM (SELECT E.EMAIL_ID, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_CATEGORY, T.MAIL_STATUS, T.MAIL_STAR
-		  		  FROM MEMBER_T E 
-		  		 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
-		  		 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO
-		  		<where>
-		  			<if test="column != '' and query != ''">
-		  				${column} LIKE CONCAT('%', #{query}, '%')
-		  			</if>
-		  			<if test="emailId != '' and mailCategory != null">
-		  				AND T.MAIL_TO = #{emailId} AND T.MAIL_CATEGORY = #{mailCategory}
-		  			</if>
-		  		</where>) A
-		 ORDER BY A.MAIL_DATE DESC
-		 LIMIT #{begin}, #{recordPerPage}
+	<!-- 메일 개수 확인  -->
+	<select id="getMailCount" parameterType="Map" resultType="int">
+		SELECT COUNT(DISTINCT M.MAIL_NO)
+		  FROM MAIL_T M LEFT JOIN MAIL_TO_T T
+		    ON M.MAIL_NO = T.MAIL_NO
+		 <choose>
+		 	<when test="mailCategory == 'NOREAD'">
+		 		<where>
+			    	<if test="column != '' and query != ''">
+			      		${column} LIKE CONCAT('%', #{query}, '%')
+			    	</if>
+			    	<if test="emailId != ''">
+		 				AND T.MAIL_TO = #{emailId}
+		 			</if>
+		 			AND T.MAIL_TO_CATEGORY = 'INBOX' AND T.MAIL_TO_STATUS = 'N'
+			  	</where>
+		 	</when>
+		 	
+		 	<when test="mailCategory == 'STARRED'">
+		 		<where>
+			    	<if test="column != '' and query != ''">
+			      		${column} LIKE CONCAT('%', #{query}, '%')
+			    	</if>
+			    	<if test="emailId != ''">
+		 				AND (M.EMAIL_ID = #{emailId} OR T.MAIL_TO = #{emailId})
+		 			</if>
+		 			AND T.MAIL_TO_CATEGORY = 'INBOX' AND T.MAIL_TO_STAR = 'Y' 
+			  	</where>
+		 	</when>
+		 	
+		 	<when test="mailCategory == 'INBOX' or mailCategory == 'SPAM' or mailCategory == 'TRASH'">
+		 		<where>
+			    	<if test="column != '' and query != ''">
+			      		${column} LIKE CONCAT('%', #{query}, '%')
+			    	</if>
+			    	<if test="emailId != '' and mailCategory != null">
+		 				AND T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = #{mailCategory}
+		 			</if>
+			  	</where>
+		 	</when>
+		 	
+		 	<when test="mailCategory == 'SENT' or mailCategory == 'DRAFTS'">
+		 		<where>
+			    	<if test="column != '' and query != ''">
+			      		${column} LIKE CONCAT('%', #{query}, '%')
+			    	</if>
+			    	<if test="emailId != '' and mailCategory != null">
+		 				AND M.EMAIL_ID = #{emailId}	AND M.MAIL_CATEGORY = #{mailCategory}
+		 			</if>
+			  	</where>
+		 	</when>
+		 </choose>
 	</select>
 	
-	<select id="getMailToRlistSearchCount" parameterType="Map" resultType="int">
-	    SELECT COUNT(M.MAIL_NO)
-	      FROM MAIL_T M INNER JOIN MAIL_TO_T T
-	        ON M.MAIL_NO = T.MAIL_NO
-	  	<where>
-	    	<if test="column != '' and query != ''">
-	      		${column} LIKE CONCAT('%', #{query}, '%')
-	    	</if>
-	    	<if test="emailId != '' and mailCategory != null">
- 					AND T.MAIL_TO = #{emailId} AND T.MAIL_CATEGORY = #{mailCategory}
- 				</if>
-	  	</where>
+	<select id="getMailList" parameterType="Map" resultMap="MailMap">
+				  		 
+		 <choose>
+		 	<when test="mailCategory == 'NOREAD'">
+			 	SELECT A.EMAIL_ID, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
+			  	  FROM (SELECT E.EMAIL_ID, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
+			  		  FROM MEMBER_T E 
+			  		 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
+			  		 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO	
+				  		<where>
+				  			<if test="column != '' and query != ''">
+				  				${column} LIKE CONCAT('%', #{query}, '%')
+				  			</if>
+				  			<if test="emailId != ''">
+				 				AND T.MAIL_TO = #{emailId}
+				 			</if>
+				 			AND T.MAIL_TO_CATEGORY = 'INBOX' AND T.MAIL_TO_STATUS = 'N'
+				  		</where>) A
+				 ORDER BY A.MAIL_DATE DESC
+				 LIMIT #{begin}, #{recordPerPage}
+		 	</when>
+		 	
+		 	<when test="mailCategory == 'STARRED'">
+		 		SELECT A.EMAIL_ID, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
+			  	  FROM (SELECT E.EMAIL_ID, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
+			  		  FROM MEMBER_T E 
+			  		 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
+			  		 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO	
+				  		<where>
+				  			<if test="column != '' and query != ''">
+				  				${column} LIKE CONCAT('%', #{query}, '%')
+				  			</if>
+				  			<if test="emailId != ''">
+				 				AND T.MAIL_TO = #{emailId}
+				 			</if>
+				 			AND T.MAIL_TO_CATEGORY = 'INBOX' AND T.MAIL_TO_STAR = 'Y' 
+				  		</where>) A
+				 ORDER BY A.MAIL_DATE DESC
+				 LIMIT #{begin}, #{recordPerPage}
+		 	</when>
+		 	
+		 	<when test="mailCategory == 'INBOX' or mailCategory == 'SPAM' or mailCategory == 'TRASH'">
+				SELECT A.EMAIL_ID, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
+			  	  FROM (SELECT E.EMAIL_ID, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
+			  		  FROM MEMBER_T E 
+			  		 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
+			  		 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO	
+				  		<where>
+				  			<if test="column != '' and query != ''">
+				  				${column} LIKE CONCAT('%', #{query}, '%')
+				  			</if>
+				  			<if test="emailId != '' and mailCategory != null">
+				  				AND T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = #{mailCategory}
+				  			</if>
+				  		</where>) A
+				 ORDER BY A.MAIL_DATE DESC
+				 LIMIT #{begin}, #{recordPerPage}
+		 	</when>
+		 	
+		 	<when test="mailCategory == 'SENT' or mailCategory == 'DRAFTS'">
+		 		SELECT A.EMAIL_ID, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY,A.MAIL_TO
+			  	  FROM (SELECT E.EMAIL_ID, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO
+			  		  FROM MEMBER_T E 
+			  		 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
+			  		 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO	
+				  		<where>
+				  			<if test="column != '' and query != ''">
+				  				${column} LIKE CONCAT('%', #{query}, '%')
+				  			</if>
+				  			<if test="emailId != '' and mailCategory != null">
+				  				AND M.EMAIL_ID = #{emailId} AND M.MAIL_CATEGORY = #{mailCategory}
+				  			</if>
+				  		</where>) A
+				 ORDER BY A.MAIL_DATE DESC
+				 LIMIT #{begin}, #{recordPerPage}
+		 	</when>
+		 </choose>
 	</select>
-	
-	<select id="getMailCcRlist" parameterType="Map" resultMap="MailCcMap">
-		SELECT A.EMAIL_ID, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CC_NO, A.MAIL_CC_TO, A.MAIL_CATEGORY, A.MAIL_STATUS, A.MAIL_STAR
-		  FROM (SELECT E.EMAIL_ID, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, C.MAIL_CC_NO, C.MAIL_CC_TO, C.MAIL_CATEGORY, C.MAIL_STATUS, C.MAIL_STAR
-		  		  FROM MEMBER_T E
-		  		 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
-		  		 INNER JOIN MAIL_CC_T C ON M.MAIL_NO = C.MAIL_NO
-		  		<where>
-		  			<if test="column != '' and query != ''">
-		  				${column} LIKE CONCAT('%', #{query}, '%')
-		  			</if>
-		  			<if test="emailId != '' and mailCategory != null">
-		  				AND C.MAIL_CC_TO = #{emailId} AND C.MAIL_CATEGORY = #{mailCategory}
-		  			</if>
-		  		</where>) A
-		 ORDER BY A.MAIL_DATE DESC
-		 LIMIT #{begin}, #{recordPerPage}
-	</select>
-	
-	<select id="getMailCcRlistSearchCount" parameterType="Map" resultType="int">
-	    SELECT COUNT(M.MAIL_NO)
-	      FROM MAIL_T M INNER JOIN MAIL_CC_T C
-	        ON M.MAIL_NO = C.MAIL_NO
-		  <where>
-		      <if test="column != '' and query != ''">
-	     	 	  ${column} LIKE CONCAT('%', #{query}, '%')
-	    	  </if>
-	    	  <if test="emailId != '' and mailCategory != null">
- 					  AND C.MAIL_CC_TO = #{emailId} AND C.MAIL_CATEGORY = #{mailCategory}
- 			  </if>
-	  	  </where>
-	</select>
-
-	<select id="getMailBcRlist" parameterType="Map" resultMap="MailBcMap">
-		SELECT A.EMAIL_ID, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_BC_NO, A.MAIL_BC_TO, A.MAIL_CATEGORY, A.MAIL_STATUS, A.MAIL_STAR
-		  FROM (SELECT E.EMAIL_ID, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, B.MAIL_BC_NO, B.MAIL_BC_TO, B.MAIL_CATEGORY, B.MAIL_STATUS, B.MAIL_STAR
-		  		  FROM MEMBER_T E 
-		  		 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
-		  		 INNER JOIN MAIL_BC_T B ON M.MAIL_NO = B.MAIL_NO
-		  		<where>
-		  			<if test="column != '' and query != ''">
-		  				${column} LIKE CONCAT('%', #{query}, '%')
-		  			</if>
-		  			<if test="emailId != '' and mailCategory != null">
-		  				AND B.MAIL_BC_TO = #{emailId} AND B.MAIL_CATEGORY = #{mailCategory}
-		  			</if>
-		  		</where>) A
-		 ORDER BY A.MAIL_DATE DESC
-		 LIMIT #{begin}, #{recordPerPage}
-	</select>
-	
-	<select id="getMailBcRlistSearchCount" parameterType="Map" resultType="int">
-	    SELECT COUNT(M.MAIL_NO)
-	      FROM MAIL_T M INNER JOIN MAIL_BC_T B
-	        ON M.MAIL_NO = B.MAIL_NO
-		 <where>
-		    <if test="column != '' and query != ''">
-		      ${column} LIKE CONCAT('%', #{query}, '%')
-		    </if>
-		    <if test="emailId != '' and mailCategory != null">
-  				AND B.MAIL_BC_TO = #{emailId} AND B.MAIL_CATEGORY = #{mailCategory}
-  			</if>
-		 </where>
-	</select>
-		
-	<!-- 안읽은메일 리스트 -->
-	<!-- <select id="getMailToCount" parameterType="String" resultType="int">
-		SELECT COUNT(*)
-		  FROM MAIL_TO_T
-		 WHERE MAIL_TO = #{emailId}
-		   AND MAIL_CATEGORY = 'R'
-		   AND MAIL_STATUS = 'N'
-	</select>
-	
-	<select id="getMailCcCount" parameterType="String" resultType="int">
-		SELECT COUNT(*)
-		  FROM MAIL_CC_T
-		 WHERE MAIL_CC_TO = #{emailId}
-		   AND MAIL_CATEGORY = 'R'
-		   AND MAIL_STATUS = 'N'
-	</select>
-
-	<select id="getMailBcCount" parameterType="String" resultType="int">
-		SELECT COUNT(*)
-		  FROM MAIL_BC_T
-		 WHERE MAIL_BC_TO = #{emailId}
-		   AND MAIL_CATEGORY = 'R'
-		   AND MAIL_STATUS = 'N'
-	</select> -->
-	
-	<!-- 중요메일 리스트 -->
-	<!-- <select id="getMailToCount" parameterType="String" resultType="int">
-		SELECT COUNT(*)
-		  FROM MAIL_TO_T
-		 WHERE MAIL_TO = #{emailId}
-		   AND MAIL_CATEGORY = 'R'
-		   AND MAIL_STAR = 'Y'
-	</select>
-	
-	<select id="getMailCcCount" parameterType="String" resultType="int">
-		SELECT COUNT(*)
-		  FROM MAIL_CC_T
-		 WHERE MAIL_CC_TO = #{emailId}
-		   AND MAIL_CATEGORY = 'R'
-		   AND MAIL_STAR = 'Y'
-	</select>
-
-	<select id="getMailBcCount" parameterType="String" resultType="int">
-		SELECT COUNT(*)
-		  FROM MAIL_BC_T
-		 WHERE MAIL_BC_TO = #{emailId}
-		   AND MAIL_CATEGORY = 'R'
-		   AND MAIL_STAR = 'Y'
-	</select> -->
 
 </mapper>
