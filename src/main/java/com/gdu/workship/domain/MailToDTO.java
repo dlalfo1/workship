@@ -11,7 +11,8 @@ public class MailToDTO {
 	private int mailToNo;
 	private MailDTO mailDTO;
 	private String mailTo;
-	private String mailCategory;
-	private String mailStatus;
-	private String mailStar;	
+	private String mailToRole;
+	private String mailToCategory;
+	private String mailToStatus;
+	private String mailToStar;	
 }

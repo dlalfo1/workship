@@ -53,4 +53,11 @@ public class AttendanceController {
 		attendManageService.getAttendManagePage(request, model);
 		return "attendance/attendManage";
 	}
+	
+	@ResponseBody
+	@GetMapping(value="/manageSearch.do", produces="application/json")
+	public Map<String, Object> manageSearch(HttpServletRequest request){
+		return null;
+	}
+	
 }
