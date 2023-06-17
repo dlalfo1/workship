@@ -28,9 +28,15 @@
   </select>
   
   <select id="checkDept" parameterType="String" resultType="DepartmentDTO">
-    SELECT *
+    SELECT DEPT_NAME
       FROM DEPARTMENT_T
      WHERE DEPT_NAME = #{deptName}
+  </select>
+  
+  <select id="checkNameByNo" parameterType="int" resultType="String">
+    SELECT DEPT_NAME
+      FROM DEPARTMENT_T
+     WHERE DEPT_NO = #{deptNo}
   </select>
   
   <insert id="addDept" useGeneratedKeys="true" keyProperty="deptNo" parameterType="DepartmentDTO">

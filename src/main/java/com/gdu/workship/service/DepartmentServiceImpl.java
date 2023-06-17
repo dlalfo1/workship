@@ -39,6 +39,16 @@ public class DepartmentServiceImpl implements DepartmentService {
   }
 
   @Override
+  public Map<String, Object> loadDeptNameBack(HttpServletRequest request) {
+    int deptNo = Integer.parseInt(request.getParameter("deptNo"));
+    String returnBackName = departmentMapper.checkNameByNo(deptNo);
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("returnBackName", returnBackName);
+    
+    return map;
+  }
+  
+  @Override
   public int addDept(HttpServletRequest request) {
     DepartmentDTO departmentDTO = new DepartmentDTO();
     String deptName = request.getParameter("deptName");
@@ -69,13 +79,20 @@ public class DepartmentServiceImpl implements DepartmentService {
     departmentDTO.setDeptName(deptName);
     System.out.println("수정 : " + departmentDTO);
     
+    //Optional<String> opt1 = Optional.ofNullable(departmentMapper.checkDept(deptName).getDeptName());
+    //String checkdeptName = opt1.orElse("N");
+    
     Map<String, Object> map = new HashMap<String, Object>();
-    if(deptName.equals(departmentMapper.checkDept(deptName).getDeptName())) {
-      map.put("isModify", false);
+    int modifyResult = 0;
+    if(departmentMapper.checkDept(deptName) == null) {
+      modifyResult = departmentMapper.modifyDept(departmentDTO);
+      System.out.println(modifyResult);
+      map.put("modifyResult", modifyResult);
+      return map;
     } else {
-      map.put("isModify", departmentMapper.modifyDept(departmentDTO) == 1);
+      map.put("modifyResult", modifyResult);
+      return map;
     }
-    return map;
   }
   
   @Override

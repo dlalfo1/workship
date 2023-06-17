@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 
 public interface DepartmentService {
   public void loadDepartmentList(HttpServletRequest request, Model model);
+  public Map<String, Object> loadDeptNameBack(HttpServletRequest request);
   public int addDept(HttpServletRequest request);
   public Map<String, Object> modifyDept(HttpServletRequest request);
   public int removeDept(HttpServletRequest request);

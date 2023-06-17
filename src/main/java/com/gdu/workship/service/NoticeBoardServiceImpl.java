@@ -36,6 +36,7 @@ import com.gdu.workship.domain.NoticeFileDTO;
 import com.gdu.workship.mapper.NoticeBoardMapper;
 import com.gdu.workship.util.MyFileUtil;
 import com.gdu.workship.util.PageUtil;
+import com.gdu.workship.util.PageUtil2;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +45,7 @@ import lombok.RequiredArgsConstructor;
 public class NoticeBoardServiceImpl implements NoticeBoardService {
 
   private final NoticeBoardMapper noticeBoardMapper;
-  private final PageUtil pageUtil;
+  private final PageUtil2 pageUtil;
   private final MyFileUtil myFileUtil;
   
   @Override

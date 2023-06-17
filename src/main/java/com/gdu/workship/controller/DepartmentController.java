@@ -27,6 +27,12 @@ public class DepartmentController {
     return "department/dept";
   }
   
+  @GetMapping(value="/department/loadDeptNameBack.do", produces="application/json")
+  @ResponseBody
+  public Map<String, Object> loadDeptNameBack(HttpServletRequest request) {
+    return departmentService.loadDeptNameBack(request);
+  }
+  
   @PostMapping("/department/addDept.do")
   public String addDept(HttpServletRequest request, RedirectAttributes redirectAttributes) {
     int addResult = departmentService.addDept(request);

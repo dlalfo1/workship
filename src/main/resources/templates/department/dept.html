@@ -27,7 +27,7 @@
     
   fnEditDept();
   fnModify();
-  fnModifyReg();
+  fnBtnCancel();
   })
   
 </script>
@@ -54,14 +54,15 @@
               <div class="card">
                 <div class="card-body">
                   <p class="card-title">부서 추가</p>
-                  <form method="post" id="createDept" class="form-inline" th:action="@{/department/addDept.do}">
-                  <label for="inputDeptName" class="col-sm-1 col-form-label">부서명</label>
-                  <input type="text" class="form-control mb-2 mr-sm-2 col-sm-4" id="inputDeptName" name="deptName" placeholder="부서명을 적어주세요.">
-                  <div id="msg" style="display: block;"></div>
-                  <button type="button" id="btnAdd" class="btn btn-primary mb-2">부서 추가</button>
-                  <button type="button" id="btnReset" class="btn btn-outline-info mb-2">다시 입력</button>
-                  
-                  </form>
+                    <div class="mb-3">
+                      <form method="post" id="createDept" class="form-inline" th:action="@{/department/addDept.do}">
+                        <label for="inputDeptName" class="col-sm-1 col-form-label">부서명</label>
+                        <input type="text" class="form-control mb-2 mr-sm-2 col-sm-4" id="inputDeptName" name="deptName" placeholder="부서명을 입력해주세요.">
+                        <button type="button" id="btnAdd" class="btn btn-primary mb-2">부서 추가</button>
+                        <button type="button" id="btnReset" class="btn btn-outline-info mb-2">다시 입력</button>
+                      </form>
+                      <div id="msg" style="display: block;"></div>
+                    </div>
                   <script>
                     var deptPass = false;
                   
@@ -126,10 +127,10 @@
                           <td th:text="|${dept.memberCount} 명|"></td>
                           <td>
                             <form id="frmBtn">
-                              <button type="button" id="btnEdit" class="btn btn-outline-secondary btn-sm btnEdit">수정</button>
+                              <button type="button" class="btn btn-outline-secondary btn-sm btnEdit">수정</button>
                               <input type="hidden" class="inputHiddenDeptName" name="deptName">
                               <input type="hidden" class="inputHiddenDeptNo" name="deptNo" th:value="${dept.deptNo}">
-                              <button type="button" id="btnRemove" class="btn btn-outline-danger btn-sm" th:onclick="fnRemoveDept([[${dept}]])">삭제</button>
+                              <button type="button" class="btn btn-outline-danger btn-sm btnRemove" th:onclick="fnRemoveDept([[${dept}]])">삭제</button>
                             </form>
                           </td>
                         </tr>
@@ -138,45 +139,61 @@
                   </table>
                   <script>
                     function fnEditDept() {
-                    	$('.btnEdit').on('click', function(){
+                    	$(document).on('click', '.btnEdit', function(){
                     		// 부서명을 input 태그로
                     	  var tdDeptName = $(this).parents('.trTag').children('.inputDeptName');
                     		// console.log('tdDeptName: ' + tdDeptName.text());
                     		var inputDeptName = tdDeptName.text();
                     		var inputTag = $('<input>').attr({
                 		      type: 'text',
-                		      class: 'form-control col-xs-2 inputModify',
+                		      // style: 'style="text-align: center;"',
+                		      class: 'form-control form-control-sm w-75 inputModify',
+                		      style: 'display: block;',
                 		      value: inputDeptName
                 		    });
-                    		
-                    		tdDeptName.empty().append(inputTag);
+                    		var divTag = $('<div class="md-1" style="display: flex; justify-content: center;">').append(inputTag);
+                    	  tdDeptName.empty().append(divTag);
+                    		// tdDeptName.empty().append($('<div>')).append(inputTag);
 
                     		inputTag.focus();
                     		
                     		// 수정 버튼을 완료 버튼으로
-                    		var tdBtn = $(this).parent();
+                    		var frmBtn = $(this).parent();
                     		var btnEdit = $(this);
                     	  var btnModify = $('<button>').attr({
                     		  type: 'button',
                     		  class: 'btn btn-outline-secondary btn-sm btnModify'
                     	  });
                     	  btnEdit.remove();
-                    	  tdBtn.prepend(btnModify.text('완료'));
+                    	  frmBtn.prepend(btnModify.text('완료'));
                     		
-                    	  let str = '<div class="modifyMsg" style="display: none"></div>';
-                    	  tdDeptName.append(str);
+                    	  // 삭제 버튼 + 취소 버튼
+                    	  var btnRemove = frmBtn.find('.btnRemove');
+                    	  var btnCancel = $('<button>').attr({
+                    		  type: 'button',
+                    		  class: 'btn btn-outline-warning btn-sm btnCancel'
+                    		  // onclick: 'location.href="/department/deptList.html"'
+                    	  });
+                    	  // btnRemove.remove();
+                    	  btnRemove.before(btnCancel.text('취소'));
                     	  
+                    	  
+                    	  // 검사 내용 출력할 <div>
+                    	  str = '<div class="modifyMsg" style="display: none;"></div>';
+                    	  inputTag.closest('td').append(str);
+                    	  
+                    	  // 수정할 때의 input 태그도 정규식으로 검사
                     	  $(document).on('keyup', '.inputModify', function(){
                           let keyupDeptName = $(this).val();
                           console.log('keyupDeptName : ' + keyupDeptName);
                           var regDept = /^[가-힣]{3,9}$/;
                           
-                          let modifyMsg = $(this).children('div');
+                          let modifyMsg = $(this).closest('tr').find('.modifyMsg');
                           
                           if(keyupDeptName.length == 0){
-                            $('.modifyMsg').text('');
+                        	  modifyMsg.text('');
                             modifyMsg.attr("style", "display: none;");
-                          } else if(regDept.test($('.inputModify').val())){
+                          } else if(regDept.test(keyupDeptName)){
                             modifyMsg.attr("style", "display: block;");
                             modifyMsg.text('부서명이 정상적으로 작성되었습니다.').css('color', '#0000FF').css('font-size', '8px');
                           } else {
@@ -196,7 +213,7 @@
                     		
                     		// 수정용 <input type="text"> 의 밸류값(..팀)
                     		var hiddenName = btnHiddenName.val();
-                    		// console.log('hiddenName' + hiddenName);
+                    		console.log('hiddenName' + hiddenName);
                     		
                     		// 완료 버튼의 형제중 inputHiddenDeptName 과 inputHiddenDeptNo를 찾아준다.
                     		var inputHiddenDeptName = $(this).parent().find('.inputHiddenDeptName');
@@ -206,15 +223,16 @@
                     		$(this).next().val(hiddenName);
                     		var paramDeptName = $(this).next().val();
                     		var paramDeptNo = inputHiddenDeptNo.val();
-                    		// console.log('inputDeptName : ' + inputDeptName);
-                    		// console.log('inputDeptNo : ' + inputDeptNo);
+                    		console.log('paramDeptName : ' + paramDeptName);
+                    		console.log('paramDeptNo : ' + paramDeptNo);
                       	$.ajax({
                       		type: 'post',
                       		url: '/department/modifyDept.do',
                       		data: 'deptNo=' + paramDeptNo + '&deptName=' + paramDeptName,
                       		dataType: 'json',
                       		success: function(resData){
-                      			if(resData.isModify){
+                      			console.log(resData);
+                      			if(resData.modifyResult == 1){
                               alert('부서명이 수정되었습니다.');
                             } else {
                             	alert('부서명 수정을 실패했습니다.\n부서명을 확인해주세요.');
@@ -225,8 +243,31 @@
                     	})
                     }
                     
-                    function fnModifyReg() {
-                    	
+                    function fnBtnCancel() {
+                    	$(document).on('click','.btnCancel', function(){
+                    		let inputDeptName = $(this).parent().parent().parent().children('.inputDeptName');
+                    		let byDeptNo = inputDeptName.prev().text();
+                    	  var parentFrm = $(this).parent();
+                    	  var btnComplete = parentFrm.children('.btnModify');
+                    	  var btnEditBack = $('<button>').attr({
+                          type: 'button',
+                          class: 'btn btn-outline-secondary btn-sm btnEdit'
+                        });
+                    	  
+                    	  btnComplete.remove();
+                    	  parentFrm.prepend(btnEditBack.text('수정'));
+                    	  $(this).remove();
+                    	  
+                      	$.ajax({
+                      		type: 'get',
+                          url: '/department/loadDeptNameBack.do',
+                          data: 'deptNo=' + byDeptNo,
+                          dataType: 'json',
+                          success: function(resData){
+                        	  inputDeptName.text(resData.returnBackName);
+                          }
+                        })
+                    	})
                     }
                     
                     function fnRemoveDept(dept) {

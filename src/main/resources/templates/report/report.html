@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('신고 관리')}"></head>
+<script th:inline="javascript">
+  
+</script>
+<body>
+
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <a th:href="@{/report/reportList.html}">신고 관리</a>
+          
+          <div class="row">
+            <div class="col-md-12 stretch-card grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-title">검색</p>
+                    <div class="mb-3">
+                      <form method="post" id="searchReport" class="form-inline" th:action="@{/department/addDept.do}">
+                        <label for="inputQuery" class="col-sm-1 col-form-label">검색어</label>
+                        <input type="text" class="form-control mb-2 mr-sm-2 col-sm-4" id="inputQuery" name="query" placeholder="검색어를 입력해주세요.">
+                        <button type="button" id="btnAdd" class="btn btn-primary mb-2">부서 추가</button>
+                        <button type="button" id="btnReset" class="btn btn-outline-info mb-2">다시 입력</button>
+                      </form>
+                      <div id="msg" style="display: block;"></div>
+                    </div>
+                  <script>
+                  
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-12 stretch-card grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-title">신고 내역</p>
+                  <table class="table table-sm text-center">
+                    <thead>
+                      <tr>
+                        <th width="10%">신고번호</th>
+                        <th width="20%">신고일</th>
+                        <th width="15%">신고자</th>
+                        <th width="20%">신고내용</th>
+                        <th width="20%">처리일</th>
+                        <th width="15%">처리여부</th>
+                      </tr>
+                    </thead>
+                    <tbody id="reportListBody">
+                    </tbody>
+                  </table>
+                  <script>
+                  
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+            
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

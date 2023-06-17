@@ -11,6 +11,7 @@ public interface DepartmentMapper {
   public List<DepartmentDTO> getDeptList();
   public List<DepartmentDTO> getDeptHeadList();
   public DepartmentDTO checkDept(String deptName);
+  public String checkNameByNo(int deptNo);
   public int addDept(DepartmentDTO departmentDTO);
   public int modifyDept(DepartmentDTO departmentDTO);
   public int removeDept(int deptNo);
