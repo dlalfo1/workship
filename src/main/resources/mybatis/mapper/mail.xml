@@ -15,14 +15,15 @@
 		<result column="MAIL_CATEGORY" property="mailCategory"/>
 		<association javaType="MemberDTO" property="memberDTO">
 			<id column="EMAIL_ID" property="emailId"/>
+			<result column="MEMBER_NAME" property="memberName"/>
 		</association>
 		<association javaType="MailToDTO" property="mailToDTO">
 			<id column="MAIL_TO_NO" property="mailToNo"/>
-		<result column="MAIL_TO" property="mailTo"/>
-		<result column="MAIL_TO_ROLE" property="mailToRole"/>
-		<result column="MAIL_TO_CATEGORY" property="mailToCategory"/>
-		<result column="MAIL_TO_STATUS" property="mailToStatus"/>
-		<result column="MAIL_TO_STAR" property="mailToStar"/>
+			<result column="MAIL_TO" property="mailTo"/>
+			<result column="MAIL_TO_ROLE" property="mailToRole"/>
+			<result column="MAIL_TO_CATEGORY" property="mailToCategory"/>
+			<result column="MAIL_TO_STATUS" property="mailToStatus"/>
+			<result column="MAIL_TO_STAR" property="mailToStar"/>
 		</association>
 	</resultMap>
 	
@@ -36,11 +37,19 @@
 		</association>
 	</resultMap>
 
-	<!-- 메일 개수 확인  -->
-	<select id="getMailCount" parameterType="Map" resultType="int">
+	<!-- 각 메일 개수 체크 -->
+	<select id="getMailTotalCount" parameterType="Map" resultType="int">
 		SELECT COUNT(DISTINCT M.MAIL_NO)
 		  FROM MAIL_T M LEFT JOIN MAIL_TO_T T
 		    ON M.MAIL_NO = T.MAIL_NO
+		 WHERE (M.EMAIL_ID = #{emailId} AND M.MAIL_CATEGORY = #{mailCategory})
+		    OR (T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = #{mailCategory})
+	</select>
+	
+	<select id="getMailCount" parameterType="Map" resultType="int">
+		SELECT COUNT(DISTINCT M.MAIL_NO)
+		  FROM MAIL_T M LEFT JOIN MAIL_TO_T T
+		    ON M.MAIL_NO = T.MAIL_NO		    		   
 		 <choose>
 		 	<when test="mailCategory == 'NOREAD'">
 		 		<where>
@@ -60,7 +69,7 @@
 			      		${column} LIKE CONCAT('%', #{query}, '%')
 			    	</if>
 			    	<if test="emailId != ''">
-		 				AND (M.EMAIL_ID = #{emailId} OR T.MAIL_TO = #{emailId})
+		 				AND T.MAIL_TO = #{emailId}
 		 			</if>
 		 			AND T.MAIL_TO_CATEGORY = 'INBOX' AND T.MAIL_TO_STAR = 'Y' 
 			  	</where>
@@ -90,15 +99,29 @@
 		 </choose>
 	</select>
 	
+	<select id="getMailNoReadCount" parameterType="Map" resultType="int">
+		SELECT COUNT(DISTINCT M.MAIL_NO)
+		  FROM MAIL_T M LEFT JOIN MAIL_TO_T T
+		    ON M.MAIL_NO = T.MAIL_NO
+		 WHERE T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = 'INBOX' AND T.MAIL_TO_STATUS = 'N'
+	</select>
+	
+	<select id="getMailStarCount" parameterType="Map" resultType="int">
+		SELECT COUNT(DISTINCT M.MAIL_NO)
+		  FROM MAIL_T M LEFT JOIN MAIL_TO_T T
+		    ON M.MAIL_NO = T.MAIL_NO
+		 WHERE T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = 'INBOX' AND T.MAIL_TO_STAR = 'Y' 
+	</select>
+	
+	<!-- 메일 목록 -->
 	<select id="getMailList" parameterType="Map" resultMap="MailMap">
-				  		 
 		 <choose>
 		 	<when test="mailCategory == 'NOREAD'">
-			 	SELECT A.EMAIL_ID, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
-			  	  FROM (SELECT E.EMAIL_ID, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
-			  		  FROM MEMBER_T E 
-			  		 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
-			  		 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO	
+			 	SELECT A.EMAIL_ID, A.MEMBER_NAME, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
+			  	  FROM (SELECT E.EMAIL_ID, E.MEMBER_NAME, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
+			  		 	  FROM MEMBER_T E 
+			  		 	 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
+			  		 	 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO					  		 
 				  		<where>
 				  			<if test="column != '' and query != ''">
 				  				${column} LIKE CONCAT('%', #{query}, '%')
@@ -113,11 +136,11 @@
 		 	</when>
 		 	
 		 	<when test="mailCategory == 'STARRED'">
-		 		SELECT A.EMAIL_ID, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
-			  	  FROM (SELECT E.EMAIL_ID, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
-			  		  FROM MEMBER_T E 
-			  		 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
-			  		 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO	
+		 		SELECT A.EMAIL_ID, A.MEMBER_NAME, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
+			  	  FROM (SELECT E.EMAIL_ID, E.MEMBER_NAME, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
+			  		 	  FROM MEMBER_T E 
+			  		 	 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
+			  		 	 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO
 				  		<where>
 				  			<if test="column != '' and query != ''">
 				  				${column} LIKE CONCAT('%', #{query}, '%')
@@ -132,11 +155,11 @@
 		 	</when>
 		 	
 		 	<when test="mailCategory == 'INBOX' or mailCategory == 'SPAM' or mailCategory == 'TRASH'">
-				SELECT A.EMAIL_ID, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
-			  	  FROM (SELECT E.EMAIL_ID, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
-			  		  FROM MEMBER_T E 
-			  		 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
-			  		 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO	
+		 		SELECT A.EMAIL_ID, A.MEMBER_NAME, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
+			  	  FROM (SELECT E.EMAIL_ID, E.MEMBER_NAME, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
+			  		 	  FROM MEMBER_T E 
+			  		 	 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
+			  		 	 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO
 				  		<where>
 				  			<if test="column != '' and query != ''">
 				  				${column} LIKE CONCAT('%', #{query}, '%')
@@ -150,11 +173,11 @@
 		 	</when>
 		 	
 		 	<when test="mailCategory == 'SENT' or mailCategory == 'DRAFTS'">
-		 		SELECT A.EMAIL_ID, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY,A.MAIL_TO
-			  	  FROM (SELECT E.EMAIL_ID, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO
-			  		  FROM MEMBER_T E 
-			  		 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
-			  		 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO	
+		 	SELECT DISTINCT A.EMAIL_ID, A.MEMBER_NAME, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
+		  	  FROM (SELECT E.EMAIL_ID, E.MEMBER_NAME, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
+		  		 	  FROM MEMBER_T E 
+		  		 	 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
+		  		 	 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO	
 				  		<where>
 				  			<if test="column != '' and query != ''">
 				  				${column} LIKE CONCAT('%', #{query}, '%')
@@ -168,5 +191,15 @@
 		 	</when>
 		 </choose>
 	</select>
+
+	<!-- 메일 상세보기 -->
+<!-- 	<select id="getMailByNo" parameterType="int" resultMap="MailMap">
+		SELECT A.EMAIL_ID, A.MEMBER_NAME, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
+	  	  FROM (SELECT E.EMAIL_ID, E.MEMBER_NAME, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
+	  		  	  FROM MEMBER_T E 
+	  		     RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
+	  		 	 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO) A
+	     WHERE A.MAIL_NO = #{mailNo}
+	</select> -->
 
 </mapper>

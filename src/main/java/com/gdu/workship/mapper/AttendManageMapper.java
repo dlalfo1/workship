@@ -9,6 +9,12 @@ import com.gdu.workship.domain.AttendanceDTO;
 @Mapper
 public interface AttendManageMapper {
 	
+	// 스케줄러
+	public List<Integer> getAllMemberNo();
+	public AttendanceDTO getAttendanceYesterday(int memberNo);
+	public int addAbsent(int memberNo);
+	public int updateError(int memberNo);
+	
 	public List<AttendanceDTO> getAllAttendanceToday();
 	
 }

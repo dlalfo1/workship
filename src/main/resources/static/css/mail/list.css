@@ -53,10 +53,13 @@
 	height: 24px;
 	width: 88px;
 }
+
 ul {
-	padding: 0px;
+	padding: 0px;	
 }
+
 li {
+	height: 40px;
 	list-style: none;
 }
 
@@ -67,17 +70,17 @@ li {
 
 .mailContent {
 	display: flex;
-	justify-content: space-between;
+	gap: 16px;
 	align-items: center;
 	border-bottom: 1px solid gray;
 }
 
 .mailCheck {
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
-	gap: 32px;
-	width: 15%
+	gap: 40px;
+	width: 20%;
+	padding: 4px;
 }
 
 input[type="radio"] {
@@ -91,11 +94,11 @@ input[type="radio"] {
 }
 
 .contentMailEmail {
-	width: 25%;
+	width: 35%;
 }
 
 .contentMailTitle {
-	width: 60%;
+	width: 50%;
 }
 
 .contentMailDate {

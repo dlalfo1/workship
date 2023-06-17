@@ -15,11 +15,11 @@
 		
 		<div class="mailFilter">
 			<a class="filter" th:href="@{/mail/list.html?mailCategory=NOREAD}">
-				<span class="count"><strong>1</strong></span>
+				<span class="count"><strong><span th:text="${mailNoReadRecord}"></span></strong></span>
 				<span class="text">안읽음</span>
 			</a>
 			<a class="filter" th:href="@{/mail/list.html?mailCategory=STARRED}">
-				<span class="count"><strong>6</strong></span>
+				<span class="count"><strong><span th:text="${mailStarRecord}"></span></strong></span>
 				<span class="text">중요</span>
 			</a>
 		</div>
@@ -32,35 +32,30 @@
 		    <a th:href="@{/mail/list.html?mailCategory=INBOX}">
 		    	<i class="fa-regular fa-envelope menu-icon"></i>
 		    	받은 메일함
-		    	<span class="badge bg-primary rounded-pill text-white">1</span>
 		    </a>
 		  </li>
 		  <li class="list-group-item d-flex justify-content-between align-items-center border-0">
 		    <a th:href="@{/mail/list.html?mailCategory=SENT}">
 		    	<i class="fa-regular fa-paper-plane"></i>
 		    	보낸 메일함
-		    	<span class="badge bg-primary rounded-pill text-white">0</span>
 		    </a>
 		  </li>
 		  <li class="list-group-item d-flex justify-content-between align-items-center border-0">
 		    <a th:href="@{/mail/list.html?mailCategory=DRAFTS}">
 		    	<i class="fa-regular fa-file"></i>
 		    	임시 보관함
-		    	<span class="badge bg-primary rounded-pill text-white">0</span>
 		    </a>
 		  </li>
 		  <li class="list-group-item d-flex justify-content-between align-items-center border-0">
 		    <a th:href="@{/mail/list.html?mailCategory=SPAM}">
 		    	<i class="fa-solid fa-ban"></i>
 		    	스팸 메일함
-		    	<span class="badge bg-primary rounded-pill text-white">6</span>
 		    </a>
 		  </li>
 		  <li class="list-group-item d-flex justify-content-between align-items-center border-0">
 		    <a th:href="@{/mail/list.html?mailCategory=TRASH}">
 		    	<i class="fa-regular fa-trash-can"></i>
 		    	휴지통
-		    	<span class="badge bg-primary rounded-pill text-white">27</span>
 		    </a>
 		  </li>
 		</ul>

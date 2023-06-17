@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('workship 메일')}"></head>
+<head th:replace="~{/layout/header::headFrag('workship 메일목록')}"></head>
 <link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
 <link rel="stylesheet" th:href="@{/css/mail/list.css(var=1.0)}">
 
@@ -37,29 +37,47 @@
         	
 	        	<div class="info">
 	        		<th:block th:if="${mailCategory == 'NOREAD'}">
-		        		<span class="title">안읽은 메일함</span>	        			
+		        		<span class="title">안읽은 메일함</span>	
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailNoReadRecord}"></span>
+		        		</div>        			
 	        		</th:block>
 	        		<th:block th:if="${mailCategory == 'STARRED'}">
-		        		<span class="title">중요 메일함</span>	        			
+		        		<span class="title">중요 메일함</span>
+		        		<div class="totalMail">	   
+		        			<span>전체 메일 </span><span th:text="${mailStarRecord}"></span>    		
+		        		</div> 	
 	        		</th:block>
 	        		<th:block th:if="${mailCategory == 'INBOX'}">
-		        		<span class="title">받은 메일함</span>	        			
+		        		<span class="title">받은 메일함</span>	
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span><span> / 안읽은 메일</span><span th:text="${mailNoReadRecord}"></span>
+		        		</div>        			
 	        		</th:block>
 	        		<th:block th:if="${mailCategory == 'SENT'}">
-		        		<span class="title">보낸 메일함</span>	        			
+		        		<span class="title">보낸 메일함</span>	  
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span>
+		        		</div>      			
 	        		</th:block>
 	        		<th:block th:if="${mailCategory == 'DRAFTS'}">
-		        		<span class="title">임시 보관함</span>	        			
+		        		<span class="title">임시 보관함</span>	
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span>
+		        		</div>        			
 	        		</th:block>
 	        		<th:block th:if="${mailCategory == 'SPAM'}">
-		        		<span class="title">스팸 메일함</span>	        			
+		        		<span class="title">스팸 메일함</span>
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span><span>
+		        		</div>	        			
 	        		</th:block>
 	        		<th:block th:if="${mailCategory == 'TRASH'}">
 		        		<span class="title">휴지통</span>	        			
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span><span>
+		        		</div>
 	        		</th:block>
-	        		<div class="totalMail">
-	        			<span>전체 메일</span><span th:text="${totalRecord}"></span>
-	        		</div>
 	        	</div>
 	        	
         		<div class="contents">
@@ -73,131 +91,192 @@
         						<label for="chk_all" id="lbl_chk_all"></label>
         						<input type="checkbox" id="chk_all" class="screen_out">
         					</div>
-        					<div>
-        						<label for="btnStar" id="lblBtnStar"></label>
-        						<input type="button" value="중요" id="chkStar" onclick="fnStar()">
-        					</div>
-        					<div>
-        						<label for="btnRead" id="lblBtnRead"></label>
-        						<input type="button" value="읽음" id="chkRead" onclick="fnRead()">
-        					</div>
-        					<div>
-        						<label for="btnRemove" id="lblBtnRemove"></label>
-        						<input type="button" value="삭제" id="chkRemove" onclick="fnRemove()">
-        					</div>
-        					<div>
-        						<label for="btnSpam" id="lblBtnSpam"></label>
-        						<input type="button" value="스팸" id="chkSpam" onclick="fnSpam()">
-        					</div>
-        					<div>
-        						<label for="btnReply" id="lblBtnReply"></label>
-        						<input type="button" value="답장" id="chkReply" onclick="fnReply()">
-        					</div>
-        					<div>
-        						<label for="btnorward" id="lblBtnForward"></label>
-        						<input type="button" value="전달" id="chkForward" onclick="fnForward()">
-        					</div>
+        					
+        					<th:block th:if="${mailCategory == 'INBOX' or mailCategory == 'NOREAD' or mailCategory == 'STARRED'}">
+	        					<div>
+	        						<label for="btnStar" id="lblBtnStar"></label>
+	        						<input type="button" value="중요" id="btnStar" onclick="fnStar()">
+	        					</div>
+	        					<div>
+	        						<label for="btnRead" id="lblBtnRead"></label>
+	        						<input type="button" value="읽음" id="btnRead" onclick="fnRead()">
+	        					</div>
+	        					<div>
+	        						<label for="btnRemove" id="lblBtnRemove"></label>
+	        						<input type="button" value="삭제" id="btnRemove" onclick="fnRemove()">
+	        					</div>
+	        					<div>
+	        						<label for="btnSpam" id="lblBtnSpam"></label>
+	        						<input type="button" value="스팸차단" id="btnSpam" onclick="fnSpam()">
+	        					</div>
+	        					<div>
+	        						<label for="btnReply" id="lblBtnReply"></label>
+	        						<input type="button" value="답장" id="btnReply" onclick="fnReply()">
+	        					</div>
+	        					<div>
+	        						<label for="btnorward" id="lblBtnForward"></label>
+	        						<input type="button" value="전달" id="btnorward" onclick="fnForward()">
+	        					</div>
+        					</th:block>
+        					
+        					<th:block th:if="${mailCategory == 'SENT'}">
+        						<div>
+	        						<label for="btnDelete" id="lblBtnDelete"></label>
+	        						<input type="button" value="영구삭제" id="btnDelete" onclick="fnDelete()">
+	        					</div>
+        					</th:block>
+
+        					<th:block th:if="${mailCategory == 'DRAFTS'}">
+        						<div>
+	        						<label for="btnDelete" id="lblBtnDelete"></label>
+	        						<input type="button" value="영구삭제" id="btnDelete" onclick="fnDelete()">
+	        					</div>
+	        					<div>
+	        						<label for="btnorward" id="lblBtnForward"></label>
+	        						<input type="button" value="전달" id="btnorward" onclick="fnForward()">
+	        					</div>
+        					</th:block>
+        					
+        					<th:block th:if="${mailCategory == 'SPAM'}">
+        						<div>
+	        						<label for="btnDelete" id="lblBtnDelete"></label>
+	        						<input type="button" value="영구삭제" id="btnDelete" onclick="fnDelete()">
+	        					</div>
+	        					<div>
+	        						<label for="btnSpamCancel" id="lblBtnSpamCancel"></label>
+	        						<input type="button" value="스팸해제" id="btnSpamCancel" onclick="fnSpamCancel()">
+	        					</div>
+        					</th:block>
+        					
+        					<th:block th:if="${mailCategory == 'TRASH'}">
+        						<div>
+	        						<label for="btnRemoveCancel" id="lblBtnRemoveCancel"></label>
+	        						<input type="button" value="메일복원" id="btnRemoveCancel" onclick="fnRemoveCancel()">
+	        					</div>
+	        					<div>
+	        						<label for="btnDelete" id="lblBtnDelete"></label>
+	        						<input type="button" value="영구삭제" id="btnDelete" onclick="fnDelete()">
+	        					</div>
+	        					<div>
+	        						<label for="btnSpam" id="lblBtnSpam"></label>
+	        						<input type="button" value="스팸차단" id="btnSpam" onclick="fnSpam()">
+	        					</div>
+        					</th:block>
         				</div>
         				
        					<div class="search">
-       						<select name="column" id="column">
+       						<select th:name="column" th:id="column">
        							<th:block th:if="${mailCategory == 'SENT' or mailCategory == 'DRAFTS'}">
-	       							<option value="T.MAIL_TO">받는사람</option>							
+	       							<option th:value="T.MAIL_TO">받는사람</option>							
        							</th:block>
        							<th:block th:unless="${mailCategory == 'SENT' or mailCategory == 'DRAFTS'}">
-       								<option value="E.EMAIL_ID">보낸사람</option>   
+       								<option th:value="M.EMAIL_ID">보낸사람</option>   
        							</th:block>
-       							<option value="M.MAIL_TITLE">메일제목</option>
+       							<option th:value="M.MAIL_TITLE">메일제목</option>
        						</select>
-       						<input list="auto_complete" type="text" name="query" id="query">
-       						
-       						
-	        				<button type='submit'><i class="fa-solid fa-magnifying-glass"></i></button>
+       						<input list="auto_complete" type="text" th:name="query" th:id="query">       						
+	        				<button><i class="fa-solid fa-magnifying-glass"></i></button>
        					</div>
         			</div>
         		</div>
         		
         		<!-- 메일리스트 뿌리기 -->
        			<div class="contentList">
-      					<div class="searchResult">
-      						<datalist id="auto_complete"></datalist>
-      					</div>	    
+   					<div class="searchResult">
+   						<datalist id="auto_complete"></datalist>
+   					</div>	    
       					    					
-      					<!-- 메일이 없는 경우 -->
-      					<th:block th:if="${#lists.isEmpty(mailList)}">
-      						<h3 class="noMail">보관 메일이 없습니다.</h3>
-      					</th:block>
+   					<!-- 메일이 없는 경우 -->
+   					<th:block th:if="${#lists.isEmpty(mailList)}">
+   						<h3 class="noMail">보관 메일이 없습니다.</h3>
+   					</th:block>
       					
-      					<!-- 메일이 있는 경우 -->
-      					<th:block th:unless="${#lists.isEmpty(mailList)}">
+   					<!-- 메일이 있는 경우 -->
+   					<th:block th:unless="${#lists.isEmpty(mailList)}">
 
-        					<!-- 보낸 메일 --> 
-        					<th:block th:if="${mailCategory == 'SENT' or mailCategory == 'DRAFTS'}">
-        						<th:block th:each="mail:${mailList}">
-	       							<ul>
-			        					<li class="mailContent">
-			        						<div class="mailCheck">
-				        						<div>
-				        							<label th:for="|chk_one${mail?.mailNo}|" class="lbl_chk_one"></label>
-				        							<input type="checkbox" th:id="|chk_one${mail?.mailNo}|" class="chk_one screen_out" name="mailList" th:value="${mail?.mailNo}">
-				        						</div>
-				        						<div class="mailAttach" id="mailAttach">
-				     								<th:block th:if="${mail?.mailHasFile == 'Y'}">
-					        							<input type="radio" name="mailAttach" value="Y" id="attachState"><label for="attachState"><i class="fa-solid fa-paperclip"></i></label>
-				     								</th:block>
-				        						</div>	     						
+       					<!-- 보낸 메일 --> 
+       					<th:block th:if="${mailCategory == 'SENT' or mailCategory == 'DRAFTS'}">
+       						<ul>
+       							<th:block th:each="mail:${mailList}">	       							
+		        					<li class="mailContent">
+		        						<div class="mailCheck">
+			        						<div>
+			        							<label th:for="|chk_one${mail.mailNo}|" class="lbl_chk_one"></label>
+			        							<input type="checkbox" th:id="|chk_one${mail.mailNo}|" class="chk_one screen_out" th:name="mailList" th:value="${mail.mailNo}">
 			        						</div>
-			        						<div class="contentMail">
-				        						<div class="contentMailEmail" style="width:25%" th:text="${mail?.mailToDTO.mailTo}"></div>
-				        						<div class="contentMailTitle" th:text="${mail?.mailTitle}"></div>				        						
-				        						<div class="contentMailDate" th:text="${#dates.format(mail?.mailDate, 'yyyy/MM/dd')}"></div>		
+			        						<div class="mailAttach" id="mailAttach">
+			     								<th:block th:if="${mail.mailHasFile == 'Y'}">
+				        							<input type="radio" th:name="mailAttach" value="Y" id="attachState"><label for="attachState"><i class="fa-solid fa-paperclip"></i></label>
+			     								</th:block>
+			        						</div>	     						
+		        						</div>
+		        						<div class="contentMail">
+		        							<div class="contentMailEmail">
+			        							<span>받는사람??</span>
+			        							(<span th:text="${mail.mailToDTO.mailTo}"></span>)
 			        						</div>
-			        					</li>
-			        				</ul>
-        						</th:block>
-      						</th:block>
-
-      						<!-- 받는 메일 -->
-       						<th:block th:unless="${mailCategory == 'SENT' or mailCategory == 'DRAFTS'}"> 
-       							<th:block th:each="mail:${mailList}">        							
-			        				<ul>
-			        					<li class="mailContent">
- 			        						<div class="mailCheck">
-				        						<div>
-				        							<label th:for="|chk_one${mail?.mailNo}|" class="lbl_chk_one"></label>
-				        							<input type="checkbox" th:id="|chk_one${mail?.mailNo}|" class="chk_one screen_out" name="mailList" th:value="${mail?.mailNo}">
-				        						</div>
-	 			        						<div class="mailStar" id="mailStar">
-				        							<th:block th:if="${mail?.mailToDTO.mailToStar == 'N'}">
-					        							<input type="radio" name="mailStar" value="N" id="starState"><label for="starState">☆</label>		        							
-				        							</th:block>
-				        							<th:block th:if="${mail?.mailToDTO.mailToStar == 'Y'}">
-				        								<input type="radio" name="mailStar" value="Y" id="starState"><label for="starState">★</label>	
-				        							</th:block>
-				        						</div>
-				     							<div class="mailRead" id="mailRead">
-				     								<th:block th:if="${mail?.mailToDTO.mailToStatus == 'N'}">
-				     									<input type="radio" name="mailRead" value="N" id="readState"><label for="readState"><i class="fa-solid fa-envelope"></i></label>
-				     								</th:block>
-				     								<th:block th:if="${mail?.mailToDTO.mailToStatus == 'Y'}">
-					        							<input type="radio" name="mailRead" value="Y" id="readState"><label for="readState"><i class="fa-solid fa-envelope-open"></i></label>
-				     								</th:block>
-				        						</div>		
-				        						<div class="mailAttach" id="mailAttach">
-				     								<th:block th:if="${mail?.mailHasFile == 'Y'}">
-					        							<input type="radio" name="mailAttach" value="Y" id="attachState"><label for="attachState"><i class="fa-solid fa-paperclip"></i></label>
-				     								</th:block>
-				        						</div>	        						
-			        						</div>
-			        						<div class="contentMail">
-				        						<div class="contentMailEmail" style="width:25%" th:text="${mail?.memberDTO.emailId}"></div>
-				        						<div class="contentMailTitle" th:text="${mail?.mailTitle}"></div>
-				        						<div class="contentMailDate" th:text="${#dates.format(mail?.mailDate, 'yyyy/MM/dd')}"></div>		
-			        						</div>
-			        					</li>
-			        				</ul>
+			        						<div class="contentMailTitle"><a th:href="@{/mail/detail.html(mailNo=${mail.mailNo})}" th:text="${mail.mailTitle}"></a></div>				        						
+			        						<div class="contentMailDate" th:text="${#dates.format(mail.mailDate, 'yyyy/MM/dd')}"></div>		
+		        						</div>
+		        					</li>			        				
+			        				<input type="hidden" th:name="mailToCategory" th:value="${mail.mailToDTO.mailToCategory}">
+			        				<input type="hidden" th:name="mailCategory" th:value="${mailCategory}">
+									<input type="hidden" th:name="emailId" th:value="${mail.memberDTO.emailId}">
+			        				<input type="hidden" th:name="mailTo" th:value="${mail.mailToDTO.mailTo}">
+									<input type="hidden" th:name="mailTitle" th:value="${mail.mailTitle}">
        							</th:block>
-     						</th:block>
+       						</ul>
+   						</th:block>  
+
+   						<!-- 받는 메일 -->
+   						<th:block th:unless="${mailCategory == 'SENT' or mailCategory == 'DRAFTS'}"> 
+	        				<ul>
+   								<th:block th:each="mail:${mailList}">        							
+		        					<li class="mailContent">
+		        						<div class="mailCheck">
+			        						<div>
+			        							<label th:for="|chk_one${mail.mailNo}|" class="lbl_chk_one"></label>
+			        							<input type="checkbox" th:id="|chk_one${mail.mailNo}|" class="chk_one screen_out" th:name="mailList" th:value="${mail.mailNo}">
+			        						</div>
+ 			        						<div class="mailStar" id="mailStar">
+			        							<th:block th:if="${mail.mailToDTO.mailToStar == 'N'}">
+				        							<input type="radio" th:name="mailStar" value="N" id="starState"><label for="starState">☆</label>		        							
+			        							</th:block>
+			        							<th:block th:if="${mail.mailToDTO.mailToStar == 'Y'}">
+			        								<input type="radio" th:name="mailStar" value="Y" id="starState"><label for="starState">★</label>	
+			        							</th:block>
+			        						</div>
+			     							<div class="mailRead" id="mailRead">
+			     								<th:block th:if="${mail.mailToDTO.mailToStatus == 'N'}">
+			     									<input type="radio" th:name="mailRead" value="N" id="readState"><label for="readState"><i class="fa-solid fa-envelope"></i></label>
+			     								</th:block>
+			     								<th:block th:if="${mail.mailToDTO.mailToStatus == 'Y'}">
+				        							<input type="radio" th:name="mailRead" value="Y" id="readState"><label for="readState"><i class="fa-solid fa-envelope-open"></i></label>
+			     								</th:block>
+			        						</div>		
+			        						<div class="mailAttach" id="mailAttach">
+			     								<th:block th:if="${mail.mailHasFile == 'Y'}">
+				        							<input type="radio" th:name="mailAttach" value="Y" id="attachState"><label for="attachState"><i class="fa-solid fa-paperclip"></i></label>
+			     								</th:block>
+			        						</div>	        						
+		        						</div>
+		        						<div class="contentMail">
+			        						<div class="contentMailEmail">
+			        							<span th:text="${mail.memberDTO.memberName}"></span>
+			        							(<span th:text="${mail.memberDTO.emailId}"></span>)
+			        						</div>
+			        						<div class="contentMailTitle"><a th:href="@{/mail/detail.html(mailNo=${mail.mailNo})}" th:text="${mail.mailTitle}"></a></div>	
+			        						<div class="contentMailDate" th:text="${#dates.format(mail.mailDate, 'yyyy/MM/dd')}"></div>		
+		        						</div>
+		        					</li>
+									<input type="hidden" th:name="mailToCategory" th:value="${mail.mailToDTO.mailToCategory}">
+			        				<input type="hidden" th:name="mailCategory" th:value="${mailCategory}">
+									<input type="hidden" th:name="emailId" th:value="${mail.memberDTO.emailId}">
+			        				<input type="hidden" th:name="mailTo" th:value="${mail.mailToDTO.mailTo}">
+									<input type="hidden" th:name="mailTitle" th:value="${mail.mailTitle}">
+   								</th:block>
+	        				</ul>
+   						</th:block>
        							
        				</th:block>
        			</div>
@@ -247,7 +326,7 @@
 						}
 					})
 				}
-				
+
 			</script>
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->

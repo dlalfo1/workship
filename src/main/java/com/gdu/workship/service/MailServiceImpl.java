@@ -48,8 +48,11 @@ public class MailServiceImpl implements MailService {
 		
 		Optional<String> opt3 = Optional.ofNullable(request.getParameter("page"));
 		int page = Integer.parseInt(opt3.orElse("1"));
-
+ 
 		int totalRecord = mailMapper.getMailCount(map);
+		int mailTotalRecord = mailMapper.getMailTotalCount(map);
+		int mailNoReadRecord = mailMapper.getMailNoReadCount(map);
+		int mailStarRecord = mailMapper.getMailStarCount(map);		
 		
 		Optional<Object> opt4 = Optional.ofNullable(session.getAttribute("recordPerPage"));
 		int recordPerPage = (int)(opt4.orElse(10));
@@ -61,15 +64,24 @@ public class MailServiceImpl implements MailService {
 		map.put("recordPerPage", recordPerPage);
 		
 		List<MailDTO> mailList = mailMapper.getMailList(map);
-		mailList.stream().forEach(obj -> System.out.println(obj.toString()));
 	
 		model.addAttribute("totalRecord", totalRecord);
 		model.addAttribute("mailList", mailList);
-		model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/mail/list.html?mailCategory=" + mailCategory + "&column=" + column + "&query" + query));
-		model.addAttribute("beginNo", totalRecord - (page - 1) + recordPerPage);
+		model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/mail/list.html?mailCategory=" + mailCategory + "&column=" + column + "&query=" + query));
+		model.addAttribute("beginNo", totalRecord - (page - 1) * recordPerPage);
 		model.addAttribute("page", page);
 		model.addAttribute("mailCategory", mailCategory);
-		
+		model.addAttribute("mailTotalRecord", mailTotalRecord);
+		model.addAttribute("mailNoReadRecord", mailNoReadRecord);
+		model.addAttribute("mailStarRecord", mailStarRecord);		
+
 	}
-	
+	/*
+	 * @Override public MailDTO getMailByNo(HttpServletRequest request) {
+	 * 
+	 * Optional<String> opt1 = Optional.ofNullable(request.getParameter("mailNo"));
+	 * int mailNo = Integer.parseInt(opt1.orElse("0"));
+	 * 
+	 * return mailMapper.getMailByNo(mailNo); }
+	 */
 }
