@@ -26,7 +26,7 @@
           
             <!--/* (끝!) 오늘의 출근정보 */-->
             <div class="col-md-4 grid-margin stretch-card mb-3">
-              <div class="card">
+              <div class="card h-100">
                 <div class="card-body text-center">
                   <p class="card-title mb-1" th:text="${#calendars.format(#calendars.createNow(), 'yyyy년 MM월 dd일')}"></p>
                   <div class="mb-3">
@@ -116,7 +116,7 @@
             
             <!--/* (끝!) 이번달 출근정보 */-->
             <div class="col-md-4 grid-margin stretch-card mb-3">
-              <div class="card">
+              <div class="card h-100">
                 <div class="card-body">
                   <p class="card-title">이번달 출근 정보</p>
                   <table class="table table-sm table-borderless text-center">
@@ -144,7 +144,7 @@
             
             <!--/* (끝!) 검색 조건 설정 */-->
             <div class="col-md-4 grid-margin stretch-card mb-3">
-              <div class="card">
+              <div class="card h-100">
                 <div class="card-body">
                   <table class="table table-sm table-borderless">
                     <tr>
@@ -284,89 +284,89 @@
           		  chkCount += $(checkbox[i]).prop('checked');
           	  }
           	  if(chkCount == 0){
-          		  alert('근태를 선택해주세요!');
-          		  return;
-          	  } else {
-          		  var attendance = [];
-          		  if($('#normal').is(':checked')) attendance.push($('#normal').val());
-          		  if($('#late').is(':checked')) attendance.push($('#late').val());
-          		  if($('#early').is(':checked')) attendance.push($('#early').val());
-          		  if($('#absent').is(':checked')) attendance.push($('#absent').val());
-                $.ajax({
-                  type: 'get',
-                  url: '/attendance/search.do',
-                  data: 'startDate=' + $('#startDate').val() + '&endDate=' + $('#endDate').val() + '&attendance=' + attendance + '&page=' + page,
-                  dataType: 'json',
-                  success: function(resData){
-                    var result = resData.result;
-                    if(result == 'noResult'){
-                  	  $('#attendanceListTableBody').empty();
-                      $('#attendanceListTableBody').append('<tr><td colspan="5">결과가 없습니다.</td></tr>');
-                    } else {
-                  	  $('#attendanceListTableBody').empty();
-                  	  $.each(result, (i, element) => {
-
-                  		  function getDate(date){
-                  			  var d = new Date(date);
-                  			  month = d.getMonth() + 1;
-                  			  day = d.getDate();
-                  			  year = d.getFullYear();
-                  			  if(month < 10) month = '0' + month;
-                  			  if(day < 10) day = '0' + day;
-                  			  return[year, month, day].join('-');
-                  		  }
-                  		  
-                  		  function getTime(date){
-                  			  var t = new Date(date);
-                  			  hour = t.getHours();
-                  			  minute = t.getMinutes();
-                  			  second = t.getSeconds();
-                  			  if(hour < 10) hour = '0' + hour;
-                  			  if(minute < 10) minute = '0' + minute;
-                  			  if(second < 10) second = '0' + second;
-                  			  return[hour, minute, second].join(':');
-                  		  }
-
-                  		  var list = '';
-                  		  var astarttime = (element.astarttime == null)? '' : getTime(element.astarttime);
-                  		  var aendtime = (element.aendtime == null)? '' : getTime(element.aendtime);
-                  		  var worktime = (element.worktime == null)? '' : getTime(element.worktime);
-                  		  list += '<tr>';
-                  		  list += '<td>' + getDate(element.date) + '</td>';
-                  		  list += '<td>' + astarttime + '</td>';
-                  		  list += '<td>' + aendtime + '</td>';
-                  		  list += '<td>' + worktime + '</td>';
-                  		  list += '<td>' + element.attendance + '</td>';
-                  		  list += '</tr>';
-                  		  $('#attendanceListTableBody').append(list);
-                  	  })
-                    }
-                    $('#pagination').empty();
-                    var pageUtil = resData.pageUtil;
-                    var str = '<nav><ul class="pagination pagination-sm justify-content-center">';
-                    if(pageUtil.beginPage == 1){
-                    	str += '<li class="page-item disabled"><span class="page-link text-secondary">이전</span></li>';
-                    } else {
-                    	str += '<li class="page-item"><span class="enable_link page-link" data-page="' + (pageUtil.beginPage - 1) + ">이전</span></li>";
-                    }
-                    for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
-                    	if(p == page){
-                    		str += '<li class="page-item active"><a class="page-link">' + p + '</a></li>';
-                    	} else {
-                    		str += '<li class="page-item"><a class="enable_link page-link" data-page="' + p + '">' + p + '</a></li>';
-                    	}
-                    }
-                    if(pageUtil.endPage == pageUtil.totalPage){
-                    	str += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
-                    } else {
-                    	str += '<li class="page-item"><span class="enable_link" page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
-                    }
-                    str += '</ul></nav>';
-                    
-                    $('#pagination').append(str);
-                  } /* success 끝나는 곳 */
-                }) /* ajax 끝나는 곳 */
+          		  for(let i = 0; i < checkbox.length; i++){
+          			  checkbox.prop('checked', true);
+          		  }
           	  }
+        		  var attendance = [];
+        		  if($('#normal').is(':checked')) attendance.push($('#normal').val());
+        		  if($('#late').is(':checked')) attendance.push($('#late').val());
+        		  if($('#early').is(':checked')) attendance.push($('#early').val());
+        		  if($('#absent').is(':checked')) attendance.push($('#absent').val());
+              $.ajax({
+                type: 'get',
+                url: '/attendance/search.do',
+                data: 'startDate=' + $('#startDate').val() + '&endDate=' + $('#endDate').val() + '&attendance=' + attendance + '&page=' + page,
+                dataType: 'json',
+                success: function(resData){
+                  var result = resData.result;
+                  if(result == 'noResult'){
+                	  $('#attendanceListTableBody').empty();
+                    $('#attendanceListTableBody').append('<tr><td colspan="5">결과가 없습니다.</td></tr>');
+                  } else {
+                	  $('#attendanceListTableBody').empty();
+                	  $.each(result, (i, element) => {
+
+                		  function getDate(date){
+                			  var d = new Date(date);
+                			  month = d.getMonth() + 1;
+                			  day = d.getDate();
+                			  year = d.getFullYear();
+                			  if(month < 10) month = '0' + month;
+                			  if(day < 10) day = '0' + day;
+                			  return[year, month, day].join('-');
+                		  }
+                		  
+                		  function getTime(date){
+                			  var t = new Date(date);
+                			  hour = t.getHours();
+                			  minute = t.getMinutes();
+                			  second = t.getSeconds();
+                			  if(hour < 10) hour = '0' + hour;
+                			  if(minute < 10) minute = '0' + minute;
+                			  if(second < 10) second = '0' + second;
+                			  return[hour, minute, second].join(':');
+                		  }
+
+                		  var list = '';
+                		  var astarttime = (element.astarttime == null)? '' : getTime(element.astarttime);
+                		  var aendtime = (element.aendtime == null)? '' : getTime(element.aendtime);
+                		  var worktime = (element.worktime == null)? '' : getTime(element.worktime);
+                		  list += '<tr>';
+                		  list += '<td>' + getDate(element.date) + '</td>';
+                		  list += '<td>' + astarttime + '</td>';
+                		  list += '<td>' + aendtime + '</td>';
+                		  list += '<td>' + worktime + '</td>';
+                		  list += '<td>' + element.attendance + '</td>';
+                		  list += '</tr>';
+                		  $('#attendanceListTableBody').append(list);
+                	  })
+                  }
+                  $('#pagination').empty();
+                  var pageUtil = resData.pageUtil;
+                  var str = '<nav><ul class="pagination pagination-sm justify-content-center">';
+                  if(pageUtil.beginPage == 1){
+                  	str += '<li class="page-item disabled"><span class="page-link text-secondary">이전</span></li>';
+                  } else {
+                  	str += '<li class="page-item"><span class="enable_link page-link" data-page="' + (pageUtil.beginPage - 1) + ">이전</span></li>";
+                  }
+                  for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
+                  	if(p == page){
+                  		str += '<li class="page-item active"><a class="page-link">' + p + '</a></li>';
+                  	} else {
+                  		str += '<li class="page-item"><a class="enable_link page-link" data-page="' + p + '">' + p + '</a></li>';
+                  	}
+                  }
+                  if(pageUtil.endPage == pageUtil.totalPage){
+                  	str += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
+                  } else {
+                  	str += '<li class="page-item"><span class="enable_link" page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
+                  }
+                  str += '</ul></nav>';
+                  
+                  $('#pagination').append(str);
+                } /* success 끝나는 곳 */
+              }) /* ajax 끝나는 곳 */
             }
             function fnChangePage(){
             	$(document).on('click', '.enable_link', function(){

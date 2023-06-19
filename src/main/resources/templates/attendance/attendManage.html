@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 출퇴근기록관리')}"></head>
-<link rel="stylesheet" th:href="@{/css/yoobin.css}">
+<link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
 <body>
   <div class="container-scroller">
 
@@ -30,7 +30,7 @@
 									<table class="table table-sm table-borderless" style="width: 90%; float: none; margin: 0 auto;">
 										<tr>
 											<th class="text-center" width="20%">기간</th>
-											<td colspan="2">
+											<td colspan="4">
 												<div class="text-center">
 													<input class="datepick" type="text" id="startDate" name="startDate">
 													<label for="startDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
@@ -42,7 +42,7 @@
 										</tr>
 										<tr>
 											<th class="text-center" width="20%">근태</th>
-											<td colspan="2">
+											<td colspan="4">
 												<div class="row form-group" style="justify-content: space-between; float: none; margin: 0 auto;">
 													<div class="form-check" style="justify-content: space-between;">
 														<label for="checkAll" class="form-check-label">
@@ -75,7 +75,7 @@
 														</label>
 													</div>
 													<div class="form-check">
-														<label for="absent" class="form-check-label" style="justify-content: space-between;">
+														<label for="error" class="form-check-label" style="justify-content: space-between;">
 														<input type="checkbox" name="attendance" class="form-check-input checkOne" id="error" value="퇴근미처리">
 														퇴근미처리
 														</label>
@@ -84,13 +84,19 @@
 											</td>
 										</tr>
 										<tr>
-											<th class="text-center" width="20%">사원명</th>
-											<td width="70%">
-												<div class="text-ceonter">
-												 <input type="text" class="form-control" name="query" id="query" placeholder="사원명을 입력하세요.">
+											<th class="text-center" width="20%">사원번호</th>
+											<td width="25%">
+												<div class="text-center">
+												 <input type="text" class="form-control" name="queryNum" id="queryNum" placeholder="사원번호">
 												</div>
 											</td>
-											<td width="10%">
+											<th class="text-center" width="15%">사원명</th>
+											<td width="25%">
+											  <div class="text-center">
+                          <input type="text" class="form-control" name="queryName" id="queryName" placeholder="사원명">
+                        </div>
+											</td>
+											<td width="15%">
 											  <input type="button" class="btn btn-primary" value="검색" onclick="fnSearch()">
 											</td>
 										</tr>
@@ -149,31 +155,43 @@
 										  <th width="15%">출근시간</th>
 										  <th width="15%">퇴근시간</th>
 										  <th width="15%">근무시간</th>
-										  <th width="5%">근태</th>
-										  <th width="5%">수정</th>
+										  <th width="10%">근태</th>
+										  <th width="15%">수정</th>
 									  </tr>
 									</thead>
-									<tbody id="attendanceListTableBody">
+									<tbody>
 									  <th:block th:each="attendance:${attendanceList}">
 									    <tr>
-									      <td th:text="${attendance?.memberDTO.memberNo}"></td>
-									      <td th:text="${attendance?.memberDTO.memberName}"></td>
-									      <td th:text="${#dates.format(attendance?.date, 'YYYY-MM-dd')}"></td>
-									      <td th:text="${#dates.format(attendance?.astarttime, 'HH:mm:ss')}"></td>
-									      <td th:text="${#dates.format(attendance?.aendtime, 'HH:mm:ss')}"></td>
-									      <td th:text="${#dates.format(attendance?.worktime, 'HH:mm:ss')}"></td>
-									      <td th:text="${attendance?.attendance}"></td>
-									      <td>수정버튼</td>
+									      <td>[[${attendance?.memberDTO.memberNo}]]</td>
+									      <td>[[${attendance?.memberDTO.memberName}]]</td>
+									      <td>[[${#dates.format(attendance?.date, 'YYYY-MM-dd')}]]</td>
+									      <td>
+									        <span>[[${#dates.format(attendance?.astarttime, 'HH:mm:ss')}]]</span>
+									        <input type="text" class="invisible" th:value="${#dates.format(attendance?.astarttime, 'HH:mm:ss')}"></input>
+									      </td>
+									      <td>
+									        <span>[[${#dates.format(attendance?.aendtime, 'HH:mm:ss')}]]</span>
+									        <input type="text" class="invisible" th:value="${#dates.format(attendance?.aendtime, 'HH:mm:ss')}"></input>
+									      </td>
+									      <td class="worktimeTd">[[${#dates.format(attendance?.worktime, 'HH:mm:ss')}]]</td>
+									      <td class="attendanceTd">[[${attendance?.attendance}]]</td>
+									      <td>
+									        <input type="hidden" class="attendanceNo" th:value="${attendance?.attendanceNo}">
+									        <input type="button" class="btn btn-sm btn-outline-secondary inputBtn" value="수정">
+									        <div class="btn-group invisible">
+									          <input type="button" class="btn btn-sm btn-outline-secondary cancelBtn" value="취소">
+									          <input type="button" class="btn btn-sm btn-secondary modiftn" value="수정">
+									        </div>
+									      </td>
 									    </tr>
 								    </th:block>
 									</tbody>
-									<tr><td colspan="8" id="pagination" class="text-center"></td></tr>
+									<tr><td colspan="8" id="pagination" class="text-center" th:utext="${pagination}"></td></tr>
 								</table>
 						  </div>
 						</div>
 					</div>
           
-          <!--/* 조회 ajax */-->
           <script>
             var page = 1;
             function fnSearch(){
@@ -183,98 +201,73 @@
                 chkCount += $(checkbox[i]).prop('checked');
               }
               if(chkCount == 0){
-                alert('근태를 선택해주세요!');
-                return;
+                for(let i = 0; i < checkbox.length; i++){
+                	checkbox.prop('checked', true);
+                	$('#frmManageSearch').submit();
+                }
               } else {
-                var attendance = [];
-                if($('#normal').is(':checked')) attendance.push($('#normal').val());
-                if($('#late').is(':checked')) attendance.push($('#late').val());
-                if($('#early').is(':checked')) attendance.push($('#early').val());
-                if($('#absent').is(':checked')) attendance.push($('#absent').val());
-                if($('#error').is(':checked')) attendance.push($('#error').val());
-                $.ajax({
-	                type: 'get',
-	                url: '/attendance/manageSearch.do',
-	                data: 'startDate=' + $('#startDate').val() + '&endDate=' + $('#endDate').val() + '&attendance=' + attendance + '&query=' + $('#query').val() + '&page=' + page,
-	                dataType: 'json',
-	                success: function(resData){
-	                  var result = resData.result;
-	                  if(result == 'noResult'){
-	                    $('#attendanceListTableBody').empty();
-	                    $('#attendanceListTableBody').append('<tr><td colspan="8">결과가 없습니다.</td></tr>');
-	                  } else {
-	                    $('#attendanceListTableBody').empty();
-	                    $.each(result, (i, element) => {
-	
-	                      function getDate(date){
-	                        var d = new Date(date);
-	                        month = d.getMonth() + 1;
-	                        day = d.getDate();
-	                        year = d.getFullYear();
-	                        if(month < 10) month = '0' + month;
-	                        if(day < 10) day = '0' + day;
-	                        return[year, month, day].join('-');
-	                      }
-	                      
-	                      function getTime(date){
-	                        var t = new Date(date);
-	                        hour = t.getHours();
-	                        minute = t.getMinutes();
-	                        second = t.getSeconds();
-	                        if(hour < 10) hour = '0' + hour;
-	                        if(minute < 10) minute = '0' + minute;
-	                        if(second < 10) second = '0' + second;
-	                        return[hour, minute, second].join(':');
-	                      }
-	
-	                      var list = '';
-	                      var astarttime = (element.astarttime == null)? '' : getTime(element.astarttime);
-	                      var aendtime = (element.aendtime == null)? '' : getTime(element.aendtime);
-	                      var worktime = (element.worktime == null)? '' : getTime(element.worktime);
-	                      list += '<tr>';
-	                      list += '<td>' + getDate(element.date) + '</td>';
-	                      list += '<td>' + astarttime + '</td>';
-	                      list += '<td>' + aendtime + '</td>';
-	                      list += '<td>' + worktime + '</td>';
-	                      list += '<td>' + element.attendance + '</td>';
-	                      list += '</tr>';
-	                      $('#attendanceListTableBody').append(list);
-	                    })
-	                  }
-	                  $('#pagination').empty();
-	                  var pageUtil = resData.pageUtil;
-	                  var str = '<nav><ul class="pagination pagination-sm justify-content-center">';
-	                  if(pageUtil.beginPage == 1){
-	                    str += '<li class="page-item disabled"><span class="page-link text-secondary">이전</span></li>';
-	                  } else {
-	                    str += '<li class="page-item"><span class="enable_link page-link" data-page="' + (pageUtil.beginPage - 1) + ">이전</span></li>";
-	                  }
-	                  for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
-	                    if(p == page){
-	                      str += '<li class="page-item active"><a class="page-link">' + p + '</a></li>';
-	                    } else {
-	                      str += '<li class="page-item"><a class="enable_link page-link" data-page="' + p + '">' + p + '</a></li>';
-	                    }
-	                  }
-	                  if(pageUtil.endPage == pageUtil.totalPage){
-	                    str += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
-	                  } else {
-	                    str += '<li class="page-item"><span class="enable_link" page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
-	                  }
-	                  str += '</ul></nav>';
-	                  
-	                  $('#pagination').append(str);
-	                } /* success 끝나는 곳 */
-	              }) /* ajax 끝나는 곳 */
+            	  $('#frmManageSearch').submit();
               }
             }
-            function fnChangePage(){
-	            $(document).on('click', '.enable_link', function(){
-	              page = $(this).data('page');
-	              fnSearch();
-	            })
-	          }
-	          fnChangePage();
+            
+            
+            $('.inputBtn').on('click', function(){
+            	$(this).closest('tr').find('span').addClass('invisible');
+            	$(this).closest('tr').find('input[type=text]').removeClass('invisible');
+            	$(this).next().removeClass('invisible');
+            	$(this).addClass('invisible');
+            })
+            
+            $('.cancelBtn').on('click', function(){
+            	$(this).closest('tr').find('span').removeClass('invisible');
+              $(this).closest('tr').find('input[type=text]').addClass('invisible');
+              $(this).parent().prev().removeClass('invisible');
+              $(this).parent().addClass('invisible');
+            })
+            
+            $('.modiftn').on('click', function(){
+            	var btn = $(this);
+            	var attendanceNo = $(this).parent().prev().prev().val();
+            	var astarttime = $(this).closest('tr').find('input[type=text]').first().val();
+            	var aendtime = $(this).closest('tr').find('input[type=text]').last().val();
+              
+            	var astarttimeSpan = $(this).closest('tr').find('span').first();
+              var aendtimeSpan = $(this).closest('tr').find('span').last();
+              var worktime = $(this).closest('tr').find('.worktimeTd');
+              var attendance = $(this).closest('tr').find('.attendanceTd');
+              
+              
+              var regTime = /^([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
+            	if(regTime.test(astarttime) == false) {
+            		alert('출근시간을 확인해주세요!');
+            	} else if(regTime.test(aendtime) == false) {
+            		alert('퇴근시간을 확인해주세요!');
+            	} else if(astarttime > aendtime){
+            		alert('출근시간과 퇴근시간을 확인해주세요!');
+            	} else {
+	             $.ajax({
+		             type: 'post',
+		             url: '/attendance/modifyAttendance.do',
+		             data: 'attendanceNo=' + attendanceNo + '&astarttime=' + astarttime + '&aendtime=' + aendtime,
+		             dataType: 'json',
+		             success: function(resData){
+		           	  if(resData.result == 'fail'){
+		           		  alert('수정에 실패하였습니다.');
+		           	  } else {
+	                  btn.closest('tr').find('input[type=text]').addClass('invisible');
+	                  btn.closest('tr').find('span').removeClass('invisible');
+	                  btn.parent().prev().removeClass('invisible');
+	                  btn.parent().addClass('invisible');
+		           		  btn.closest('tr').find('span').first().text(resData.astarttime.substr(11, 8));
+		           		  btn.closest('tr').find('span').last().text(resData.aendtime.substr(11, 8));
+		           		  btn.closest('tr').find('.worktimeTd').text(resData.worktime.substr(11, 8));
+		           		  btn.closest('tr').find('.attendanceTd').text(resData.attendance);
+		           	  }
+		             }
+	              })
+            	}
+            })
+            
           </script>
           
         </div>  <!--/* content-wrapper 끝나는 지점 */-->

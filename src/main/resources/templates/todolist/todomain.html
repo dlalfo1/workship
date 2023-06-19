@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship todoList')}"></head>
+<link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
+<body>
+
+  <div class="container-scroller">
+
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+  
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+    
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+	        <div class="card-group" style="display: flex;">
+	          <!--/* 할 일 */-->
+	          <div class="col-md-4">
+	            <div class="card h-100">
+	              <div class="card-header text-white bg-info rounded-top">
+	                <h4>할 일</h4>
+	              </div>
+	              <div class="card-body border border-info rounded-bottom">
+	              
+	                <div class="list-wrapper">
+	                  <ul class="d-flex flex-column-reverse sort-list sort-list1 todo-list">
+	                    <li>
+	                      <span>올ㅋ할일1 ㅋ</span>
+	                      <i class="remove ti-close"></i>
+	                    </li>
+	                    <li>
+	                      <span>올ㅋ할일2 ㅋ</span>
+	                      <i class="remove ti-close"></i>
+	                    </li>
+	                  </ul>
+	                </div>
+	              
+	              </div>
+	            </div>
+	          </div>
+	          
+	          <!--/* 진행중 */-->
+	          <div class="col-md-4">
+	            <div class="card h-100">
+	              <div class="card-header text-white bg-warning rounded-top">
+	                <h4>진행중</h4>
+	              </div>
+	              <div class="card-body border border-warning rounded-bottom">
+	              
+	                <div class="list-wrapper">
+	                  <ul class="d-flex flex-column-reverse sort-list sort-list2 todo-list">
+	                    <li>
+	                      <span>올ㅋ진행중1 ㅋ</span>
+	                      <i class="remove ti-close"></i>
+	                    </li>
+	                    <li>
+	                      <span>올ㅋ진행중2 ㅋ</span>
+	                      <i class="remove ti-close"></i>
+	                    </li>
+	                  </ul>
+	                </div>
+	              
+	              </div>
+	            </div>
+	          </div>
+	          
+	          <!--/* 완료 */-->
+	          <div class="col-md-4">
+	            <div class="card h-100">
+	              <div class="card-header text-white bg-success rounded-top">
+	                <h4>완료</h4>
+	              </div>
+	              <div class="card-body border border-success rounded-bottom">
+	              
+	                <div class="list-wrapper">
+	                  <ul class="d-flex flex-column-reverse sort-list sort-list3 todo-list">
+	                    <li>
+	                      <span>올ㅋ완료1 ㅋ</span>
+	                      <i class="remove ti-close"></i>
+	                    </li>
+	                    <li>
+	                      <span>올ㅋ완료2 ㅋ</span>
+	                      <i class="remove ti-close"></i>
+	                    </li>
+	                  </ul>
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+	          
+          </div>
+          
+          <script>
+          $(".sort-list1").sortable({
+        	  connectWith: ".sort-list2, .sort-list3",
+        	  cursor: "hand"
+        	});
+
+        	$(".sort-list2").sortable({
+        		connectWith: ".sort-list1, .sort-list3",
+        		cursor: "hand"
+        	});
+        	
+        	$(".sort-list3").sortable({
+        		placeholder: "todo-list",
+        		connectWith: ".sort-list1, .sort-list2",
+        		cursor: "hand"
+        	});
+          </script>
+          
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

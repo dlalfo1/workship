@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AttendanceDTO {
+	private int attendanceNo;
 	private int memberNo;
 	private Date date;
 	private Date astarttime;

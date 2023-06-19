@@ -21,7 +21,7 @@ public class ApprovalDTO {
 	private int approvalStatus;
 	private int approvalCount;
 	private int approvalSequence;
-	private Date vacatioinStartDate;
+	private Date vacationStartDate;
 	private Date vacationEndDate;
 	private Date payDate;
 	private Date resignationDate;

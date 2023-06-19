@@ -40,7 +40,7 @@
         <ul class="nav flex-coulmn sub-menu">
           <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendList.do(memberNo=${session.loginMember.memberNo})}">출퇴근기록조회</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">연차조회</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendManage.do}">출퇴근기록관리</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendManage.html}">출퇴근기록관리</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">연차관리</a> </li>
         </ul>
       </div>
@@ -60,20 +60,20 @@
       <div class="collapse" id="board-basic">
         <ul class="nav flex-coulmn sub-menu">
           <li class="nav-item"> <a class="nav-link" th:href="@{/notice/noticeMain.html}">공지사항</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/board/board.html}">부서별 게시판</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/board/boardMain.html}">부서별 게시판</a> </li>
         </ul>
       </div>
     </li>
     <li class="nav-item">
        <a class="nav-link" href="#">
-	        <i class="fa-regular fa-calendar menu-icon"></i>
+	       <i class="fa-regular fa-calendar menu-icon"></i>
 	       <span class="menu-title">일정관리</span>
       </a>
     </li>
     <li class="nav-item">
-       <a class="nav-link" href="#">
-	       <i class="fa-solid fa-list-check menu-icon"></i>
-	       <span class="menu-title">ToDoList</span>
+      <a class="nav-link" th:href="@{/todolist/todomain.do}">
+        <i class="fa-solid fa-list-check menu-icon"></i>
+        <span class="menu-title">ToDoList</span>
       </a>
     </li>
     <li class="nav-item">
@@ -96,7 +96,7 @@
       </a>
     </li>
     <li class="nav-item">
-       <a class="nav-link" th:href="@{report/report.html}">
+       <a class="nav-link" th:href="@{/report/report.html}">
        <i class="fa-solid fa-triangle-exclamation menu-icon"></i>
        <span class="menu-title">신고관리</span>
       </a>
