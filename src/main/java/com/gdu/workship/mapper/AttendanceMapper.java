@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.gdu.workship.domain.AttendManageDTO;
 import com.gdu.workship.domain.AttendanceDTO;
 
 @Mapper
@@ -23,5 +24,18 @@ public interface AttendanceMapper {
 	
 	public List<AttendanceDTO> searchAttendance(Map<String, Object> map);
 	public int searchCount(Map<String, Object> map);
+	
+	// 스케줄러
+	public List<Integer> getAllMemberNo();
+	public AttendanceDTO getAttendanceYesterday(int memberNo);
+	public int addAbsent(int memberNo);
+	public int updateError(int memberNo);
+	
+	public List<AttendanceDTO> getAllAttendanceToday();
+	public int getManageSearchCount(Map<String, Object> map);
+	public List<AttendanceDTO> searchAttendManage(Map<String, Object> map);
+	
+	public int modifyAttendance(Map<String, Object> map);
+	public AttendManageDTO getAttendanceByattendanceNo(int attendanceNo);
 	
 }

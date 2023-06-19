@@ -58,7 +58,7 @@ public class PageUtil2 {
 		}
 		
 		if(endPage == totalPage) {
-			sb.append("<li class=\"page-item disabled\"><span class=\"page-link text-secondary>다음</span></li>");
+			sb.append("<li class=\"page-item disabled\"><span class=\"page-link text-secondary\">다음</span></li>");
 		} else {
 			sb.append("<li class=\"page-item\"><a class=\"page-link\" href=\"" + path + "page=" + (endPage + 1) + "\">다음</a></li>");
 		}
