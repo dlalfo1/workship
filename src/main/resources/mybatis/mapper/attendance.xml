@@ -6,6 +6,19 @@
 <!-- namespace는 @Mapper를 지정한다. -->
 <mapper namespace="com.gdu.workship.mapper.AttendanceMapper">
 
+  <resultMap type="AttendManageDTO" id="AttendManageMap">
+    <id column="ATTENDANCE_NO" property="attendanceNo"/>
+    <result column="DATE" property="date"/>
+    <result column="ASTARTTIME" property="astarttime"/>
+    <result column="AENDTIME" property="aendtime"/>
+    <result column="WORKTIME" property="worktime"/>
+    <result column="ATTENDANCE" property="attendance"/>
+    <association javaType="MemberDTO" property="memberDTO">
+      <id column="MEMBER_NO" property="memberNo"/>
+      <result column="MEMBER_NAME" property="memberName" />
+    </association>
+  </resultMap>
+
   <select id="getAttendanceToday" parameterType="int" resultType="AttendanceDTO">
    SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
      FROM ATTENDANCE_T
@@ -14,7 +27,7 @@
   </select>
   
   <insert id="addAStartTime" parameterType="Map">
-    INSERT INTO ATTENDANCE_T
+    INSERT INTO ATTENDANCE_T(MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE)
     VALUES (#{memberNo}, DATE(NOW()), #{time}, NULL, NULL, #{attendance})
   </insert>
   
@@ -68,5 +81,94 @@
     ORDER BY DATE DESC
     LIMIT #{begin}, #{recordPerPage}
 	</select>
+
+  <select id="getAllMemberNo" resultType="int">
+   SELECT MEMBER_NO
+     FROM MEMBER_T
+    ORDER BY MEMBER_NO
+  </select>
+  
+  <select id="getAttendanceYesterday" parameterType="int" resultType="AttendanceDTO">
+   SELECT MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE
+     FROM ATTENDANCE_T
+    WHERE MEMBER_NO = #{memberNo}
+      AND DATE = DATE(NOW()) - 1
+  </select>
+  
+  <insert id="addAbsent" parameterType="int">
+    INSERT INTO ATTENDANCE_T(MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE)
+    VALUES (#{memberNo}, DATE(NOW()) - 1, '00:00:00', '00:00:00', '00:00:00', '결근')
+  </insert>
+  
+  <update id="updateError" parameterType="int">
+    UPDATE ATTENDANCE_T
+       SET ATTENDANCE = '퇴근미처리'
+     WHERE MEMBER_NO = #{memberNo}
+       AND DATE = DATE(NOW()) - 1
+  </update>
+
+  <select id="getTodaysCount" resultType="int">
+    SELECT COUNT(*)
+      FROM ATTENDANCE_T
+     WHERE DATE = DATE(NOW())
+  </select>
+  
+  <select id="getAllAttendanceToday" resultMap="AttendManageMap">
+    SELECT M.MEMBER_NO, M.MEMBER_NAME, A.DATE, A.ASTARTTIME, A.AENDTIME, A.WORKTIME, A.ATTENDANCE
+      FROM ATTENDANCE_T A INNER JOIN MEMBER_T M
+        ON A.MEMBER_NO = M.MEMBER_NO
+     WHERE DATE = DATE(NOW())
+     ORDER BY MEMBER_NO DESC
+  </select>
+  
+  <select id="getManageSearchCount" parameterType="Map" resultType="int">
+    SELECT COUNT(M.MEMBER_NO)
+      FROM ATTENDANCE_T A INNER JOIN MEMBER_T M
+        ON M.MEMBER_NO = A.MEMBER_NO
+    <where>
+            DATE BETWEEN #{startDate} AND #{endDate}
+        AND ATTENDANCE IN (${attendance})
+      <if test="queryNum != ''">
+        AND A.MEMBER_NO = #{queryNum}
+      </if>
+      <if test="queryName != ''">
+        AND M.MEMBER_NAME = #{queryName}
+      </if>
+    </where>
+  </select>
+  
+  <select id="searchAttendManage" parameterType="Map" resultMap="AttendManageMap">
+    SELECT A.ATTENDANCE_NO, M.MEMBER_NO, M.MEMBER_NAME, A.DATE, A.ASTARTTIME, A.AENDTIME, A.WORKTIME, A.ATTENDANCE
+      FROM ATTENDANCE_T A INNER JOIN MEMBER_T M
+        ON M.MEMBER_NO = A.MEMBER_NO
+    <where>
+            DATE BETWEEN #{startDate} AND #{endDate}
+        AND ATTENDANCE IN (${attendance})
+      <if test="queryNum != ''">
+        AND A.MEMBER_NO = #{queryNum}
+      </if>
+      <if test="queryName != ''">
+        AND M.MEMBER_NAME = #{queryName}
+      </if>
+    </where>
+     ORDER BY DATE DESC, M.MEMBER_NO DESC
+     LIMIT #{begin}, #{recordPerPage}
+  </select>
+  
+  <update id="modifyAttendance" parameterType="Map">
+    UPDATE ATTENDANCE_T
+       SET ASTARTTIME = #{astarttime}
+         , AENDTIME = #{aendtime}
+         , WORKTIME = TIMEDIFF(#{aendtime}, #{astarttime})
+         , ATTENDANCE = #{attendance}
+     WHERE ATTENDANCE_NO = #{attendanceNo}
+  </update>
+  
+  <select id="getAttendanceByattendanceNo" parameterType="int" resultMap="AttendManageMap">
+    SELECT A.ATTENDANCE_NO, M.MEMBER_NO, M.MEMBER_NAME, A.DATE, A.ASTARTTIME, A.AENDTIME, A.WORKTIME, A.ATTENDANCE
+      FROM ATTENDANCE_T A INNER JOIN MEMBER_T M
+        ON M.MEMBER_NO = A.MEMBER_NO
+     WHERE A.ATTENDANCE_NO = #{attendanceNo}
+  </select>
 
 </mapper>

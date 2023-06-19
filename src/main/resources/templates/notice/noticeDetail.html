@@ -5,9 +5,10 @@
 
 <script th:inline="javascript">
   var frm;
+  var noticeNo = /*[[${n.noticeNo}]]*/ null;
   
   $(function(){
-    let modifyResult = /*[[${modifyResult}]]*/ null;  // addResult가 전달되지 않는 경우 null을 사용한다.
+    let modifyResult = /*[[${modifyResult}]]*/ null;
     if(modifyResult !== null){
       if(modifyResult === 1) {
         alert('게시글이 수정되었습니다.');
@@ -21,7 +22,34 @@
     $('#column').on('change', function(){
       $('#query').val('');
     })
+    
+    fnPrev();
+    fnNext();
   })
+  
+  function fnPrev(){
+	  $('#btnPrev').on('click', function(event){
+		  let prevNo = /*[[${prevNo}]]*/ null;
+		  if(prevNo == noticeNo) {
+			  alert('더 이상 이전 글이 없습니다.');
+			  event.preventDefault();
+			  return;
+		  }
+		  location.href='/notice/noticeDetail.html?noticeNo=' + prevNo;
+	  })
+  }
+  
+  function fnNext(){
+    $('#btnNext').on('click', function(){
+      let nextNo = /*[[${nextNo}]]*/ null;
+        if(nextNo == noticeNo) {
+          alert('더 이상 다음 글이 없습니다.');
+          event.preventDefault();
+          return;
+        }
+        location.href='/notice/noticeDetail.html?noticeNo=' + nextNo ;
+      })
+  }
   
   function fnList() {
 	  location.href = '/notice/noticeList.do';
@@ -68,8 +96,8 @@
             
             <div class="board-detail">
               <div class="page-button">
-                <button type="button" class="btn btn-outline-secondary btn-sm" th:onclick="location.href='noticeDetail.html?noticeNo=${n.noticeNo - 1}&cpage=${ cpage }'">이전</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm" th:onclick="location.href='noticeDetail.html?noticeNo=${n.noticeNo + 1}&cpage=${ cpage }'">다음</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnPrev">이전</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnNext">다음</button>
                 <button type="button" class="btn btn-outline-dark btn-sm" onclick="fnList()">목록</button>
               </div>
             
@@ -110,9 +138,15 @@
                 <th:block th:if="${session.deptName == '인사팀'}">
                 </th:block>
                  */-->
+                  <input type="hidden" id="refNo">
                   <button type="button" class="btn btn-primary btn-rounded btn-sm" onclick="fnWrite()">새글쓰기</button>
+                  <button type="button" class="btn btn-danger btn-rounded btn-sm" data-toggle="modal" data-target="#jyModal_confirm">신고</button>
                 <!--/* 
                 <th:block th:if="${session.loginId == n.MemberDTO.emailId}">
+                </th:block>
+                 */-->
+                <!--/* 
+                <th:block th:if="${session.loginId != n.MemberDTO.emailId}">
                 </th:block>
                  */-->
                   <button type="button" class="btn btn-outline-secondary btn-rounded btn-sm" th:onclick="fnEdit()">수정</button>
@@ -122,7 +156,158 @@
             
             </div> <!--/* board-detail 끝나는 지점 */-->
           </div> <!--/* board-main 끝나는 지점 */-->
+          
+          <!--/* 신고하기 모달창 */-->
+          <div class="modal" id="jyModal_confirm">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                  <h4 class="modal-title">신고하기</h4>
+                  <button type="button" class="modal_close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body" style="text-align: left; padding-left: 30px;">
+                  <p><b>신고사유를 선택해주세요</b></p>
+                  <input type="hidden" id="real">
+                  <p><input type="radio" class="rpRadio" value="욕설">&nbsp;&nbsp;욕설이 포함된 게시글</p>
+                  <p><input type="radio" class="rpRadio" value="비방">&nbsp;&nbsp;비하하거나 비방하는 내용의 게시글</p>
+                  <p><input type="radio" class="rpRadio" value="부적절한 내용">&nbsp;&nbsp;부적절한 내용이 포함된 게시글</p>
+                  <p><input type="radio" id="etcBtn" class="rpRadio" value="기타">&nbsp;&nbsp;기타</p>
+                  <textarea id="rpEtc" cols="48" rows="4" style="resize: none;" disabled></textarea>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-rounded btn-sm" id="realSpam" onclick="report(this);">신고</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm btn-jycancle" data-dismiss="modal">취소</button>
+                </div>
+              </div>
+            </div>
+          </div> <!--/* 신고하기 모달창 */-->
+          
+          <!-- 토스트 메시지 -->
+          <div id="toast" class="">
+              
+            </div>
+            
+            <script th:inline="javascript">
+              
+              $(document).on("click", ".rpRadio", function(){
+                
+                $(this).parent().siblings().children("input").prop("checked", false);
+                
+                if($(this).val() != '기타'){
+                  $('#real').val($(this).val());
+                }else{
+                  $('#rpEtc').attr("disabled", false);
+                  $('#real').val($(this).parent().next().val());
+                }
+                
+                if($('#etcBtn').is(":checked")){
+                  $('#rpEtc').attr("disabled", false);
+                }else{
+                  $('#rpEtc').attr("disabled", true);
+                }
+                
+              })
 
+              // 신고
+              function report(){
+                
+                // type이 1이면 게시글번호, type이 2면 댓글번호
+                let reportRefNo = '';
+                
+                reportRefNo = /*[[${n.noticeNo}]]*/ null;
+                console.log(reportRefNo);
+                
+                let emailId = /*[[${session.loginId}]]*/ null;
+                
+                // 유저가 동일한 게시글을 신고한 이력이 있는지 조회
+                $.ajax({
+                  url: "rpCheck.bo",
+                  data: {
+                    reportRefNo: reportRefNo,
+                    emailId: emailId
+                  },
+                  success: function(rep){
+
+                    if(rep == null){ // 이력 없음
+                      
+                      // type이 1이면 게시글번호, type이 2면 댓글번호
+                      let reportRefNo = '';
+                      
+                      reportRefNo = /*[[${n.noticeNo}]]*/ null;
+                      
+                      if($('#etcBtn').is(":checked")){
+                        $('#real').val($('#rpEtc').val());
+                      }
+                      
+                      let value = $('#real').val();
+                      
+                      $.ajax({
+                        url: 'report.bo',
+                        data: {
+                          boardNo: reportRefNo,
+                          emailId: emailId,
+                          reportContent: value
+                        },
+                        success: function(r){
+                          if(r.result > 0){
+                            
+                            toast('신고가 접수되었습니다.');
+                            
+                            $('.btn-jycancle').click();
+                            
+                          } else {
+                            console.log('신고 실패');
+                          }
+                        },error: function(){
+                          console.log('신고 ajax 실패');
+                        }
+                      });
+                      
+                    } else { // 이력 있음
+
+                      toast('이미 신고가 접수되었습니다.');
+                    
+                      $('.btn-jycancle').click();
+                      
+                    }
+                    
+                  },error: function(){
+                    console.log('신고 여부 ajax 실패');
+                  }
+                });
+                
+              }
+              
+              // 토스트
+              let removeToast;
+                      
+              function toast(string) {
+                const toast = document.getElementById('toast');
+  
+                if(toast.classList.contains('reveal')) {
+                  (clearTimeout(removeToast), removeToast = setTimeout(function () {
+                    document.getElementById('toast').classList.remove('reveal')
+                  }, 1000))
+                } else {
+                  removeToast = setTimeout(function () {
+                    document.getElementById('toast').classList.remove('reveal')
+                  }, 1500)
+                }
+                toast.classList.add('reveal'),
+                toast.innerText = string
+              }
+            </script>
+          
+          
+          
+          
+          
+          
+          
+          
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->

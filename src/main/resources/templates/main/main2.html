@@ -126,7 +126,11 @@
 	                           success: function(resData){
 	                             var result = resData.result;
 	                             if(result == 'noStart') {
-	                               alert('출근 처리가 되지 않았습니다.');
+	                               Swal.fire(
+	                            	   '출근 처리가 되지 않았습니다.',
+	                            	   '문제가 있을 경우 인사팀에 문의해주세요.',
+	                            	   'error'
+	                               )
 	                             } else if(result == 'alreadyEnd'){
 	                            	 alert('이미 퇴근 처리되었습니다.');
 	                             } else {

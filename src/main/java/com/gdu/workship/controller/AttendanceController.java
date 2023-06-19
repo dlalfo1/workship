@@ -7,11 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.gdu.workship.service.AttendManageService;
 import com.gdu.workship.service.AttendanceService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class AttendanceController {
 
 	private final AttendanceService attendanceService;
-	private final AttendManageService attendManageService;
 	
 	@GetMapping("/attendList.do")
 	public String attendanceMain(@RequestParam("memberNo") int memberNo, Model model) {
@@ -48,16 +47,22 @@ public class AttendanceController {
 		return attendanceService.search(request);
 	}
 	
-	@GetMapping("/attendManage.do")
-	public String attendManage(HttpServletRequest request, Model model) {
-		attendManageService.getAttendManagePage(request, model);
+	@GetMapping("/attendManage.html")
+	public String attendManage(Model model) {
+		attendanceService.getAttendManagePage(model);
+		return "attendance/attendManage";
+	}
+	
+	@GetMapping("/attendManageList.do")
+	public String attendManageSearch(HttpServletRequest request, Model model) {
+		attendanceService.attendManageSearch(request, model);
 		return "attendance/attendManage";
 	}
 	
 	@ResponseBody
-	@GetMapping(value="/manageSearch.do", produces="application/json")
-	public Map<String, Object> manageSearch(HttpServletRequest request){
-		return null;
+	@PostMapping("/modifyAttendance.do")
+	public Map<String, Object> modifyAttendance(HttpServletRequest request) {
+		return attendanceService.modifyAttendance(request);
 	}
 	
 }

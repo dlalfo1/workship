@@ -140,9 +140,9 @@
                   <div>
                     <select name="deptNo" class="dept" required>
                       <option value="">부서 선택</option>
-                      <option value="1">인사팀</option>
-                      <option value="2">총무팀</option>
-                      <option value="3">개발팀</option>
+                      <th:block th:each="dept:${deptList}">
+                          <option th:value="${dept.deptNo}" th:text="${dept.deptName}"></option>
+                      </th:block>
                     </select>          
                     <select name="jobNo" class="job" required>
                       <option value="">직위 선택</option>
@@ -170,9 +170,9 @@
                   <input type="password" class="form-control p-input" id="pw" name="pw" th:value="${m.pw}" placeholder="임시 비밀번호를 입력해주세요" required> 
                 </div>
                 <div class="col-12">
-                    <button type="button" class="btn btn-primary btn-rounded" id="btnModify" th:onclick="fnModifyMember()">수정하기</button>
-                    <button type="button" class="btn btn-danger btn-rounded" id="btnRemove" th:onclick="fnRemoveMember()">삭제하기</button>
-                    <button type="button" class="btn btn-secondary btn-rounded" id="btnCancel" th:onclick="fnCancel()">취소하기</button>
+                    <button type="button" class="btn btn-primary btn-rounded" id="btnModify" onclick="fnModifyMember()">수정하기</button>
+                    <button type="button" class="btn btn-danger btn-rounded" id="btnRemove" onclick="fnRemoveMember()">삭제하기</button>
+                    <button type="button" class="btn btn-secondary btn-rounded" id="btnCancel" onclick="fnCancel()">취소하기</button>
                 </div>
               </form>
             </div> <!--/* formWrap 끝나는 지점 */-->

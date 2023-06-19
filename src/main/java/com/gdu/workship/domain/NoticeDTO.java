@@ -10,15 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NoticeDTO {
-	
-	private int noticeNo;
-	private MemberDTO memberDTO;
-	private String noticeTitle;
-	private String noticeContent;
-	private Date noticeCreatedAt;
-	private Date noticeModifiedAt;
-	private int noticeHit;
-	private int noticeState;
+  
+  private int noticeNo;
+  private MemberDTO memberDTO;
+  private String noticeTitle;
+  private String noticeContent;
+  private Date noticeCreatedAt;
+  private Date noticeModifiedAt;
+  private int noticeHit;
+  private int noticeState;
 
   private int prevNo;
   private int nextNo;

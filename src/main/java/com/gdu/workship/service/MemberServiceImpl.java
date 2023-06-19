@@ -257,6 +257,7 @@ public class MemberServiceImpl implements MemberService {
     String profileImage = member.getProfileFilePath() + sep + member.getProfileFileName();
     model.addAttribute("m", member);
     model.addAttribute("profileImage", profileImage);
+    model.addAttribute("deptList", memberMapper.getDeptList());
   }
   
   @Override
