@@ -11,6 +11,6 @@ public interface LoginMapper {
 	  public int insertAutologin(MemberDTO memberDTO);
 	  public int deleteAutologin(String emailId);
 	  public MemberDTO getMemberDTO(MemberDTO memberDTO);
-	  public MemberDTO selectAutologin(String autologinId);
+	  public String selectAutologin(String autologinId);
 	  
 }

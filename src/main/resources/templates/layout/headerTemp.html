@@ -10,6 +10,7 @@
   <script th:src="@{/summernote-0.8.18-dist/summernote-lite.min.js}"></script>
   <script th:src="@{/summernote-0.8.18-dist/lang/summernote-ko-KR.min.js}"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <link rel="stylesheet" th:href="@{/jquery-ui-1.13.2/jquery-ui.css(ver=1.0)}">
   <link rel="stylesheet" th:href="@{/summernote-0.8.18-dist/summernote-lite.min.css(ver=1.0)}">
   <link rel="stylesheet" th:href="@{/vendors/feather/feather.css(ver=1.0)}">
@@ -19,27 +20,10 @@
   <link rel="stylesheet" th:href="@{/css/vertical-layout-light/style.css(ver=1.0)}">
   <link rel="stylesheet" th:href="@{/images/favicon.png}">
   <link rel="stylesheet" th:href="@{/css/common.css(ver=1.0)}">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
   <style>
     @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css');
   </style>
-
-  <script>
-    $.datepicker.setDefaults({
-      dateFormat: 'yy-mm-dd',
-      prevText: '이전 달',
-      nextText: '다음 달',
-      showButtonPanel: true,
-      closeText: '닫기',
-      currentText: '오늘',
-      firstDay: 1, /* 1이면 월요일 시작, 0이면 일요일 시작 */
-      monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-      dayNames: ['일', '월', '화', '수', '목', '금', '토'],
-      dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
-      dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
-      showMonthAfterYear: true
-    });
-  </script>
   
 </head>
 

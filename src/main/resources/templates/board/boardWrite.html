@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
+<script>
+
+  function fnFileCheck(vThis){
+  
+  	// 최대 크기 10MB
+  	let maxSize = 1024 * 1024 * 10;
+  	
+  	// 첨부된 파일 목록
+  	let files = vThis.files;
+  	
+  	// 첨부된 파일 순회(크기 체크 + 첨부된 파일명 표시)
+  	$('#fileList').empty();
+  	$.each(files, function(i, file){
+  		
+  		// 크기 체크
+  		if(file.size > maxSize){
+  			alert('각 첨부파일의 최대 크기는 10MB입니다.');
+  			$(vThis).val('');  // 첨부된 파일을 모두 지운다.
+  			$('#fileList').text('첨부 파일의 목록이 이 곳에 표시됩니다');
+  			return;
+  		}
+  		
+  		// 첨부된 파일명 표시
+  		$('#fileList').append('<div>' + file.name + '</div>');
+  		
+  	})
+  	
+  }
+
+  function fnAddBoard() {
+	  $('#frmWrite').submit();
+  }
+	
+  function fnTempSave() {
+	  
+  }
+  
+  function fnList() {
+  	location.href = '/board/boardList.do';
+  }
+  
+  
+  $(function(){
+	  
+  })
+	
+</script>
+<body>
+
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+          <div class="board-main">
+            <div class="board-title">
+             <h3>게시글 작성하기</h3>
+            </div>
+            
+            <hr>
+          
+            <div class="board-content">
+              <form id="frmWrite" method="post" enctype="multipart/form-data" th:action="@{/board/addBoard.do}">
+                <div class="inputTitle">
+                  <label for="noticeTitle">제목</label>
+                  <div><input type="text" name="boardTitle" id="boardTitle" required="required"></div>
+                </div>
+                <div class="emailId">
+                  <label for="emailId">작성자</label>
+                  <div><input type="text" th:value="${member.memberName}" readonly></div>
+                  <div><input type="hidden" name="emailId" id="emailId" th:value="${member.emailId}" readonly></div>
+                </div>
+                <div class="inputText">
+                  <textarea id="boardContent" name="boardContent" required="required" style="resize: none;"></textarea>
+                </div>
+                <script>
+                  $('#boardContent').summernote({
+                      width: 1280,
+                      height: 1024,
+                      lang: 'ko-KR',
+                      toolbar: [
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                        ['fontname', ['fontname']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture', 'video']],
+                        ['view', ['fullscreen', 'codeview', 'help']]
+                      ]
+                    });
+                </script>
+                <div class="attchFile">
+                  <label for="files">첨부</label>
+                  <input type="file" id="files" name="files" multiple="multiple" onchange="fnFileCheck(this)">
+                  <div id="fileList">첨부 파일의 목록이 이 곳에 표시됩니다</div>
+                </div>
+                <div class="btnWrap">
+                  <input type="button" class="btn btn-primary btn-rounded btn-sm" value="작성완료" onclick="fnAddBoard()">
+                  <input type="button" class="btn btn-outline-secondary btn-rounded btn-sm" value="임시저장" onclick="fnTempSave()">
+                  <input type="button" class="btn btn-outline-secondary btn-rounded btn-sm" value="돌아가기" onclick="fnList()"> <!-- 바로 전 목록으로 돌아가기 -->
+                </div>
+              </form>
+            </div> <!--/* board-table 끝나는 지점 */-->
+          </div> <!--/* board-main 끝나는 지점 */-->
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>
