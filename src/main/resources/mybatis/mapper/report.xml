@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace는 @Mapper를 지정한다. -->
+<mapper namespace="com.gdu.workship.mapper.ReportMapper">
+  
+  <resultMap type="ReportDTO" id="ReportMap">
+    <id column="REPORT_NO" property="reportNo"/>
+    <result column="REPORT_CONTENT" property="reportContent"/>
+    <result column="REPORT_STATE" property="reportState"/>
+    <result column="REPORT_DATE" property="reportDate"/>
+    <result column="REPORT_DONE_DATE" property="reportDoneDate"/>
+    <association javaType="BoardDTO" property="boardDTO">
+      <id column="BOARD_NO" property="boardNo"/>
+      <result column="BOARD_TITLE" property="boardTitle"/>
+      <result column="BOARD_CONTENT" property="boardContent"/>
+      <association javaType="MemberDTO" property="memberDTO">
+        <id column="MEMBER_NO" property="memberNo"/>
+        <result column="MEMBER_NAME" property="memberName"/>
+        <result column="EMAIL_ID" property="emailId"/>
+      </association>
+    </association>
+    <association javaType="MemberDTO" property="memberDTO">
+      <id column="MEMBER_NO" property="memberNo"/>
+      <result column="MEMBER_NAME" property="memberName"/>
+      <result column="EMAIL_ID" property="emailId"/>
+      <result column="TEL" property="tel"/>
+      <result column="BIRTHDAY" property="birthday"/>
+      <result column="JOINED_AT" property="joinedAt"/>
+      <result column="MODIFIED_AT" property="modifiedAt"/>
+      <result column="STATUS" property="status"/>
+      <result column="DAYOFF_COUNT" property="dayoffCount"/>
+      <result column="PW" property="pw"/>
+      <result column="PROFILE_FILE_PATH" property="profileFilePath"/>
+      <result column="PROFILE_FILE_NAME" property="profileFileName"/>
+      <association javaType="JobDTO" property="jobDTO">
+        <id column="JOB_NO" property="jobNo"/>
+        <result column="JOB_NAME" property="jobName"/>
+      </association>
+      <association javaType="DepartmentDTO" property="departmentDTO">
+        <id column="DEPT_NO" property="deptNo"/>
+        <result column="DEPT_NAME" property="deptName"/>
+      </association>
+    </association>
+  </resultMap>
+  
+  <resultMap type="BoardDTO" id="boardMap">
+    <id column="BOARD_NO" property="boardNo"/>
+    <result column="BOARD_TITLE" property="boardTitle"/>
+    <result column="BOARD_CONTENT" property="boardContent"/>
+    <association javaType="MemberDTO" property="memberDTO">
+      <id column="MEMBER_NO" property="memberNo"/>
+      <result column="MEMBER_NAME" property="memberName"/>
+      <result column="EMAIL_ID" property="emailId"/>
+    </association>
+  </resultMap>
+  
+  <select id="getReportCount" resultType="int">
+    SELECT COUNT(*)
+      FROM REPORT_BOARD_T
+  </select>
+
+  <select id="getBoardByReportNo" parameterType="int" resultMap="boardMap">
+    SELECT A.BOARD_NO, A.BOARD_TITLE, A.BOARD_CONTENT, A.MEMBER_NO, A.MEMBER_NAME, A.EMAIL_ID
+      FROM (SELECT B.BOARD_NO, B.BOARD_TITLE, B.BOARD_CONTENT, M.MEMBER_NO, M.MEMBER_NAME, M.EMAIL_ID
+              FROM BOARD_T B INNER JOIN MEMBER_T M
+                ON B.MEMBER_NO = M.MEMBER_NO
+             WHERE B.BOARD_NO = #{boardNo}) A
+  </select>
+  
+  <select id="loadReportSearchList" parameterType="Map" resultMap="ReportMap">
+    SELECT A.REPORT_NO
+         , A.REPORT_CONTENT
+         , A.REPORT_STATE
+         , A.REPORT_DATE
+         , A.REPORT_DONE_DATE
+         , A.BOARD_NO
+         , A.BOARD_TITLE
+         , A.BOARD_CONTENT
+         , A.BM_MEMBER_NO
+         , A.BM_MEMBER_NAME
+         , A.BM_EMAIL_ID
+         , A.MEMBER_NO
+         , A.MEMBER_NAME
+         , A.EMAIL_ID
+         , A.TEL
+         , A.BIRTHDAY
+         , A.JOINED_AT
+         , A.MODIFIED_AT
+         , A.STATUS
+         , A.DAYOFF_COUNT
+         , A.PW
+         , A.PROFILE_FILE_PATH
+         , A.PROFILE_FILE_NAME
+         , A.JOB_NO
+         , A.JOB_NAME
+         , A.DEPT_NO
+         , A.DEPT_NAME
+      FROM (SELECT R.REPORT_NO
+                 , R.REPORT_CONTENT
+                 , R.REPORT_STATE
+                 , R.REPORT_DATE
+                 , R.REPORT_DONE_DATE
+                 , B.BOARD_NO
+                 , B.BOARD_TITLE
+                 , B.BOARD_CONTENT
+                 , BM.MEMBER_NO AS BM_MEMBER_NO
+                 , BM.MEMBER_NAME AS BM_MEMBER_NAME
+                 , BM.EMAIL_ID AS BM_EMAIL_ID
+                 , M.MEMBER_NO
+                 , M.MEMBER_NAME
+                 , M.EMAIL_ID
+                 , M.TEL
+                 , M.BIRTHDAY
+                 , M.JOINED_AT
+                 , M.MODIFIED_AT
+                 , M.STATUS
+                 , M.DAYOFF_COUNT
+                 , M.PW
+                 , M.PROFILE_FILE_PATH
+                 , M.PROFILE_FILE_NAME
+                 , J.JOB_NO
+                 , J.JOB_NAME
+                 , D.DEPT_NO
+                 , D.DEPT_NAME
+              FROM REPORT_BOARD_T R INNER JOIN BOARD_T B
+                ON R.BOARD_NO = B.BOARD_NO INNER JOIN MEMBER_T BM
+                ON B.MEMBER_NO = BM.MEMBER_NO INNER JOIN MEMBER_T M
+                ON R.MEMBER_NO = M.MEMBER_NO INNER JOIN JOB_T J
+                ON M.JOB_NO = J.JOB_NO INNER JOIN DEPARTMENT_T D
+                ON M.DEPT_NO = D.DEPT_NO
+             <where>
+               <if test="column != '' and query != ''">
+                 ${column} LIKE CONCAT('%', #{query}, '%')
+               </if>
+               <if test="reportState != ''">
+                  AND REPORT_STATE = #{reportState}
+               </if>
+             </where>) A
+    ORDER BY A.REPORT_NO DESC
+    LIMIT #{begin}, #{recordPerPage} 
+  </select>
+  <select id="getReportSearchCount" parameterType="Map" resultType="int">
+    SELECT COUNT(A.REPORT_NO)
+      FROM (SELECT R.REPORT_NO, R.MEMBER_NO, M.MEMBER_NAME
+              FROM REPORT_BOARD_T R INNER JOIN MEMBER_T M
+                ON R.MEMBER_NO = M.MEMBER_NO
+            <where>
+              <if test="column != '' and query != ''">
+                ${column} LIKE CONCAT('%', #{query}, '%')
+              </if>
+              <if test="reportState != ''">
+                AND REPORT_STATE = #{reportState}
+              </if>
+            </where>) A
+  </select>  
+  
+  <select id="getDeptHeadList" resultType="DepartmentDTO">
+    SELECT D.DEPT_NO, D.DEPT_NAME, CONCAT(M.MEMBER_NAME, ' ' , J.JOB_NAME) AS DEPT_HEAD
+      FROM DEPARTMENT_T D INNER JOIN MEMBER_T M 
+        ON D.DEPT_NO = M.DEPT_NO INNER JOIN JOB_T J 
+        ON J.JOB_NO = M.JOB_NO
+     WHERE M.JOINED_AT = (
+                          SELECT MIN(JOINED_AT)
+                          FROM MEMBER_T
+                          WHERE DEPT_NO = D.DEPT_NO AND JOB_NO = 2
+                         )
+     ORDER BY D.DEPT_NO ASC
+  </select>
+  
+  <select id="checkDept" parameterType="String" resultType="DepartmentDTO">
+    SELECT DEPT_NAME
+      FROM DEPARTMENT_T
+     WHERE DEPT_NAME = #{deptName}
+  </select>
+  
+</mapper>

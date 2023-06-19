@@ -236,11 +236,8 @@
 
 	  // ({2,3}) - ({3,4}) - ({4})
 	  return [
-	    // 첫번째 구간 (00 or 000)
 	    value.slice(0, firstLength),
-	    // 두번째 구간 (000 or 0000)
 	    value.slice(firstLength, value.length - 4),
-	    // 남은 마지막 모든 숫자
 	    value.slice(value.length - 4),
 	  ].join('-');
 	}
