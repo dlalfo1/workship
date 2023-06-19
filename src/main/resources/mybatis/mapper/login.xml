@@ -50,7 +50,7 @@
     SELECT EMAIL_ID
       FROM MEMBER_T
      WHERE AUTOLOGIN_ID = #{autologinId}
-       AND AUTOLOGIN_EXPIRED_AT > SYSDATE
+       AND AUTOLOGIN_EXPIRED_AT > NOW()
   </select>
   
   <update id="insertAutologin" parameterType="MemberDTO">

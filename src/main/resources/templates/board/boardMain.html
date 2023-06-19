@@ -6,13 +6,42 @@
 	.second-title {
 		color: black;
 	}
-	#boardCategory {
-		height: 10px;
-	
-	}
 
 </style>
-<script>
+<script th:inline="javascript">
+
+	function fnWriteBoard() {
+		location.href = '/board/boardWrite.html';
+	}
+	
+	
+	$(function(){
+	// 게시글 달기 결과 메시지
+	let addResult = /*[[${addResult}]]*/ null;  // addResult가 전달되지 않는 경우 null을 사용한다.
+	if(addResult !== null){
+	  if(addResult === 1) {
+	    alert('게시글이 작성되었습니다.');
+	  } else {
+	    alert('게시글 작성에 실패했습니다.');
+	  }
+	}
+	
+	let removeResult = /*[[${removeResult}]]*/ null;  // addResult가 전달되지 않는 경우 null을 사용한다.
+	if(removeResult !== null){
+	  if(removeResult === 1) {
+	    alert('게시글이 삭제되었습니다.');
+	  } else {
+	    alert('게시글 삭제에 실패했습니다.');
+	  }
+	}
+	
+	// 검색어 초기화
+		$('#column').on('change', function(){
+			$('#query').val('');
+		})
+		
+		
+	})
 </script>
 <body>
 
@@ -33,13 +62,13 @@
         
           <div class="board-main">
             <div class="board-title">
-                <h3><a th:href="@{/board/board.do}" class="second-title row">부서별게시판</a></h3>
+                <h2><a th:href="@{/board/boardMain.html}" class="second-title">부서별게시판</a></h2>
                 <div class="dropdown">
-									<button class="btn btn-primary dropdown-toggle has-ripple" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height: 10px; ">게시판<span class="ripple ripple-animate" style="height: 102.438px; width: 102.438px; animation-duration: 0.7s; animation-timing-function: linear; background: rgb(255, 255, 255); opacity: 0.4; top: -23.419px; left: 49.781px;"></span></button>
+									<button class="btn btn-primary dropdown-toggle has-ripple" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height: 50px; ">게시판<span class="ripple ripple-animate" style="height: 102.438px; width: 102.438px; animation-duration: 0.7s; animation-timing-function: linear; background: rgb(255, 255, 255); opacity: 0.4; top: -23.419px; left: 49.781px;"></span></button>
             			<div class="dropdown-menu">
 										<a class="dropdown-item" th:href="@{/board/HRBoard.html}">인사게시판</a>
-										<a class="dropdown-item" href="#!">총무게시판</a>
-										<a class="dropdown-item" th:href="@{/}">개발게시판</a>
+										<a class="dropdown-item" th:href="@{/board/GADBoard.html}">총무게시판</a>
+										<a class="dropdown-item" th:href="@{/board/DIVBoard.html}">개발게시판</a>
 									</div>
             		</div>
             		
@@ -56,7 +85,7 @@
                             <th style="width: 50px;">조회수</th>
                         </tr>
                     </thead>
-                    <tbody id="boardBoardList">
+                    <tbody id="boardList">
                       <th:block th:if="${#lists.isEmpty(boardList)}">
                         <tr> 
                           <td colspan="5">현재 게시글이 없습니다.</td>
@@ -95,7 +124,7 @@
               			<button type="submit">검색</button>
               		</form>
                   <div class="writeWrap">
-                    <input type="button" class="btn btn-primary btn-rounded btn-md" id="btnWrite" value="글쓰기" onclick="fnWriteboard()">
+                    <input type="button" class="btn btn-primary btn-rounded btn-md" id="btnWriteBoard" value="글쓰기" onclick="fnWriteBoard()">
                   </div>
                 </div> <!--/* search_wrap 끝나는 지점 */-->
               

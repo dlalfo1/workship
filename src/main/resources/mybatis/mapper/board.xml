@@ -6,7 +6,7 @@
 <!-- namespace는 @Mapper를 지정한다. -->
 <mapper namespace="com.gdu.workship.mapper.BoardMapper">
 
-	<resultMap type="BoardDTO" id="boardDTO">
+	<resultMap type="BoardDTO" id="BoardMap">
 		<id column="BOARD_NO" property="boardNo"/>
 		<result column="BOARD_TITLE" property="boardTitle"/>
 		<result column="BOARD_CONTENT" property="boardContent"/>	
@@ -86,9 +86,9 @@
   </select>
   <select id="getBoardList" parameterType="Map" resultMap="BoardMap">
     SELECT A.BOARD_NO, A.MEMBER_NAME, A.BOARD_TITLE, A.BOARD_CONTENT, A.BOARD_CREATED_AT, A.BOARD_MODIFIED_AT, A.BOARD_HIT, A.BOARD_STATE, A.JOB_NAME
-      FROM (SELECT B.BOARD_NO, M.MEMBER_NAME, B.BOARD_TITLE, B.BOARD_CONTENT, B.BOARD_CREATED_AT, B.BOARD_MODIFIED_AT, B.BOARD_HIT, B.BOARD_STATE, J.JOB_NAME
-              FROM BOARD_T B RIGHT OUTER JOIN MEMBER_T M
-                ON M.MEMBER_NO = B.MEMBER_NO LEFT OUTER JOIN JOB_T J
+      FROM (SELECT B.BOARD_NO, M.MEMBER_NAME, B.BOARD, B.BOARD_CONTENT, B.BOARD_CREATED_AT, B.BOARD_MODIFIED_AT, B.BOARD_HIT, B.BOARD_STATE, J.JOB_NAME
+              FROM BOARD_BOARD_T B RIGHT OUTER JOIN MEMBER_T M
+                ON M.MEMBER_NO = N.MEMBER_NO LEFT OUTER JOIN JOB_T J
                 ON M.JOB_NO = J.JOB_NO
            <where>
            <!-- 전달된 column 그대로 부를 수 있다. mybatis.org 동적 sql 참고-->

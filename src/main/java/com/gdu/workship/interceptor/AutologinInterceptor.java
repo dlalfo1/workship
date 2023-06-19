@@ -34,6 +34,7 @@ public class AutologinInterceptor implements HandlerInterceptor {
         
         String autologinId =  (String) cookie.getValue();
         String emailId = loginMapper.selectAutologin(autologinId);
+        
         if(emailId != null) {
           session.setAttribute("emailId", emailId);
         }

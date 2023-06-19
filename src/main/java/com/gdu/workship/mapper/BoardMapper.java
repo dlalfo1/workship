@@ -3,10 +3,13 @@ package com.gdu.workship.mapper;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.gdu.workship.domain.BoardDTO;
 import com.gdu.workship.domain.BoardFileDTO;
 import com.gdu.workship.domain.MemberDTO;
 
+@Mapper
 public interface BoardMapper {
 	
 	public MemberDTO getMemberByEmail(String emailId);

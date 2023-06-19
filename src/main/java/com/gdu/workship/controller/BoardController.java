@@ -25,6 +25,23 @@ public class BoardController {
 	
 	private final BoardService boardService;
 	
+	@GetMapping("/board/boardMain.html")
+	public String board() {
+		return "board/boardMain";
+	}
+	@GetMapping("/board/HRBoard.html")
+	public String HRBoard() {
+		return "board/HRBoard";
+	}
+	@GetMapping("/board/GADBoard.html")
+	public String GADBoard() {
+		return "board/GADBoard";
+	}
+	@GetMapping("/board/DIVBoard.html")
+	public String DIVBoard() {
+		return "board/DIVBoard";
+	}
+	
 	@GetMapping("/board/boarList.do")
 	public String boardMain(HttpServletRequest request, Model model) {
 		boardService.loadBoardList(request, model);
@@ -32,8 +49,8 @@ public class BoardController {
 	}
 	
 	 @GetMapping("/board/increaseHit.do")
-	  public String increseHit(@RequestParam(value="noticeNo", required=false, defaultValue="0") int boardNo) {
-	    int increaseResult = BoardService.increaseHit(boardNo);
+	  public String increseHit(@RequestParam(value="boardNo", required=false, defaultValue="0") int boardNo) {
+	    int increaseResult = boardService.increaseHit(boardNo);
 	    if(increaseResult == 1) {
 	      return "redirect:/board/boardDetail.html?boardNo=" + boardNo;
 	    } else {
@@ -43,57 +60,57 @@ public class BoardController {
 	  
 	  @GetMapping("/board/boardDetail.html")
 	  public String boardDetail(@RequestParam(value="boardNo", required=false, defaultValue="0") int boardNo, Model model) {
-	    BoardService.getBoardByNo(boardNo, model);
+	    boardService.getBoardByNo(boardNo, model);
 	    return "board/boardDetail";
 	  }
 	  
 	  @GetMapping("/board/download.do")
 	  public ResponseEntity<Resource> download(@RequestParam("boardFileNo") int boardFileNo, @RequestHeader("User-Agent") String userAgent) {
-	    return BoardService.download(boardFileNo, userAgent);
+	    return boardService.download(boardFileNo, userAgent);
 	  }
 	  
 	  @GetMapping("/board/downloadAll.do")
 	  public ResponseEntity<Resource> downloadAll(@RequestParam("boardNo") int boardNo) {
-	    return BoardService.downloadAll(boardNo);
+	    return boardService.downloadAll(boardNo);
 	  }
 	  
-		@GetMapping("/board/board.html")
+		@GetMapping("/board/boardWrite.html")
 		public String write(HttpSession session, Model model) {
-		  MemberDTO member = BoardService.goWrtie(session, model);
+		  MemberDTO member = boardService.goWrtie(session, model);
 		  model.addAttribute("member", member);
 			return "board/boardWrite";
 		}
 		
 		@PostMapping("/board/addBoard.do")
 		public String addBoard(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
-		  int addResult = BoardService.addBoard(request);
+		  int addResult = boardService.addBoard(request);
 	    redirectAttributes.addFlashAttribute("addResult", addResult);
 		  return "redirect:/board/boardList.do";
 		}
 		
-	  @PostMapping("/board/removeNotice.do")
-	  public String removeNotice(@RequestParam("noticeNo") int noticeNo, RedirectAttributes redirectAttributes) { 
-	    int removeResult = BoardService.removeBoard(boardNo);
+	  @PostMapping("/board/removeBoard.do")
+	  public String removeNotice(@RequestParam("boardNo") int boardNo, RedirectAttributes redirectAttributes) { 
+	    int removeResult = boardService.removeBoard(boardNo);
 	    redirectAttributes.addFlashAttribute("removeResult", removeResult);
 	    return "redirect:/board/boardList.do";
 	  }
 		
 	  @PostMapping("/board/editboard.html")
 	  public String editNotice(@RequestParam("boardNo") int boardNo, Model model) {
-	    BoardService.getBoardByNo(boardNo, model);
+	    boardService.getBoardByNo(boardNo, model);
 	    return "notice/noticeEdit";
 	  }
 	  
 	  @PostMapping("/board/modifyBoard.do")
 	  public String modifyNotice(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
-	    int modifyResult = BoardService.modifyBoard(request);
+	    int modifyResult = boardService.modifyBoard(request);
 	    redirectAttributes.addFlashAttribute("modifyResult", modifyResult);
 	    return "redirect:/board/boardDetail.html?boardNo=" + request.getParameter("boardNo");
 	  }
 	  
-	  @GetMapping("/notice/removeNoticeFile.do")
+	  @GetMapping("/board/removeBoardFile.do")
 	  public String removeBoardFile(@RequestParam("boardNo") int boardNo, @RequestParam("boardFileNo") int boardFileNo) {
-	    BoardService.removeBoardFile(boardFileNo);
+	   boardService.removeBoardFile(boardFileNo);
 	    return "redirect:/board/boardDetail.html?boardNo=" + boardNo;
 	  }
 		

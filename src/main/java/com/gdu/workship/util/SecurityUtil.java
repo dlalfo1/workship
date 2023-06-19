@@ -2,6 +2,7 @@ package com.gdu.workship.util;
 
 import java.security.MessageDigest;
 
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 
