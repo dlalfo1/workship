@@ -2,7 +2,25 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 출퇴근기록조회')}"></head>
-<link rel="stylesheet" th:href="@{/css/yoobin.css(ver=2.0)}">
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+<link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
+<script>
+  $.datepicker.setDefaults({
+    dateFormat: 'yy-mm-dd',
+    prevText: '이전 달',
+    nextText: '다음 달',
+    showButtonPanel: true,
+    closeText: '닫기',
+    currentText: '오늘',
+    firstDay: 1, /* 1이면 월요일 시작, 0이면 일요일 시작 */
+    monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+    dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+    dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+    dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+    showMonthAfterYear: true
+  });
+</script>
+
 <body>
   <div class="container-scroller">
 
@@ -382,6 +400,7 @@
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   <!--/* footer 영역 */-->
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 

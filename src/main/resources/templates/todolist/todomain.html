@@ -27,12 +27,13 @@
 	          <div class="col-md-4">
 	            <div class="card h-100">
 	              <div class="card-header text-white bg-info rounded-top">
-	                <h4>할 일</h4>
+	                <p class="card-title text-white text-center mb-0">할 일</p>
 	              </div>
 	              <div class="card-body border border-info rounded-bottom">
 	              
 	                <div class="list-wrapper">
 	                  <ul class="d-flex flex-column-reverse sort-list sort-list1 todo-list">
+	                    <li class="invisible preventMove"></li>
 	                    <li>
 	                      <span>올ㅋ할일1 ㅋ</span>
 	                      <i class="remove ti-close"></i>
@@ -40,6 +41,9 @@
 	                    <li>
 	                      <span>올ㅋ할일2 ㅋ</span>
 	                      <i class="remove ti-close"></i>
+	                    </li>
+	                    <li class="preventMove" id="addToDo">
+	                    새로운 할 일 추가하기
 	                    </li>
 	                  </ul>
 	                </div>
@@ -52,12 +56,13 @@
 	          <div class="col-md-4">
 	            <div class="card h-100">
 	              <div class="card-header text-white bg-warning rounded-top">
-	                <h4>진행중</h4>
+	                <p class="card-title text-white text-center mb-0">진행중</p>
 	              </div>
 	              <div class="card-body border border-warning rounded-bottom">
 	              
 	                <div class="list-wrapper">
 	                  <ul class="d-flex flex-column-reverse sort-list sort-list2 todo-list">
+	                    <li class="invisible preventMove"></li>
 	                    <li>
 	                      <span>올ㅋ진행중1 ㅋ</span>
 	                      <i class="remove ti-close"></i>
@@ -77,12 +82,15 @@
 	          <div class="col-md-4">
 	            <div class="card h-100">
 	              <div class="card-header text-white bg-success rounded-top">
-	                <h4>완료</h4>
+	                <p class="card-title text-white text-center mb-0">완료</p>
 	              </div>
 	              <div class="card-body border border-success rounded-bottom">
 	              
 	                <div class="list-wrapper">
 	                  <ul class="d-flex flex-column-reverse sort-list sort-list3 todo-list">
+	                    <li class="preventMove" id="removeAllDone">
+	                      완료된 할 일 전체 삭제
+	                    </li>
 	                    <li>
 	                      <span>올ㅋ완료1 ㅋ</span>
 	                      <i class="remove ti-close"></i>
@@ -102,18 +110,16 @@
           <script>
           $(".sort-list1").sortable({
         	  connectWith: ".sort-list2, .sort-list3",
-        	  cursor: "hand"
+        	  cancel: ".preventMove"
         	});
 
         	$(".sort-list2").sortable({
-        		connectWith: ".sort-list1, .sort-list3",
-        		cursor: "hand"
+        		connectWith: ".sort-list1, .sort-list3"
         	});
         	
         	$(".sort-list3").sortable({
-        		placeholder: "todo-list",
         		connectWith: ".sort-list1, .sort-list2",
-        		cursor: "hand"
+        		cancel: ".preventMove"
         	});
           </script>
           
