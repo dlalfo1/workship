@@ -6,6 +6,9 @@
   .red_text{
     color: red;
   }
+  .orange_text{
+    color: #FFC100;
+  }
   .blue_text{
     color: blue;
   }
@@ -19,23 +22,19 @@
   .dropdown-item:hover {
    font-weight: 600;  
   }
+  .modal-tbody tr .border-left {
+     border-left: 1px solid #CED4DA;
+  }
+  .modal-tbody tr td {
+    padding: 0.9rem;
+  }
 </style>
 <script th:inline="javascript">
   $(function(){
-    // recordPerPage의 변경
-    /* $('#recordPerPage').on('change', function(){
-      location.href = '${contextPath}/employees/change/record.do?recordPerPage=' + $(this).val();  // session에 recorePerPage 올리기
-    }) 
-    // 세션에 저장된 recordPerPage값으로 <select> 태그의 값을 세팅
-    let recordPerPage = '${sessionScope.recordPerPage}' == '' ? '10' : '${sessionScope.recordPerPage}';
-    $('#recordPerPage').val(recordPerPage);
-    // 제목을 클릭하면 정렬 방식을 바꿈
-    $('.title').on('click', function(){
-      location.href = '${contextPath}/employees/pagination.do?column=' + $(this).data('column') + '&order=' + $(this).data('order') + "&page=${page}";
-    })
-    */
     fnSearchReport();
     fnChangePage();
+    fnDeletePost();
+    fnReturnReport();
   })
 </script>
 <body>
@@ -84,12 +83,17 @@
                                 <div class="row form-group" style="float: none; margin:0 auto;">
                                   <div class="form-check" style="display:inline-block; margin-top:0.9em;">
                                     <label for="all" class="form-check-label">
-                                     <input type="radio" class="form-check-input" name="reportState" id="all" value="" checked>전체&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" class="form-check-input" name="reportState" id="all" value="" checked>전체&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     </label>
                                   </div>
                                   <div class="form-check" style="display:inline-block; margin-top:0.9em;">
                                     <label for="done" class="form-check-label">
-                                    <input type="radio" class="form-check-input" name="reportState" id="done" value="1">처리&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" class="form-check-input" name="reportState" id="done" value="2">처리&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </label>
+                                  </div>
+                                  <div class="form-check" style="display:inline-block; margin-top:0.9em;">
+                                    <label for="return" class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="reportState" id="return" value="1">반려&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     </label>
                                   </div>
                                   <div class="form-check" style="display:inline-block; margin-top:0.9em;">
@@ -125,7 +129,7 @@
                   <p class="card-title">신고 목록</p>
                   <div class="changeRecordPerPage" style="width: 15%;">
                     <select id="recordPerPage" class="form-control form-control-sm">
-                      <option value="10" selected="selected">10개씩 보기</option>
+                      <option value="10">10개씩 보기</option>
                       <option value="20">20개씩 보기</option>
                       <option value="30">30개씩 보기</option>
                     </select>
@@ -166,19 +170,26 @@
                   
                   
                     var page = 1;
+                    var recordPerPage = '[[${session.recordPerPage}]]' == '' ? '10' : '[[${session.recordPerPage}]]';
                     function fnSearchReport(){
                     	var column = $('#column').val();
                     	$('#column').change(function(){
                         column = $(this).val();
-                        console.log(column);
+                        console.log('column : ' + column);
                       });
+                    	
+                    	$('#recordPerPage').on('change', function(){
+                	      recordPerPage = $(this).val();
+                        // $('#recordPerPage').val(recordPerPage); 필요없어 보임 ajax라서..?
+                	      fnSearchReport();
+                	    }) 
                     	
                       var reportState = $('input[name="reportState"]:checked').val()
                       console.log(reportState);
                       $.ajax({
                         type: 'get',
                         url: '/report/reportSearch.do',
-                        data: 'reportState=' + reportState + '&column=' + column + '&query=' + $('#query').val() + '&page=' + page,
+                        data: 'reportState=' + reportState + '&column=' + column + '&query=' + $('#query').val() + '&page=' + page + '&recordPerPage=' + recordPerPage,
                         dataType: 'json',
                         success: function(resData){
                         	let reportListBody = $('#reportListBody');
@@ -190,8 +201,12 @@
                             $.each(resData.reportSearchList, function(i, report){
                               let str = '<tr>';
                               str += '<td class="reportNo">' + report.reportNo + '</td>';
-                              str += '<td class="boardTitle" style="cursor: pointer;" onclick="openInNewTab(' + '\'/notice/noticeDetail.html?noticeNo=1\')">' + report.boardDTO.boardTitle +'</td>';
-                              str += '<td>' + report.boardDTO.memberDTO.memberName +'</a></td>';
+                              if(report.boardDTO == null) {
+                    	         str += '<td colspan="2"><span style="color: gray; font-style: italic;">삭제된 게시글입니다.</span></td>';
+                              } else {
+                    	         str += '<td class="boardTitle" style="cursor: pointer;" onclick="openInNewTab(' + '\'/notice/noticeDetail.html?noticeNo=1\')">' + report.boardDTO.boardTitle +'</td>';
+                               str += '<td>' + report.boardDTO.memberDTO.memberName +'</a></td>';
+                              }
                               str += '<td>'   + report.reportContent + '</td>';
                               str += '<td>' + report.memberDTO.memberName + ' ' + report.memberDTO.jobDTO.jobName + '</td>';
                               str += '<td>' + fnDateFormat(report.reportDate) + '</td>';
@@ -200,9 +215,11 @@
                               } else {
                                 str += '<td>' + fnDateFormat(report.reportDoneDate) + '</td>';
                               }
+                              str += '<td class="dropdown-item process" href="#" data-toggle="modal" data-target="#reportModal" onclick="fnReportProcess()"><input type="hidden" value="' + report.reportNo + '">';
                               switch(report.reportState){ 
-                                case 0: reportState = str += '<td class="dropdown-item show" href="#" data-toggle="modal" data-target="#reportModal"><span class="red_text">미처리</span></td>'; break; 
-                                case 1: reportState = str += '<td class="dropdown-item show" href="#" data-toggle="modal" data-target="#reportModal"><span class="blue_text">처리완료</span></td>'; break; 
+                                case 0: str += '<span class="red_text">미처리</span></td>'; break; 
+                                case 1: str += '<span class="orange_text">반려</span></td>'; break; 
+                                case 2: str += '<span class="blue_text">처리완료</span></td>'; break; 
                                 default: reportState = '';
                               }
                               str += '</tr>'
@@ -263,54 +280,144 @@
                     <span aria-hidden="true">x</span>
                   </button>
                 </div>
-                <div class="modal-body">
-                  <p>신고번호 : </p>
-                  <p>신고자 : </p>
-                  <p>신고날짜 : </p>
-                  <p>신고게시글 : </p>
-                  <p>신고횟수 : </p> 
-                  <p>신고내용 : </p> 
-                  <textarea id="rpEtc" cols="48" rows="4" style="resize: none;" readonly></textarea>
+                <div class="modal-body" style="padding: 10px 0 5px;">
+                  <table class="table" style="width: 80%; margin: 0 auto;">
+                    <tbody class="modal-tbody">
+                    </tbody>
+                  </table>
                 </div>
                 <div class="modal-footer">
-                  <button class="btn btn-primary" type="button" data-dismiss="modal">처리</button>
-                  <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+                  <button class="btn btn-danger btn-rounded btnDeletePost" type="button">신고글삭제</button>
+                  <button class="btn btn-warning btn-rounded btnReturnReport" type="button">반려</button>
+                  <button class="btn btn-secondary btn-rounded btnCancel" type="button" data-dismiss="modal">취소</button>
                 </div>
               </div>
             </div>
-          </div> <!--/* Moa Modal 끝 */-->
+          </div> <!--/* report Modal 끝 */-->
           <script>
             var reportNo = '';
-            $(document).ready(function(){
-        	    $('.show').on('click', function(){
-        	      console.log('클릭');
-        	    	reportNo = $(this).parent().children('.reportNo').val();
-        	      console.log(reportNo);
-        	      $.ajax({      
-        	        type: 'get',
-        	        url: '/report/reportDetail.do',
-        	        data: 'reportNo=' + reportNo,
-        	        dataType: 'json',
-        	        success:function(resData) {
-        	          showList(resData);
-        	        }
-        	      });
-        	    });
-        	    function showList(report){
-        	      var str = '';
-        	      $(".modal-body").empty();
-      	        str += '<div>신고번호 : ' + report.reportNo + '</div>';
-      	        str += '<div>신고자 :' + report.memberDTO.memberName + '</div>';
-      	        str += '<div>신고일 : ' + fnDateFormat(report.reportDate) + '</div>';
-      	        str += '<div>처리일 : ' + fnDateFormat(report.reportDoneDate) + '</div>';
-      	        str += '<div>처리여부 : ' + report.reportState + '</div>';
-      	        str += '<div>신고게시글 : ' + report.boardDTO.boardTitle + '</div>';
-      	        str += '<div>신고횟수 : ' + report.reportCount + '</div>';
-      	        str += '<div>신고내용 : </div>';
-      	        str += '<textarea id="rpEtc" cols="48" rows="4" style="resize: none;" readonly>' + data.reportConent  + '</textarea>';
-      	        $(".modal-body").append(str);
-        	    }
-        	  });
+            var reportState = '';
+            function fnReportProcess() {
+        	    //$('.process').off('click').on('click', function(){ 바꾸니까 클릭해도 콘솔에 오류났다 안 뜨네
+      	    	// reportNo = $(this).parent().children('.reportNo').text();
+        	    $(document).off('click', '.process').on('click', '.process', function(){ 
+        	    	reportNo = $(this).children('input').val();
+        	      fnReportDetail(reportNo);
+        	    })
+            }
+        	    
+      	    function fnReportDetail(reportNo) {
+      	    	$.ajax({      
+                type: 'get',
+                url: '/report/reportDetail.do',
+                data: 'reportNo=' + reportNo,
+                dataType: 'json',
+                success:function(resData) {
+                  showList(resData);
+                }
+              });
+      	    }
+        	    
+      	    function showList(resData){
+      	      var str = '';
+      	      let report = resData.report;
+      	      str += '<tr><td class="text-center" width="12%">신고번호</td>' + '<td class="border-left" colspan="3"><span class="modalReportNo">' + report.reportNo + '</span><input type="hidden" value="' + report.boardDTO.boardNo + '"</td></tr>';
+    	        str += '<tr><td class="text-center" width="12%">신고자</td><td class="border-left" colspan="3">' + report.memberDTO.memberName + '</td></tr>';
+    	        str += '<tr><td class="text-center" width="12%">신고일</td><td class="border-left">' + fnDateFormat(report.reportDate) + '</td>';
+      	      if(resData.report.reportDoneDate == null) {
+                str += '<td class="text-center border-left" width="22%">처리일</td><td class="text-center border-left" width="28%">' + '' + '</td></tr>';
+              } else {
+                str += '<td class="text-center border-left" width="22%">처리일</td><td class="text-center border-left" width="28%">' + fnDateFormat(report.reportDoneDate) + '</td></tr>';
+              }
+      	      switch(report.reportState){ 
+                case 0: str += '<tr><td class="text-center" width="12%">처리여부</td><td class="border-left" colspan="3" width="38%"><span class="red_text">미처리</span></td></tr>'; break; 
+                case 1: str += '<tr><td class="text-center" width="12%">처리여부</td><td class="border-left" colspan="3" width="38%"><span class="orange_text">반려</span></td></tr>'; break; 
+                case 2: str += '<tr><td class="text-center" width="12%">처리여부</td><td class="border-left" colspan="3" width="38%"><span class="blue_text">처리완료(신고게시글 삭제)</span></td></tr>'; break; 
+                default: reportState = '';
+              }
+      	      if(report.boardDTO.boardTitle == null) {
+      	    	  str += '<tr><td class="text-center" width="12%">신고게시글</td><td class="border-left" colspan="3">삭제된 게시글입니다.</td></tr>';
+      	      } else {
+      	    	  str += '<tr><td class="text-center" width="12%">신고게시글</td><td class="border-left" colspan="3">' + report.boardDTO.boardTitle + '<span>(신고누적 : ' + resData.reportCount + '회)</span></td></tr>';
+      	      }
+    	        str += '<tr><td class="text-center" width="12%" style="padding-bottom: 0.6rem;">신고내용</td><td colspan="3"></td></tr>';
+    	        str += '<tr><td colspan="4" class="text-center" width="12%" style="padding: 0.1rem 0.4rem; border-top: none;""><textarea class="form-control" id="rpEtc" cols="48" rows="4" style="resize: none;" readonly>' + report.reportContent  + '</textarea></td></tr>';
+    	        $(".modal-tbody").empty().append(str);
+      	    }
+      	    
+      	    function fnChangeState() {
+      	      reportState = 1; 
+      	      $.ajax({
+      	    	  type: 'post',
+      	    	  url: '/report/changeState.do',
+      	    	  data: 'reportState=' + reportState,
+      	    	  dataType: 'json',
+      	    	  success: function(resData) {
+      	    		  console.log(resData);
+      	    	  }
+    	    	  })
+      	    }
+      	    
+      	    function fnDeletePost() {
+      	    	$(document).on('click', '.btnDeletePost', function(event) {
+      	    		let modalReportNo = $(this).parent().siblings('.modal-body').children().children().children().children().children('.modalReportNo');
+      	    		reportNo = modalReportNo.text(); 
+      	    		let boardNo = modalReportNo.next().val();
+      	    		
+      	    		console.log(reportNo);
+      	    		console.log(boardNo);
+      	    		
+      	    		if(confirm('신고된 게시글을 삭제하시겠습니까?') == false) {
+      	    			event.preventDefault();
+      	    			return;
+                }
+      	    		$.ajax({
+      	    		  type: 'post',
+      	    		  url: '/report/deleteBoardByReport.do',
+      	    		  data: 'boardNo=' + boardNo,
+      	    		  dataType: 'json',
+      	    		  success: function(resData){
+  	                if(resData.isDelete){
+  	                	$('.btnCancel').click();
+  	                	alert('신고 게시글이 삭제되었습니다.');
+  	                	fnSearchReport();
+  	                	// location.href = '/report/report.html';
+  	                }
+      	    		  }
+      	    		})
+      	    	})
+      	    }
+      	    
+      	    function fnReturnReport() {
+      	    	$(document).on('click', '.btnReturnReport', function(event) {
+                let modalReportNo = $(this).parent().siblings('.modal-body').children().children().children().children().children('.modalReportNo');
+                reportNo = modalReportNo.text(); 
+                
+                console.log(reportNo);
+                
+                if(confirm('해당 신고를 반려하시겠습니까?') == false) {
+                  event.preventDefault();
+                  return;
+                }
+                $.ajax({
+                  type: 'post',
+                  url: '/report/returnReport.do',
+                  data: 'reportNo=' + reportNo,
+                  dataType: 'json',
+                  success: function(resData){
+                    if(resData.isChange){
+                    	$('.btnCancel').click();
+                      alert('해당 신고가 반려되었습니다.');
+                      fnSearchReport();
+                      // location.href = '/report/report.html';
+                    } else {
+                    	alert('동작을 실패했습니다.\n이미 삭제된 게시글인지 확인하십시오.');
+                    	$('.btnCancel').click();
+                    }
+                  }
+                })
+              })
+      	    }
           </script>
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
