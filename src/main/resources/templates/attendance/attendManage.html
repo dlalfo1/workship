@@ -2,8 +2,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 출퇴근기록관리')}"></head>
-<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 <link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
+<script th:replace="~{/layout/common::datepickerSetting}"></script>
 <body>
   <div class="container-scroller">
 
@@ -277,6 +277,7 @@
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
   <!--/* footer 영역 */-->
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
 </body>

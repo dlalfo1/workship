@@ -10,7 +10,7 @@
        </a>
     </li>
         <li class="nav-item">
-       <a class="nav-link" th:href="@{/project/project.html}">
+       <a class="nav-link" th:href="@{/project/projectList.do}">
         <i class="fa-solid fa-diagram-project menu-icon"></i>
         <span class="menu-title">프로젝트</span>
        </a>
@@ -39,7 +39,7 @@
       <div class="collapse" id="attendance-basic">
         <ul class="nav flex-coulmn sub-menu">
           <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendList.do(memberNo=${session.loginMember.memberNo})}">출퇴근기록조회</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="#">연차조회</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/vacation/vacationList.html}">연차조회</a> </li>
           <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendManage.html}">출퇴근기록관리</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">연차관리</a> </li>
         </ul>
@@ -60,7 +60,7 @@
       <div class="collapse" id="board-basic">
         <ul class="nav flex-coulmn sub-menu">
           <li class="nav-item"> <a class="nav-link" th:href="@{/notice/noticeMain.html}">공지사항</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/board/boardMain.html}">부서별 게시판</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/board/boardList.do}">부서별 게시판</a> </li>
         </ul>
       </div>
     </li>

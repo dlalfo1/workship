@@ -1,6 +1,6 @@
 package com.gdu.workship.domain;
 
-import java.util.Date;
+import java.sql.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +21,7 @@ public class ApprovalDTO {
 	private int approvalStatus;
 	private int approvalCount;
 	private int approvalSequence;
+	private String vacationCategory;
 	private Date vacationStartDate;
 	private Date vacationEndDate;
 	private Date payDate;
