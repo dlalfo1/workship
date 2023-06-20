@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
+
+<script th:inline="javascript">
+  var frm;
+  
+  $(function(){
+    let modifyResult = /*[[${modifyResult}]]*/ null;  // addResult가 전달되지 않는 경우 null을 사용한다.
+    if(modifyResult !== null){
+      if(modifyResult === 1) {
+        alert('게시글이 수정되었습니다.');
+      } else {
+        alert('게시글 수정에 실패했습니다.');
+      }
+    }
+	  
+    frm = $('#frmBtn');
+    // 검색어 초기화
+    $('#column').on('change', function(){
+      $('#query').val('');
+    })
+  })
+  
+  function fnList() {
+	  location.href = '/board/boardList.do';
+  }
+  function fnWrite() {
+	  location.href = '/board/board.html';
+  }
+  function fnEdit() {
+	  frm.attr('action', '/board/boardEdit.html');
+    frm.submit();
+  }
+  function fnRemove() {
+    if(confirm('게시글을 삭제하면 모든 첨부 파일이 함께 삭제됩니다. 그래도 삭제하시겠습니까?') == false){
+        return;
+      }
+    frm.attr('action', '/board/removeBoard.do');
+    frm.submit();
+  }
+	
+</script>
+<body>
+
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+          <div class="board-main">
+            <div class="board-title">
+                <h3><a th:href="@{/board/boardList.do}">공지사항</a></h3>
+            </div>
+            
+            <hr>
+            
+            <div class="board-detail">
+              <div class="page-button">
+                <button type="button" class="btn btn-outline-secondary btn-sm" th:onclick="location.href='boardDetail.html?boardNo=${b.boardNo - 1}&cpage=${ cpage }'">이전</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" th:onclick="location.href='boardDetail.html?boardNo=${b.boardNo + 1}&cpage=${ cpage }'">다음</button>
+                <button type="button" class="btn btn-outline-dark btn-sm" onclick="fnList()">목록</button>
+              </div>
+            
+            <div class="content-header">
+                <h5 th:text="${b.boardTitle}"></h5>
+                <div class="profile">
+                  <!--/* <img th:src="@{/board/display.do(memberNo=${b.MemberDTO.memberNo})}"> */-->
+                  <div th:text="|${b.MemberDTO.memberName} ${b.memberDTO.JobDTO.jobName}|"></div>
+                  <div class="createDate" th:text="${#dates.format(b.boardCreatedAt, 'yyyy/MM/dd HH:mm')}"></div>
+                  <!--/* <div class="modiDate" th:text="${#dates.format(b.boardModifiedAt, 'yyyy/MM/dd')}"></div>  */-->
+                  <div class="boardHit">조회수 <span th:text="${b.boardHit}"></span></div>
+                </div>
+            </div>
+            
+            <!--/* 게시판 내용 영역 */-->
+            <div class="content-body" th:utext="${b.boardContent}"></div>
+            
+            <hr>
+              
+            <!--/* 다운로드 영역 */-->
+            <div class="attachList">
+              <th:block th:if="${#lists.isEmpty(boardFileList)}">
+                <div><i class="fa-light fa-arrow-down-to-line fa-1x"></i>첨부된 파일이 없습니다.</div>
+              </th:block>
+              
+              <th:block th:unless="${#lists.isEmpty(boardFileList)}">
+                <th:block th:each="boardFile:${boardFileList}">
+                  <div><i class="mdi mdi-download"></i><a th:href="@{/board/download.do(boardFileNo=${boardFile.boardFileNo})}"><span th:text="${boardFile.boardFileOriginName}"></span></a><span>(kb)</span></div>
+                </th:block>
+                  <div><a th:href="@{/board/downloadAll.do(boardNo=${b.boardNo})}">모두 다운로드</a></div>
+              </th:block>
+            </div>
+            
+            <div class="write-button">
+              <form id="frmBtn" method="post">
+                <input type="hidden" name="boardNo" th:value="${b.boardNo}">
+                <!--/* 
+                <th:block th:if="${session.deptName == '인사팀'}">
+                </th:block>
+                 */-->
+                  <button type="button" class="btn btn-primary btn-rounded btn-sm" onclick="fnWrite()">새글쓰기</button>
+                <!--/* 
+                <th:block th:if="${session.loginId == b.MemberDTO.emailId}">
+                </th:block>
+                 */-->
+                  <button type="button" class="btn btn-outline-secondary btn-rounded btn-sm" th:onclick="fnEdit()">수정</button>
+                  <button type="button" class="btn btn-danger btn-rounded btn-sm" th:onclick="fnRemove()">삭제</button>
+                </form>
+            </div>
+            
+            </div> <!--/* board-detail 끝나는 지점 */-->
+          </div> <!--/* board-main 끝나는 지점 */-->
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

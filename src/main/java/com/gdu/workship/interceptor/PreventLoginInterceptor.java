@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-public class PreventLoginIntercepter implements HandlerInterceptor {
+public class PreventLoginInterceptor implements HandlerInterceptor {
 
   // 로그인이 되어 있는 상태에서
   // 다시 로그인 페이지로 이동, 회원 가입 페이지로 이동을 막는 인터셉터

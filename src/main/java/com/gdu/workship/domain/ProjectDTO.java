@@ -1,7 +1,5 @@
 package com.gdu.workship.domain;
 
-import java.sql.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,10 +10,10 @@ import lombok.NoArgsConstructor;
 public class ProjectDTO {
 	private int projectNo;
 	private MemberDTO memberDTO;
-	private int projectState;
-	private Date projectStartAt; 
-	private Date projectEndAt; 
-	private Date projectModifiedAt;
+	private DepartmentDTO departmentDTO;
+	private String projectStartAt; 
+	private String projectEndAt; 
+	private String projectModifiedAt;
 	private String projectTitle;
-	private String projectDetail;
+	private IngDTO ingDTO;
 }

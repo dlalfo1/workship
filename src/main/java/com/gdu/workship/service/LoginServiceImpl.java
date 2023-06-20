@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.mapper.LoginMapper;
@@ -26,7 +25,7 @@ public class LoginServiceImpl implements LoginService {
 	// private final PageUtil pageUtil;
 	// private final MyFileUtil myfileUtil;
 	// private final SecurityUtil securityUtil; 
-	
+
 	@Override
 	public void login(HttpServletRequest request, HttpServletResponse response) {
 		
@@ -57,25 +56,6 @@ public class LoginServiceImpl implements LoginService {
 			
 		}
 			
-				
-		
-		
-		/*
-		HttpSession session = request.getSession();
-		session.setAttribute("loginMember", loginMemberDTO);
-		
-		if(loginMemberDTO != null) {
-			
-
-			try {
-				response.sendRedirect(url);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		*/
-		
-		
 		else {
 			
 			try {
@@ -100,6 +80,13 @@ public class LoginServiceImpl implements LoginService {
 	    HttpSession session = request.getSession();
 	    String id = (String) session.getAttribute("loginId");
 	    loginMapper.deleteAutologin(id);
+	    
+	    Cookie cookie = new Cookie("autologinId", "");
+	    cookie.setMaxAge(0);                       
+	    cookie.setPath("/"); 
+	    response.addCookie(cookie);
+	    
+	    session.invalidate();
 	    
 		
 	}

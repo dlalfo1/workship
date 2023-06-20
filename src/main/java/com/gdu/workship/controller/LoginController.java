@@ -1,5 +1,6 @@
 package com.gdu.workship.controller;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,7 +27,7 @@ public class LoginController {
 	    model.addAttribute("url", url == null ? request.getContextPath() : url);
 	    return "templates/loginTemp";
 	  }*/
-	  @PostMapping("/loginTemp.do")
+	  @PostMapping("/main.do")
 	  public void login(HttpServletRequest request, HttpServletResponse response) {
 		 loginService.login(request, response);
 	  }
@@ -36,4 +37,18 @@ public class LoginController {
 	    loginService.logout(request, response);
 	    return "redirect:/";
 	  }
+	  @GetMapping("/findPassword.do")  // 비밀번호 찾기 화면으로 이동
+	  public String findPwForm() {
+	    return "login/findPassword";
+	  }
+	  
+	  public void setCookie(HttpServletResponse response) {
+	    Cookie cookie = new Cookie("cookieName", "cookieValue");
+	    cookie.setMaxAge(0); 
+	    cookie.setPath("/"); 
+	    response.addCookie(cookie);
+	  }
+	  
+
+
 }
