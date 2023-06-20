@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('프로젝트 메인페이지')}"></head>
+<link rel="stylesheet" th:href="@{/css/project.css?ver=1.0}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />        
+<body>
+
+  <div class="container-scroller">
+
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+  
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+    
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+			<div class="project-main">
+				<div class="project-title">
+					<h3>프로젝트</h3>
+				</div>
+				<div class="projectList">
+					<table id="listTable" class="table table-hover text-center">
+						<thead id="projectHead">
+							<tr>
+								<th style="width: 150px;">프로젝트 번호</th>
+								<th style="width: 150px;">프로젝트 이름</th>
+								<th style="width: 100px;">담당자</th>
+								<th style="width: 100px;">부서명</th>
+								<th style="width: 100px;">상태</th>
+							</tr>
+						</thead>
+						<tbody id="projectListBody">
+							<th:block th:if="${#lists.isEmpty(projectList)}">
+								<tr>
+									<td colspan="4">현재 프로젝트가 없습니다.</td>
+								</tr>
+							</th:block>
+							<th:block th:unless="${#lists.isEmpty(projectList)}">
+								<th:block th:each="project:${projectList}">
+									<tr>
+										<td class="no"><a th:text="${project.projectNo}"></a></td>
+										<td><a th:href="@{/project/projectWorkList.html(projectNo=${project.projectNo})}" th:text="${project.projectTitle}"></a></td>
+										<td th:text="${project.memberDTO.memberName}"></td>
+										<td th:text="${project.departmentDTO.deptName}"></td>
+										<td th:text="${project.IngDTO.ingState}"></td>
+									</tr>
+								</th:block>
+							</th:block>
+						</tbody>
+					</table>
+				</div>	<!--/* projectList 끝나는지점 */-->	
+				<div class="searchWrap">
+					<form id="frmSearch" th:action="@{/project/projectList.do}">
+						<select name="column" id="column">
+							<option value="M.MEMBER_NAME" selected="selected">담당자</option>
+							<option value="P.PROJECT_TITLE">프로젝트명</option>
+						</select>
+						<input type="text" name="query" id="query">
+						<button>검색</button>
+					</form>
+				</div>	
+				<div id="pagination" style="text-align: center;" th:utext="${pagination}"></div>
+				</div>
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

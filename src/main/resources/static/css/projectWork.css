@@ -1,0 +1,87 @@
+@charset "UTF-8";
+
+#AllContent {								/* 본문 전체 내용 */
+	width: 100%;
+	height: 100%;
+}	
+#content1 { 								/* 프로젝트 관리자, 내업무 묶음 */
+	display: flex;
+}
+#ProjectAdminPackage {						/* 프로젝트 관리자(글씨, 박스 묶음) */
+	margin-left: 1%;
+	margin-top: 20px;
+}
+#ProjectAdmin {								/* 프로젝트 관리자 글씨 */
+	font-size: 20px;
+}
+#box1 {										/* 프로젝트 관리자 박스 */
+	margin-left: -1%;
+	margin-top: 20px;
+	width: 187px;
+	height: 120px;
+	background-color: white;
+	border: 2px solid rgb(27, 151, 252);
+	border-radius: 10px 10px 10px 10px;
+}
+.fa-solid fa-circle-user {
+	
+}
+#line {										/* 세로선 */
+	 border-left: 2px solid gray;
+	 height: 880px;
+	 margin-left: 1%;
+	 position: absolute;
+}
+#ProjectMyPackage {							/* 내 업무(글씨, 박스 묶음) */
+	margin-top: 20px;
+	margin-left: 3%;
+}
+#myWork {									/* 내 업무 글씨 */
+	font-size: 20px;
+}
+#box2 {										/* 내 업무 박스 */
+	margin-top: 20px;
+	width: 1390px;
+	height: 350px;
+	background-color: white;
+	border: 2px solid rgb(27, 151, 252);
+	border-radius: 10px 10px 10px 10px;
+}
+
+/* /------------------------------------ 상 단 작 업 ---------------------------------------/ */
+
+#content2 { 								/* 프로젝트 참여자, 전체 프로젝트 묶음 */
+	display: flex;
+}
+#ProjectParticipantsPackage {				/* 프로젝트 참여자(글씨, 박스 묶음) */	
+	margin-left: 1%;
+	margin-top: -188px;	
+}
+#ProjectParticipants {						/* 프로젝트 참여자 글씨 */
+	font-size: 20px;	
+}
+#box3 {										/* 프로젝트 참여자 박스 */
+	margin-top: 20px;			
+	width: 185px;
+	height: 600px;
+	background-color: white;
+	border: 2px solid rgb(27, 151, 252);
+	border-radius: 10px 10px 10px 10px;
+}
+#ProjectAllPackage {						/* 전체 프로젝트(글씨, 박스 묶음) */
+	margin-left: 3%;
+	margin-top: 20px;
+}
+#ProjectAll {								/* 전체 프로젝트 글씨 */
+	font-size: 20px;
+}
+#box4 {										/* 전체 프로젝트 박스 */
+	margin-top: 20px;
+	width: 1390px;
+	height: 391px;
+	background-color: white;
+	border: 2px solid rgb(27, 151, 252);
+	border-radius: 10px 10px 10px 10px;
+}
+
+/* /------------------------------------ 하 단 작 업 ---------------------------------------/ */
