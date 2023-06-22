@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.gdu.workship.domain.BoardDTO;
 import com.gdu.workship.domain.BoardFileDTO;
 import com.gdu.workship.domain.MemberDTO;
+import com.gdu.workship.domain.NoticeDTO;
 
 @Mapper
 public interface BoardMapper {
@@ -20,6 +21,7 @@ public interface BoardMapper {
 	public int increaseHit(int boardNo);
 	
     public BoardDTO getBoardByNo(int boardNo);
+    public BoardDTO prevAndNextBoard(int boardNo);
     public List<BoardFileDTO> getBoardFileList(int boardNo);
   
     public BoardFileDTO getBoardFileByNo(int boardFileNo);

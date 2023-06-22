@@ -96,10 +96,20 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public void getBoardByNo(int boardNo, Model model) {
-		model.addAttribute("b", boardMapper.getBoardByNo(boardNo));
+	    model.addAttribute("b", boardMapper.getBoardByNo(boardNo));
 	    System.out.println(boardMapper.getBoardByNo(boardNo));
 	    model.addAttribute("boardFileList", boardMapper.getBoardFileList(boardNo));
-	}
+	    
+	    // 이전글(prevNo), 다음글(nextNo)
+	    int nextNo = boardMapper.prevAndNextBoard(boardNo).getNextNo();
+	    int prevNo = boardMapper.prevAndNextBoard(boardNo).getPrevNo();
+	    if(nextNo == 0) nextNo = boardNo;
+	    if(prevNo == 0) prevNo = boardNo;
+	    
+	    model.addAttribute("nextNo", nextNo);
+	    model.addAttribute("prevNo", prevNo);
+	    
+	  }
 
 	@Override
 	public ResponseEntity<Resource> download(int boardFileNo, String userAgent) {

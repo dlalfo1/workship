@@ -32,7 +32,7 @@ public class AutologinInterceptor implements HandlerInterceptor {
       
       if(cookie != null) {  // 쿠키 autologinId가 w존재하는가?
         
-        String autologinId =  (String) cookie.getValue();
+        String autologinId = cookie.getValue();
         String emailId = loginMapper.selectAutologin(autologinId);
         
         if(emailId != null) {

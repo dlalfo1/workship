@@ -1,46 +1,163 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
-
+<head th:replace="~{/layout/header::headFrag('게시판')}"></head>
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+<style>
+  .blind {
+    display: none;
+  }
+  .invisible {
+    visibility: hidden;
+  }
+  .enable_link {
+    cursor: pointer;
+  }
+  .pagination {
+    margin: 0 5px;
+  }
+</style>
 <script th:inline="javascript">
-  var frm;
-  
-  $(function(){
-    let modifyResult = /*[[${modifyResult}]]*/ null;  // addResult가 전달되지 않는 경우 null을 사용한다.
-    if(modifyResult !== null){
-      if(modifyResult === 1) {
-        alert('게시글이 수정되었습니다.');
-      } else {
-        alert('게시글 수정에 실패했습니다.');
-      }
-    }
-	  
-    frm = $('#frmBtn');
-    // 검색어 초기화
-    $('#column').on('change', function(){
-      $('#query').val('');
-    })
-  })
-  
-  function fnList() {
-	  location.href = '/board/boardList.do';
-  }
-  function fnWrite() {
-	  location.href = '/board/board.html';
-  }
-  function fnEdit() {
-	  frm.attr('action', '/board/boardEdit.html');
-    frm.submit();
-  }
-  function fnRemove() {
-    if(confirm('게시글을 삭제하면 모든 첨부 파일이 함께 삭제됩니다. 그래도 삭제하시겠습니까?') == false){
-        return;
-      }
-    frm.attr('action', '/board/removeBoard.do');
-    frm.submit();
-  }
+
+	var frm;
+	var boardNo = /*[[${b.boardNo}]]*/ null;
+	var page = 1; // 적절한 값으로 대체
+	var emailId = /*[[${session.loginMember.emailId}]]*/ null;
 	
+	$(function(){
+	  let modifyResult = /*[[${modifyResult}]]*/ null;
+	  if(modifyResult !== null){
+	    if(modifyResult === 1) {
+	      alert('게시글이 수정되었습니다.');
+	    } else {
+	      alert('게시글 수정에 실패했습니다.');
+	    }
+	  }
+		  
+	  frm = $('#frmBtn');
+	  // 검색어 초기화
+	  $('#column').on('change', function(){
+	    $('#query').val('');
+	  })
+	  
+	  fnPrev();
+	  fnNext();
+    fnAddComment();
+    fnCommentList();
+	})
+	
+	function fnPrev(){
+		  $('#btnPrev').on('click', function(event){
+			  let prevNo = /*[[${prevNo}]]*/ null;
+			  if(prevNo == boardNo) {
+				  alert('더 이상 이전 글이 없습니다.');
+				  event.preventDefault();
+				  return;
+			  }
+			  location.href='/board/boardDetail.html?boardNo=' + prevNo;
+		  })
+	}
+	
+	function fnNext(){
+	  $('#btnNext').on('click', function(){
+	    let nextNo = /*[[${nextNo}]]*/ null;
+	      if(nextNo == boardNo) {
+	        alert('더 이상 다음 글이 없습니다.');
+	        event.preventDefault();
+	        return;
+	      }
+	      location.href='/board/boardDetail.html?boardNo=' + nextNo ;
+	    })
+	}
+	
+	function fnList() {
+		  location.href = '/board/boardList.do';
+	}
+	function fnWrite() {
+		  location.href = '/board/boardWrite.html';
+	}
+	function fnEdit() {
+		  frm.attr('action', '/board/boardEdit.html');
+	  frm.submit();
+	}
+	function fnRemove() {
+	  if(confirm('게시글을 삭제하면 모든 첨부 파일이 함께 삭제됩니다. 그래도 삭제하시겠습니까?') == false){
+	      return;
+	    }
+	  frm.attr('action', '/board/removeBoard.do');
+	  frm.submit();
+	}
+  function fnAddComment(){
+		$('#btnAddComment').on('click', function(){
+        if($('#commentContent').val() == ''){
+          alert('댓글 내용을 입력하세요.');
+          return;
+        }
+        $.ajax({
+          type: 'post',
+          url: '/boardComment/addComment.do',
+          data: $('#frmAddComment').serialize(),
+          dataType: 'json',
+          success: function(resData){  // resData = {"isAdd": true}
+            if(resData.isAdd){
+              alert('댓글이 등록되었습니다.');
+              $('#commentContent').val('');
+              fnCommentList();  // 댓글 목록을 가져와서 화면에 만드는 함수
+            }
+          }
+        })
+      })
+    }
+    function fnCommentList(){
+        $.ajax({
+          type: 'get',
+          url: '/boardComment/list.do',
+          data: 'boardNo=' + boardNo + '&page=' + page,
+          dataType: 'json',
+          success: function(resData){  // resData = { "commentList": [{}, {}, ...], "pageUtil": {beginPage: 1, endPage: 5, ...} }
+            /******************* 댓글 목록 만들기 *******************/
+            $('#commentList').empty();
+            $.each(resData.commentList, function(i, boardComment){
+              var str = '<div>';
+              if(boardComment.commentState == -1){
+                if(boardComment.commentDepth == 0){                  
+                  str += '<span>삭제된 댓글입니다.';
+                } else {
+                  str += '<span style="margin-left: 30px;">삭제된 답글입니다.';
+                }
+              } else {
+                if(boardComment.commentDepth == 0){
+                  str += '<span>';
+                } else {
+                  str += '<span style="margin-left: 30px;">';
+                }
+                str += boardComment.memberDTO.memberName;
+                str += ' - ' + boardComment.commentContent;
+                if(emailId != ''){
+                  if(emailId == boardComment.memberDTO.emailId && boardComment.commentState == 1){
+                     str += '<input type="button" value="삭제" class="btnCommentRemove" data-comment_no="' + boardComment.commentNo + '">';
+                  } else if(emailId != boardComment.memberDTO.emailId && boardComment.commentDepth == 0){
+                    str += '<input type="button" value="답글" class="btnOpenReply">';
+                  }
+                }
+                str += '<div class="replyArea blind">';
+                /******************* 답글달 때 전송할 데이터는 4개(content, blogNo, groupNo, memberNo) *******************/
+                str += '  <form class="frmReply">';
+                str += '    <input type="text"   name="commentContent"  class="replyContent" placeholder="답글을 작성해 주세요">';
+                str += '    <input type="hidden" name="boardNo"   value="' + boardComment.boardNo + '">';
+                str += '    <input type="hidden" name="commentGroupNo"  value="' + boardComment.commentGroupNo + '">';
+                str += '    <input type="hidden" name="memberNo" value="${sessionScope.loginNo}">';  // 수업 때 잘못 구현한 부분
+                str += '    <input type="button" value="답글작성완료" class="btnAddReply">';
+                str += '  </form>';
+                /*********************************************************************************************************/
+                str += '</div>';
+              }
+            
+              $('#commentList').append(str);
+            });
+          }
+    });
+    }
 </script>
 <body>
 
@@ -61,18 +178,18 @@
         
           <div class="board-main">
             <div class="board-title">
-                <h3><a th:href="@{/board/boardList.do}">공지사항</a></h3>
+                <h3><a th:href="@{/board/boardList.do}">부서별게시판</a></h3>
             </div>
             
             <hr>
             
             <div class="board-detail">
               <div class="page-button">
-                <button type="button" class="btn btn-outline-secondary btn-sm" th:onclick="location.href='boardDetail.html?boardNo=${b.boardNo - 1}&cpage=${ cpage }'">이전</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm" th:onclick="location.href='boardDetail.html?boardNo=${b.boardNo + 1}&cpage=${ cpage }'">다음</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnPrev">이전</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnNext">다음</button>
                 <button type="button" class="btn btn-outline-dark btn-sm" onclick="fnList()">목록</button>
-              </div>
-            
+            </div>
+           	<hr> 
             <div class="content-header">
                 <h5 th:text="${b.boardTitle}"></h5>
                 <div class="profile">
@@ -83,12 +200,26 @@
                   <div class="boardHit">조회수 <span th:text="${b.boardHit}"></span></div>
                 </div>
             </div>
-            
+            <hr>
             <!--/* 게시판 내용 영역 */-->
             <div class="content-body" th:utext="${b.boardContent}"></div>
             
+            
             <hr>
-              
+          	<div>
+							<div id="commentList">
+							</div>          	
+          	</div>
+          	<hr>
+						<div>
+						  <form id="frmAddComment">
+						    <input type="text"   name="commentContent" id="commentContent" placeholder="댓글 작성해 주세요">
+						    <input type="hidden" name="boardNo" th:value="${b.boardNo}">
+						    <input type="hidden" name="memberNo" th:value="${session.loginMember.memberNo}">
+						    <input type="button" value="작성완료" id="btnAddComment">
+            	</form>
+            <hr>
+            	 
             <!--/* 다운로드 영역 */-->
             <div class="attachList">
               <th:block th:if="${#lists.isEmpty(boardFileList)}">
@@ -112,14 +243,14 @@
                  */-->
                   <button type="button" class="btn btn-primary btn-rounded btn-sm" onclick="fnWrite()">새글쓰기</button>
                 <!--/* 
-                <th:block th:if="${session.loginId == b.MemberDTO.emailId}">
+                <th:block th:if="${session.emailId == b.MemberDTO.emailId}">
                 </th:block>
                  */-->
                   <button type="button" class="btn btn-outline-secondary btn-rounded btn-sm" th:onclick="fnEdit()">수정</button>
                   <button type="button" class="btn btn-danger btn-rounded btn-sm" th:onclick="fnRemove()">삭제</button>
                 </form>
             </div>
-            
+            </div>
             </div> <!--/* board-detail 끝나는 지점 */-->
           </div> <!--/* board-main 끝나는 지점 */-->
 

@@ -3,34 +3,34 @@
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 로그인페이지')}"></head>
 <script th:inline="javascript">
+	var rememberId = $.cookie('rememberId');
+	var autologin = $.cookie('autologin');
 // 로그인하기
-function fnLogin(){
-  
-  $('#frmLogin').on('submit', function(event){
-    
-   // 아이디, 비밀번호 공백 검사
-   if($('#emailId').val() == '' || $('#pw').val() == ''){
-     alert('아이디와 비밀번호를 모두 입력하세요.');
-     event.preventDefault();
-     return;
-   }
-   
-   // 아이디 기억을 체크하면 rememberId 쿠키에 입력된 아이디를 저장
-   if($('#chkRememberId').is(':checked')){
-     $.cookie('rememberId', $('#emailId').val());
-   } else {
-     $.cookie('rememberId', '');
-   }
-   
-   // 자동 로그인 체크 여부 확인
-   if($('#chkAutologinId').is(':checked')){
-     $.cookie('autologin', 'true');
-   } else {
-     $.cookie('autologin', 'false');
-   }
-    
+function fnLogin() {
+  $('#frmLogin').on('submit', function(event) {
+    // 아이디, 비밀번호 공백 검사
+    if ($('#emailId').val() == '' || $('#pw').val() == '') {
+      if (!$('#chkAutologinId').is(':checked')) {
+        alert('아이디와 비밀번호를 모두 입력하세요.');
+        event.preventDefault();
+      }
+      return;
+    }
+
+    // 아이디 기억을 체크하면 rememberId 쿠키에 입력된 아이디를 저장
+    if ($('#chkRememberId').is(':checked')) {
+      $.cookie('rememberId', $('#emailId').val());
+    } else {
+      $.cookie('rememberId', '');
+    }
+
+    // 자동 로그인 체크 여부 확인
+    if ($('#chkAutologinId').is(':checked')) {
+      $.cookie('autologin', 'true');
+    } else {
+      $.cookie('autologin', 'false');
+    }
   });
-  
 }
 	
 
@@ -47,7 +47,7 @@ function fnRememberId(){
 	    $('#chkRememberId').prop('checked', true);
 	  }
 	}
-function fnAutologin(){
+/*function fnAutologin(){
   // autologin 쿠키에 저장된 값에 따라 자동 로그인 체크 상태 변경
 	  let autologin = $.cookie('autologin');
 	  if (autologin == 'true') {
@@ -55,13 +55,21 @@ function fnAutologin(){
 	    $('#frmLogin').submit();
 	  } else {
 	    $('#chkAutologin').prop('checked', false);
-	  }
-
+	  }*/
+	  function fnAutologin() {
+		  let autologin = $.cookie('autologin');
+		  if (autologin == 'true') {
+		    $('#chkAutologin').prop('checked', true);
+		    $('#frmLogin').submit(); 
+		  } else {
+		    $('#chkAutologin').prop('checked', false);
+		  }
+		}
 	  // 자동 로그인 체크 여부에 따라 로그인 처리
 	  if ($.cookie('autologin') == 'true') {
 	    $('#frmLogin').submit();
 	  }
-	}
+
 
 $(function(){
   fnLogin();

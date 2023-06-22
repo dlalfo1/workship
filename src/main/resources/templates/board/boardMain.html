@@ -2,18 +2,37 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('게시판')}"></head>
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 <style>
 	.second-title {
 		color: black;
 	}
-
+  .blind {
+    display: none;
+  }
+  .invisible {
+    visibility: hidden;
+  }
+  .enable_link {
+    cursor: pointer;
+  }
 </style>
 <script th:inline="javascript">
-
+	
+	
 	function fnWriteBoard() {
 		location.href = '/board/boardWrite.html';
 	}
 	
+	/*
+	function fnWriteBoard(){
+		if(deptNo === 1){
+			location.href = '/board/boardWrite.html'
+		} else {
+			alert('작성을 하실 수 없습니다.');
+		}
+	}
+	*/
 	
 	$(function(){
 	// 게시글 달기 결과 메시지
@@ -62,29 +81,29 @@
         
           <div class="board-main">
             <div class="board-title">
-                <h2><a th:href="@{/board/boardMain.html}" class="second-title">부서별게시판</a></h2>
+                <h2><a th:href="@{/board/boardList.do}" class="second-title">부서별게시판</a></h2>
                 <div class="dropdown">
 									<button class="btn btn-primary dropdown-toggle has-ripple" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height: 50px; ">게시판<span class="ripple ripple-animate" style="height: 102.438px; width: 102.438px; animation-duration: 0.7s; animation-timing-function: linear; background: rgb(255, 255, 255); opacity: 0.4; top: -23.419px; left: 49.781px;"></span></button>
             			<div class="dropdown-menu">
 										<a class="dropdown-item" th:href="@{/board/HRBoard.html}">인사게시판</a>
 										<a class="dropdown-item" th:href="@{/board/GADBoard.html}">총무게시판</a>
-										<a class="dropdown-item" th:href="@{/board/DIVBoard.html}">개발게시판</a>
+										<a class="dropdown-item" th:href="@{/board/DEVBoard.html}">개발게시판</a>
 									</div>
             		</div>
             		
             <hr>
             
             <div class="board-table">
-                <table border="1" id="listTable" class="table">
-                    <thead>
-                        <tr>
-                            <th style="width: 50px;">게시글 번호</th>
-                            <th style="width: 100px;">제목</th>
-                            <th style="width: 50px;">작성자</th>
-                            <th style="width: 50px;">작성일</th>
-                            <th style="width: 50px;">조회수</th>
-                        </tr>
-                    </thead>
+              <table id="listTable" class="table text-center">
+                <thead>
+                  <tr>
+                    <th style="width: 10%">게시글 번호</th>
+                    <th style="width: 35%;">제목</th>
+                    <th style="width: 20%;">작성자</th>
+                    <th style="width: 25%;">작성일</th>
+                    <th style="width: 10%;">조회수</th>
+                  </tr>
+                </thead>
                     <tbody id="boardList">
                       <th:block th:if="${#lists.isEmpty(boardList)}">
                         <tr> 
@@ -97,7 +116,7 @@
                           <th:block th:if="${board.boardState == 1}">
                             <tr class="list">
                               <td th:text="${board.boardNo}"></td>
-                              <!--/* 본인이 작성한 공지사항은 조회수가 증가하지 않는다. */-->
+                              <!--/* 본인이 작성한 게시글은 조회수가 증가하지 않는다. */-->
                               <td th:if="${session.loginMember.emailId == board.memberDTO.emailId}">
                                 <a th:href="@{/board/increaseHit.do(boardNo=${board.boardNo})}" th:text="${board.boardTitle}"></a>
                               </td>

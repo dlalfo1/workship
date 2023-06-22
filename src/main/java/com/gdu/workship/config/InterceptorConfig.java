@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.gdu.workship.interceptor.AutologinInterceptor;
-import com.gdu.workship.interceptor.LoginInterceptor;
+import com.gdu.workship.interceptor.LoginCheckInterceptor;
 import com.gdu.workship.interceptor.PreventLoginInterceptor;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class InterceptorConfig implements WebMvcConfigurer {
 
 	@Autowired
-	private final LoginInterceptor loginInterceptor;
+	private final LoginCheckInterceptor loginInterceptor;
 	private final PreventLoginInterceptor preventLoginInterceptor;
 	private final AutologinInterceptor autologinInterceptor;
 	
