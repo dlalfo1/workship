@@ -46,6 +46,10 @@
     fnCommentList();
 	})
 	
+	function fnRemoveComment(){
+		
+	}
+	
 	function fnPrev(){
 		  $('#btnPrev').on('click', function(event){
 			  let prevNo = /*[[${prevNo}]]*/ null;
@@ -190,7 +194,7 @@
                 <button type="button" class="btn btn-outline-dark btn-sm" onclick="fnList()">목록</button>
             </div>
            	<hr> 
-            <div class="content-header">
+            <div class="content-header"> 
                 <h5 th:text="${b.boardTitle}"></h5>
                 <div class="profile">
                   <!--/* <img th:src="@{/board/display.do(memberNo=${b.MemberDTO.memberNo})}"> */-->
@@ -198,7 +202,7 @@
                   <div class="createDate" th:text="${#dates.format(b.boardCreatedAt, 'yyyy/MM/dd HH:mm')}"></div>
                   <!--/* <div class="modiDate" th:text="${#dates.format(b.boardModifiedAt, 'yyyy/MM/dd')}"></div>  */-->
                   <div class="boardHit">조회수 <span th:text="${b.boardHit}"></span></div>
-                </div>
+                </div> 
             </div>
             <hr>
             <!--/* 게시판 내용 영역 */-->
