@@ -4,36 +4,7 @@
 <head th:replace="~{/layout/header::headFrag('프로젝트 메인페이지')}"></head>
 <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 <link rel="stylesheet" th:href="@{/css/project.css?ver=1.0}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script>
-
-	function fnDeleteP() {
-		$('#btnDelete').on('click', function(){
-			if(confirm('삭제하시겠습니까?') == false){
-				return;
-			}else{	
-				$('#frmDelete').submit();
-				alert('삭제완료');
-			}
-		})
-	}
-	/* 
-	function fnRegistor() {
-		$('#registor').on('click', function(){
-			if(confirm('등록하시게?') == false){
-				return;
-			}else{	
-				$('#frmDelete').submit();
-				alert('삭제완료');
-			}
-		})
-	}
-	*/
-	
-		$(function(){
-			fnDeleteP();
-		})
-</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />        
 <body>
 
   <div class="container-scroller">
@@ -54,24 +25,22 @@
         <div class="content-wrapper">
 			<div class="project-main">
 				<div class="project-title">
-					<span style="font-size: 30px;">프로젝트</span>&nbsp;&nbsp;<span><a id="registor" th:href="@{/project/projectAdd.html}"><i class="fa-solid fa-folder-plus fa-xl"></i></a></span>
+					<h3>프로젝트</h3>
 				</div>
 				<div class="projectList">
 					<table id="listTable" class="table table-hover text-center">
 						<thead id="projectHead">
 							<tr>
-								<th style="width: 150px;">프로젝트 번호</th>
-								<th style="width: 150px;">프로젝트 이름</th>
+								<th style="width: 150px;">업무 번호</th>
+								<th style="width: 150px;">업무명</th>
 								<th style="width: 100px;">담당자</th>
-								<th style="width: 100px;">부서명</th>
 								<th style="width: 100px;">상태</th>
-								<th style="width: 100px"></th>
 							</tr>
 						</thead>
 						<tbody id="projectListBody">
 							<th:block th:if="${#lists.isEmpty(projectList)}">
 								<tr>
-									<td colspan="4">현재 프로젝트가 없습니다.</td>
+									<td colspan="4">현재 업무가 없습니다.</td>
 								</tr>
 							</th:block>
 							<th:block th:unless="${#lists.isEmpty(projectList)}">
@@ -82,20 +51,6 @@
 										<td th:text="${project.memberDTO.memberName}"></td>
 										<td th:text="${project.departmentDTO.deptName}"></td>
 										<td th:text="${project.IngDTO.ingState}"></td>
-										<td>
-											<form id="frmUpdate" method="get" th:action="@{/project/projectUpdate.html}">
-												<input type="hidden" name="projectNo" th:value="${project.projectNo}" required>
-												<!-- 
-												<input type="hidden" name="memberName" th:value="${member.memberName}" required>
-												<input type="hidden" name="deptNo" th:value="${member.departmentDTO.deptNo}" required>
-												 -->
-												<button type="submit" class="btn btn-primary" id="btnUpdate">수정</button>
-											</form>
-											<form id="frmDelete" method="post" th:action="@{/project/deleteProject.do}">
-												<input type="hidden" name="projectNo" th:value="${project.projectNo}">
-												<button type="button" class="btn btn-secondary" id="btnDelete">삭제</button>
-											</form>
-										</td>
 									</tr>
 								</th:block>
 							</th:block>
@@ -113,7 +68,8 @@
 					</form>
 				</div>	
 				<div id="pagination" style="text-align: center;" th:utext="${pagination}"></div>
-			</div>
+					<div><a th:href="@{/project/projectAdd.html}">작성</a></div>
+				</div>
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
