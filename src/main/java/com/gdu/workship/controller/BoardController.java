@@ -37,12 +37,12 @@ public class BoardController {
 	public String GADBoard() {
 		return "board/GADBoard";
 	}
-	@GetMapping("/board/DIVBoard.html")
-	public String DIVBoard() {
-		return "board/DIVBoard";
+	@GetMapping("/board/DEVBoard.html")
+	public String DEVBoard() {
+		return "board/DEVBoard";
 	}
 	
-	@GetMapping("/board/boarList.do")
+	@GetMapping("/board/boardList.do")
 	public String boardMain(HttpServletRequest request, Model model) {
 		boardService.loadBoardList(request, model);
 		return "board/boardMain";
@@ -95,10 +95,10 @@ public class BoardController {
 	    return "redirect:/board/boardList.do";
 	  }
 		
-	  @PostMapping("/board/editboard.html")
-	  public String editNotice(@RequestParam("boardNo") int boardNo, Model model) {
+	  @PostMapping("/board/boardEdit.html")
+	  public String boardEdit(@RequestParam("boardNo") int boardNo, Model model) {
 	    boardService.getBoardByNo(boardNo, model);
-	    return "notice/noticeEdit";
+	    return "board/boardEdit";
 	  }
 	  
 	  @PostMapping("/board/modifyBoard.do")

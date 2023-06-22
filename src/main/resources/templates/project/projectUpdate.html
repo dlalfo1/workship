@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship 프로젝트 작성')}"></head>
+<script th:replace="~{/layout/common::datepickerSetting}"></script>
+<script>
+	function fnCancel() {
+	  $('#btnCancel').on('click', function(){
+	    history.back();
+	  })
+	}
+	 $(function(){
+	   fnCancel();
+	 })
+</script>
+<body>
+  <div class="container-scroller">
+
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+  
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+    
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        	<div class="ProjectAddWrap">
+				<div class="ProjectAddTitle">
+					<h3>프로젝트 수정</h3>
+				</div>
+				<div class="UFormWrap">
+					<form method="post" th:action="@{/project/projectUpdate.do}">
+						<div class="InputProjectTitle">
+							<label for="ProjectTitle">프로젝트명</label>
+							<input type="text" class="form-control p-input" id="ProjectTitle" name="projectTitle"  placeholder="" style="width: 50%" required>
+						</div>
+						<div class="Start">
+							<label for="startDate">시작일</label>
+							<input type="text" class="datepick" id="startDate" name="projectStartAt" style="width: 40%;" required>
+		                    <label for="startDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
+						</div>
+						<div class="End">
+		                    <label for="endDate">종료일</label>
+		                    <input type="text" class="datepick" id="endDate" name="projectEndAt" style="width: 40%;" required>
+		                    <label for="endDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
+						</div>	
+							<div class="Information">
+							<th:block th:each="project:${projectList}">
+								<input type="hidden" name="projectModifiedAt" id="projectModifiedAt" required>
+								<input type="hidden" name="projectNo" th:value="${projectDTO.projectNo}" required>
+								<input type="hidden" name="memberNo" th:value="${member.memberNo}" required>
+								<input type="hidden" name="memberName" th:value="${member.memberName}" required>
+								<input type="hidden" name="deptNo" th:value="${member.departmentDTO.deptNo}" required>
+							</th:block>
+						</div>
+						<div>
+							<select name="ingNo" class="ingNo" required>
+								<option value="1">보류</option>
+								<option value="2">진행중</option>
+								<option value="3">완료</option>
+							</select>
+						</div>
+						<div>
+							<button type="submit" class="btn btn-primary" id="btnSubmit">수정하기</button>
+							<button type="button" class="btn btn-secondary" id="btnCancel">취소하기</button>
+						</div>
+					</form>
+				</div>
+				<script>
+					function clock(){
+					    var today = new Date();
+					    var year = today.getFullYear();
+					    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+					    var date = ('0' + today.getDate()).slice(-2);
+					    var time = year + '-' + month + '-' + date;
+						$('input[name=projectStartAt]').attr('value',time);
+					    $('#startDate').text(time);
+					}
+					
+					function clock2(){
+					    var today = new Date();
+					    var year = today.getFullYear();
+					    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+					    var date = ('0' + today.getDate()).slice(-2);
+					    var time = year + '-' + month + '-' + date;
+						$('input[name=projectModifiedAt]').attr('value',time);
+					    $('#projectModifiedAt').text(time);
+					}
+
+					var startDate = $('#startDate');
+					var endDate = $('#endDate');
+					    startDate.datepicker({
+					  	  maxDate: 0,
+					  	  onClose: function(selectedDate){
+					  		  endDate.datepicker('option', 'minDate', selectedDate);
+					  	  }
+					    });
+					    endDate.datepicker({
+					      minDate: 0,	
+					      onClose: function(selectedDate){
+					      	startDate.datepicker('option', 'minDate', selectedDate);
+					      }
+					    });
+					    clock();
+					    clock2();
+				</script>
+			</div>
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

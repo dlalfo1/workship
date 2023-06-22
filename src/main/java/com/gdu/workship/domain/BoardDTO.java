@@ -20,4 +20,6 @@ public class BoardDTO {
 	private int boardHit;
 	private int boardState;
 	
+	private int prevNo;
+	private int nextNo;
 }

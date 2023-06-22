@@ -81,7 +81,7 @@
 	  </insert>
       
       <select id="selectIng" parameterType="int" resultType="IngDTO">
-      SELECT DEPT_NO, DEPT_NAME
+      SELECT ING_NO, ING_STATE
         FROM ING_T
        WHERE ING_NO = #{ingNo}
 	  </select>

@@ -30,13 +30,14 @@
 		<typeAlias alias="ApprovalLineDTO"      type="com.gdu.workship.domain.ApprovalLineDTO"/>
 		<typeAlias alias="ApprovalReferenceDTO" type="com.gdu.workship.domain.ApprovalReferenceDTO"/>
 		<typeAlias alias="ProjectDTO"           type="com.gdu.workship.domain.ProjectDTO"/>
-		<typeAlias alias="IngDTO"           type="com.gdu.workship.domain.IngDTO"/>
+		<typeAlias alias="IngDTO"               type="com.gdu.workship.domain.IngDTO"/>
     <typeAlias alias="ProjectFileDTO"       type="com.gdu.workship.domain.ProjectFileDTO"/>
     <typeAlias alias="ProjectWorkDTO"       type="com.gdu.workship.domain.ProjectWorkDTO"/>
     <typeAlias alias="ProjectWorkFileDTO"   type="com.gdu.workship.domain.ProjectWorkFileDTO"/>
     <typeAlias alias="AttendanceDTO"        type="com.gdu.workship.domain.AttendanceDTO"/>
     <typeAlias alias="AttendManageDTO"      type="com.gdu.workship.domain.AttendManageDTO"/>
     <typeAlias alias="TodolistDTO"          type="com.gdu.workship.domain.TodolistDTO"/>
+    <typeAlias alias="VacationDTO"          type="com.gdu.workship.domain.VacationDTO"/>
   </typeAliases>
 
 </configuration>

@@ -6,17 +6,8 @@
 
 .info {
 	display: flex;
-	align-items: flex-end;
+	align-items: center;
 	gap: 16px;
-}
-
-.toMail {
-	display: flex;
-	gap: 8px;
-}
-
-.btnAddress {
-	background-color: transparent;
 }
 
 .title {
@@ -24,14 +15,41 @@
 	font-weight: bold;
 }
 
-.dlist {
+#btnDraftsList {
+	display: flex;
+	background-color: transparent;
+	border: none;
 	color: gray;
-	text-decoration: none;
 }
 
-.dlist:hover {
-	text-decoration: none;
-	color: gray;
+.btnAddr {
+	background-color: transparent;
+}
+
+.mailBox {
+	height: 65px;
+}
+
+.fixedCol1 {
+	width: 10%;
+}
+
+.fixedCol2 {
+	width: 75%;
+	margin: 0;
+}
+
+.fixedCol2 textarea {
+	width: 100%;
+	height: 30px;
+	border: none;
+	border-bottom: 2px solid gray;
+}
+
+.fixedCol3 {
+	display: flex;
+	align-content: flex-end;
+	width: 4%;
 }
 
 .header {
@@ -45,16 +63,8 @@
 }
 
 .contents {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
+	width: 100%;
 	padding-top: 16px;
-}
-
-.contents label, files {
-	width: 80px;
-	font-weight: bold;
-	white-space: nowrap;
 }
 
 .contents input[type="text"] {
@@ -66,13 +76,7 @@
 	border-bottom: 2px solid gray;
 }
 
-.contentBox {
-	display: flex;
-}
-
-.fileDrag {
-	float: right;
-	width: calc(100% - 88px);
+.fileAll {
 	border: 1px solid gray;
 }
 

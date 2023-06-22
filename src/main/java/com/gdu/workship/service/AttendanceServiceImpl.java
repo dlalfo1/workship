@@ -31,6 +31,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	private final AttendanceMapper attendanceMapper;
 	private final PageUtil2 pageUtil;
 	
+	// 출퇴근조회페이지
 	@Override
 	public void getAttendancePage(int memberNo, Model model) {
 
@@ -183,6 +184,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 		}
 		return map;
 	}
+	
+	// 스케줄러
 	@Override
 	public void updateAllScehduler() {
 		List<Integer> memberNoList = attendanceMapper.getAllMemberNo();
@@ -196,6 +199,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 		}
 	}
 	
+	// 출퇴근관리페이지
 	@Override
 	public void getAttendManagePage(Model model) {
 		model.addAttribute("attendanceList", attendanceMapper.getAllAttendanceToday());

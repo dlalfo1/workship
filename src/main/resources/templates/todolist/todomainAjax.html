@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship todoList')}"></head>
+<link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
+<body>
+
+<!--/* 새로운 할 일 등록 모달 */-->
+<div class="modal fade" id="addTodoModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title text-center">새로운 할 일 등록하기</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <form id="frmAddTodo" method="post" th:action="@{/todolist/addTodolist.do}">
+          <table class="table"  style="float: none; margin: 0 auto; width: 90%;">
+            <tr>
+              <th><h5>할 일</h5></th>
+              <td>
+                <input type="text" class="form-control form-control-lg" name="todoTitle" maxlength="50" placeholder="할 일을 입력하세요!">
+              </td>
+            </tr>
+            <tr>
+              <th><h5>메모</h5></th>
+              <td>
+                <textarea class="form-control" rows="3" cols="20"></textarea>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-primary" onclick="fnAddTodo()">등록하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="container-scroller">
+
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+  
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+    
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+	        <div class="card-group" style="display: flex;">
+	        
+	          <!--/* 할 일 */-->
+	          <div class="col-md-4">
+	            <div class="card h-100">
+	              <div class="card-header text-white bg-info rounded-top">
+	                <p class="card-title text-white text-center mb-0">할 일</p>
+	              </div>
+	              <div class="card-body border border-info rounded-bottom">
+	                <div class="list-wrapper">
+	                  <ul class="d-flex flex-column-reverse sort-list todo-list" id="undo">
+                      <li class="preventMove btn btn-inverse-info" id="undoFixed" data-toggle="modal" data-target="#addTodoModal">
+                      새로운 할 일 추가하기
+                      </li>
+	                  </ul>
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+	          
+	          <script th:inline="javascript">
+              function fnAddTodo(){
+                $('#frmAddTodo').submit();
+              }
+              let addResult = /*[[${addResult}]]*/ null;
+              if(addResult != null && addResult != '') {
+                if(addResult == '1'){
+                  alert('할 일이 등록되었습니다.');
+                } else{
+                  alert('등록에 실패했습니다.');
+                }
+              }
+            </script>
+	          
+	          <!--/* 진행중 */-->
+	          <div class="col-md-4">
+	            <div class="card h-100">
+	              <div class="card-header text-white bg-warning rounded-top">
+	                <p class="card-title text-white text-center mb-0">진행중</p>
+	              </div>
+	              <div class="card-body border border-warning rounded-bottom">
+	              
+	                <div class="list-wrapper">
+	                  <ul class="d-flex flex-column-reverse sort-list todo-list" id="doing">
+	                    <li class="invisible preventMove" id="doingFixed"></li>
+	                  </ul>
+	                </div>
+	              
+	              </div>
+	            </div>
+	          </div>
+	          
+	          <!--/* 완료 */-->
+	          <div class="col-md-4">
+	            <div class="card h-100">
+	              <div class="card-header text-white bg-success rounded-top">
+	                <p class="card-title text-white text-center mb-0">완료</p>
+	              </div>
+	              <div class="card-body border border-success rounded-bottom">
+	              
+	                <div class="list-wrapper">
+	                  <ul class="d-flex flex-column-reverse sort-list todo-list" id="done">
+	                    <li class="preventMove" id="doneFixed">
+	                      <div class="text-center">완료된 할 일 전체 삭제</div>
+	                    </li>
+	                  </ul>
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+	          
+	          <script th:inline="javascript">
+	            $('#doneFixed').on('click', function(){
+	              if(confirm('모든 완료된 할 일을 삭제하시겠어요?')){
+	                let done = /*[[${#lists.isEmpty(done)}]]*/;
+	                if(done){
+	                  alert('삭제할 할 일이 없습니다.');
+	                } else{
+	                  location.href = '/todolist/deleteAllDone.do';
+	                }
+	              }
+	            })
+	            
+	            let result = /*[[${result}]]*/ null;
+	            if(result != null){
+	              if(result == '1') {
+	                alert('모든 완료된 할 일이 삭제되었습니다.');
+	              } else if(result == '0'){
+	                alert('삭제에 실패했습니다.');
+	              }
+	            }
+            </script>
+	          
+          </div>
+          
+          <script th:inline="javascript">
+          function fnGetTodolist(){
+        	  var memberNo =  /*[[${session.loginMember.memberNo}]]*/ null;
+	          $.ajax({
+	        	  type: 'get',
+	            url: '/todolist/getTodolist.do',
+	            data: 'memberNo=' + memberNo,
+	            dataType: 'json',
+	            success: function(resData){
+	            	var undo = resData.undo;
+	            	var doing = resData.doing;
+	            	var done = resData.done;
+	            	var undoFixed = $('#undoFixed');
+	            	var doingFixed = $('#doingFixed');
+	            	var doneFixed = $('#doneFixed');
+	            	if(undo == 'noResult') {
+	            		let text = '<span class="preventMove">등록된 할 일이 없습니다.</span>';
+	            		undoFixed.before(text);
+	            	} else {
+	            		$.each(undo, (i, element)=>{
+	            			let text = '<li class="movable"><span class="invisible">' + element.todolistNo + '</span>';
+	                  text += '<span>' + element.todoTitle + '</span><i class="remove ti-close"></i></li>';
+	            			undoFixed.before(text);
+	            		})
+	            	}
+	            	
+	            	if(doing == 'noResult') {
+	            		let text = '<span class="preventMove">등록된 진행중 할 일이 없습니다.</span>';
+	            		doingFixed.after(text);
+	            	} else {
+	                $.each(doing, (i, element)=>{
+	                  let text = '<li class="movable"><span class="invisible">' + element.todolistNo + '</span>';
+	                  text += '<span>' + element.todoTitle + '</span><i class="remove ti-close"></i></li>';
+	                  if(i == 0) doingFixed.after(text);
+	                  else doingFixed.closest('ul').find('li').last().after(text);
+	                  })
+	            	}
+	            	
+	            	if(done == 'noResult') {
+	            		let text = '<span class="preventMove">완료된 할 일이 없습니다.</span>';
+	            		doneFixed.before(text);
+	            	} else {
+									$.each(done, (i, element)=>{
+										let text = '<li class="movable"><span class="invisible">' + element.todolistNo + '</span>';
+					          text += '<span>' + element.todoTitle + '</span><i class="remove ti-close"></i></li>';
+									  doneFixed.before(text);
+									})
+	            	}
+	            	
+	            }
+            })
+          };
+          
+          fnGetTodolist();
+          
+          $('#undo').sortable({
+              connectWith: "#doing, #done",
+              cancel: ".preventMove",
+              items: ".movable",
+              placeholder: "todo-list"
+            });
+
+            $('#doing').sortable({
+              connectWith: "#undo, #done",
+              cancel: ".preventMove",
+              items: ".movable",
+              placeholder: "todo-list"
+            });
+            
+            $('#done').sortable({
+              connectWith: "#undo, #doing",
+              cancel: ".preventMove",
+              items: ".movable",
+              placeholder: "todo-list"
+            });
+            
+            $('.movable *').disableSelection();
+            
+            var undo = $('#undo');
+            var doing = $('#doing');
+            var done = $('#done');
+            $('.movable').on('mousedown', function(){
+              let todolistNo = $(this).find('span').first().text();
+              undo.sortable({
+                receive: function(){
+                  $.ajax({
+                    type: 'get',
+                    url: '/todolist/updateState.do',
+                    data: 'todolistNo=' + todolistNo + '&todoState=1',
+                    dataType: 'json',
+                    success: function(resData){
+                      var result = resData.updateResult;
+                    }
+                  })
+                }
+              });
+              doing.sortable({
+                receive: function(){
+                  $.ajax({
+                    type: 'get',
+                    url: '/todolist/updateState.do',
+                    data: 'todolistNo=' + todolistNo + '&todoState=2',
+                    dataType: 'json',
+                    success: function(resData){
+                      var result = resData.updateResult;
+                    }
+                  })
+                }
+              });
+
+              done.sortable({
+                receive: function(){
+                  $.ajax({
+                    type: 'get',
+                    url: '/todolist/updateState.do',
+                    data: 'todolistNo=' + todolistNo + '&todoState=3',
+                    dataType: 'json',
+                    success: function(resData){
+                      let result = resData.updateResult;
+                    }
+                  })
+                }
+              });
+            })
+            
+            $('.ti-close').on('click', function(){
+              let todolistNo = $(this).prev().prev().text();
+              let append = $(this).prev();
+              if(!confirm('할 일을 삭제하시겠어요?')){
+                location.href = '/todolist/todomain.do';
+              } else {
+                $.ajax({
+                  type: 'post',
+                  url: '/todolist/removeTodo.do',
+                  data: 'todolistNo=' + todolistNo,
+                  dataType: 'json',
+                  success: function(resData){
+                    let result = resData.deleteResult;
+                  }
+                })
+              }
+            })
+          </script>
+          
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+
+  <!--/* footer 영역 */-->
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

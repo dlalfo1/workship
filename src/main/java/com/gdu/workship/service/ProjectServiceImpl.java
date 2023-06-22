@@ -33,15 +33,15 @@ public class ProjectServiceImpl implements ProjectService {
 	private final PageUtil pageUtil;
 	
 	@Override
-		public int addProjectM(MultipartHttpServletRequest multipartHttpRequest) {
+		public int addProjectM(HttpServletRequest request) {
 			
 			// 파라미터
-			String projectTitle = multipartHttpRequest.getParameter("projectTitle");
-			int memberNo = multipartHttpRequest.getParameter("memberNo").isEmpty() ? 1 : Integer.parseInt(multipartHttpRequest.getParameter("memberNo"));
-			int deptNo = multipartHttpRequest.getParameter("deptNo").isEmpty() ? 1 : Integer.parseInt(multipartHttpRequest.getParameter("deptNo"));
-			String projectStartAt = multipartHttpRequest.getParameter("projectStartAt");
-			String projectEndAt = multipartHttpRequest.getParameter("projectEndAt");
-			int ingNo = multipartHttpRequest.getParameter("ingNo").isEmpty() ? 1 : Integer.parseInt(multipartHttpRequest.getParameter("ingNo"));
+			String projectTitle = request.getParameter("projectTitle");
+			int memberNo = request.getParameter("memberNo").isEmpty() ? 1 : Integer.parseInt(request.getParameter("memberNo"));
+			int deptNo = request.getParameter("deptNo").isEmpty() ? 1 : Integer.parseInt(request.getParameter("deptNo"));
+			String projectStartAt = request.getParameter("projectStartAt");
+			String projectEndAt = request.getParameter("projectEndAt");
+			int ingNo = request.getParameter("ingNo").isEmpty() ? 1 : Integer.parseInt(request.getParameter("ingNo"));
 			
 			
 			String deptName = memberMapper.selectDept(deptNo).getDeptName();
@@ -126,16 +126,16 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		
 		@Override
-		public int updateProjectM(MultipartHttpServletRequest multipartHttpRequest) {
-			int projectNo = Integer.parseInt(multipartHttpRequest.getParameter("projectNo"));
-			String memberName = multipartHttpRequest.getParameter("memberName");
-			String projectTitle = multipartHttpRequest.getParameter("projectTitle");
-			String projectModifiedAt = multipartHttpRequest.getParameter("projectModifiedAt");
-			String projectStartAt = multipartHttpRequest.getParameter("projectStartAt");
-			String projectEndAt = multipartHttpRequest.getParameter("projectEndAt");
-			int deptNo = multipartHttpRequest.getParameter("deptNo").isEmpty() ? 1 : Integer.parseInt(multipartHttpRequest.getParameter("deptNo"));
-			int memberNo = multipartHttpRequest.getParameter("memberNo").isEmpty() ? 1 : Integer.parseInt(multipartHttpRequest.getParameter("memberNo"));  
-			int ingNo = multipartHttpRequest.getParameter("ingNo").isEmpty() ? 1 : Integer.parseInt(multipartHttpRequest.getParameter("ingNo"));
+		public int updateProjectM(HttpServletRequest request) {
+			int projectNo = Integer.parseInt(request.getParameter("projectNo"));
+			String memberName = request.getParameter("memberName");
+			String projectTitle = request.getParameter("projectTitle");
+			String projectModifiedAt = request.getParameter("projectModifiedAt");
+			String projectStartAt = request.getParameter("projectStartAt");
+			String projectEndAt = request.getParameter("projectEndAt");
+			int deptNo = request.getParameter("deptNo").isEmpty() ? 1 : Integer.parseInt(request.getParameter("deptNo"));
+			int memberNo = request.getParameter("memberNo").isEmpty() ? 1 : Integer.parseInt(request.getParameter("memberNo"));  
+			int ingNo = request.getParameter("ingNo").isEmpty() ? 1 : Integer.parseInt(request.getParameter("ingNo"));
 			
 			String deptName = memberMapper.selectDept(deptNo).getDeptName();
 			String ingName = projectMapper.selectIng(ingNo).getIngState();
