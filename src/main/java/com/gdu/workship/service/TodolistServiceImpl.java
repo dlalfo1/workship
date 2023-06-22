@@ -34,6 +34,7 @@ public class TodolistServiceImpl implements TodolistService {
 		model.addAttribute("done", done);
 	}
 	
+	/*
 	@Override
 	public Map<String, Object> updateState(HttpServletRequest request) {
 		int todolistNo = Integer.parseInt(request.getParameter("todolistNo"));
@@ -45,6 +46,17 @@ public class TodolistServiceImpl implements TodolistService {
 		Map<String, Object> map = new HashMap<>();
 		map.put("updateResult", updateResult);
 		return map;
+	}
+	*/
+	
+	@Override
+	public void updateState(HttpServletRequest request) {
+		int todolistNo = Integer.parseInt(request.getParameter("todolistNo"));
+		int todoState = Integer.parseInt(request.getParameter("todoState"));
+		Map<String, Object> parameter = new HashMap<>();
+		parameter.put("todolistNo", todolistNo);
+		parameter.put("todoState", todoState);
+		todolistMapper.updateState(parameter);
 	}
 	
 	@Override

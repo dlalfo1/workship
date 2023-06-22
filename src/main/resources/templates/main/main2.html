@@ -54,23 +54,23 @@
                 <div class="col-md-12 grid-margin mb-3">
                   <div class="card">
                     <div class="card-body">
-                      <p class="card-title">메일</p>                      
-                      <div class="row">
-                        <div class="col-5">
-                          <p>읽지 않은 메일</p>
-                        </div>
-                        <div class="col-3 text-primary">
-                          <h3>12</h3>
-                        </div>
-                        <div class="col-4">
-                          <input type="button" onclick="fnWriteMail()" class="btn btn-inverse-primary btn-sm text-center" value="메일작성">
-                          <script>
-                            function fnWriteMail(){
-                            	location.href = '/mail/write.html';
-                            }
-                          </script>
-                        </div>
-                      </div>
+                      <p class="card-title">메일</p>
+                      <table style="float: none; margin: 0 auto;">
+                        <tr>
+                          <td width="50%">읽지 않은 메일</td>
+                          <td width="20%">
+                            <h3 class="text-primary">13</h3>
+                          </td>
+                          <td width="30%">
+	                          <input type="button" onclick="fnWriteMail()" class="btn btn-inverse-primary btn-sm text-center" value="메일작성">
+		                          <script>
+		                            function fnWriteMail(){
+		                              location.href = '/mail/write.html';
+		                            }
+	                          </script>
+                          </td>
+                        </tr>
+                      </table>                      
                     </div>
                   </div>
                 </div>
@@ -159,7 +159,7 @@
                   <div class="card">
                     <div class="card-body">
                       <p class="card-title">최신공지사항</p>
-                      <table class="table table-hover table-striped">
+                      <table class="table table-hover table-striped table-responsive-md">
                         <thead class="text-center">
                           <tr>
                             <th width="60%">제목</th>
@@ -198,7 +198,7 @@
                   <div class="card">
                     <div class="card-body">
                       <p class="card-title">참여 중인 프로젝트</p>
-                      <table class="table table-sm table-bordered">
+                      <table class="table table-sm table-bordered table-responsive-md">
                         <thead class="text-center">
                           <tr style="background-color: #F5F7FF;">
                             <th>프로젝트명</th>

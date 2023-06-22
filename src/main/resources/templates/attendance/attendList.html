@@ -258,15 +258,20 @@
 										  </tr>
 										</thead>
 										<tbody id="attendanceListTableBody">
-										  <th:block th:each="attendance:${attendanceList}">
-										    <tr>
-										      <td th:text="${#dates.format(attendance?.date, 'YYYY-MM-dd')}"></td>
-										      <td th:text="${#dates.format(attendance?.astarttime, 'HH:mm:ss')}"></td>
-										      <td th:text="${#dates.format(attendance?.aendtime, 'HH:mm:ss')}"></td>
-										      <td th:text="${#dates.format(attendance?.worktime, 'HH:mm:ss')}"></td>
-										      <td th:text="${attendance?.attendance}"></td>
-										    </tr>
-									    </th:block>
+										  <th:block th:if="${#lists.isEmpty(attendanceList)}">
+										    <tr><td colspan="5">조회 결과가 없습니다.</td></tr>
+										  </th:block>
+										  <th:block th:unless="${#lists.isEmpty(attendanceList)}">
+											  <th:block th:each="attendance:${attendanceList}">
+											    <tr>
+											      <td th:text="${#dates.format(attendance?.date, 'YYYY-MM-dd')}"></td>
+											      <td th:text="${#dates.format(attendance?.astarttime, 'HH:mm:ss')}"></td>
+											      <td th:text="${#dates.format(attendance?.aendtime, 'HH:mm:ss')}"></td>
+											      <td th:text="${#dates.format(attendance?.worktime, 'HH:mm:ss')}"></td>
+											      <td th:text="${attendance?.attendance}"></td>
+											    </tr>
+										    </th:block>
+										  </th:block>
 										</tbody>
 										<tr><td colspan="5" id="pagination" class="text-center"></td></tr>
 									</table>

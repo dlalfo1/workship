@@ -42,12 +42,19 @@ public class TodolistController {
 	public Map<String, Object> todoAjax(@RequestParam("memberNo") int memberNo){
 		return todolistService.todoAjax(memberNo);
 	}
-	*/
+	
 	
 	@ResponseBody
-	@GetMapping("/updateState.do")
+	@GetMapping("/updateStateAjax.do")
 	public Map<String, Object> updateStateAjax(HttpServletRequest request){
 		return todolistService.updateState(request);
+	}
+	*/
+	
+	@GetMapping("/updateState.do")
+	public String updateState(HttpServletRequest request) {
+		todolistService.updateState(request);
+		return "redirect:/todolist/todomain.do";
 	}
 	
 	@ResponseBody

@@ -28,7 +28,7 @@
 	            <div class="card-body">
 	              <p class="card-title">조회 조건 설정</p>
 	              <form id="frmManageSearch" th:action="@{/attendance/attendManageList.do}">
-									<table class="table table-sm table-borderless" style="width: 90%; float: none; margin: 0 auto;">
+									<table class="table table-sm table-borderless table-responsive-md" style="width: 90%; float: none; margin: 0 auto;">
 										<tr>
 											<th class="text-center" width="20%">기간</th>
 											<td colspan="4">
@@ -147,7 +147,7 @@
 						<div class="card">
 						  <div class="card-body">
 							  <p class="card-title">조회결과</p>
-								<table class="table table-striped table-hover table-sm text-center">
+								<table class="table table-striped table-hover table-sm text-center table-responsive-md">
 									<thead>
 									  <tr>
 									    <th width="5%">사원번호</th>
@@ -161,30 +161,37 @@
 									  </tr>
 									</thead>
 									<tbody>
-									  <th:block th:each="attendance:${attendanceList}">
+									  <th:block th:if="${#lists.isEmpty(attendanceList)}">
 									    <tr>
-									      <td>[[${attendance?.memberDTO.memberNo}]]</td>
-									      <td>[[${attendance?.memberDTO.memberName}]]</td>
-									      <td>[[${#dates.format(attendance?.date, 'YYYY-MM-dd')}]]</td>
-									      <td>
-									        <span>[[${#dates.format(attendance?.astarttime, 'HH:mm:ss')}]]</span>
-									        <input type="text" class="invisible" th:value="${#dates.format(attendance?.astarttime, 'HH:mm:ss')}"></input>
-									      </td>
-									      <td>
-									        <span>[[${#dates.format(attendance?.aendtime, 'HH:mm:ss')}]]</span>
-									        <input type="text" class="invisible" th:value="${#dates.format(attendance?.aendtime, 'HH:mm:ss')}"></input>
-									      </td>
-									      <td class="worktimeTd">[[${#dates.format(attendance?.worktime, 'HH:mm:ss')}]]</td>
-									      <td class="attendanceTd">[[${attendance?.attendance}]]</td>
-									      <td>
-									        <input type="hidden" class="attendanceNo" th:value="${attendance?.attendanceNo}">
-									        <input type="button" class="btn btn-sm btn-outline-secondary inputBtn" value="수정">
-									        <div class="btn-group invisible">
-									          <input type="button" class="btn btn-sm btn-outline-secondary cancelBtn" value="취소">
-									          <input type="button" class="btn btn-sm btn-secondary modiftn" value="수정">
-									        </div>
-									      </td>
+									      <td colspan="8">조회 결과가 없습니다.</td>
 									    </tr>
+									  </th:block>
+									  <th:block th:unless="${#lists.isEmpty(attendanceList)}">
+										  <th:block th:each="attendance:${attendanceList}">
+										    <tr>
+										      <td>[[${attendance?.memberDTO.memberNo}]]</td>
+										      <td>[[${attendance?.memberDTO.memberName}]]</td>
+										      <td>[[${#dates.format(attendance?.date, 'YYYY-MM-dd')}]]</td>
+										      <td>
+										        <span>[[${#dates.format(attendance?.astarttime, 'HH:mm:ss')}]]</span>
+										        <input type="text" class="invisible" th:value="${#dates.format(attendance?.astarttime, 'HH:mm:ss')}"></input>
+										      </td>
+										      <td>
+										        <span>[[${#dates.format(attendance?.aendtime, 'HH:mm:ss')}]]</span>
+										        <input type="text" class="invisible" th:value="${#dates.format(attendance?.aendtime, 'HH:mm:ss')}"></input>
+										      </td>
+										      <td class="worktimeTd">[[${#dates.format(attendance?.worktime, 'HH:mm:ss')}]]</td>
+										      <td class="attendanceTd">[[${attendance?.attendance}]]</td>
+										      <td>
+										        <input type="hidden" class="attendanceNo" th:value="${attendance?.attendanceNo}">
+										        <input type="button" class="btn btn-sm btn-outline-secondary inputBtn" value="수정">
+										        <div class="btn-group invisible">
+										          <input type="button" class="btn btn-sm btn-outline-secondary cancelBtn" value="취소">
+										          <input type="button" class="btn btn-sm btn-secondary modifyBtn" value="수정">
+										        </div>
+										      </td>
+										    </tr>
+										  </th:block>
 								    </th:block>
 									</tbody>
 									<tr><td colspan="8" id="pagination" class="text-center" th:utext="${pagination}"></td></tr>
@@ -226,7 +233,7 @@
               $(this).parent().addClass('invisible');
             })
             
-            $('.modiftn').on('click', function(){
+            $('.modifyBtn').on('click', function(){
             	var btn = $(this);
             	var attendanceNo = $(this).parent().prev().prev().val();
             	var astarttime = $(this).closest('tr').find('input[type=text]').first().val();

@@ -18,4 +18,6 @@ public class MailDTO {
    private Date mailDate;
    private String mailCategory;
    private MailToDTO mailToDTO;
+   private int prevNo;
+    private int nextNo;
 }

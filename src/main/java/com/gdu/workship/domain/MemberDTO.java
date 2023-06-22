@@ -20,6 +20,7 @@ public class MemberDTO {
 	private Date joinedAt;
 	private Date modifiedAt;
 	private int status;
+	private int totalDayoff;
 	private int dayoffCount;
 	private String pw;
 	private String profileFilePath;

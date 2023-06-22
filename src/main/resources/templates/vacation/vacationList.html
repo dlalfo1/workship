@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 연차조회')}"></head>
 <link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
-<script th:replace="~{/layout/common::datepickerSetting}"></script>
 <body>
   <div class="container-scroller">
 
@@ -22,11 +20,12 @@
       <div class="main-panel">
         <div class="content-wrapper">
         
-        <!--/* 연차정보 모아보기 */-->
+        <!--/* 휴가정보 모아보기 */-->
         <div class="col-md-8 grid-margin mb-3" style="float: none; margin: 0 auto;">
           <div class="card">
             <div class="card-body text-center">
-              <h3 class="card-title text-center mb-4" th:text="|${#calendars.format(#calendars.createNow(), 'yyyy')}년 연차 정보|"></h3>
+              <h3 class="card-title text-center mb-4" th:text="|${#calendars.format(#calendars.createNow(), 'yyyy')}년 휴가 정보|"></h3>
+              <div class="d-flex justify-content-center">
               <table class="table table-borderless table-sm text-center" style="width: 90%;">
                 <tr>
                   <td rowspan="2" style="width: 14%;">
@@ -45,14 +44,59 @@
                   <th style="width: 14%;">남은 휴가</th>
                 </tr>
                 <tr>
-                  <td class="text-center"><h2 class="text-primary">13</h2></td>
-                  <td class="text-center"><h2 class="text-primary">5</h2></td>
-                  <td class="text-center"><h2 class="text-primary">3</h2></td>
+                  <td class="text-center"><h2 class="text-primary">[[${totalDayoff}]]</h2></td>
+                  <td class="text-center"><h2 class="text-primary">[[${dayoffCount}]]</h2></td>
+                  <td class="text-center"><h2 class="text-primary">[[${totalDayoff - dayoffCount}]]</h2></td>
                 </tr>
               </table>
+              </div>
             </div>
           </div>
         </div>
+        
+        <!--/* 리스트 뿌려줄 테이블 */-->
+        <div class="col-md-12 stretch-card grid-margin">
+          <div class="card">
+            <div class="card-body">
+              <p class="card-title" th:text="|${#calendars.format(#calendars.createNow(), 'yyyy')}년 휴가 상세내역|"></p>
+              <table class="table table-striped table-hover table-sm text-center">
+                <thead>
+                  <tr>
+	                  <th width="20%">신청일자</th>
+	                  <th width="20%">휴가종류</th>
+	                  <th width="20%">휴가시작일</th>
+	                  <th width="20%">휴가종료일</th>
+	                  <th width="20%">사용일수</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <th:block th:if="${#lists.isEmpty(vacationList)}">
+                    <tr><td colspan="5">휴가사용내역이 존재하지 않습니다.</td></tr>
+                  </th:block>
+                  <th:block th:unless="${#lists.isEmpty(vacationList)}">
+                    <th:block th:each="vacation:${vacationList}">
+                      <tr>
+                        <td th:text="${#dates.format(vacation?.approvalDTO.createdAt, 'YYYY-MM-dd')}"></td>
+                        <td th:text="${vacation?.approvalDTO.vacationCategory}"></td>
+                        <td th:text="${#dates.format(vacation?.approvalDTO.vacationStartDate, 'YYYY-MM-dd')}"></td>
+                        <td th:text="${#dates.format(vacation?.approvalDTO.vacationEndDate, 'YYYY-MM-dd')}"></td>
+                        <td th:text="${vacation?.vacationDay}"></td>
+                      </tr>
+                    </th:block>
+                  </th:block>
+                </tbody>
+              </table>
+              <div class="d-flex justify-content-center">
+              <input type="button" id="btnVacationApproval" class="btn btn-inverse-primary d-grid col-12 mt-3" value="휴가신청하러가기">
+              </div>
+            </div>
+          </div>
+        </div>
+        <script>
+          $('#btnVacationApproval').on('click', function(){
+        	  location.href= '/approval/documentList.html?formNo=1';
+          })
+        </script>
         
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
