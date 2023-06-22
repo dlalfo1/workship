@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class MailToDTO {
 	private int mailToNo;
 	private MailDTO mailDTO;
-	private String mailTo;
+	private String mailTo;	
 	private String mailToRole;
 	private String mailToCategory;
 	private String mailToStatus;

@@ -29,48 +29,175 @@
 
         	<div class="info">
         		<span class="title">메일 쓰기</span>
-        		<span><a class="dlist" th:href="@{/mail/dlist.html}">임시 보관함</a></span>
+        		<span><input type="button" value="임시 보관함" id="btnDraftsList"></span>
         	</div>
+        	<script>
+        	
+        		function fnDraftsList() {
+        			$('#btnDraftsList').on('click', function(){
+        				if(confirm('이 페이지를 벗어나면 작성중인 내용은 저장되지 않습니다.\n그래도 이동하시겠습니까?')) {
+	        				location.href = '/mail/list.html?Category=DRAFTS';        					
+        				}        				
+        			})
+        		}
+        		
+        		$(function(){
+        			fnDraftsList();
+        		})        		
+        	</script>
         	
         	
-        	<form method="post" enctype="multipart/form-data" th:action="@{/mail/add.do}">
+	        	<form method="post" id ="frmSend" enctype="multipart/form-data" th:action="@{/mail/sendMail.do}">
+     <!--    	<th:block th:if="${Type == 'NORMAL'}">
+        	</th:block>
+        	<th:block th:if="${Type == 'REPLY'}">
+	        	<form method="post" id ="frmSend" enctype="multipart/form-data" th:action="@{/mail/sendReply.do}">
+        	</th:block>
+        	<th:block th:if="${Type == 'RELAY'}">
+	        	<form method="post" id ="frmSend" enctype="multipart/form-data" th:action="@{/mail/sendRelay.do}">
+        	</th:block>
+        	<th:block th:if="${Type == 'DRAFTS'}">
+	        	<form method="post" id ="frmSend" enctype="multipart/form-data" th:action="@{/mail/sendDrafts.do}">
+        	</th:block>
+        	 -->
         		<div class="header">
+        			<!-- 
+        			<input type="hidden" th:name="emailId" th:value="${session.loginMemberDTO.emailId}">
+        			 -->
         			<button class="btn">보내기</button>
-        			<input class="btn" type="button" value="임시 저장" onclick="fnDraft()">
-        			<input class="btn" type="reset" value="다시 작성">
+        			<input class="hidden" name="emailId" th:value="${session.loginMemberDTO.emailId}">
+        			<input class="btn" type="button" value="임시 저장" id="btnDraft">
+        			<input class="btn" type="reset" value="다시 작성" id="btnReset">
         		</div>
+        		
+        		<script>
+        		
+        			function fnSendMail(){
+        				$('#frmSend').on('submit', function(event){
+        					if($('#to').val() == '') {
+        						alert('받는사람이 지정되지 않았습니다.\n받는사람 주소를 입력해주세요.');
+        						event.preventDefault();
+        						return;
+        					}
+        					
+        					if($('#title').val() == '') {
+        						alert('제목이 작성되지 않았습니다.\n제목을 입력해주세요.');
+        						event.preventDefault();
+        						return;
+        					}
+        					
+        					if(confirm('메일을 발송하시겠습니까?')) {
+        						return
+        					} else {
+        						event.preventDefault();
+        					}
+        					
+        				})
+        			}
+        			
+        			function fnAddDrafts(){
+        				$('#btnDraft').on('click', function(event){
+        					if($('#addressee').val() == '') {
+        						alert('받는사람이 지정되지 않았습니다.\n받는사람 주소를 입력해주세요.');
+        						event.preventDefault();
+        						return;
+        					}
+        					
+        					if($('#title').val() == '') {
+        						alert('제목이 작성되지 않았습니다.\n제목을 입력해주세요.');
+        						event.preventDefault();
+        						return;
+        					}
+        					
+        				})
+        			}
+        			
+        			function fnReset() {
+        				$('#btnReset').on('click', function(event) {
+        					if(confirm('확인을 누르시면 작성중인 내용이 모두 지워집니다.\n그래도 진행하시겠습니까?')) {
+	        					$('#fileList').empty();
+	        					$('#fileList').html('<i class="fa-solid fa-file-circle-plus"></i>파일을 마우스로 끌어 오세요');
+	        					$('.note-editable').html('');
+        					} else {
+        						event.preventDefault();
+        						return;
+        					}        					
+        				})		
+        				
+        			}	
+					
+        			$(document).ready(function(){
+        				fnSendMail();
+        				fnAddDrafts();
+        				fnReset();
+        			})
+
+        		</script>
         		
         		<div class="contents">
         			<div class="toMail">
-        				<label for="addressee">받는사람</label>
-        				<input type="text" id="addressee" name="addressee" required="required">
+        				<label for="mailTo">받는사람</label>
+        				<input type="text" id="mailTo" name="mailTo">
+        				<ul>
+        					<th:block th:if="${Type= == 'NORMAL'}">
+        						<li>
+        							
+        						</li>
+        					</th:block>
+        				</ul>
         				<span><input type="button" value="주소록" class="btnAddress" onclick="fnAddress()"></span>
         			</div>
         			<script>
+        			
         				function fnAddress(){
         					location.href = '/mail/address.html';
+        				}        				
+        				
+        			</script>        		        			
+    		    				    			
+        			<div class="contentBox">
+        				<label for="CC">참조</label>
+        				<input type="text" id="CC" name="CC">
+        			</div>
+        			
+        			<div class="contentBox">
+        				<label for="BCC">숨은 참조</label>
+        				<input type="text" id="BCC" name="BCC">
+        			</div>
+        			
+        			<div class="contentBox">
+        				<label for="mailTitle">제목</label>
+        				<input type="text" id="mailTitle" name="mailTitle">
+        			</div>
+        			
+        			<script>
+        			
+        				function fnCheckAddressee() {
+        					$('#addressee').on('keyup',function() {
+        						
+        						let addressee = $(this).val();
+        						
+        						let regAddressee = /^[A-Za-z0-9_-]+@[A-Za-z0-9]{2,}(\.[A-Za-z]{2,6}){1,2}$/;
+        						
+        						verifyAddressee = regAddressee.test(addressee)
+        						
+        						if(verifyAddressee == false) {
+        							alert('잘못된 주소 형식입니다.');
+        							return;
+        						}
+        					})
         				}
+        			
+        			
         			</script>
-        			        			
-        			<div class="contentBox">
-        				<label for="cc">참조</label>
-        				<input type="text" id="cc" name="cc">
-        			</div>
         			
-        			<div class="contentBox">
-        				<label for="bc">숨은 참조</label>
-        				<input type="text" id="bc" name="bc">
-        			</div>
         			
-        			<div class="contentBox">
-        				<label for="title">제목</label>
-        				<input type="text" id="title" name="title" required="required">
-        			</div>
+        			
+        			
         			
         			<div>
         				<div>
 	        				<label for="files">파일 첨부</label>
-	        				<input type="button" value="파일 첨부" onclick="fnUploadFile()" style="display:none">
 	        				<input type="button" value="전체 삭제" onclick="fnRemoveAll()">
 	        				<input type="file" id="files" name="files" multiple="multiple" onchange=" fnFileCheck(this)">     				
         				</div>
@@ -85,9 +212,7 @@
 	        						<span class="fileSize">0(KB)</span>
 	        					</div>
 	        				</div>		
-       						<ul id="fileList">
-       							<i class="fa-solid fa-file-circle-plus"></i>파일을 마우스로 끌어 오세요
-       						</ul>		
+       						<ul id="fileList">첨부 파일의 목록이 이 곳에 표시됩니다</ul>		
         				</div>
         			</div>
         			
@@ -118,54 +243,19 @@
         					
         					let fileSize = Math.ceil(file.size / 1024);
 							
-        					$('#fileList').append('<li>');
-        					$('#fileList').append('<input type="checkbox">');         					
-        					$('#fileList').append('<span class="filesTitle">' + file.name + '</span>');
-        					$('#fileList').append('<span class="AllSize">' + fileSize + 'KB' + '</span>');
-        					$('#fileList').append('</li>');
+        					$('#fileList').append('<li><input type="checkbox"><span class="filesTitle">' + file.name + '</span><span class="AllSize">' + fileSize + 'KB' + '</span></li>');
         		
         				})        
 
         			}       		
-        			
-        			/* 	const dataTransfer = new DataTransfer();
-        				
-        				$("#files").change(function(){
-        					let fileArr = document.getElementById("files").files
-        					
-        					if(fileArr != null && fileArr.length > 0) {
-        						for(var i=0; i< fileArr.length; i++) {
-        							dataTransfer.items.add(fileArr[i])
-        						}
-     							document.getElementById("files").files = dataTransfer.files;
-        					}
-        				})
-        			
-        				const fileDrag = document.getElementById("fileDrag")
-        				
-        				fileDrag.addEventListener("drgover", function(e){
-        					e.preventDefault();
-        				})
-        				
-        				fileDrag.addEventListener("drop", function(e){
-        					e.preventDefault();
-        					
-        					arr = event.dataTransfer.files;
-        					addFileList(arr)
-        					for(var i=0; i < arr.length; i++) {
-        						dataTransger.items.add(arr[i])
-        					}
-        					
-        					$('#plzDrag').css('display', "none")
-        					$('.filesHeader').css('display', 'flex')
-        					document.getElementById("files").files=dataTransfer.files;
-        				}) */
+
         			</script>
  
         			<div>
         				<textarea id="content" name="content" class="content"></textarea>
         			</div>
 					<script>
+					
 						$('#content').summernote({
 							width: '100%',
 							height: 480,
@@ -180,6 +270,7 @@
 								['view', ['fullscreen', 'codeview', 'help']]
 						  	]
 						})
+						
 					</script>
         		</div>
         	</form>

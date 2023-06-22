@@ -27,6 +27,23 @@
 		</association>
 	</resultMap>
 	
+	<resultMap type="MailToDTO" id="MailToMap">
+		<id column="MAIL_TO_NO" property="mailToNo"/>
+		<result column="MAIL_TO" property="mailTo"/>
+		<result column="MAIL_TO_ROLE" property="mailToRole"/>
+		<result column="MAIL_TO_CATEGORY" property="mailToCategory"/>
+		<result column="MAIL_TO_STATUS" property="mailToStatus"/>
+		<result column="MAIL_TO_STAR" property="mailToStar"/>
+		<association javaType="MailDTO" property="mailDTO" >
+			<id column="MAIL_NO" property="mailNo"/>
+			<result column="MAIL_TITLE" property="mailTitle"/>
+			<result column="MAIL_CONTENT" property="mailContent"/>
+			<result column="MAIL_HAS_FILE" property="mailHasFile"/>
+			<result column="MAIL_DATE" property="mailDate"/>
+			<result column="MAIL_CATEGORY" property="mailCategory"/>		
+		</association>		
+	</resultMap>	
+	
 	<resultMap type="MailFileDTO" id="MailFileMap">
 		<id column="MAIL_FILE_NO" property="mailFileNo"/>
 		<result column="MAIL_FILE_PATH" property="mailFilePath"/>
@@ -42,8 +59,8 @@
 		SELECT COUNT(DISTINCT M.MAIL_NO)
 		  FROM MAIL_T M LEFT JOIN MAIL_TO_T T
 		    ON M.MAIL_NO = T.MAIL_NO
-		 WHERE (M.EMAIL_ID = #{emailId} AND M.MAIL_CATEGORY = #{mailCategory})
-		    OR (T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = #{mailCategory})
+		 WHERE (M.EMAIL_ID = #{emailId} AND M.MAIL_CATEGORY = #{Category})
+		    OR (T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = #{Category})
 	</select>
 	
 	<select id="getMailCount" parameterType="Map" resultType="int">
@@ -51,10 +68,10 @@
 		  FROM MAIL_T M LEFT JOIN MAIL_TO_T T
 		    ON M.MAIL_NO = T.MAIL_NO		    		   
 		 <choose>
-		 	<when test="mailCategory == 'NOREAD'">
+		 	<when test="Category == 'NOREAD'">
 		 		<where>
 			    	<if test="column != '' and query != ''">
-			      		${column} LIKE CONCAT('%', #{query}, '%')
+			      		${column} LIKE CONCAT('%', UPPER(#{query}), '%') OR ${column} LIKE CONCAT('%', LOWER(#{query}), '%')
 			    	</if>
 			    	<if test="emailId != ''">
 		 				AND T.MAIL_TO = #{emailId}
@@ -63,10 +80,10 @@
 			  	</where>
 		 	</when>
 		 	
-		 	<when test="mailCategory == 'STARRED'">
+		 	<when test="Category == 'STARRED'">
 		 		<where>
 			    	<if test="column != '' and query != ''">
-			      		${column} LIKE CONCAT('%', #{query}, '%')
+			      		${column} LIKE CONCAT('%', UPPER(#{query}), '%') OR ${column} LIKE CONCAT('%', LOWER(#{query}), '%')
 			    	</if>
 			    	<if test="emailId != ''">
 		 				AND T.MAIL_TO = #{emailId}
@@ -75,24 +92,24 @@
 			  	</where>
 		 	</when>
 		 	
-		 	<when test="mailCategory == 'INBOX' or mailCategory == 'SPAM' or mailCategory == 'TRASH'">
+		 	<when test="Category == 'INBOX' or Category == 'SPAM' or Category == 'TRASH'">
 		 		<where>
 			    	<if test="column != '' and query != ''">
-			      		${column} LIKE CONCAT('%', #{query}, '%')
+			      		${column} LIKE CONCAT('%', UPPER(#{query}), '%') OR ${column} LIKE CONCAT('%', LOWER(#{query}), '%')
 			    	</if>
-			    	<if test="emailId != '' and mailCategory != null">
-		 				AND T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = #{mailCategory}
+			    	<if test="emailId != '' and Category != null">
+		 				AND T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = #{Category}
 		 			</if>
 			  	</where>
 		 	</when>
 		 	
-		 	<when test="mailCategory == 'SENT' or mailCategory == 'DRAFTS'">
+		 	<when test="Category == 'SENT' or Category == 'DRAFTS'">
 		 		<where>
 			    	<if test="column != '' and query != ''">
-			      		${column} LIKE CONCAT('%', #{query}, '%')
+			      		${column} LIKE CONCAT('%', UPPER(#{query}), '%') OR ${column} LIKE CONCAT('%', LOWER(#{query}), '%')
 			    	</if>
-			    	<if test="emailId != '' and mailCategory != null">
-		 				AND M.EMAIL_ID = #{emailId}	AND M.MAIL_CATEGORY = #{mailCategory}
+			    	<if test="emailId != '' and Category != null">
+		 				AND M.EMAIL_ID = #{emailId}	AND M.MAIL_CATEGORY = #{Category}
 		 			</if>
 			  	</where>
 		 	</when>
@@ -116,7 +133,7 @@
 	<!-- 메일 목록 -->
 	<select id="getMailList" parameterType="Map" resultMap="MailMap">
 		 <choose>
-		 	<when test="mailCategory == 'NOREAD'">
+		 	<when test="Category == 'NOREAD'">
 			 	SELECT A.EMAIL_ID, A.MEMBER_NAME, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
 			  	  FROM (SELECT E.EMAIL_ID, E.MEMBER_NAME, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
 			  		 	  FROM MEMBER_T E 
@@ -124,7 +141,7 @@
 			  		 	 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO					  		 
 				  		<where>
 				  			<if test="column != '' and query != ''">
-				  				${column} LIKE CONCAT('%', #{query}, '%')
+				  				${column} LIKE CONCAT('%', UPPER(#{query}), '%') OR ${column} LIKE CONCAT('%', LOWER(#{query}), '%')
 				  			</if>
 				  			<if test="emailId != ''">
 				 				AND T.MAIL_TO = #{emailId}
@@ -135,7 +152,7 @@
 				 LIMIT #{begin}, #{recordPerPage}
 		 	</when>
 		 	
-		 	<when test="mailCategory == 'STARRED'">
+		 	<when test="Category == 'STARRED'">
 		 		SELECT A.EMAIL_ID, A.MEMBER_NAME, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
 			  	  FROM (SELECT E.EMAIL_ID, E.MEMBER_NAME, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
 			  		 	  FROM MEMBER_T E 
@@ -143,7 +160,7 @@
 			  		 	 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO
 				  		<where>
 				  			<if test="column != '' and query != ''">
-				  				${column} LIKE CONCAT('%', #{query}, '%')
+				  				${column} LIKE CONCAT('%', UPPER(#{query}), '%') OR ${column} LIKE CONCAT('%', LOWER(#{query}), '%')
 				  			</if>
 				  			<if test="emailId != ''">
 				 				AND T.MAIL_TO = #{emailId}
@@ -154,7 +171,7 @@
 				 LIMIT #{begin}, #{recordPerPage}
 		 	</when>
 		 	
-		 	<when test="mailCategory == 'INBOX' or mailCategory == 'SPAM' or mailCategory == 'TRASH'">
+		 	<when test="Category == 'INBOX' or Category == 'SPAM' or Category == 'TRASH'">
 		 		SELECT A.EMAIL_ID, A.MEMBER_NAME, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
 			  	  FROM (SELECT E.EMAIL_ID, E.MEMBER_NAME, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
 			  		 	  FROM MEMBER_T E 
@@ -162,44 +179,166 @@
 			  		 	 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO
 				  		<where>
 				  			<if test="column != '' and query != ''">
-				  				${column} LIKE CONCAT('%', #{query}, '%')
+				  				${column} LIKE CONCAT('%', UPPER(#{query}), '%') OR ${column} LIKE CONCAT('%', LOWER(#{query}), '%')
 				  			</if>
-				  			<if test="emailId != '' and mailCategory != null">
-				  				AND T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = #{mailCategory}
+				  			<if test="emailId != '' and Category != null">
+				  				AND T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = #{Category}
 				  			</if>
 				  		</where>) A
 				 ORDER BY A.MAIL_DATE DESC
 				 LIMIT #{begin}, #{recordPerPage}
 		 	</when>
 		 	
-		 	<when test="mailCategory == 'SENT' or mailCategory == 'DRAFTS'">
-		 	SELECT DISTINCT A.EMAIL_ID, A.MEMBER_NAME, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
+		 <when test="Category == 'SENT' or Category == 'DRAFTS'">
+		 	SELECT A.EMAIL_ID, A.MEMBER_NAME, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
 		  	  FROM (SELECT E.EMAIL_ID, E.MEMBER_NAME, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
 		  		 	  FROM MEMBER_T E 
 		  		 	 RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
 		  		 	 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO	
 				  		<where>
 				  			<if test="column != '' and query != ''">
-				  				${column} LIKE CONCAT('%', #{query}, '%')
+				  				${column} LIKE CONCAT('%', UPPER(#{query}), '%') OR ${column} LIKE CONCAT('%', LOWER(#{query}), '%')
 				  			</if>
-				  			<if test="emailId != '' and mailCategory != null">
-				  				AND M.EMAIL_ID = #{emailId} AND M.MAIL_CATEGORY = #{mailCategory}
+				  			<if test="emailId != '' and Category != null">
+				  				AND M.EMAIL_ID = #{emailId} AND M.MAIL_CATEGORY = #{Category}
 				  			</if>
+				  			AND T.MAIL_TO_ROLE LIKE 'TO'
+				  			AND T.MAIL_TO_NO IN (SELECT MIN(MAIL_TO_NO) FROM MAIL_TO_T GROUP BY MAIL_NO)
 				  		</where>) A
 				 ORDER BY A.MAIL_DATE DESC
 				 LIMIT #{begin}, #{recordPerPage}
 		 	</when>
 		 </choose>
 	</select>
+	
+	<select id="getNameByEmail" parameterType="Map" resultType="MemberDTO">
+		SELECT MEMBER_NAME, EMAIL_ID
+		  FROM MEMBER_T
+		 WHERE EMAIL_ID = #{mailTo} 	
+	</select>
 
 	<!-- 메일 상세보기 -->
-<!-- 	<select id="getMailByNo" parameterType="int" resultMap="MailMap">
-		SELECT A.EMAIL_ID, A.MEMBER_NAME, A.MAIL_NO, A.MAIL_TITLE, A.MAIL_CONTENT, A.MAIL_HAS_FILE, A.MAIL_DATE, A.MAIL_CATEGORY, A.MAIL_TO_NO, A.MAIL_TO, A.MAIL_TO_ROLE, A.MAIL_TO_CATEGORY, A.MAIL_TO_STATUS, A.MAIL_TO_STAR
-	  	  FROM (SELECT E.EMAIL_ID, E.MEMBER_NAME, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
-	  		  	  FROM MEMBER_T E 
-	  		     RIGHT JOIN MAIL_T M ON E.EMAIL_ID = M.EMAIL_ID
-	  		 	 INNER JOIN MAIL_TO_T T ON M.MAIL_NO = T.MAIL_NO) A
-	     WHERE A.MAIL_NO = #{mailNo}
-	</select> -->
+	<select id="getMailByMailNo" parameterType="Map" resultMap="MailMap">
+		SELECT E.EMAIL_ID, E.MEMBER_NAME, M.MAIL_NO, M.MAIL_TITLE, M.MAIL_CONTENT, M.MAIL_HAS_FILE, M.MAIL_DATE, M.MAIL_CATEGORY
+	  	  FROM MEMBER_T E INNER JOIN MAIL_T M 
+	  		ON E.EMAIL_ID = M.EMAIL_ID
+	  	 WHERE M.MAIL_NO = #{mailNo}
+	</select>
+	
+	<select id="getMailByMailToNo" parameterType="Map" resultMap="MailToMap">
+		SELECT M.MAIL_NO, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
+		  FROM MAIL_T M INNER JOIN MAIL_TO_T T 
+		  	ON M.MAIL_NO = T.MAIL_NO	
+		 WHERE T.MAIL_NO = #{mailNo}
+	</select>
+	
+	<select id="getMailToMeByMailToNo" parameterType="Map" resultMap="MailToMap">
+		SELECT M.MAIL_NO, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
+		  FROM MAIL_T M INNER JOIN MAIL_TO_T T 
+		  	ON M.MAIL_NO = T.MAIL_NO	
+		 WHERE T.MAIL_NO = #{mailNo}
+		   AND T.MAIL_TO = #{emailId}
+	</select>
+	
+	<select id="getMailToByMailNo" parameterType="Map" resultMap="MailToMap">
+		SELECT M.MAIL_NO, T.MAIL_TO_NO, T.MAIL_TO, T.MAIL_TO_ROLE, T.MAIL_TO_CATEGORY, T.MAIL_TO_STATUS, T.MAIL_TO_STAR
+		  FROM MAIL_T M INNER JOIN MAIL_TO_T T 
+		  	ON M.MAIL_NO = T.MAIL_NO
+		 WHERE M.MAIL_NO IN
+		 		<foreach collection="checkMailNo" item="mailNo" open="(" separator="," close=")">
+		 			#{mailNo}
+		 		</foreach>
+		  AND MAIL_TO = #{mailTo}
+	</select>
+	
+	<!-- 메일 상태변경 -->
+	<update id="updateStar" parameterType="Map">
+		UPDATE MAIL_TO_T
+		   SET MAIL_TO_STAR = 'Y'
+		 WHERE MAIL_TO_NO = #{mailToNo}
+		   AND MAIL_TO = #{mailTo}
+	</update>
+	
+	<update id="updateStatus" parameterType="Map">
+		UPDATE MAIL_TO_T
+		   SET MAIL_TO_STATUS = 'Y'
+		 WHERE MAIL_TO_NO = #{mailToNo}
+		   AND MAIL_TO = #{mailTo}		   
+	</update>
+	
+	<update id="updateToTrash" parameterType="Map">
+		UPDATE MAIL_TO_T
+		   SET MAIL_TO_CATEGORY = 'TRASH'
+		 WHERE MAIL_TO_NO = #{mailToNo}
+		   AND MAIL_TO = #{mailTo}
+	</update>
+	
+	<update id="updateToSpam" parameterType="Map">
+		UPDATE MAIL_TO_T
+		   SET MAIL_TO_CATEGORY = 'SPAM'
+		 WHERE MAIL_TO_NO = #{mailToNo}
+		   AND MAIL_TO = #{mailTo}
+	</update>
+	
+	<update id="deleteSentMail" parameterType="Map">
+		UPDATE MAIL_T
+		   SET MAIL_CATEGORY = 'DELETE'
+		  WHERE MAIL_NO IN
+	 		<foreach collection="checkMailNo" item="mailNo" open="(" separator="," close=")">
+	 			#{mailNo}
+	 		</foreach>
+	 		    AND EMAIL_ID = #{emailId} 
+	</update>
+	
+	<delete id="deleteReceiveMail" parameterType="Map">
+		DELETE
+		  FROM MAIL_TO_T
+		 WHERE MAIL_TO_NO = #{mailToNo}
+		   AND MAIL_TO = #{mailTo}	
+	</delete>
+	
+	<update id="updateToInbox" parameterType="Map">
+		UPDATE MAIL_TO_T
+		   SET MAIL_TO_CATEGORY = 'INBOX'
+		 WHERE MAIL_TO_NO = #{mailToNo}
+		   AND MAIL_TO = #{mailTo}
+	</update>
+	
+	<!-- 메일보내기  -->
+<!-- 	<insert id="sendMail" useGeneratedKeys="true" keyProperty="mailNo" parameterType="MailDTO">
+		INSERT INTO MAIL_T 
+			(EMAIL_ID, MAIL_TITLE, MAIL_CONTENT, MAIL_HAS_FILE, MAIL_DATE, MAIL_CATEGORY)			
+		VALUES 
+			(#{emailId}, #{mailTitle}, #{mailContent}, 'N', CURRENT_TIME_STAMP(), 'SENT')	
+	</insert>
+	
+	<insert id="sendMailTo" useGeneratedKeys="true" keyProperty="mailToNo" parameterMap="MailToDTO">
+		INSERT INTO MAIL_TO_T
+			(MAIL_TO, MAIL_TO_ROLE, MAIL_TO_CATEGORY, MAIL_TO_STATUS, MAIL_TO_STAR)
+		VALUES 
+			(#{mailTo}, 'TO', 'INBOX', 'N', 'N')
+	</insert>
+	
+	<insert id="sendMailCc" useGeneratedKeys="true" keyProperty="mailToNo" parameterMap="MailToDTO">
+		INSERT INTO MAIL_TO_T
+			(MAIL_TO, MAIL_TO_ROLE, MAIL_TO_CATEGORY, MAIL_TO_STATUS, MAIL_TO_STAR)
+		VALUES 
+			(#{mailTo}, 'CC', 'INBOX', 'N', 'N')
+	</insert>
+	
+	<insert id="sendMailBcc" useGeneratedKeys="true" keyProperty="mailToNo" parameterMap="MailToDTO">
+		INSERT INTO MAIL_TO_T
+			(MAIL_TO, MAIL_TO_ROLE, MAIL_TO_CATEGORY, MAIL_TO_STATUS, MAIL_TO_STAR)
+		VALUES 
+			(#{mailTo}, 'BCC', 'INBOX', 'N', 'N')
+	</insert>
+	 -->
+	<!-- 첨부파일 -->
+<!-- 	<insert id="addAttach" parameterType="AttachDTO">
+		INSERT INTO MAIL_FILE_T
+			(MAIL_FILE_PATH, MAIL_FILE_ORIGIN_NAME, MAIL_FILE_SYSTEM_NAME)
+		VALUES
+			()
+	</insert> -->
 
 </mapper>

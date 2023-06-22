@@ -3,7 +3,7 @@
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 메일 상세보기')}"></head>
 <link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
-<link rel="stylesheet" th:href="@{/css/mail/list.css(var=1.0)}">
+<link rel="stylesheet" th:href="@{/css/mail/detail.css(var=1.0)}">
 
 <body>
   <div class="container-scroller">
@@ -31,8 +31,301 @@
           샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
           참고할 만 한 html 파일들은 static/pages 에 있습니다!
         */-->
-  
-			<div>상세보기</div>
+
+			<div class="info">
+	        		<th:block th:if="${Category == 'NOREAD'}">
+		        		<span class="title">안읽은 메일함</span>	
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailNoReadRecord}"></span>
+		        		</div>        			
+	        		</th:block>
+	        		<th:block th:if="${Category == 'STARRED'}">
+		        		<span class="title">중요 메일함</span>
+		        		<div class="totalMail">	   
+		        			<span>전체 메일 </span><span th:text="${mailStarRecord}"></span>    		
+		        		</div> 	
+	        		</th:block>
+	        		<th:block th:if="${Category == 'INBOX'}">
+		        		<span class="title">받은 메일함</span>	
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span><span> / 안읽은 메일</span><span th:text="${mailNoReadRecord}"></span>
+		        		</div>        			
+	        		</th:block>
+	        		<th:block th:if="${Category == 'SENT'}">
+		        		<span class="title">보낸 메일함</span>	  
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span>
+		        		</div>      			
+	        		</th:block>
+	        		<th:block th:if="${Category == 'DRAFTS'}">
+		        		<span class="title">임시 보관함</span>	
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span>
+		        		</div>        			
+	        		</th:block>
+	        		<th:block th:if="${Category == 'SPAM'}">
+		        		<span class="title">스팸 메일함</span>
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span>
+		        		</div>	        			
+	        		</th:block>
+	        		<th:block th:if="${Category == 'TRASH'}">
+		        		<span class="title">휴지통</span>	        			
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span>
+		        		</div>
+	        		</th:block>
+	        	</div>
+	       
+	        	<div class="contents">
+        		
+        			<!-- 메일 이동 및 검색창 구현 -->
+        			<div class="contentCheck">
+        			
+        				<!-- 메일 이동 -->
+        				<div class="category">
+        					<th:block th:if="${Category == 'INBOX' or Category == 'NOREAD' or Category == 'STARRED'}">
+	        					<div>
+	        						<label for="btnStar" id="lblBtnStar"></label>
+	        						<input type="button" value="중요" id="btnStar" onclick="fnStar()">
+	        					</div>
+	        					<div>
+	        						<label for="btnRead" id="lblBtnRead"></label>
+	        						<input type="button" value="읽음" id="btnRead" onclick="fnRead()">
+	        					</div>
+	        					<div>
+	        						<label for="btnRemove" id="lblBtnRemove"></label>
+	        						<input type="button" value="삭제" id="btnRemove" onclick="fnRemove()">
+	        					</div>
+	        					<div>
+	        						<label for="btnSpam" id="lblBtnSpam"></label>
+	        						<input type="button" value="스팸차단" id="btnSpam" onclick="fnSpam()">
+	        					</div>
+	        					<div>
+	        						<label for="btnReply" id="lblBtnReply"></label>
+	        						<input type="button" value="답장" id="btnReply" onclick="fnReply()">
+	        					</div>
+	        					<div>
+	        						<label for="btnorward" id="lblBtnForward"></label>
+	        						<input type="button" value="전달" id="btnorward" onclick="fnForward()">
+	        					</div>
+        					</th:block>
+        					
+        					<th:block th:if="${Category == 'SENT'}">
+        						<div>
+	        						<label for="btnDelete" id="lblBtnDelete"></label>
+	        						<input type="button" value="영구삭제" id="btnDelete" onclick="fnDelete()">
+	        					</div>
+        					</th:block>
+
+        					<th:block th:if="${Category == 'DRAFTS'}">
+        						<div>
+	        						<label for="btnDelete" id="lblBtnDelete"></label>
+	        						<input type="button" value="영구삭제" id="btnDelete" onclick="fnDelete()">
+	        					</div>
+	        					<div>
+	        						<label for="btnorward" id="lblBtnForward"></label>
+	        						<input type="button" value="전달" id="btnorward" onclick="fnForward()">
+	        					</div>
+        					</th:block>
+        					
+        					<th:block th:if="${Category == 'SPAM'}">
+        						<div>
+	        						<label for="btnDelete" id="lblBtnDelete"></label>
+	        						<input type="button" value="영구삭제" id="btnDelete" onclick="fnDelete()">
+	        					</div>
+	        					<div>
+	        						<label for="btnSpamCancel" id="lblBtnSpamCancel"></label>
+	        						<input type="button" value="스팸해제" id="btnSpamCancel" onclick="fnSpamCancel()">
+	        					</div>
+        					</th:block>
+        					
+        					<th:block th:if="${Category == 'TRASH'}">
+        						<div>
+	        						<label for="btnRemoveCancel" id="lblBtnRemoveCancel"></label>
+	        						<input type="button" value="메일복원" id="btnRemoveCancel" onclick="fnRemoveCancel()">
+	        					</div>
+	        					<div>
+	        						<label for="btnDelete" id="lblBtnDelete"></label>
+	        						<input type="button" value="영구삭제" id="btnDelete" onclick="fnDelete()">
+	        					</div>
+	        					<div>
+	        						<label for="btnSpam" id="lblBtnSpam"></label>
+	        						<input type="button" value="스팸차단" id="btnSpam" onclick="fnSpam()">
+	        					</div>
+        					</th:block>
+        				</div>     				
+        					
+       					<div class="changePage">
+       						<a class="toList" th:href="@{/mail/list.html(Category=${Category})}">목록</a>
+       						<i class="fa-solid fa-chevron-up" onclick="fnPrev()"></i>
+       						<i class="fa-solid fa-chevron-down" onclick="fnNext()"></i>
+       					</div>       					
+					</div>
+
+					<div class="content">
+
+						<!-- 보낸 메일 --> 
+		
+       					<th:block th:if="${Category == 'SENT' or Category == 'DRAFTS'}">
+       						<div class="mainContent1">
+	       						<div class="mailTitle" th:text="${sentMail.mailTitle}"></div>
+       						</div>
+       						
+       						<div class="mainContent2">
+       							<span class="mainContent">보낸사람</span>
+	       						<div class="recipient" th:text="${sentMail.memberDTO.emailId}"></div>       						
+       						</div>
+       						
+       						<div class="mainContent3">
+       							<span class="mainContent">받는사람</span>
+       							<div class="senderContent">       							
+	       							<th:block th:each="mailtoSender:${mailtoList}">
+	       								<span class="sender" th:text="|${mailtoSender.memberName}(${mailtoSender.emailId})|"></span>
+	       							</th:block>       							
+       							</div>
+       						</div>
+      			
+       						<th:block th:unless="${#lists.isEmpty(mailccList)}">
+	       						<div class="mainContent3">
+	       							<span class="mainContent">참조</span>
+	       							<div class="senderContent">
+		       							<th:block th:each="mailccSender:${mailccList}">
+		       								<span class="sender" th:text="|${mailccSender.memberName}(${mailccSender.emailId})|"></span>
+		       							</th:block>
+		       						</div>
+	       						</div>
+       						</th:block>
+       						
+       						<th:block th:unless="${#lists.isEmpty(mailbccList)}">
+	       						<div class="mainContent3">
+	       							<span class="mainContent">숨은참조</span>
+	       							<div class="senderContent">
+		       							<th:block th:each="mailbccSender:${mailbccList}">
+		       								<span class="sender" th:text="|${mailbccSender.memberName}(${mailbccSender.emailId})|"></span>
+		       							</th:block>
+	       							</div>
+	       						</div>     						
+       						</th:block>
+       			
+       						<div class="mainContent4">
+       							<span class="mainContent">메일 받은시간</span>
+       							<div class="mailDateTime" th:text="${#dates.format(sentMail.mailDate, 'yyyy/MM/dd HH:mm')}"></div>
+       						</div>
+       						
+       						<div class="mailContent">
+       							<th:block th:if="${sentMail.mailHasFile == 'Y'}">
+       								<div class="mailAttach">
+       									<div class="attachTitle">첨부파일</div>
+       									<div class="fileDrag">
+				        					<div class="filesHeader">
+					        					<div class="filesTitle">
+					        						<span class="text">파일명</span>
+					        					</div>
+					        					<div class="AllSize">
+					        						<span class="text">총용량</span>
+					        						<span class="fileSize">0(KB)</span>
+					        					</div>
+					        					<input type="button" th:value="모두저장" onclick="fnSave()">
+					        				</div>		
+					        				<div class="attachList">
+					       						<ul id="fileList">
+					       							<li>파일리스트 올리기</li>
+					       						</ul>					        				
+					        				</div>
+				        				</div>
+       								</div>
+		       						<div class="maildetailContent" th:text="${sentMail.mailContent}"></div>
+       							</th:block>
+       							<th:block th:unless="${sentMail.mailHasFile == 'Y'}">
+       								<div class="maildetailContent" th:text="${sentMail.mailContent}"></div>
+       							</th:block>
+       						</div>    						     
+   						</th:block>  
+
+   						<!-- 받는 메일 -->
+   						<th:block th:unless="${Category == 'SENT' or Category == 'DRAFTS'}"> 
+
+       						<div class="mainContent1" id="firstLine">
+       							<span class="mainContent">
+	       							<th:block th:if="${mailToMe.mailToStar == 'N'}">
+	        							<input type="radio" th:name="mailStar" value="N" id="starState"><label for="starState">☆</label>		        							
+	       							</th:block>
+	       							<th:block th:if="${mailToMe.mailToStar == 'Y'}">
+	       								<input type="radio" th:name="mailStar" value="Y" id="starState"><label for="starState">★</label>	
+	       							</th:block>       							
+       							</span>       							
+
+	       						<div class="mailTitle" th:text="${sentMail.mailTitle}"></div>
+       						</div>
+       						<div class="mainContent2">
+       							<span class="mainContent">보낸사람</span>
+	       						<div class="recipient" th:text="${sentMail.memberDTO.emailId}"></div>       						
+       						</div>
+       				
+       						<div class="mainContent3">
+       							<span class="mainContent">받는사람</span>
+       							<div class="senderContent">
+	       							<th:block th:each="mailtoSender:${mailtoList}">
+	       								<span class="sender" th:text="|${mailtoSender.memberName}(${mailtoSender.emailId})|"></span>					
+	       							</th:block>
+       							</div>
+       						</div>
+       						
+       						<th:block th:unless="${#lists.isEmpty(mailccList)}">
+	       						<div class="mainContent3">
+	       							<span class="mainContent">참조</span>
+	       								<div class="senderContent">
+			       							<th:block th:each="mailccSender:${mailccList}">
+			       								<span class="sender" th:text="|${mailccSender.memberName}(${mailccSender.emailId})|"></span>			
+			       							</th:block>
+	       								</div>
+	       						</div>
+       						</th:block>
+       						
+       						<th:block th:if="${mailToMe.mailToRole == 'BCC'}">
+	       						<div class="mainContent3">
+	       							<span class="mainContent">숨은참조</span>
+		       						<span class="sender" th:text="|(${mailToMe.mailTo})|"></span>       		       					
+	       						</div>       						
+       						</th:block>
+       						       				
+       						<div class="mainContent4">
+       							<span class="mainContent">메일 받은시간</span>
+       							<div class="mailDateTime" th:text="${#dates.format(sentMail.mailDate, 'yyyy/MM/dd HH:mm')}"></div>
+       						</div>
+       						
+       						<div class="mailContent">
+       							<th:block th:if="${sentMail.mailHasFile == 'Y'}">
+       								<div class="mailAttach">
+       									<div class="attachTitle">첨부파일</div>
+       									<div class="fileDrag">
+				        					<div class="filesHeader">
+					        					<div class="filesTitle">
+					        						<span class="text">파일명</span>
+					        					</div>
+					        					<div class="AllSize">
+					        						<span class="text">총용량</span>
+					        						<span class="fileSize">0(KB)</span>
+					        					</div>
+					        					<input type="button" th:value="모두저장" onclick="fnSave()">
+					        				</div>		
+					        				<div class="attachList">
+					       						<ul id="fileList">
+					       							<li>파일리스트 올리기</li>
+					       						</ul>					        				
+					        				</div>
+				        				</div>
+       								</div>
+		       						<div class="maildetailContent" th:text="${sentMail.mailContent}"></div>
+       							</th:block>
+       							<th:block th:unless="${sentMail.mailHasFile == 'Y'}">
+       								<div class="maildetailContent" th:text="${sentMail.mailContent}"></div>
+       							</th:block>
+       						</div> 
+						</th:block>
+					</div>					
+				</div> 
 
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
