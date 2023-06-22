@@ -30,5 +30,6 @@ public interface VacationMapper {
 	public List<VacationDTO> vacationSearchList(Map<String, Object> map);
 	public int modifyVacationApproval(Map<String, Object> map);
 	public int modifyVacationDay(VacationDTO vacationDTO);
+	public int selectMemberNoByVacationNo(int vacationNo);
 	
 }

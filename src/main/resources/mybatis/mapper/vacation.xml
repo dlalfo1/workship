@@ -179,4 +179,10 @@
      WHERE VACATION_NO = #{vacationNo}
   </update>
   
+  <select id="selectMemberNoByVacationNo" parameterType="int" resultType="int">
+    SELECT MEMBER_NO
+      FROM VACATION_T
+     WHERE VACATION_NO = #{vacationNo}
+  </select>
+  
 </mapper>

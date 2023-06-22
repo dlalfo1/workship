@@ -173,16 +173,23 @@ public class VacationServiceImpl implements VacationService {
 		Map<String, Object> map = new HashMap<>();
 		map.put("updateApprovalResult", updateApprovalResult);
 		int vacationNo = Integer.parseInt(request.getParameter("vacationNo"));
-		int vacationDay = endDate.compareTo(startDate) + 1;
+		int recentVacationDay = vacationMapper.getVacationDay(approvalNo);
+		int modifiedvacationDay = endDate.compareTo(startDate) + 1;
+		int vacationDayGap = modifiedvacationDay - recentVacationDay;
 		VacationDTO vacationDTO = new VacationDTO();
 		vacationDTO.setVacationNo(vacationNo);
-		vacationDTO.setVacationDay(vacationDay);
+		vacationDTO.setVacationDay(modifiedvacationDay);
 		int updateVacationResult = vacationMapper.modifyVacationDay(vacationDTO);
+		int memberNo = vacationMapper.selectMemberNoByVacationNo(vacationNo);
+		Map<String, Object> parameter2 = new HashMap<>();
+		parameter2.put("memberNo", memberNo);
+		parameter2.put("vacationDays", vacationDayGap);
+		vacationMapper.updateDayoffCount(parameter2);
 		map.put("updateVacationResult", updateVacationResult);
 		map.put("vacationCategory", vacationCategory);
 		map.put("vacationStartDate", vacationStartDate);
 		map.put("vacationEndDate", vacationEndDate);
-		map.put("vacationDay", vacationDay);
+		map.put("vacationDay", modifiedvacationDay);
 		return map;
 	}
 }
