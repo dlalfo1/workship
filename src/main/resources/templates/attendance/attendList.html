@@ -2,25 +2,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 출퇴근기록조회')}"></head>
-<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 <link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
-<script>
-  $.datepicker.setDefaults({
-    dateFormat: 'yy-mm-dd',
-    prevText: '이전 달',
-    nextText: '다음 달',
-    showButtonPanel: true,
-    closeText: '닫기',
-    currentText: '오늘',
-    firstDay: 1, /* 1이면 월요일 시작, 0이면 일요일 시작 */
-    monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-    dayNames: ['일', '월', '화', '수', '목', '금', '토'],
-    dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
-    dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
-    showMonthAfterYear: true
-  });
-</script>
-
+<script th:replace="~{/layout/common::datepickerSetting}"></script>
 <body>
   <div class="container-scroller">
 
@@ -275,15 +258,20 @@
 										  </tr>
 										</thead>
 										<tbody id="attendanceListTableBody">
-										  <th:block th:each="attendance:${attendanceList}">
-										    <tr>
-										      <td th:text="${#dates.format(attendance?.date, 'YYYY-MM-dd')}"></td>
-										      <td th:text="${#dates.format(attendance?.astarttime, 'HH:mm:ss')}"></td>
-										      <td th:text="${#dates.format(attendance?.aendtime, 'HH:mm:ss')}"></td>
-										      <td th:text="${#dates.format(attendance?.worktime, 'HH:mm:ss')}"></td>
-										      <td th:text="${attendance?.attendance}"></td>
-										    </tr>
-									    </th:block>
+										  <th:block th:if="${#lists.isEmpty(attendanceList)}">
+										    <tr><td colspan="5">조회 결과가 없습니다.</td></tr>
+										  </th:block>
+										  <th:block th:unless="${#lists.isEmpty(attendanceList)}">
+											  <th:block th:each="attendance:${attendanceList}">
+											    <tr>
+											      <td th:text="${#dates.format(attendance?.date, 'YYYY-MM-dd')}"></td>
+											      <td th:text="${#dates.format(attendance?.astarttime, 'HH:mm:ss')}"></td>
+											      <td th:text="${#dates.format(attendance?.aendtime, 'HH:mm:ss')}"></td>
+											      <td th:text="${#dates.format(attendance?.worktime, 'HH:mm:ss')}"></td>
+											      <td th:text="${attendance?.attendance}"></td>
+											    </tr>
+										    </th:block>
+										  </th:block>
 										</tbody>
 										<tr><td colspan="5" id="pagination" class="text-center"></td></tr>
 									</table>
@@ -400,8 +388,8 @@
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
-  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   <!--/* footer 영역 */-->
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
 </body>

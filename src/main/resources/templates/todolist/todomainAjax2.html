@@ -73,7 +73,6 @@
 	                  <ul class="d-flex flex-column-reverse sort-list todo-list" id="undo">
 	                    <th:block th:if="${#lists.isEmpty(undo)}">
 	                      <span class="preventMove" id="noUndo">등록된 할 일이 없습니다.</span>
-	                      <span class="movable"></span>
 	                    </th:block>
 	                    <th:block th:unless="${#lists.isEmpty(undo)}">
 		                    <th:block th:each="undo:${undo}">
@@ -231,18 +230,43 @@
         		let todolistNo = $(this).find('span').first().text();
         		undo.sortable({
         			receive: function(){
-        				location.href = '/todolist/updateState.do?todoState=1&todolistNo=' + todolistNo;
+        			  $.ajax({
+        				  type: 'get',
+        				  url: '/todolist/updateState.do',
+        				  data: 'todolistNo=' + todolistNo + '&todoState=1',
+        				  dataType: 'json',
+        				  success: function(resData){
+        					  var result = resData.updateResult;
+        					  $('#noUndo').remove();
+        				  }
+        			  })
         			}
         		});
         		doing.sortable({
         			receive: function(){
-        				location.href = '/todolist/updateState.do?todoState=2&todolistNo=' + todolistNo;
+        				$.ajax({
+                  type: 'get',
+                  url: '/todolist/updateState.do',
+                  data: 'todolistNo=' + todolistNo + '&todoState=2',
+                  dataType: 'json',
+                  success: function(resData){
+                    var result = resData.updateResult;
+                  }
+                })
         			}
         		});
 
         		done.sortable({
         			receive: function(){
-        				location.href = '/todolist/updateState.do?todoState=3&todolistNo=' + todolistNo;
+	              $.ajax({
+	                type: 'get',
+	                url: '/todolist/updateState.do',
+	                data: 'todolistNo=' + todolistNo + '&todoState=3',
+	                dataType: 'json',
+	                success: function(resData){
+	                  let result = resData.updateResult;
+	                }
+	              })
         			}
         		});
         	})

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace는 @Mapper를 지정한다. -->
+<mapper namespace="com.gdu.workship.mapper.VacationMapper">
+
+  <resultMap type="VacationDTO" id="VacationMap">
+    <id column="VACATION_NO" property="vacationNo"/>
+    <result column="VACATION_DAY" property="vacationDay"/>
+    <association javaType="MemberDTO" property="memberDTO">
+      <id column="MEMBER_NO" property="memberNo"/>
+      <result column="MEMBER_NAME" property="memberName"/>
+    </association>
+    <association javaType="ApprovalDTO" property="approvalDTO">
+      <id column="APPROVAL_NO" property="approvalNo"/>
+      <result column="DOC_TITLE" property="docTitle"/>
+      <result column="CREATED_AT" property="createdAt"/>
+      <result column="VACATION_CATEGORY" property="vacationCategory"/>
+      <result column="VACATION_START_DATE" property="vacationStartDate"/>
+      <result column="VACATION_END_DATE" property="vacationEndDate"/>
+      <result column="VACATION_STATE" property="vacationState"/>
+    </association>
+  </resultMap>
+  
+  <resultMap type="ApprovalDTO" id="ApprovalMap">
+    <id column="APPROVAL_NO" property="approvalNo" />
+    <result column="DOC_TITLE" property="docTitle"/>
+    <result column="CREATED_AT" property="createdAt"/>
+    <result column="VACATION_CATEGORY" property="vacationCategory"/>
+    <result column="VACATION_START_DATE" property="vacationStartDate"/>
+    <result column="VACATION_END_DATE" property="vacationEndDate"/>
+    <result column="VACATION_STATE" property="vacationState"/>
+    <association javaType="MemberDTO" property="memberDTO">
+      <id column="MEMBER_NO" property="memberNo"/>
+      <result column="MEMBER_NAME" property="memberName"/>
+    </association>
+  </resultMap>
+  
+  <select id="getPersonalVacationInfo" parameterType="int" resultType="MemberDTO">
+    SELECT TOTAL_DAYOFF, DAYOFF_COUNT
+      FROM MEMBER_T
+     WHERE MEMBER_NO = #{memberNo}
+  </select>
+  
+  <select id="getPersonalVacationList" parameterType="int" resultMap="VacationMap">
+    SELECT A.CREATED_AT, A.VACATION_CATEGORY, A.VACATION_START_DATE, A.VACATION_END_DATE, V.VACATION_DAY
+      FROM VACATION_T V INNER JOIN APPROVAL_T A
+        ON V.APPROVAL_NO = A.APPROVAL_NO
+     WHERE V.MEMBER_NO = #{memberNo}
+       AND YEAR(A.VACATION_START_DATE) = YEAR(NOW())
+       AND A.VACATION_STATE = 1
+     ORDER BY A.CREATED_AT DESC
+  </select>
+  
+  <select id="getApprovalCount" parameterType="Map" resultType="int">
+    SELECT COUNT(*)
+      FROM APPROVAL_T A INNER JOIN MEMBER_T M
+        ON A.MEMBER_NO = M.MEMBER_NO
+    <where>
+            DOC_NAME = 1
+        AND APPROVAL_STATUS = 2
+        AND CREATED_AT BETWEEN #{startDate} AND #{endDate}
+      <if test="vacationCategory != null and vacationCategory != ''">
+        AND VACATION_CATEGORY IN (${vacationCategory})
+      </if>
+      <if test="queryNum != null and queryNum != ''">
+        AND A.MEMBER_NO = #{queryNum}
+      </if>
+      <if test="queryName != null and queryName!=''">
+        AND M.MEMBER_NAME = #{queryName}
+      </if>
+    </where>
+  </select>
+  
+  <select id="approvalSearchList" parameterType="Map" resultMap="ApprovalMap">
+    SELECT A.APPROVAL_NO, A.DOC_TITLE, A.CREATED_AT, A.VACATION_CATEGORY, A.VACATION_START_DATE, A.VACATION_END_DATE, A.VACATION_STATE, A.MEMBER_NO, M.MEMBER_NAME
+      FROM APPROVAL_T A INNER JOIN MEMBER_T M
+        ON A.MEMBER_NO = M.MEMBER_NO
+    <where>
+          DOC_NAME = 1
+        AND APPROVAL_STATUS = 2
+        AND CREATED_AT BETWEEN #{startDate} AND #{endDate}
+      <if test="vacationCategory != null and vacationCategory != ''">
+        AND VACATION_CATEGORY IN (${vacationCategory})
+      </if>
+      <if test="queryNum != null and queryNum != ''">
+        AND A.MEMBER_NO = #{queryNum}
+      </if>
+      <if test="queryName != null and queryName!=''">
+        AND M.MEMBER_NAME = #{queryName}
+      </if>
+    </where>
+     ORDER BY A.CREATED_AT DESC, M.MEMBER_NO DESC
+     LIMIT #{begin}, #{recordPerPage}
+  </select>
+  
+  <update id="updateApproval" parameterType="int">
+    UPDATE APPROVAL_T
+       SET VACATION_STATE = 1
+     WHERE APPROVAL_NO = #{approvalNo}
+  </update>
+  
+  <select id="selectApprovalByApprovalNo" parameterType="int" resultType="ApprovalDTO">
+    SELECT VACATION_CATEGORY, VACATION_START_DATE, VACATION_END_DATE
+      FROM APPROVAL_T
+     WHERE APPROVAL_NO = #{approvalNo}
+  </select>
+  
+  <insert id="insertVacation" parameterType="Map">
+    INSERT INTO VACATION_T(MEMBER_NO, APPROVAL_NO, VACATION_DAY)
+    VALUES(#{memberNo}, #{approvalNo}, DATEDIFF(#{vacationEndDate}, #{vacationStartDate}) + 1)
+  </insert>
+  
+  <select id="getVacationDay" parameterType="int" resultType="int">
+    SELECT VACATION_DAY
+      FROM VACATION_T
+     WHERE APPROVAL_NO = #{approvalNo}
+  </select>
+  
+  <update id="updateDayoffCount" parameterType="Map">
+    UPDATE MEMBER_T
+       SET DAYOFF_COUNT = DAYOFF_COUNT + ${vacationDays}
+     WHERE MEMBER_NO = #{memberNo}
+  </update>
+  
+    <select id="getVacationCount" parameterType="Map" resultType="int">
+    SELECT COUNT(*)
+      FROM VACATION_T V INNER JOIN APPROVAL_T A
+        ON V.APPROVAL_NO = A.APPROVAL_NO INNER JOIN MEMBER_T M
+        ON V.MEMBER_NO = M.MEMBER_NO
+    <where>
+           A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+      <if test="vacationCategory != null and vacationCategory != ''">
+       AND A.VACATION_CATEGORY IN (${vacationCategory})
+      </if>
+      <if test="queryNum != null and queryNum != ''">
+       AND V.MEMBER_NO = #{queryNum}
+      </if>
+      <if test="queryName != null and queryName!=''">
+       AND M.MEMBER_NAME = #{queryName}
+      </if>
+    </where>
+  </select>
+  
+  <select id="vacationSearchList" parameterType="Map" resultMap="VacationMap">
+    SELECT M.MEMBER_NO, M.MEMBER_NAME, A.APPROVAL_NO, A.VACATION_CATEGORY, A.CREATED_AT, A.VACATION_START_DATE, A.VACATION_END_DATE, V.VACATION_NO, V.VACATION_DAY
+      FROM VACATION_T V INNER JOIN APPROVAL_T A
+        ON V.APPROVAL_NO = A.APPROVAL_NO INNER JOIN MEMBER_T M
+        ON V.MEMBER_NO = M.MEMBER_NO
+    <where>
+           A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+      <if test="vacationCategory != null and vacationCategory != ''">
+       AND A.VACATION_CATEGORY IN (${vacationCategory})
+      </if>
+      <if test="queryNum != null and queryNum != ''">
+       AND V.MEMBER_NO = #{queryNum}
+      </if>
+      <if test="queryName != null and queryName!=''">
+       AND M.MEMBER_NAME = #{queryName}
+      </if>
+    </where>
+     ORDER BY A.CREATED_AT DESC, V.MEMBER_NO DESC
+     LIMIT #{begin}, #{recordPerPage}
+  </select>
+  
+  <update id="modifyVacationApproval" parameterType="Map">
+    UPDATE APPROVAL_T
+       SET VACATION_CATEGORY = #{vacationCategory},
+           VACATION_START_DATE = STR_TO_DATE(#{vacationStartDate}, '%Y-%m-%d'),
+           VACATION_END_DATE = STR_TO_DATE(#{vacationEndDate}, '%Y-%m-%d')
+     WHERE APPROVAL_NO = #{approvalNo}
+  </update>
+  
+  <update id="modifyVacationDay" parameterType="VacationDTO">
+    UPDATE VACATION_T
+       SET VACATION_DAY = #{vacationDay}
+     WHERE VACATION_NO = #{vacationNo}
+  </update>
+  
+</mapper>

@@ -126,7 +126,7 @@
       FROM ATTENDANCE_T A INNER JOIN MEMBER_T M
         ON M.MEMBER_NO = A.MEMBER_NO
     <where>
-            DATE BETWEEN #{startDate} AND #{endDate}
+       DATE BETWEEN #{startDate} AND #{endDate}
         AND ATTENDANCE IN (${attendance})
       <if test="queryNum != ''">
         AND A.MEMBER_NO = #{queryNum}

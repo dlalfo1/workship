@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/layout/header::headFrag('workship 연차조회')}"></head>
+<link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
+<body>
+  <div class="container-scroller">
+
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+  
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+    
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+        <!--/* 휴가정보 모아보기 */-->
+        <div class="col-md-8 grid-margin mb-3" style="float: none; margin: 0 auto;">
+          <div class="card">
+            <div class="card-body text-center">
+              <h3 class="card-title text-center mb-4" th:text="|${#calendars.format(#calendars.createNow(), 'yyyy')}년 휴가 정보|"></h3>
+              <div class="d-flex justify-content-center">
+              <table class="table table-borderless table-sm text-center" style="width: 90%;">
+                <tr>
+                  <td rowspan="2" style="width: 14%;">
+                    <i class="fa-solid fa-moon fa-4x text-secondary"></i>
+                  </td>
+                  <th style="width: 14%;">총 휴가</th>
+                  <td rowspan="2" style="width: 8%;"></td>
+                  <td rowspan="2" style="width: 14%;">
+                    <i class="fa-solid fa-right-from-bracket fa-4x text-secondary"></i>
+                  </td>
+                  <th style="width: 14%;">사용 휴가</th>
+                  <td rowspan="2" style="width: 8%;"></td>
+                  <td rowspan="2" style="width: 14%;">
+                    <i class="fa-solid fa-champagne-glasses fa-4x text-secondary"></i>
+                  </td>
+                  <th style="width: 14%;">남은 휴가</th>
+                </tr>
+                <tr>
+                  <td class="text-center"><h2 class="text-primary">[[${totalDayoff}]]</h2></td>
+                  <td class="text-center"><h2 class="text-primary">[[${dayoffCount}]]</h2></td>
+                  <td class="text-center"><h2 class="text-primary">[[${totalDayoff - dayoffCount}]]</h2></td>
+                </tr>
+              </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!--/* 리스트 뿌려줄 테이블 */-->
+        <div class="col-md-12 stretch-card grid-margin">
+          <div class="card">
+            <div class="card-body">
+              <p class="card-title" th:text="|${#calendars.format(#calendars.createNow(), 'yyyy')}년 휴가 상세내역|"></p>
+              <table class="table table-striped table-hover table-sm text-center">
+                <thead>
+                  <tr>
+	                  <th width="20%">신청일자</th>
+	                  <th width="20%">휴가종류</th>
+	                  <th width="20%">휴가시작일</th>
+	                  <th width="20%">휴가종료일</th>
+	                  <th width="20%">사용일수</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <th:block th:if="${#lists.isEmpty(vacationList)}">
+                    <tr><td colspan="5">휴가사용내역이 존재하지 않습니다.</td></tr>
+                  </th:block>
+                  <th:block th:unless="${#lists.isEmpty(vacationList)}">
+                    <th:block th:each="vacation:${vacationList}">
+                      <tr>
+                        <td th:text="${#dates.format(vacation?.approvalDTO.createdAt, 'YYYY-MM-dd')}"></td>
+                        <td th:text="${vacation?.approvalDTO.vacationCategory}"></td>
+                        <td th:text="${#dates.format(vacation?.approvalDTO.vacationStartDate, 'YYYY-MM-dd')}"></td>
+                        <td th:text="${#dates.format(vacation?.approvalDTO.vacationEndDate, 'YYYY-MM-dd')}"></td>
+                        <td th:text="${vacation?.vacationDay}"></td>
+                      </tr>
+                    </th:block>
+                  </th:block>
+                </tbody>
+              </table>
+              <div class="d-flex justify-content-center">
+              <input type="button" id="btnVacationApproval" class="btn btn-inverse-primary d-grid col-12 mt-3" value="휴가신청하러가기">
+              </div>
+            </div>
+          </div>
+        </div>
+        <script>
+          $('#btnVacationApproval').on('click', function(){
+        	  location.href= '/approval/documentList.html?formNo=1';
+          })
+        </script>
+        
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>
