@@ -90,12 +90,12 @@
               FROM NOTICE_BOARD_T N INNER JOIN MEMBER_T M
                 ON M.MEMBER_NO = N.MEMBER_NO INNER JOIN JOB_T J
                 ON M.JOB_NO = J.JOB_NO
-           <where>
+             WHERE N.NOTICE_STATE = 1
            <!-- 전달된 column 그대로 부를 수 있다. mybatis.org 동적 sql 참고-->
             <if test="column != '' and query != ''">
-              ${column} LIKE CONCAT('%', #{query}, '%')
+             AND ${column} LIKE CONCAT('%', #{query}, '%')
             </if>
-           </where>) A
+           ) A
      ORDER BY N.NOTICE_NO DESC
      LIMIT #{begin}, #{recordPerPage}
   </select>
@@ -205,6 +205,72 @@
       FROM NOTICE_FILE_T
      WHERE NOTICE_FILE_NO = #{noticeFileNo}
   </delete>
-
-
+  
+  <!-- 게시글 임시저장  -->
+  <!-- 작성일 NULL로 해준다!? -->
+  <insert id="saveNotice" useGeneratedKeys="true" keyProperty="noticeNo" parameterType="NoticeDTO">
+    INSERT INTO NOTICE_BOARD_T (
+        MEMBER_NO
+      , NOTICE_TITLE
+      , NOTICE_CONTENT
+      , NOTICE_CREATED_AT
+      , NOTICE_MODIFIED_AT
+      , NOTICE_HIT
+      , NOTICE_STATE
+    ) VALUES (
+        #{memberDTO.memberNo}
+      , #{noticeTitle}
+      , #{noticeContent}
+      , NOW()
+      , NULL
+      , 0
+      , #{noticeState}
+    )
+  </insert>
+  <delete id="removeNoticeFileBynoticeNo" parameterType="int">
+    DELETE
+      FROM NOTICE_FILE_T
+     WHERE NOTICE_NO = #{noticeNo} AND NOTICE_STATE = 0
+  </delete>
+  <!-- 게시글 임시저장 업데이트 -->
+  <update id="saveUpdateNotice" parameterType="NoticeDTO">
+    UPDATE NOTICE_BOARD_T
+       SET NOTICE_TITLE = #{noticeTitle}
+         , NOTICE_CONTENT = #{noticeContent}
+         , NOTICE_CREATED_AT = NOW()
+     WHERE NOTICE_NO = #{noticeNo} AND MEMBER_NO = #{memberDTO.memberNo}
+  </update>
+  
+  <!-- 첨부파일 임시저장 업데이트 -->
+  <insert id="saveUpdateNoticeFile" parameterType="NoticeFileDTO">
+    INSERT INTO NOTICE_FILE_T (
+        NOTICE_NO
+      , NOTICE_FILE_PATH
+      , NOTICE_FILE_ORIGIN_NAME
+      , NOTICE_FILE_SYSTEM_NAME
+    ) VALUES (
+        #{noticeDTO.noticeNo}
+      , #{noticeFilePath}
+      , #{noticeFileOriginName}
+      , #{noticeFileSystemName}
+    )
+  </insert>
+  
+  <!-- 임시저장 리스트 조회 -->
+  <select id="getSaveList" parameterType="int" resultType="NoticeDTO">
+    SELECT NOTICE_NO
+         , NOTICE_TITLE
+         , NOTICE_CREATED_AT
+      FROM NOTICE_BOARD_T
+     WHERE MEMBER_NO = #{memberNo}
+       AND NOTICE_STATE = 0
+     ORDER BY NOTICE_NO DESC
+  </select>
+  
+  <delete id="deleteSave" parameterType="int">
+    DELETE
+      FROM NOTICE_BOARD_T
+     WHERE NOTICE_NO = #{noticeNo}  
+  </delete>
+  
 </mapper>

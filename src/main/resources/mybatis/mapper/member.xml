@@ -91,6 +91,11 @@
      WHERE JOB_NO = #{jobNo}
   </select>
   
+  <select id="selectMemberByEmailId" parameterType="String" resultType="MemberDTO">
+    SELECT EMAIL_ID
+      FROM MEMBER_T
+     WHERE EMAIL_ID = #{emailId}
+  </select>
   <insert id="createMember" parameterType="MemberDTO">
     INSERT INTO MEMBER_T(
            DEPT_NO

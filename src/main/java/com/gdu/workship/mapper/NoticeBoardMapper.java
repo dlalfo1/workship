@@ -33,4 +33,9 @@ public interface NoticeBoardMapper {
   public int modifyNotice(NoticeDTO noticeDTO);
   public int removeNoticeFile(int noticeFileNo);
   
+  public int saveNotice(NoticeDTO noticeDTO);
+  public int removeNoticeFileBynoticeNo(int noticeNo);
+  public int saveUpdateNotice(NoticeDTO noticeDTO);
+  public List<NoticeDTO> getSaveList(int memberNo);
+  public int deleteSave(int noticeNo);
 }

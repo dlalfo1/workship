@@ -35,7 +35,6 @@ import com.gdu.workship.domain.NoticeDTO;
 import com.gdu.workship.domain.NoticeFileDTO;
 import com.gdu.workship.mapper.NoticeBoardMapper;
 import com.gdu.workship.util.MyFileUtil;
-import com.gdu.workship.util.PageUtil;
 import com.gdu.workship.util.PageUtil2;
 
 import lombok.RequiredArgsConstructor;
@@ -79,6 +78,7 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     System.out.println(noticeList);
     model.addAttribute("noticeList", noticeList);
     model.addAttribute("beginNo", totalRecord - (page - 1) * recordPerPage);
+    System.out.println("beginNo : " + (totalRecord - (page - 1) * recordPerPage));
     if(column.isEmpty() || query.isEmpty()) {
       model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/notice/noticeList.do"));
     } else {
@@ -434,12 +434,11 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
       if(multipartFile != null && multipartFile.isEmpty() == false) {
         
         // 예외 처리
-        try {
+        try {          
           /* HDD에 첨부 파일 저장하기 */
           
           // 첨부 파일의 저장 경로
-          String path = "C:" + File.separator + "storage" + File.separator + "final";
-          System.out.println(path);
+          String path = myFileUtil.getPath();
           // 첨부 파일의 저장 경로가 없으면 만들기
           File dir = new File(path);
           if(dir.exists() == false) {
@@ -512,5 +511,205 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     
   }
   
+  @Override
+  public Map<String, Object> tempSave(MultipartHttpServletRequest request) {
+    /*
+     * * 임시저장 여부는 boardNo이 빈칸이면 새글, 채워져있으면 임시저장글
+     *   첨부파일은 계속 누를 때마다 삭제하고 다시 삽입
+     * 
+     * == 임시저장 ==
+     * - 새로 임시저장 : saveBoard
+     * - 임시저장 갱신 : updateSave
+     * 
+     * == 등록 ==
+     * - 새로 등록 : insertBoard
+     * - 임시저장 불러와서 등록 : insert
+     */
+    String noticeTitle = request.getParameter("noticeTitle");
+    String emailId = request.getParameter("emailId");
+    int memberNo = noticeBoardMapper.getMemberByEmail(emailId).getMemberNo();
+    String noticeContent = request.getParameter("noticeContent");
+    
+    // DB로 보낼 NoticeDTO 만들기
+    MemberDTO memberDTO = new MemberDTO();
+    memberDTO.setMemberNo(memberNo);;
+    NoticeDTO noticeDTO = new NoticeDTO();
+    noticeDTO.setNoticeTitle(noticeTitle);
+    noticeDTO.setMemberDTO(memberDTO);
+    noticeDTO.setNoticeContent(noticeContent);
+    noticeDTO.setNoticeState(0);
+    
+    // DB로 NoticeDTO 보내기 (삽입)
+    Map<String, Object> result = new HashMap<String, Object>();
+    
+    
+    // 첨부된 파일 목록
+    List<MultipartFile> files = request.getFiles("files");  // <input type="file" name="files">
+    
+    if(request.getParameter("noticeNo").isEmpty()) { // 새로 임시저장
+      int saveResult = noticeBoardMapper.saveNotice(noticeDTO);
+      
+      for(MultipartFile multipartFile : files) {
+        // 첨부파일이 있을 경우 FileUpload클래스로 파일 변환 후 Board 객체에 담기
+        
+        if(multipartFile != null && multipartFile.isEmpty() == false) {
+          // 예외 처리
+          try {
+            /* HDD에 첨부 파일 저장하기 */
+            
+            String path = myFileUtil.getPath();
+            File dir = new File(path);
+            if(dir.exists() == false) {
+              dir.mkdirs();
+            }
+            
+            String originName = multipartFile.getOriginalFilename();
+            originName = originName.substring(originName.lastIndexOf("\\") + 1);  // IE는 전체 경로가 오기 때문에 마지막 역슬래시 뒤에 있는 파일명만 사용한다.
+            
+            String filesystemName = myFileUtil.getFilesystemName(originName);
+            
+            File file = new File(dir, filesystemName);
+            
+            multipartFile.transferTo(file);  // 실제로 서버에 저장된다.
+            
+            // DB로 보낼 NoticeFileDTO 만들기
+            NoticeFileDTO noticeFileDTO = new NoticeFileDTO();
+            noticeFileDTO.setNoticeFileOriginName(originName);
+            noticeFileDTO.setNoticeFileSystemName(filesystemName);
+            noticeFileDTO.setNoticeFilePath(path);
+            noticeFileDTO.setNoticeDTO(noticeDTO);
+            
+            noticeBoardMapper.addNoticeFile(noticeFileDTO);
+            
+          } catch(Exception e) {
+            e.printStackTrace();
+          }
+          
+        }
+      }
+      
+      result.put("saveResult", saveResult);
+      // System.out.println("임시저장: " + noticeDTO);
+      return result;
+      
+    } else {  // 임시저장 업데이트
+      
+      int noticeNo = Integer.parseInt(request.getParameter("noticeNo"));
+      String upNoticeTitle = request.getParameter("noticeTitle");
+      String upNoticeContent = request.getParameter("noticeContent");
+      
+      // DB로 보낼 NoticeDTO 만들기
+      noticeDTO.setNoticeNo(noticeNo);
+      noticeDTO.setNoticeTitle(upNoticeTitle);
+      noticeDTO.setNoticeContent(upNoticeContent);
+      
+      int saveUpdateResult = noticeBoardMapper.saveUpdateNotice(noticeDTO);
+      
+      // 글번호로 등록된 첨부파일 삭제하기
+      // 해당하는 첨부파일 조회
+      List<NoticeFileDTO> noticeFileList = noticeBoardMapper.getNoticeFileList(noticeNo);
+      
+      if(noticeFileList != null && noticeFileList.isEmpty() == false) {
+        // db에서 해당 첨부파일 삭제
+        int removeFileResult = noticeBoardMapper.removeNoticeFileBynoticeNo(noticeNo);
+        
+        if(removeFileResult > 0) {
+          // 삭제할 첨부 파일들을 순회하면서 하나씩 삭제
+          for(NoticeFileDTO noticeFileDTO : noticeFileList) {
+            
+            // 삭제할 첨부 파일의 File 객체
+            File file = new File(noticeFileDTO.getNoticeFilePath(), noticeFileDTO.getNoticeFileSystemName());
+            
+            // 첨부 파일 삭제
+            if(file.exists()) {
+              file.delete();
+            }
+            
+          }
+        }
+      }
+      
+      for(MultipartFile multipartFile : files) {
+        
+        if(multipartFile != null && multipartFile.isEmpty() == false) {
+          // 예외 처리
+          try {
+            /* HDD에 첨부 파일 저장하기 */
+            
+            String path = myFileUtil.getPath();
+            File dir = new File(path);
+            if(dir.exists() == false) {
+              dir.mkdirs();
+            }
+            
+            String originName = multipartFile.getOriginalFilename();
+            originName = originName.substring(originName.lastIndexOf("\\") + 1);  // IE는 전체 경로가 오기 때문에 마지막 역슬래시 뒤에 있는 파일명만 사용한다.
+            
+            String filesystemName = myFileUtil.getFilesystemName(originName);
+            
+            File file = new File(dir, filesystemName);
+            
+            multipartFile.transferTo(file);  // 실제로 서버에 저장된다.
+            
+            // DB로 보낼 NoticeFileDTO 만들기
+            NoticeFileDTO noticeFileDTO = new NoticeFileDTO();
+            noticeFileDTO.setNoticeFileOriginName(originName);
+            noticeFileDTO.setNoticeFileSystemName(filesystemName);
+            noticeFileDTO.setNoticeFilePath(path);
+            noticeFileDTO.setNoticeDTO(noticeDTO);
+            
+            noticeBoardMapper.addNoticeFile(noticeFileDTO);
+            
+          } catch(Exception e) {
+            e.printStackTrace();
+          }
+          
+        }
+      }
+      
+      result.put("saveUpdateResult", saveUpdateResult);
+      // System.out.println("임시저장업뎃: " + noticeDTO);
+      return result;
+      
+    }
+      
+    
+  }
   
+  @Override
+  public Map<String, Object> getSaveList(HttpServletRequest request) {
+    String emailId = request.getParameter("emailId");
+    int memberNo = noticeBoardMapper.getMemberByEmail(emailId).getMemberNo();
+    Optional<String> opt1 = Optional.ofNullable(request.getParameter("noticeState"));
+    int noticeState = Integer.parseInt(opt1.orElse("0"));
+    List<NoticeDTO> saveList = noticeBoardMapper.getSaveList(memberNo);
+
+    Map<String, Object> result = new HashMap<String, Object>();
+    result.put("saveList", saveList);
+    
+    return result;
+  }
+  
+  @Override
+  public Map<String, Object> getSaveByNo(HttpServletRequest request) {
+    String strNoticeNo = request.getParameter("noticeNo");
+    int noticeNo = 0;
+    if(strNoticeNo != null && strNoticeNo.isEmpty() == false) noticeNo = Integer.parseInt(strNoticeNo);
+    Map<String, Object> result = new HashMap<String, Object>();
+    result.put("save", noticeBoardMapper.getNoticeByNo(noticeNo));
+    result.put("noticeFileList", noticeBoardMapper.getNoticeFileList(noticeNo));
+    System.out.println("result :: " + result);
+    
+    return result;
+  }
+  
+  @Override
+  public Map<String, Object> deleteSave(HttpServletRequest request) {
+    int noticeNo = Integer.parseInt(request.getParameter("noticeNo"));
+    
+    Map<String, Object> result = new HashMap<String, Object>();
+    result.put("deleteResult", noticeBoardMapper.deleteSave(noticeNo));
+    return result;
+  }
+    
 }

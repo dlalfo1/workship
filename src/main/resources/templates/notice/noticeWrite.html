@@ -2,8 +2,10 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
-<script>
-
+<script th:inline="javascript">
+  
+  var emailId = '';
+  
   function fnFileCheck(vThis){
   
   	// 최대 크기 10MB
@@ -32,21 +34,94 @@
   }
 
   function fnAddNotice() {
-	  $('#frmWrite').submit();
+	  if($('#noticeTitle').val() == '') {
+      alert("제목을 입력해주세요.");
+    } else if ($('#noticeContent').val() == '') {
+      alert("내용을 입력해주세요.");
+    } else {
+      $('#frmWrite').submit();
+    }
   }
 	
-  function fnTempSave() {
-	  
-  }
-  
   function fnList() {
   	location.href = '/notice/noticeList.do';
   }
   
+  function fnDateFormat(nCreatedAt) {
+    var d = new Date(nCreatedAt),
+    year = d.getFullYear(),
+    month = '' + (d.getMonth() + 1), 
+    day = '' + d.getDate();
+    if (month.length < 2) month = '0' + month; 
+    if (day.length < 2) day = '0' + day; 
+    var date = [year, month, day].join('-');
+    
+    var hours = ('0' + d.getHours()).slice(-2); 
+    var minutes = ('0' + d.getMinutes()).slice(-2);
+    var seconds = ('0' + d.getSeconds()).slice(-2);
+    var time = hours + ':' + minutes + ':' + seconds;
+
+    
+    return date + '&nbsp;' + time;
+  } 
+  
   
   $(function(){
 	  
+	  emailId = $('#emailId').val();
+    $("#files").change(function(){
+      
+      // 임시저장된 글 불러와서 첨부파일 변경할 경우 삭제하기 위해 파일 번호 넘기기
+      if($("#fileNo").val() != ""){
+        deleteFile();
+      }
+      
+      // fileChange();
+      
+    })
+    
   })
+    
+  
+  $(function(){
+    // 드래그 앤 드랍 함수
+    
+    $("#dropZone").on("dragenter", function(e){
+          e.preventDefault();
+          e.stopPropagation();
+      }).on("dragover", function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          $(this).css("background-color", "#ddd");
+      }).on("dragleave", function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          $(this).css("background-color", "white");
+      }).on('drop', function(e){
+      e.preventDefault();
+      $(this).css("background-color", "white");
+      
+      // 드랍된 파일을 뽑아서 담아주기
+      var files = e.originalEvent.dataTransfer.files;
+      
+      // input타입 객체의 파일을 드랍된 파일로 바꿔치기
+      $(".input-file")[0].files = files;
+      
+      // 바뀐 파일을 li로 다시 뽑아주기
+      fileChange();
+    })
+    
+  })
+  
+  function deleteLi(){
+    
+    // input타입 file 객체 비워주기
+    $(".input-file").val('');
+    
+    // li요소 지워주기
+    $(".item-file").parent().remove();
+    
+  }
 	
 </script>
 <body>
@@ -75,6 +150,7 @@
           
             <div class="board-content">
               <form id="frmWrite" method="post" enctype="multipart/form-data" th:action="@{/notice/addNotice.do}">
+                <input type="hidden" name="noticeNo">
                 <div class="inputTitle">
                   <label for="noticeTitle">제목</label>
                   <div><input type="text" name="noticeTitle" id="noticeTitle" required="required"></div>
@@ -84,39 +160,304 @@
                   <div><input type="text" th:value="${member.memberName}" readonly></div>
                   <div><input type="hidden" name="emailId" id="emailId" th:value="${member.emailId}" readonly></div>
                 </div>
+                <div class="editor">
+                  <button type="button" class="btn btn-sm btn-light" data-toggle="modal" data-target="#jyModal_confirm" onclick="saveList();">임시 저장된 글</button>
+                </div>
                 <div class="inputText">
                   <textarea id="noticeContent" name="noticeContent" required="required" style="resize: none;"></textarea>
                 </div>
                 <script>
-                  $('#noticeContent').summernote({
-                      width: 1280,
-                      height: 1024,
-                      lang: 'ko-KR',
-                      toolbar: [
-                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['font', ['strikethrough', 'superscript', 'subscript']],
-                        ['fontname', ['fontname']],
-                        ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['table', ['table']],
-                        ['insert', ['link', 'picture', 'video']],
-                        ['view', ['fullscreen', 'codeview', 'help']]
-                      ]
-                    });
+              	  $('#noticeContent').summernote({
+                    width: 1280,
+                    height: 1024,
+                    lang: 'ko-KR',
+                    toolbar: [
+                      ['style', ['bold', 'italic', 'underline', 'clear']],
+                      ['font', ['strikethrough', 'superscript', 'subscript']],
+                      ['fontname', ['fontname']],
+                      ['color', ['color']],
+                      ['para', ['ul', 'ol', 'paragraph']],
+                      ['table', ['table']],
+                      ['insert', ['link', 'picture', 'video']],
+                      ['view', ['fullscreen', 'codeview', 'help']]
+                    ]
+                  });
                 </script>
                 <div class="attchFile">
                   <label for="files">첨부</label>
-                  <input type="file" id="files" name="files" multiple="multiple" onchange="fnFileCheck(this)">
+                  <input type="file" id="files" name="files" multiple="multiple" accept="undefined" onchange="fnFileCheck(this)">
                   <div id="fileList">첨부 파일의 목록이 이 곳에 표시됩니다</div>
+                  <input type="hidden" name="fileNo" id="fileNo"> <!-- 임시저장된 글에서 불러온 첨부파일번호 -->
+                  <input type="hidden" name="delFile" id="delFile"> <!-- 불러올 첨부파일 삭제할 때 넘기는 파일번호 -->
+                  <input type="hidden" name="changeName" id="changeName"> <!-- 불러올 첨부파일 삭제할 때 넘기는 파일경로 -->
+                </div>
+                <div class="wrap-attach">
+                  <!-- 파일 첨부 스타일 -->
+                  <ul class="file-wrap"></ul>
+                  <!-- 이미지 첨부 스타일 -->
+                  <ul class="img-wrap"></ul>
+                  <!-- 파일 첨부 시 변형되는 건 다우오피스 참고 -->
                 </div>
                 <div class="btnWrap">
                   <input type="button" class="btn btn-primary btn-rounded btn-sm" value="작성완료" onclick="fnAddNotice()">
-                  <input type="button" class="btn btn-outline-secondary btn-rounded btn-sm" value="임시저장" onclick="fnTempSave()">
+                  <input type="button" class="btn btn-outline-secondary btn-rounded btn-sm btnSave" value="임시저장">
                   <input type="button" class="btn btn-outline-secondary btn-rounded btn-sm" value="돌아가기" onclick="fnList()"> <!-- 바로 전 목록으로 돌아가기 -->
                 </div>
               </form>
             </div> <!--/* board-table 끝나는 지점 */-->
           </div> <!--/* board-main 끝나는 지점 */-->
+          
+          <!-- 모달: 제목 있음 / 버튼 2개 -->
+          <div class="modal" id="jyModal_confirm">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                  <h6 class="modal-title">임시 저장된 글</h6>
+                  <button type="button" class="modal_close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body" style="text-align: center;">
+                  <ul class="list-line">
+                        
+                  </ul>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-jyok" id="realSpam" data-dismiss="modal">확인</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 모달 끝 -->
+          
+          
+          <script>
+          /*
+            function fileChange(){
+              // 파일이름 li로 뽑아주는 함수
+              
+              let fileInput = $(".input-file")[0]; // input타입 객체 담기
+            
+              let file = fileInput.files; // file 리스트에 각각 담기 (한 개여도 리스트로 취급)
+              
+              let value = '<li>'
+                    + '<span class="item-file">'
+                    +   '<span class="btn-wrap" title="삭제">'
+                    +     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="deleteBtn" onclick="deleteLi();" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
+                    +   '</span>'
+                    +   '<span class="ic-file">'
+                    +     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="rgb(0, 135, 239)" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-slack"><path d="M22.08 9C19.81 1.41 16.54-.35 9 1.92S-.35 7.46 1.92 15 7.46 24.35 15 22.08 24.35 16.54 22.08 9z"></path><line x1="12.57" y1="5.99" x2="16.15" y2="16.39"></line><line x1="7.85" y1="7.61" x2="11.43" y2="18.01"></line><line x1="16.39" y1="7.85" x2="5.99" y2="11.43"></line><line x1="18.01" y1="12.57" x2="7.61" y2="16.15"></line></svg>'
+                    +   '</span>'
+                    +   '<span class="name">'
+                    +     file[0].name
+                    +   '</span>'
+                    + '</span>'
+                    + '</li>';
+              
+              $(".file-wrap").html(value);
+              
+            }*/
+          
+            $(document).ready(function() {
+              $(document).on('click', '.btnSave', function() {
+                
+                // form 요소를 FormData로 만들기 (input 타입에 있는 값들 담김, 하지만 첨부파일은 담기지 않음)
+                let formData = new FormData(document.getElementById('frmWrite'));
+                
+                // 첨부파일 뽑아서 변수에 담기
+                let files = $('#files')[0].files;
+                
+                // FormData에 첨부파일도 더하기
+                formData.append('file', files[0]);
+                
+                $.ajax({
+                  type: 'post',
+                  url: '/notice/tempSave.do',
+                  data: formData,
+                  processData: false,
+                  contentType: false,
+                  dataType: 'json',
+                  success: function(data){
+                    if(data.result > 0){
+                      alert('게시글이 임시저장되었습니다.');
+                      $('input[name=noticeNo]').val(data.noticeNo);
+                    }else{
+                      alert('게시글 임시저장에 실패하였습니다');
+                    }
+                    console.log('성공');
+                  },error: function(){
+                    console.log('실패');
+                  }
+                });
+                
+              })
+            })
+          
+            function saveList(){
+            	let list;
+                $.ajax({
+                	type: 'get',
+                  url: '/notice/saveList.do',
+                  data: 'emailId=' + emailId,
+                  dataType: 'json',
+                  success: function(resData){
+                	  console.log(resData.saveList);
+                    list = resData.saveList;
+                    let value = '';
+                    let lastNo = list.length - 1;
+                    
+                    if(list.length == 0){ // 조회된 list가 없을 때
+                      
+                      value += '<li class="last">'
+                    	      +    '<div style="text-align:center">'
+                            +      '<span>임시 저장된 글이 없습니다.</span>'
+                            +    '</div>'
+                  
+                    } else { // 조회된 list가 있을 때
+                      
+                      if(list.length != 1){
+                        for(var i = 0; i < list.length - 1; i++){
+                          value += '<li>'
+                              + '<div>'
+                              +   '<input type="hidden" class="noticeNo" name="noticeNo" value="' + list[i].noticeNo + '">'
+                              +   '<a onclick="selectSave($(this).prev());"><span class="subject">' + list[i].noticeTitle + '</span>'
+                              +   '</a>'
+                              +   '<span class="date">' + fnDateFormat(list[i].noticeCreatedAt) + '</span>'
+                              +   '<span class="deleteBtn">'
+                              +     'X'
+                              +   '</span>'
+                              + '</div>'
+                              +'</li>';
+                        }
+                      }
+                      
+                      value += '<li class="last">'
+                            + '<div>'
+                            +   '<input type="hidden" class="noticeNo" name="noticeNo" value="' + list[lastNo].noticeNo + '">'
+                            +   '<a onclick="selectSave($(this).prev());"><span class="subject">' + list[lastNo].noticeTitle + '</span>'
+                            +   '</a>'
+                            +   '<span class="date">' + fnDateFormat(list[lastNo].noticeCreatedAt) + '</span>'
+                            +   '<span class="deleteBtn">'
+                            +     'X'
+                            +   '</span>'
+                            + '</div>'
+                            +'</li>';
+                      
+                    }
+                    
+                    $('.list-line').html(value);
+                    
+                  },error: function(){
+                    console.log('임시저장 리스트 ajax 통신 실패');
+                  }
+                });
+                
+              }
+              
+              function selectSave(result){
+                
+                // 왜 여기서 $(this).prev().val()이 안 먹히는지 궁금함
+                var noticeNum = result.val();
+                
+                $('#realSpam').click();
+                
+                $.ajax({
+                	type: 'get',
+                  url: '/notice/getSaveByNo.do',
+                  data: 'noticeNo=' + noticeNum,
+                  success: function(map){
+                    
+                    // notice 객체 뿌리기
+                    $('input[name=noticeNo]').val(map.save.noticeNo);
+
+                    $('#noticeTitle').val(map.save.noticeTitle);
+                    var noticeContent = map.save.noticeContent;
+                    console.log('noticeContent : ' + noticeContent);
+                    //$('#noticeContent').summernote('editor.insertText', noticeContent);
+                    $(".note-editable").html(noticeContent);
+                    
+                    // 첨부파일 있으면 뿌리기
+                    if(map.noticeFileList != null && map.noticeFileList.length != 0){
+                    	let fileList = map.noticeFileList;
+                    	let value = '';
+                    	for(var i = 0; i < fileList.length - 1; i++){
+                      	console.log(map.noticeFileList);
+                        // 파일번호, 파일이름 뿌리고
+                        // 기존파일 삭제버튼 클릭시 input파일에 파일번호, 경로 넣어주기 => db에서 삭제 후 서버에서 삭제
+                        // 기존파일 그대로 넘어가면 파일 변경할 필요 없음
+                        // 파일 변경시 기존파일 삭제하기 위해 input파일에 파일번호, 경로 넘기고
+                        // 새로운 input 넘기면 됨 (비교는 새로운 input값이 넘어오면 기존파일 삭제, 안 넘어오면 기존파일 그대로)
+                        // 새로운 파일 선택해서 li 보여질 때 삭제버튼은 기존파일 삭제버튼과 다르게 지정(클래스 부여)
+                        $("#fileNo").val(map.noticeFileList[i].noticeFileNo);
+                        $("#changeName").val(map.noticeFileList[i].noticeFileSystemName);
+                        value = '<li id="originFile">'
+                        + '<span class="item-file">'
+                        +   '<span class="btn-wrap" title="삭제">'
+                        +     '<span class="deleteBtn" onclick="deleteFile();">X</span>'
+                        +   '</span>'
+                        +   '<span class="name">'
+                        +     map.noticeFileList.noticeFileOriginName
+                        +   '</span>'
+                        + '</span>'
+                        + '</li>';
+                    	}
+                
+                    $('#fileList').html(value);
+                    //$('.file-wrap').html(value);
+                      
+                    }else{
+                      $('#fileNo').val('');
+                      $('#changeName').val('');
+                      $('.file-wrap').html('');
+                    }
+                    
+                  },error: function(){
+                    console.log('임시저장 게시글 ajax 통신 실패');
+                  }
+                });
+                
+              }
+              
+              $(document).ready(function() {
+            	  $(document).on('click', '.deleteBtn', function() {
+              	  var saveNoticeNo = $(this).closest('div').find('.noticeNo').val();
+              	  console.log(saveNoticeNo);
+              	  alert('삭제?');
+              	  
+              	  $.ajax({
+              		  type: 'post',
+              		  url: '/notice/deleteSave.do',
+              		  data: 'noticeNo=' + saveNoticeNo,
+              		  dataType: 'json',
+              		  success: function(resData) {
+            				  console.log(resData.deleteResult);
+              			  if(resData.deleteResult){
+              				  console.log('성공');
+              				  $(this).parent().parent().parent().remove();
+              				  $(document).ready(function(){
+              					 saveList();
+              				  });
+              			  } else {
+              				  console.log('실패');
+              			  }
+              		  }  
+              	  })
+            	  });
+              });
+              
+              function deleteFile(){
+                $("#originFile").remove(); // li 요소 삭제
+                
+                const fileNo = $("#fileNo").val(); // 기존 파일 번호 변수에 담기
+                $("#delFile").val(fileNo); // 삭제할 번호로 넘기기
+                
+                $("#fileNo").val(""); // 초기화
+                
+                console.log(fileNo);
+                console.log($("#delFile").val()); // 삭제 후 다시 빈칸으로 돌려놓기 !!!!!!!!!!!!!!!!!!!!!!!!!
+              } 
+          </script>
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
@@ -124,6 +465,7 @@
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
   <!--/* footer 영역 */-->
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
 </body>

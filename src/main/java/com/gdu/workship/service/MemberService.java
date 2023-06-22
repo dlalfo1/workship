@@ -12,6 +12,8 @@ public interface MemberService {
   public void loadMemberList(HttpServletRequest request, Model model);
   public Map<String, Object> loadMemberList2(HttpServletRequest request);
   public Map<String, Object> loadRetiredMemberList(HttpServletRequest request);
+  public Map<String, Object> verifyEmail(String emailId);
+  public void loadDeptList(Model model);
   public int addMember(MultipartHttpServletRequest request);
   public void memberDetail(int memberNo, Model model);
   public int modifyMember(MultipartHttpServletRequest request);

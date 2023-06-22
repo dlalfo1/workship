@@ -25,7 +25,7 @@ import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.domain.RetiredMemberDTO;
 import com.gdu.workship.mapper.MemberMapper;
 import com.gdu.workship.util.MyFileUtil;
-import com.gdu.workship.util.PageUtil;
+import com.gdu.workship.util.PageUtil2;
 
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
@@ -35,7 +35,7 @@ import net.coobird.thumbnailator.Thumbnails;
 public class MemberServiceImpl implements MemberService {
 
   private final MemberMapper memberMapper;
-  private final PageUtil pageUtil;
+  private final PageUtil2 pageUtil;
   private final MyFileUtil myFileUtil;
   
   @Override
@@ -151,6 +151,18 @@ public class MemberServiceImpl implements MemberService {
     System.out.println(pageUtil.getEndPage());
     System.out.println(pageUtil.getTotalPage());
     return result;
+  }
+  
+  @Override
+  public Map<String, Object> verifyEmail(String emailId) {
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("enableEmail", memberMapper.selectMemberByEmailId(emailId) == null);
+    return map;
+  }
+  
+  @Override
+  public void loadDeptList(Model model) {
+    model.addAttribute("deptList", memberMapper.getDeptList());
   }
   
   @Override

@@ -142,11 +142,11 @@
                   <button type="button" class="btn btn-primary btn-rounded btn-sm" onclick="fnWrite()">새글쓰기</button>
                   <button type="button" class="btn btn-danger btn-rounded btn-sm" data-toggle="modal" data-target="#jyModal_confirm">신고</button>
                 <!--/* 
-                <th:block th:if="${session.loginId == n.MemberDTO.emailId}">
+                <th:block th:if="${session.loginMember.emailId == n.MemberDTO.emailId}">
                 </th:block>
                  */-->
                 <!--/* 
-                <th:block th:if="${session.loginId != n.MemberDTO.emailId}">
+                <th:block th:if="${session.loginMember.emailId != n.MemberDTO.emailId}">
                 </th:block>
                  */-->
                   <button type="button" class="btn btn-outline-secondary btn-rounded btn-sm" th:onclick="fnEdit()">수정</button>
@@ -169,144 +169,147 @@
                 <!-- Modal body -->
                 <div class="modal-body" style="text-align: left; padding-left: 30px;">
                   <p><b>신고사유를 선택해주세요</b></p>
-                  <input type="hidden" id="real">
-                  <p><input type="radio" class="rpRadio" value="욕설">&nbsp;&nbsp;욕설이 포함된 게시글</p>
-                  <p><input type="radio" class="rpRadio" value="비방">&nbsp;&nbsp;비하하거나 비방하는 내용의 게시글</p>
-                  <p><input type="radio" class="rpRadio" value="부적절한 내용">&nbsp;&nbsp;부적절한 내용이 포함된 게시글</p>
-                  <p><input type="radio" id="etcBtn" class="rpRadio" value="기타">&nbsp;&nbsp;기타</p>
-                  <textarea id="rpEtc" cols="48" rows="4" style="resize: none;" disabled></textarea>
+                  <input type="hidden" id="reportContent">
+                  <div class="form-check" style="display:block; margin-top:0.9em;">
+                    <label for="a" class="form-check-label">
+                    <input type="radio" id="a" name="rpRadio" class="rpRadio form-check-input" value="욕설이 포함된 게시글" checked>&nbsp;&nbsp;욕설이 포함된 게시글
+                    </label>
+                  </div>
+                  <div class="form-check" style="display:block; margin-top:0.9em;">
+                    <label for="b" class="form-check-label">
+                    <input type="radio" id="b" name="rpRadio" class="rpRadio form-check-input" value="비하하거나 비방하는 내용의 게시글">&nbsp;&nbsp;비하하거나 비방하는 내용의 게시글
+                    </label>
+                  </div>
+                  <div class="form-check" style="display:block; margin-top:0.9em;">
+                    <label for="c" class="form-check-label">
+                    <input type="radio" id="c" name="rpRadio" class="rpRadio form-check-input" value="부적절한 내용이 포함된 게시글">&nbsp;&nbsp;부적절한 내용이 포함된 게시글
+                    </label>
+                  </div>
+                  <div class="form-check" style="display:block; margin-top:0.9em;">
+                    <label for="etcBtn" class="form-check-label" style="display: block">
+                    <input type="radio" id="etcBtn" name="rpRadio" class="rpRadio form-check-input" value="기타">&nbsp;&nbsp;기타
+                    </label>
+                  </div>
+                  <textarea class="form-control" id="rpEtc" cols="48" rows="4" style="resize: none;" disabled></textarea>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-rounded btn-sm" id="realSpam" onclick="report(this);">신고</button>
+                <button type="button" class="btn btn-danger btn-rounded btn-sm" id="realSpam" onclick="report();">신고</button>
                 <button type="button" class="btn btn-outline-secondary btn-sm btn-jycancle" data-dismiss="modal">취소</button>
                 </div>
               </div>
             </div>
           </div> <!--/* 신고하기 모달창 */-->
           
-          <!-- 토스트 메시지 -->
-          <div id="toast" class="">
-              
-            </div>
             
-            <script th:inline="javascript">
+          <script th:inline="javascript">
+          
+            var reportRefNo = '';
+            
+            reportRefNo = /*[[${n.noticeNo}]]*/ null;
+            console.log(reportRefNo);
+            
+            var emailId = /*[[${session.loginMember.emailId}]]*/ null;
+            console.log(emailId);
+            
+            var inputReportContent = $('#reportContent');
+            var reportContent = $('#a').val();
+            console.log('rpRadio : ' + $('#a').val());
+            inputReportContent.attr('value', reportContent);
+            console.log('fd :' + inputReportContent.val());
+            
+            $(document).on("click", ".rpRadio", function(){
               
-              $(document).on("click", ".rpRadio", function(){
-                
-                $(this).parent().siblings().children("input").prop("checked", false);
-                
-                if($(this).val() != '기타'){
-                  $('#real').val($(this).val());
-                }else{
-                  $('#rpEtc').attr("disabled", false);
-                  $('#real').val($(this).parent().next().val());
-                }
-                
-                if($('#etcBtn').is(":checked")){
-                  $('#rpEtc').attr("disabled", false);
-                }else{
-                  $('#rpEtc').attr("disabled", true);
-                }
-                
-              })
+              if($(this).val() != '기타'){
+              	reportContent = $(this).val();
+              } else {
+                $('#rpEtc').attr("disabled", false);
+              	$('#rpEtc').focus();
+                reportContent = $(this).parent().parent().next().val();
+                console.log('reportContent1 :' + reportContent);
+              }
+              console.log('reportContent2 :' + reportContent);
+              
+              if($('#etcBtn').is(":checked")){
+                $('#rpEtc').attr("disabled", false);
+              } else {
+                $('#rpEtc').attr("disabled", true);
+              }
+              
+            })
+            
 
-              // 신고
-              function report(){
-                
-                // type이 1이면 게시글번호, type이 2면 댓글번호
-                let reportRefNo = '';
-                
-                reportRefNo = /*[[${n.noticeNo}]]*/ null;
-                console.log(reportRefNo);
-                
-                let emailId = /*[[${session.loginId}]]*/ null;
-                
+            // 신고
+            function report(){
+              
+          	  if(confirm('게시글을 신고하시겠습니까?') == false) {
+              	return;
+              }
+          	  
+              new Promise(function(resolve, reject){
                 // 유저가 동일한 게시글을 신고한 이력이 있는지 조회
                 $.ajax({
-                  url: "rpCheck.bo",
+                	type: 'get',
+                  url: '/report/reportCheck.do',
                   data: {
-                    reportRefNo: reportRefNo,
+                	  boardNo: reportRefNo,
                     emailId: emailId
                   },
-                  success: function(rep){
-
-                    if(rep == null){ // 이력 없음
-                      
-                      // type이 1이면 게시글번호, type이 2면 댓글번호
-                      let reportRefNo = '';
-                      
+                  dataType: 'json',
+                  success: function(resData){
+                    if(resData.check == null){ // 이력 없음
                       reportRefNo = /*[[${n.noticeNo}]]*/ null;
                       
                       if($('#etcBtn').is(":checked")){
-                        $('#real').val($('#rpEtc').val());
+                      	if($('#rpEtc').val() == '') {
+                      		$('#reportContent').val('기타');
+                      	} else {
+                          $('#reportContent').val($('#rpEtc').val());
+                      	}
+                        reportContent = $('#reportContent').val();
+                        console.log(reportContent);
                       }
+                      reportContent = $('#reportContent').val();
+                      console.log(reportContent);
+                      resolve();
                       
-                      let value = $('#real').val();
-                      
-                      $.ajax({
-                        url: 'report.bo',
-                        data: {
-                          boardNo: reportRefNo,
-                          emailId: emailId,
-                          reportContent: value
-                        },
-                        success: function(r){
-                          if(r.result > 0){
-                            
-                            toast('신고가 접수되었습니다.');
-                            
-                            $('.btn-jycancle').click();
-                            
-                          } else {
-                            console.log('신고 실패');
-                          }
-                        },error: function(){
-                          console.log('신고 ajax 실패');
-                        }
-                      });
-                      
-                    } else { // 이력 있음
-
-                      toast('이미 신고가 접수되었습니다.');
-                    
+                    } else {   // 이력 있음
                       $('.btn-jycancle').click();
-                      
                     }
-                    
-                  },error: function(){
-                    console.log('신고 여부 ajax 실패');
+                  },
+                  error: function(jqXHR){
+                      reject(jqXHR); 
                   }
-                });
-                
-              }
-              
-              // 토스트
-              let removeToast;
-                      
-              function toast(string) {
-                const toast = document.getElementById('toast');
-  
-                if(toast.classList.contains('reveal')) {
-                  (clearTimeout(removeToast), removeToast = setTimeout(function () {
-                    document.getElementById('toast').classList.remove('reveal')
-                  }, 1000))
-                } else {
-                  removeToast = setTimeout(function () {
-                    document.getElementById('toast').classList.remove('reveal')
-                  }, 1500)
-                }
-                toast.classList.add('reveal'),
-                toast.innerText = string
-              }
-            </script>
-          
-          
-          
-          
-          
-          
-          
+                })
+              }).then(function(){
+              	$.ajax({
+              		type: 'post',
+                  url: '/report/addReport.do',
+                  data: {
+                    boardNo: reportRefNo,
+                    emailId: emailId,
+                    reportContent: reportContent
+                  },
+                  dataType: 'json',
+                  success: function(r){
+                  	console.log('addReportSuccess');
+                    if(r.isAdd > 0){
+                      $('.btn-jycancle').click();
+                      alert('신고가 접수되었습니다.');                        
+                    } else {
+                      console.log('신고 실패');
+                    }
+                  },
+                  error: function(){
+                    console.log('신고 ajax 실패');
+                  }
+                })
+              }).catch(function(param){
+              	console.log('신고 ajax1 실패');
+              })
+            }
+            
+          </script>
           
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
@@ -314,6 +317,7 @@
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
   <!--/* footer 영역 */-->
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
 </body>
