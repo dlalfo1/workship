@@ -206,13 +206,12 @@
 				                  let insertResult = resData.insertResult;
 				                  if(updateResult == 'success' && insertResult == 'success') {
 				                    alert('휴가신청내역이 승인되었습니다.');
+				                    location.reload();
 				                  } else {
 				                    alert('승인에 실패하였습니다.');
 				                  }
 				                }
 				              })
-				              $(this).addClass('invisible');
-				              $(this).closest('td').text('승인완료');
 				            }
 				          })
 				        </script>

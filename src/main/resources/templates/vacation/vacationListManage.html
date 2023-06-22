@@ -232,11 +232,6 @@
 						    	var vacationCategory = btn.closest('tr').find('select').val();
 						    	var vacationStartDate = btn.closest('tr').find('input[type=text]').first().val();
 						    	var vacationEndDate = btn.closest('tr').find('input[type=text]').last().val();
-						    	console.log(approvalNo);
-						    	console.log(vacationNo);
-						    	console.log(vacationCategory);
-						    	console.log(vacationStartDate);
-						    	console.log(vacationEndDate);
 						    	$.ajax({
 						    		type: 'post',
 						    		url: '/vacation/modifyVacation.do',
@@ -246,21 +241,15 @@
 						    			if(resData.updateApprovalResult == 'fail' || resData.updateVacationResult == 'fail'){
 						    				alert('수정에 실패하였습니다.');
 						    			} else {
-		                    btn.closest('tr').find('input[type=text]').addClass('invisible');
-		                    btn.closest('tr').find('span').removeClass('invisible');
-		                    btn.parent().prev().removeClass('invisible');
-		                    btn.closest('tr').find('select').addClass('invisible');
-		                    btn.parent().addClass('invisible');
-		                    btn.closest('tr').find('span').first().text(resData.vacationCategory);
-		                    btn.closest('tr').find('span').first().next().text(resData.vacationStartDate);
-		                    btn.closest('tr').find('span').last().text(resData.vacationEndDate);
-		                    btn.closest('tr').find('.vacationDay').text(resData.vacationDay);
+		                    location.reload();
 						    			}
 						    		}
 						    	})
 						    })
 						    
 						    $('.deleteBtn').on('click', function(){
+						    	var btn = $(this);
+						    	var vacationNo = btn.closest('td').find('.vacationNo').val();
 						    	
 						    })
 						  </script>

@@ -26,7 +26,7 @@
 	        <div class="col-md-8 grid-margin mb-3" style="float: none; margin: 0 auto;">
 	          <div class="card">
 	            <div class="card-body">
-	              <p class="card-title">조회 조건 설정</p>
+	              <p class="card-title">출퇴근기록 조회 조건 설정</p>
 	              <form id="frmManageSearch" th:action="@{/attendance/attendManageList.do}">
 									<table class="table table-sm table-borderless table-responsive-md" style="width: 90%; float: none; margin: 0 auto;">
 										<tr>
@@ -262,14 +262,7 @@
 		           	  if(resData.result == 'fail'){
 		           		  alert('수정에 실패하였습니다.');
 		           	  } else {
-	                  btn.closest('tr').find('input[type=text]').addClass('invisible');
-	                  btn.closest('tr').find('span').removeClass('invisible');
-	                  btn.parent().prev().removeClass('invisible');
-	                  btn.parent().addClass('invisible');
-		           		  btn.closest('tr').find('span').first().text(resData.astarttime.substr(11, 8));
-		           		  btn.closest('tr').find('span').last().text(resData.aendtime.substr(11, 8));
-		           		  btn.closest('tr').find('.worktimeTd').text(resData.worktime.substr(11, 8));
-		           		  btn.closest('tr').find('.attendanceTd').text(resData.attendance);
+		           		  location.reload();
 		           	  }
 		             }
 	              })

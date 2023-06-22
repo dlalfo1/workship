@@ -186,10 +186,6 @@ public class VacationServiceImpl implements VacationService {
 		parameter2.put("vacationDays", vacationDayGap);
 		vacationMapper.updateDayoffCount(parameter2);
 		map.put("updateVacationResult", updateVacationResult);
-		map.put("vacationCategory", vacationCategory);
-		map.put("vacationStartDate", vacationStartDate);
-		map.put("vacationEndDate", vacationEndDate);
-		map.put("vacationDay", modifiedvacationDay);
 		return map;
 	}
 }
