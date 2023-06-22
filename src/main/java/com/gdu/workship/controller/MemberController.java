@@ -43,6 +43,18 @@ public class MemberController {
     return memberService.loadRetiredMemberList(request);
   }
   
+  @ResponseBody
+  @GetMapping(value="/member/verifyEmail.do", produces="application/json")
+  public Map<String, Object> verifyEmail(@RequestParam("emailId") String emailId) {
+    return memberService.verifyEmail(emailId);
+  }
+  
+  @GetMapping("/member/memberCreate2.html")
+  public String memberCreate(Model model) {
+    memberService.loadDeptList(model);
+    return "member/memberCreate";
+  }
+  
   @PostMapping("/member/addMember.do")
   public String addMember(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
     redirectAttributes.addFlashAttribute("addReuslt", memberService.addMember(request));
@@ -71,5 +83,8 @@ public class MemberController {
     redirectAttributes.addFlashAttribute("removeResult", memberService.removeMember(memberNo));
     return "redirect:/member/memberList.do";
   }
+  
+  
+  
 
 }

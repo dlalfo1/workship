@@ -4,6 +4,11 @@
 <head th:replace="~{/layout/header::headFrag('사원 정보 수정')}"></head>
 <script th:inline="javascript">
   var frm;
+  // 전역 변수 (각종 검사 통과 유무를 저장하는 변수)
+  var verifyName = false;
+  var verifyMobile = false;
+  var verifyBirthday = false;
+  var verifyPw = false;
   
   function isImageFile(file) {
       var ext = file.name.split(".").pop().toLowerCase(); // 파일명에서 확장자를 가져온다. 
@@ -46,8 +51,25 @@
   }
   
   function fnModifyMember() {
-	  $('#btnModify').on('click', function(){
+	  $('#btnModify').on('click', function(event){
       frm.attr('action', '/member/modifyMember.do');
+      if(verifyName == false){
+        alert('이름을 확인하세요.');
+        event.preventDefault();
+        return;
+      } else if(verifyMobile == false){
+        alert('휴대전화번호를 확인하세요.');
+        event.preventDefault();
+        return;
+      } else if(verifyBirthday == false){
+        alert('생년월일을 확인하세요.');
+        event.preventDefault();
+        return;
+      } else if(verifyPw == false){
+        alert('비밀번호를 확인하세요.');
+        event.preventDefault();
+        return;
+      } 
       frm.submit();
     })      
   }
@@ -63,8 +85,91 @@
   function fnCancel() {
     history.back();
   }
+  
+  // 1. 이름
+  function fnCheckName(){
+    verifyName = $('#memberName').val() != '';
+    $(document).on('keyup', '#memberName', function(){
+      verifyName = $(this).val() != '';
+    })
+    
+  }
+  
+  // 2. 휴대전화
+  function fnCheckMobile(){
+    // 정규식
+    let mobile = $('#tel').val();
+    let regMobile = /^010[0-9]{7,8}$/;
+    verifyMobile = regMobile.test(mobile);
+    
+    $('#tel').on('keyup', function(){
+      
+      // 입력한 휴대전화
+      mobile = $(this).val();
+      
+      // 정규식 검사
+      verifyMobile = regMobile.test(mobile);
+      if(verifyMobile){
+        $('#msgMobile').text('');
+      } else {
+        $('#msgMobile').text('휴대전화 입력을 확인하세요.');        
+      }
+      
+    })
+    
+  }
+  
+  // 3. 생년월일
+  function fnCreateDate(){
+	  let birthday = $('#birthday').val();
+	  let regBirthday = /^(19[0-9][0-9]|20\d{2})(0[0-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/;
+	  verifyBirthday = regBirthday.test(birthday);
+    $('#birthday').on('keyup', function(){
+      birthday = $(this).val(); 
+      verifyBirthday = regBirthday.test(birthday);
+    })
+    
+  }
+  
+  // 4. 비밀번호 검사 (정규식)
+  function fnCheckPw(){
+	  let pw = $('#pw').val();
+	  pwLength = pw.length;
+    validCount = /[a-z]/.test(pw)         //   소문자를 가지고 있으면 true(1), 없으면 false(0)
+               + /[A-Z]/.test(pw)         //   대문자를 가지고 있으면 true(1), 없으면 false(0)
+               + /[0-9]/.test(pw)         //     숫자를 가지고 있으면 true(1), 없으면 false(0)
+               + /[^a-zA-Z0-9]/.test(pw); // 특수문자를 가지고 있으면 true(1), 없으면 false(0)
+    verifyPw = (pwLength >= 4) && (pwLength <= 20) && (validCount >= 3);
+    
+    $('#pw').on('keyup', function(){
+    
+      // 입력한 비밀번호
+      pw = $(this).val();
+      
+      // 길이(4~20자) 및 정규식(소문자+대문자+숫자+특수문자 사용 가능, 3개 이상 조합)
+      let pwLength = pw.length;
+      let validCount = /[a-z]/.test(pw)         //   소문자를 가지고 있으면 true(1), 없으면 false(0)
+                     + /[A-Z]/.test(pw)         //   대문자를 가지고 있으면 true(1), 없으면 false(0)
+                     + /[0-9]/.test(pw)         //     숫자를 가지고 있으면 true(1), 없으면 false(0)
+                     + /[^a-zA-Z0-9]/.test(pw); // 특수문자를 가지고 있으면 true(1), 없으면 false(0)
+      verifyPw = (pwLength >= 4) && (pwLength <= 20) && (validCount >= 3);
+      if(verifyPw){
+        $('#msgPw').text('사용 가능한 비밀번호입니다.');
+      } else {
+        $('#msgPw').text('4~20자, 소문자+대문자+숫자+특수문자 사용 가능, 3개 이상 조합');
+      }
+    
+    })
+    
+  }
+
   $(function(){
     fnPreview();
+    
+    fnCheckName();
+    fnCheckMobile();
+    fnCreateDate();
+    fnCheckPw();
     
     // 사원의 부서, 직위, 상태 db값으로 selected
     let deptNo = /*[[${m.departmentDTO.deptNo}]]*/ null;
@@ -143,7 +248,7 @@
                       <th:block th:each="dept:${deptList}">
                           <option th:value="${dept.deptNo}" th:text="${dept.deptName}"></option>
                       </th:block>
-                    </select>          
+                    </select>
                     <select name="jobNo" class="job" required>
                       <option value="">직위 선택</option>
                       <option value="6">사원</option>
@@ -184,6 +289,7 @@
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
   <!--/* footer 영역 */-->
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
 </body>

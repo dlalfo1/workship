@@ -20,6 +20,7 @@ public interface MemberMapper {
   public int getMemberSearchCount(Map<String, Object> map);
   public DepartmentDTO selectDept(int deptNo);
   public JobDTO selectJob(int jobNo);
+  public MemberDTO selectMemberByEmailId(String emailId);
   public int createMember(MemberDTO member);
   public MemberDTO getMemberByNo(int memberNo);
   public int modifyMember(MemberDTO member);

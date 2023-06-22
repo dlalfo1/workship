@@ -25,4 +25,9 @@ public interface NoticeBoardService {
   public int removeNotice(int noticeNo);
   public int modifyNotice(MultipartHttpServletRequest multipartRequest);
   public int removeNoticeFile(int noticeFileNo);
+  public Map<String, Object> tempSave(MultipartHttpServletRequest multipartRequest);
+  public Map<String, Object> getSaveList(HttpServletRequest request);
+  public Map<String, Object> getSaveByNo(HttpServletRequest request);
+  public Map<String, Object> deleteSave(HttpServletRequest request);
+  
 }

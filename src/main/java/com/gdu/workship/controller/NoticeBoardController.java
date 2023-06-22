@@ -104,5 +104,35 @@ public class NoticeBoardController {
     noticeBoardService.removeNoticeFile(noticeFileNo);
     return "redirect:/notice/noticeDetail.html?noticeNo=" + noticeNo;
   }
+  
+  
+
+  // 게시글 임시저장
+  @PostMapping(value="/notice/tempSave.do", produces="application/json")
+  @ResponseBody
+  public Map<String, Object> ajaxSaveBoard(MultipartHttpServletRequest request) {
+    return noticeBoardService.tempSave(request);
+  }
+  
+  // 임시저장 리스트 조회
+  @GetMapping(value="/notice/saveList.do", produces="application/json")
+  @ResponseBody
+  public Map<String, Object> ajaxSaveList(HttpServletRequest request) {
+    return noticeBoardService.getSaveList(request);
+  }
+  
+  // 임시저장 게시글 조회, 뫄델
+  @GetMapping(value="/notice/getSaveByNo.do", produces="application/json")
+  @ResponseBody
+  public Map<String, Object> getSaveByNo(HttpServletRequest request) {
+    return noticeBoardService.getSaveByNo(request);
+  } 
+
+  // 임시저장 게시글 삭제
+  @PostMapping(value="/notice/deleteSave.do", produces="application/json")
+  @ResponseBody
+  public Map<String, Object> deleteSave(HttpServletRequest request) {
+    return noticeBoardService.deleteSave(request);
+  } 
 	
 }
