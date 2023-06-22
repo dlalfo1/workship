@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace는 @Mapper를 지정한다. -->
+<mapper namespace="com.gdu.workship.mapper.TodolistMapper">
+
+  <select id="getUndoList" parameterType="int" resultType="TodolistDTO">
+    SELECT TODOLIST_NO, MEMBER_NO, TODO_TITLE, TODO_MEMO, TODO_STATE
+      FROM TODOLIST_T
+     WHERE MEMBER_NO = #{memberNo}
+       AND TODO_STATE = 1
+  </select>
+  
+  <select id="getDoingList" parameterType="int" resultType="TodolistDTO">
+    SELECT TODOLIST_NO, MEMBER_NO, TODO_TITLE, TODO_MEMO, TODO_STATE
+      FROM TODOLIST_T
+     WHERE MEMBER_NO = #{memberNo}
+       AND TODO_STATE = 2
+  </select>
+  
+  <select id="getDoneList" parameterType="int" resultType="TodolistDTO">
+    SELECT TODOLIST_NO, MEMBER_NO, TODO_TITLE, TODO_MEMO, TODO_STATE
+      FROM TODOLIST_T
+     WHERE MEMBER_NO = #{memberNo}
+       AND TODO_STATE = 3
+  </select>
+  
+  <update id="updateState" parameterType="Map">
+    UPDATE TODOLIST_T
+       SET TODO_STATE = #{todoState}
+     WHERE TODOLIST_NO = #{todolistNo}
+  </update>
+  
+  <delete id="removeTodoByTodolistNo" parameterType="int">
+    DELETE FROM TODOLIST_T
+     WHERE TODOLIST_NO = #{todolistNo}
+  </delete>
+
+  <insert id="addTodolist" parameterType="Map">
+    INSERT INTO TODOLIST_T(MEMBER_NO, TODO_TITLE, TODO_MEMO, TODO_STATE)
+    VALUES (#{memberNo}, #{todoTitle}, #{todoMemo}, 1)
+  </insert>
+  
+  <select id="selectAllDoneCount" parameterType="int">
+    SELECT COUNT(*)
+      FROM TODOLIST_T
+     WHERE MEMBER_NO = #{memberNo}
+       AND TODO_STATE = 3
+  </select>
+  
+  <delete id="deleteAllDone" parameterType="int">
+    DELETE FROM TODOLIST_T
+     WHERE MEMBER_NO = #{memberNo}
+       AND TODO_STATE = 3
+  </delete>
+
+</mapper>

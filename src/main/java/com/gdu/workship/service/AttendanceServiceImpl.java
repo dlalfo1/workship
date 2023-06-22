@@ -16,10 +16,11 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import com.gdu.workship.domain.AttendManageDTO;
 import com.gdu.workship.domain.AttendanceDTO;
 import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.mapper.AttendanceMapper;
-import com.gdu.workship.util.PageUtil;
+import com.gdu.workship.util.PageUtil2;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,8 +29,9 @@ import lombok.RequiredArgsConstructor;
 public class AttendanceServiceImpl implements AttendanceService {
 
 	private final AttendanceMapper attendanceMapper;
-	private final PageUtil pageUtil;
+	private final PageUtil2 pageUtil;
 	
+	// 출퇴근조회페이지
 	@Override
 	public void getAttendancePage(int memberNo, Model model) {
 
@@ -152,6 +154,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 			attendance += attendanceArr[i] + ", ";
 		}
 		attendance += attendanceArr[length - 1];
+		if(attendanceArr.length == 4) {
+			attendance += ", '퇴근미처리'";
+		}
 		if(attendance.contains("지각") || attendance.contains("조퇴")) {
 			attendance += ", '지각/조퇴'";
 		}
@@ -160,7 +165,10 @@ public class AttendanceServiceImpl implements AttendanceService {
 		parameter.put("startDate", startDate);
 		parameter.put("endDate", endDate);
 		parameter.put("attendance", attendance);
+		
+		/* recordPerPage 수정하기 */
 		int recordPerPage = 5;
+		
 		int searchRecord = attendanceMapper.searchCount(parameter);
 		Optional<String> pageStr = Optional.ofNullable(request.getParameter("page"));
 		int page = Integer.parseInt(pageStr.orElse("1"));
@@ -173,6 +181,117 @@ public class AttendanceServiceImpl implements AttendanceService {
 		else {
 			map.put("result", list);
 			map.put("pageUtil", pageUtil);
+		}
+		return map;
+	}
+	
+	// 스케줄러
+	@Override
+	public void updateAllScehduler() {
+		List<Integer> memberNoList = attendanceMapper.getAllMemberNo();
+		for(int memberNo : memberNoList) {
+			AttendanceDTO attendanceDTO = attendanceMapper.getAttendanceYesterday(memberNo);
+			if(attendanceDTO == null) attendanceMapper.addAbsent(memberNo);
+			else {
+				Date aEndTime = attendanceDTO.getAendtime();
+				if(aEndTime == null) attendanceMapper.updateError(memberNo);
+			}
+		}
+	}
+	
+	// 출퇴근관리페이지
+	@Override
+	public void getAttendManagePage(Model model) {
+		model.addAttribute("attendanceList", attendanceMapper.getAllAttendanceToday());
+	}
+	
+	@Override
+	public void attendManageSearch(HttpServletRequest request, Model model) {
+		LocalDate now = LocalDate.now();
+		String thismonthStr = LocalDate.of(now.getYear(), now.getMonthValue(), 1).toString();
+		String startDateStr = request.getParameter("startDate");
+		if(startDateStr.isBlank()) startDateStr = thismonthStr;
+		int startyear = Integer.parseInt(startDateStr.substring(0, 4));
+		int startmonth = Integer.parseInt(startDateStr.substring(5, 7));
+		int startday = Integer.parseInt(startDateStr.substring(8, 10));
+		LocalDate startDate = LocalDate.of(startyear, startmonth, startday);
+		String endDateStr = request.getParameter("endDate");
+		String nowStr = now.toString();
+		if(endDateStr.isBlank()) endDateStr = nowStr;
+		int endyear = Integer.parseInt(endDateStr.substring(0, 4));
+		int endmonth = Integer.parseInt(endDateStr.substring(5, 7));
+		int endday = Integer.parseInt(endDateStr.substring(8, 10));
+		LocalDate endDate = LocalDate.of(endyear, endmonth, endday);
+		String[] attendanceArr = request.getParameterValues("attendance");
+		String attendance = "";
+		int length = attendanceArr.length;
+		String attendPath = "";
+		for(int i = 0; i < length - 1; i++) {
+			attendPath += "&attendance=" + attendanceArr[i];
+		}
+		attendPath += "&attendance=" + attendanceArr[length - 1];
+		for(int i = 0; i < length; i++) {
+			attendanceArr[i] = "'" + attendanceArr[i] + "'";
+		}
+		for(int i = 0; i < length - 1; i++) {
+			attendance += attendanceArr[i] + ", ";
+		}
+		attendance += attendanceArr[length - 1];
+		if(attendance.contains("지각") || attendance.contains("조퇴")) {
+			attendance += ", '지각/조퇴'";
+		}
+		Optional<String> opt1 = Optional.ofNullable(request.getParameter("queryNum"));
+		String queryNum = opt1.orElse("");
+		Optional<String> opt2 = Optional.ofNullable(request.getParameter("queryName"));
+		String queryName = opt2.orElse("");
+		Map<String, Object> parameter = new HashMap<>();
+		parameter.put("queryNum", queryNum);
+		parameter.put("queryName", queryName);
+		parameter.put("startDate", startDate);
+		parameter.put("endDate", endDate);
+		parameter.put("attendance", attendance);
+		
+		/* recordPerPage 수정하기 */
+		int recordPerPage = 10;
+		int searchRecord = attendanceMapper.getManageSearchCount(parameter);
+		Optional<String> pageStr = Optional.ofNullable(request.getParameter("page"));
+		int page = Integer.parseInt(pageStr.orElse("1"));
+		pageUtil.setPageUtil(page, searchRecord, recordPerPage);
+		parameter.put("begin", pageUtil.getBegin());
+		parameter.put("recordPerPage", recordPerPage);
+		List<AttendanceDTO> list = attendanceMapper.searchAttendManage(parameter);
+		model.addAttribute("attendanceList", list);
+		String path = "/attendance/attendManageList.do?startDate=" + startDate + "&endDate=" + endDate + attendPath + "&queryNum=" + queryNum + "&queryName=" + queryName;
+		model.addAttribute("pagination", pageUtil.getPagination(path));
+	}
+	
+	@Override
+	public Map<String, Object> modifyAttendance(HttpServletRequest request) {
+		int attendanceNo = Integer.parseInt(request.getParameter("attendanceNo"));
+		String astarttime = request.getParameter("astarttime");
+		String aendtime = request.getParameter("aendtime");
+		int starthour = Integer.parseInt(astarttime.substring(0, 2));
+		int endhour = Integer.parseInt(aendtime.substring(0, 2));
+		String attendance = "";
+		if(starthour < 9 && endhour >= 18) attendance = "정상";
+		if(starthour < 9 && endhour < 18) attendance = "조퇴";
+		if(starthour >= 9 && endhour >= 18) attendance = "지각";
+		if(starthour >= 9 && endhour < 18) attendance = "지각/조퇴";
+		Map<String, Object> parameter = new HashMap<>();
+		parameter.put("attendanceNo", attendanceNo);
+		parameter.put("astarttime", astarttime);
+		parameter.put("aendtime", aendtime);
+		parameter.put("attendance", attendance);
+		int updateResult = attendanceMapper.modifyAttendance(parameter);
+		Map<String, Object> map = new HashMap<>();
+		if(updateResult == 1) {
+			AttendManageDTO attendManageDTO = attendanceMapper.getAttendanceByattendanceNo(attendanceNo);
+			map.put("astarttime", attendManageDTO.getAstarttime().toString());
+			map.put("aendtime", attendManageDTO.getAendtime().toString());
+			map.put("worktime", attendManageDTO.getWorktime().toString());
+			map.put("attendance", attendManageDTO.getAttendance());
+		} else {
+			map.put("result", "fail");
 		}
 		return map;
 	}

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace는 @Mapper를 지정한다. -->
+<mapper namespace="com.gdu.workship.mapper.ProjectMapper">
+	  
+	  <resultMap type="ProjectDTO" id="ProjectMap">
+	  	<id column="PROJECT_NO" property="projectNo" />
+	  	<result column="PROJECT_START_AT" property="projectStartAt" />
+	  	<result column="PROJECT_END_AT" property="projectEndAt" />
+	  	<result column="PROJECT_TITLE" property="projectTitle" />
+	  	<association  javaType="MemberDTO" property="memberDTO">
+  		    <id column="MEMBER_NO" property="memberNo"/>
+		    <result column="MEMBER_NAME" property="memberName"/>
+		    <association javaType="JobDTO" property="jobDTO">
+		      <id column="JOB_NO" property="jobNo"/>
+		      <result column="JOB_NAME" property="jobName"/>
+		    </association>
+	  	</association>
+	    <association javaType="DepartmentDTO" property="departmentDTO">
+	      <id column="DEPT_NO" property="deptNo"/>
+	      <result column="DEPT_NAME" property="deptName"/>
+		</association>	
+	  	<association javaType="IngDTO" property="ingDTO">
+	  		<id column="ING_NO" property="ingNo"/>
+	  		<result column="ING_STATE" property="ingState"/>
+	  	</association>
+	  </resultMap>
+	  
+	  <resultMap type="ProjectWorkDTO" id="ProjectWorkMap">
+		<id column="PROJECT_WORK_NO" property="projectWorkNo" />
+		<result column="PROJECT_WORK_TITLE" property="projectWorkTitle" />	  
+		<result column="PROJECT_WORK_DETAIL" property="projectWorkDetail" />	  
+		<result column="PROJECT_WORK_MODIFIED_AT" property="projectWorkModifiedAt" />	  
+			<association javaType="ProjectDTO" property="projectDTO">
+				<id column="PROJECT_NO" property="projectNo" />
+				<result column="PROJECT_TITLE" property="projectTitle" />
+			</association>
+			<association  javaType="MemberDTO" property="memberDTO">
+				<id column="MEMBER_NO" property="memberNo" />
+				<result column="MEMBER_NAME" property="memberName" />
+				<association javaType="JobDTO" property="jobDTO">
+			      <id column="JOB_NO" property="jobNo"/>
+			      <result column="JOB_NAME" property="jobName"/>
+			    </association>
+			    <association javaType="DepartmentDTO" property="departmentDTO">
+			      <id column="DEPT_NO" property="deptNo"/>
+			      <result column="DEPT_NAME" property="deptName"/>
+			    </association>
+			</association>
+		    <association javaType="IngDTO" property="ingDTO">
+		      <id column="ING_NO" property="ingNo"/>
+		      <result column="ING_STATE" property="ingState"/>
+		    </association>
+	  </resultMap>
+	  
+	  <select id="getjob" parameterType="int" resultType="JobDTO" >
+	  	SELECT JOB_NO, JOB_NAME
+	  	  FROM JOB_T
+	  	 WHERE JOB_NO = #{jobNo} 
+	  </select>
+	  
+	  <insert id="addProjectM" parameterType="ProjectDTO">
+	  	INSERT INTO PROJECT_T (
+	  	    MEMBER_NO
+	  	  , DEPT_NO
+	  	  , PROJECT_START_AT
+	  	  , PROJECT_END_AT
+	  	  ,	PROJECT_TITLE
+	  	  , ING_NO
+	  	) VALUES (
+	  		#{memberDTO.memberNo} 	
+	  	  , #{departmentDTO.deptNo}	
+	  	  , #{projectStartAt} 		
+	  	  , #{projectEndAt}			
+	  	  ,	#{projectTitle}
+	  	  , #{ingDTO.ingNo}
+	  	)
+	  </insert>
+      
+      <select id="selectIng" parameterType="int" resultType="IngDTO">
+      SELECT ING_NO, ING_STATE
+        FROM ING_T
+       WHERE ING_NO = #{ingNo}
+	  </select>
+  		
+  	  <delete id="deleteProjectM" >
+  	  	DELETE 
+  	  	  FROM PROJECT_T
+  	  	 WHERE PROJECT_NO = #{projectNo} 	
+  	  </delete>
+
+  	  <select id="getProjectMList" parameterType="Map" resultMap="ProjectMap">
+  	  	SELECT A.MEMBER_NO, A.MEMBER_NAME, A.PROJECT_NO, A.PROJECT_START_AT, A.PROJECT_END_AT, A.PROJECT_TITLE, A.DEPT_NO, A.DEPT_NAME, A.ING_NO, A.ING_STATE             
+  	  	  FROM (SELECT P.PROJECT_NO, P.PROJECT_START_AT, P.PROJECT_END_AT, P.PROJECT_TITLE, M.MEMBER_NO, M.MEMBER_NAME, D.DEPT_NO, D.DEPT_NAME, I.ING_NO, I.ING_STATE
+  	  	  FROM PROJECT_T P INNER JOIN MEMBER_T M 
+  	  	    ON P.MEMBER_NO = M.MEMBER_NO INNER JOIN DEPARTMENT_T D
+  	  	    ON D.DEPT_NO = P.DEPT_NO INNER JOIN ING_T I
+  	  	    ON P.ING_NO = I.ING_NO
+  	  	    <where>
+  	  	    	<if test="column != '' and query != ''">
+  	  	    		${column} LIKE CONCAT('%' , #{query}, '%')
+  	  	    	</if>
+  	  	    </where>) A
+  		  ORDER BY P.PROJECT_NO ASC
+  	  	  LIMIT #{begin}, #{recordPerPage}
+  	  </select>
+  	  <select id="getProjectWList" parameterType="Map" resultMap="ProjectWorkMap">
+		SELECT A.PROJECT_WORK_NO, A.PROJECT_WORK_TITLE, A.PROJECT_WORK_DETAIL, A.PROJECT_WORK_MODIFIED_AT, A.PROJECT_NO, A.PROJECT_TITLE, A.MEMBER_NO, A.MEMBER_NAME, A.ING_NO, A.ING_NAME
+		  FROM (SELECT W.PROJECT_WORK_NO, W.PROJECT_WORK_TITLE, W.PROJECT_WORK_DETAIL, W.PROJECT_WORK_MODIFIED_AT, P.PROJECT_NO, P.PROJECT_TITLE, M.MEMBER_NO, M.MEMBER_NAME, I.ING_NO, I.ING_NAME)
+		  FROM PROJECT_WORK_T W INNER JOIN PROJECT_T P 
+		  	ON W.PROJECT_NO = P.PROJECT_NO INNER JOIN MEMBER_T M
+		  	ON W.MEMBER_NO = M.MEMBER_NO INNER JOIN ING_T I
+		  	ON W.ING_NO = I.ING_NO
+  	  	    <where>
+  	  	    	<if test="column != '' and query != ''">
+  	  	    		${column} LIKE CONCAT('%' , #{query}, '%')
+  	  	    	</if>
+  	  	    </where>) A
+	  	  <choose>
+	  	  	<when test="column != ''">
+	  	  		ORDER BY ${column} ASC
+	  	  	</when>
+	  	  	<otherwise>
+	  	  		ORDER BY W.PROJECT_WORK_NO ASC
+	  	  	</otherwise>
+	  	  </choose>	    
+  	  	  LIMIT #{begin}, #{recordPerPage}
+  	  </select>
+  		
+  	  <update id="updateProjectM">
+  	  	UPDATE PROJECT_T
+  	  	   SET 
+     	  	    MEMBER_NO 			= #{memberDTO.memberNo} 
+	  	  	  , DEPT_NO				= #{departmentDTO.deptNo}
+	  	      , PROJECT_START_AT	= #{projectStartAt}
+	  	      , PROJECT_END_AT		= #{projectEndAt}
+	  	      ,	PROJECT_TITLE		= #{projectTitle}
+	  	      , ING_NO				= #{ingDTO.ingNo}
+	  	 WHERE PROJECT_NO = #{projectNo}     
+  	  </update>	
+  	  
+  	  <insert id="addProjectW">
+  	  	INSERT INTO PROJECT_WORK_T (
+  	  		PROJECT_NO
+  	  	  , MEMBER_NO
+  	  	  , PROJECT_WORK_TITLE
+  	  	  , PROJECT_WORK_DETAIL
+  	  	  , PROJECT_WORK_STATE
+  	  	  , PROJECT_WORK_MODIFIED_AT
+  	  	 ) VALUES (
+			#{projectDTO.projectNo}
+		  , #{memberDTO.memberNo}  	  	 
+		  , #{projectWorkTitle}  	  	 
+		  , #{projectWorkDetail}  	  	 
+		  , #{ingDTO.ingNo}  	
+		  , #{projectWorkModifiedAt}  	 
+  	  	 )
+  	  </insert>
+
+	  <delete id="deleteProjectW">
+	  	DELETE
+	  	  FROM PROJECT_WORK_T
+	  	 WHERE PROJECT_WORK_NO = #{projectWorkNo}  
+	  </delete>
+	  
+	  <update id="updateProjectW">
+	  	UPDATE PROJECT_WORK_T 
+	  	   SET   	  		
+		  	   	PROJECT_NO 				 = #{projectDTO.projectNo}
+	  	  	  , MEMBER_NO 				 = #{memberDTO.memberNo}
+	  	  	  , PROJECT_WORK_TITLE  	 = #{projectWorkTitle} 
+	  	  	  , PROJECT_WORK_DETAIL  	 = #{projectWorkDetail} 
+	  	  	  , PROJECT_WORK_STATE 		 = #{ingDTO.ingNo}
+	  	  	  , PROJECT_WORK_MODIFIED_AT = #{projectWorkModifiedAt}
+	  	 WHERE PROJECT_WORK_NO = #{projectWorkNo}  
+	  </update>
+	  
+	  <select id="getProjectCount" resultType="int">
+    	SELECT COUNT(*)
+      	  FROM PROJECT_T
+  	  </select>
+  	  
+  	  <select id="getProjectWCount" resultType="int">
+  	  	SELECT COUNT(*)
+  	  	  FROM PROJECT_WORK_T
+  	  </select>
+
+	  <select id="getProjectSearchCount" parameterType="Map" resultType="int">
+	    SELECT COUNT(A.PROJECT_NO)
+	      FROM (SELECT P.PROJECT_NO, P.PROJECT_TITLE, M.MEMBER_NO, M.MEMBER_NAME
+	     		  FROM PROJECT_T P INNER JOIN MEMBER_T M
+	        		ON P.MEMBER_NO = M.MEMBER_NO
+		    <where>
+		      <if test="column != '' and query != ''">
+		        #{column} LIKE CONCAT('%', #{query}, '%')
+		      </if>
+		    </where>) A
+	  </select>
+
+	  <select id="getProjectWSearchCount" parameterType="Map" resultType="int">
+	    SELECT COUNT(A.PROJECT_WORK_NO)
+	      FROM (SELECT W.PROJECT_WORK_NO, M.MEMBER_NO, M.MEMBER_NAME 
+	      		  FROM PROJECT_WORK_T W INNER JOIN MEMBER_T M
+	        		ON W.MEMBER_NO = M.MEMBER_NO
+			    <where>
+			      <if test="column != '' and query != ''">
+			        ${column} LIKE CONCAT('%', #{query}, '%')
+			      </if>
+			    </where>) A
+	  </select>
+	  
+	 <select id="getDeptList" resultType="DepartmentDTO">
+    	SELECT DEPT_NO, DEPT_NAME
+      	  FROM DEPARTMENT_T
+  	</select>
+  	<select id="getProjectWByNo" parameterType="int" resultMap="ProjectWorkMap">
+  		SELECT M.MEMBER_NO, M.MEMBER_NAME, P.PROJECT_NO, I.ING_NO, I.ING_NAME, W.PROJECT_WORK_NO, W.PROJECT_WORK_TITLE, W.PROJECT_WORK_DETAIL, P.PROJECT_MODIFIED_AT
+  		  FROM PROJECT_WORK_T W LEFT OUTER JOIN MEMBER_T M
+  		    ON W.MEMBER_NO = M.MEMBER_NO LEFT OUTER JOIN PROJECT_T P
+  		    ON W.PROJECT_NO = P.PROJECT_NO LEFT OUTER JOIN  ING_T I
+  		    ON W.ING_NO = I.ING_NO
+  		 WHERE W.PROJECT_WORK_NO = #{projectWorkNo}   
+  	</select>
+  	
+ 
+</mapper>

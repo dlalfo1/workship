@@ -4,7 +4,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.gdu.workship.service.AttendManageService;
+import com.gdu.workship.service.AttendanceService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,11 +13,11 @@ import lombok.RequiredArgsConstructor;
 @EnableScheduling
 public class AttendanceScheduler {
 
-	private final AttendManageService attendManageService;
+	private final AttendanceService attendanceService;
 	
 	@Scheduled(cron="0 0 3 ? * MON-FRI")
 	 public void addDateIntoAttendance() {
-		 attendManageService.updateAllScehduler();
+		 attendanceService.updateAllScehduler();
 	 }
 	
 }

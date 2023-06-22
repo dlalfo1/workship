@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace는 @Mapper를 지정한다. -->
+<mapper namespace="com.gdu.workship.mapper.BoardMapper">
+
+	<resultMap type="BoardDTO" id="BoardMap">
+		<id column="BOARD_NO" property="boardNo"/>
+		<result column="BOARD_TITLE" property="boardTitle"/>
+		<result column="BOARD_CONTENT" property="boardContent"/>	
+		<result column="BOARD_CREATED_AT" property="boardCreatedAt"/>	
+		<result column="BOARD_MODIFIED_AT" property="boardModifiedAt"/>	
+		<result column="BOARD_HIT" property="boardHit"/>	
+		<result column="BOARD_STATE" property="boardState"/>
+		<association javaType="MemberDTO" property="memberDTO">
+      <id column="MEMBER_NO" property="memberNo"/>
+      <result column="MEMBER_NAME" property="memberName"/>
+      <result column="EMAIL_ID" property="emailId"/>
+      <result column="TEL" property="tel"/>
+      <result column="BIRTHDAY" property="birthday"/>
+      <result column="JOINED_AT" property="joinedAt"/>
+      <result column="MODIFIED_AT" property="modifiedAt"/>
+      <result column="STATUS" property="status"/>
+      <result column="DAYOFF_COUNT" property="dayoffCount"/>
+      <result column="PW" property="pw"/>
+      <result column="PROFILE_FILE_PATH" property="profileFilePath"/>
+      <result column="PROFILE_FILE_NAME" property="profileFileName"/>
+      <association javaType="JobDTO" property="jobDTO">
+        <id column="JOB_NO" property="jobNo"/>
+        <result column="JOB_NAME" property="jobName"/>
+      </association>
+      <association javaType="DepartmentDTO" property="departmentDTO">
+        <id column="DEPT_NO" property="deptNo"/>
+        <result column="DEPT_NAME" property="deptName"/>
+      </association>
+    </association>
+	</resultMap>
+	
+  <resultMap type="MemberDTO" id="MemberMap">
+    <id column="MEMBER_NO" property="memberNo"/>
+    <result column="MEMBER_NAME" property="memberName"/>
+    <result column="EMAIL_ID" property="emailId"/>
+    <result column="TEL" property="tel"/>
+    <result column="BIRTHDAY" property="birthday"/>
+    <result column="JOINED_AT" property="joinedAt"/>
+    <result column="MODIFIED_AT" property="modifiedAt"/>
+    <result column="STATUS" property="status"/>
+    <result column="DAYOFF_COUNT" property="dayoffCount"/>
+    <result column="PW" property="pw"/>
+    <result column="PROFILE_FILE_PATH" property="profileFilePath"/>
+    <result column="PROFILE_FILE_NAME" property="profileFileName"/>
+    <association javaType="JobDTO" property="jobDTO">
+      <id column="JOB_NO" property="jobNo"/>
+      <result column="JOB_NAME" property="jobName"/>
+    </association>
+    <association javaType="DepartmentDTO" property="departmentDTO">
+      <id column="DEPT_NO" property="deptNo"/>
+      <result column="DEPT_NAME" property="deptName"/>
+    </association>
+ 	</resultMap>
+	
+	<resultMap type="BoardFileDTO" id="BoardFileMap">
+		<id column="BOARD_FILE_NO" property="boardFileNo"/>
+		<result column="BOARD_FILE_PATH" property="boardFilePath"/>
+		<result column="BOARD_FILE_ORIGIN_NAME" property="boardFileOriginName"/>
+		<result column="BOARD_FILE_SYSTEM_NAME" property="boardFileSystemName"/>
+		<association javaType="BoardDTO" property="boardDTO">
+			<id column="BOARD_NO" property="boardNo"/>
+		</association>
+	</resultMap>
+	
+	  <!-- 게시판 리스트, 검색 -->
+  <select id="getMemberByEmail" parameterType="String" resultMap="MemberMap">
+    SELECT A.MEMBER_NO, A.DEPT_NO, A.JOB_NO, A.MEMBER_NAME, A.EMAIL_ID, A.TEL, A.BIRTHDAY, A.JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME, A.DEPT_NAME, A.JOB_NAME
+      FROM (SELECT M.MEMBER_NO, M.DEPT_NO, M.JOB_NO, M.MEMBER_NAME, M.EMAIL_ID, M.TEL, M.BIRTHDAY, M.JOINED_AT, M.MODIFIED_AT, M.STATUS, M.DAYOFF_COUNT, M.PW, M.PROFILE_FILE_PATH, M.PROFILE_FILE_NAME, D.DEPT_NAME, J.JOB_NAME
+              FROM MEMBER_T M LEFT OUTER JOIN DEPARTMENT_T D
+                ON M.DEPT_NO = D.DEPT_NO LEFT OUTER JOIN JOB_T J
+                ON M.JOB_NO = J.JOB_NO) A
+      WHERE EMAIL_ID = #{emailId}
+  </select>
+    <select id="getBoardCount" parameterType="Map" resultType="int">
+    SELECT COUNT(*)
+      FROM BOARD_T
+  </select>
+  <select id="getBoardList" parameterType="Map" resultMap="BoardMap">
+    SELECT A.BOARD_NO, A.MEMBER_NAME, A.BOARD_TITLE, A.BOARD_CONTENT, A.BOARD_CREATED_AT, A.BOARD_MODIFIED_AT, A.BOARD_HIT, A.BOARD_STATE, A.JOB_NAME
+      FROM (SELECT B.BOARD_NO, M.MEMBER_NAME, B.BOARD, B.BOARD_CONTENT, B.BOARD_CREATED_AT, B.BOARD_MODIFIED_AT, B.BOARD_HIT, B.BOARD_STATE, J.JOB_NAME
+              FROM BOARD_BOARD_T B RIGHT OUTER JOIN MEMBER_T M
+                ON M.MEMBER_NO = N.MEMBER_NO LEFT OUTER JOIN JOB_T J
+                ON M.JOB_NO = J.JOB_NO
+           <where>
+           <!-- 전달된 column 그대로 부를 수 있다. mybatis.org 동적 sql 참고-->
+            <if test="column != '' and query != ''">
+              ${column} LIKE CONCAT('%', #{query}, '%')
+            </if>
+           </where>) A
+     ORDER BY B.BOARD_NO DESC
+     LIMIT #{begin}, #{recordPerPage}
+  </select>
+  
+    <select id="getBoardSearchCount" parameterType="Map" resultType="int">
+    SELECT COUNT(B.BOARD_NO)
+      FROM BOARD_T B RIGHT OUTER JOIN MEMBER_T M
+        ON M.MEMBER_NO = N.MEMBER_NO
+    <where>
+      <if test="column != '' and query != ''">
+        ${column} LIKE CONCAT('%', #{query}, '%')
+      </if>
+    </where>
+  </select>
+  
+    <!-- 게시판 조회수 -->
+  <update id="increaseHit" parameterType="int">
+    UPDATE BOARD_T
+       SET BOARD_HIT = BOARD_HIT + 1
+     WHERE BOARD_NO = #{boardNo}
+  </update>
+    
+  <select id="getBoardByNo" parameterType="int" resultMap="BoardMap">
+    SELECT A.BOARD_NO, A.MEMBER_NAME, A.BOARD_TITLE, A.BOARD_CONTENT, A.BOARD_CREATED_AT, A.BOARD_MODIFIED_AT, A.BOARD_HIT, A.BOARD_STATE, A.DEPT_NAME, A.JOB_NAME, A.MEMBER_NO, A.DEPT_NO, A.JOB_NO, A.EMAIL_ID, A.TEL, A.BIRTHDAY, A.JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME
+      FROM (SELECT B.BOARD_NO, MDJ.MEMBER_NAME, B.BOARD_TITLE, B.BOARD_CONTENT, B.BOARD_CREATED_AT, B.BOARD_MODIFIED_AT, B.BOARD_HIT, B.BOARD_STATE, MDJ.DEPT_NAME, MDJ.JOB_NAME, MDJ.MEMBER_NO, MDJ.DEPT_NO, MDJ.JOB_NO, MDJ.EMAIL_ID, MDJ.TEL, MDJ.BIRTHDAY, MDJ.JOINED_AT, MDJ.MODIFIED_AT, MDJ.STATUS, MDJ.DAYOFF_COUNT, MDJ.PW, MDJ.PROFILE_FILE_PATH, MDJ.PROFILE_FILE_NAME
+              FROM BOARD_T B LEFT OUTER JOIN (SELECT M.MEMBER_NO, M.DEPT_NO, M.JOB_NO, M.MEMBER_NAME, M.EMAIL_ID, M.TEL, M.BIRTHDAY, M.JOINED_AT, M.MODIFIED_AT, M.STATUS, M.DAYOFF_COUNT, M.PW, M.PROFILE_FILE_PATH, M.PROFILE_FILE_NAME, D.DEPT_NAME, J.JOB_NAME
+                                                       FROM MEMBER_T M LEFT OUTER JOIN DEPARTMENT_T D
+                                                         ON M.DEPT_NO = D.DEPT_NO LEFT OUTER JOIN JOB_T J
+                                                         ON M.JOB_NO = J.JOB_NO) MDJ
+                ON MDJ.MEMBER_NO = N.MEMBER_NO) A
+     WHERE BOARD_NO = #{boardNo}
+  </select>
+  <select id="getBoardFileList" parameterType="int" resultType="BoardFileDTO">
+    SELECT BOARD_FILE_NO, BOARD_NO, BOARD_FILE_PATH, BOARD_FILE_ORIGIN_NAME, BOARD_FILE_SYSTEM_NAME
+      FROM BOARD_FILE_T
+     WHERE BOARD_NO = #{boardNo}
+  </select>
+  
+  <select id="getBoardFileByNo" parameterType="int" resultType="BoardFileDTO">
+    SELECT BOARD_FILE_NO, BOARD_NO, BOARD_FILE_PATH, BOARD_FILE_ORIGIN_NAME, BOARD_FILE_SYSTEM_NAME
+      FROM BOARD_FILE_T
+     WHERE BOARD_FILE_NO = #{boardFileNo}
+  </select>
+  
+  
+  <insert id="addBoard" useGeneratedKeys="true" keyProperty="boardNo" parameterType="BoardDTO">
+    INSERT INTO BOARD_T (
+        MEMBER_NO
+      , BOARD_TITLE
+      , BOARD_CONTENT
+      , BOARD_CREATED_AT
+      , BOARD_MODIFIED_AT
+      , BOARD_HIT
+      , BOARD_STATE
+    ) VALUES (
+        #{memberDTO.memberNo}
+      , #{boardTitle}
+      , #{boardContent}
+      , NOW()
+      , NOW()
+      , 0
+      , 1
+    )
+  </insert>
+  <insert id="addBoardFile" parameterType="BoardFileDTO">
+    INSERT INTO BOARD_FILE_T (
+        BOARD_NO
+      , BOARD_FILE_PATH
+      , BOARD_FILE_ORIGIN_NAME
+      , BOARD_FILE_SYSTEM_NAME
+    ) VALUES (
+        #{boardDTO.boardNo}
+      , #{boardFilePath}
+      , #{boardFileOriginName}
+      , #{boardFileSystemName}
+    )
+  </insert>
+  
+  <delete id="removeBoard" parameterType="int">
+    DELETE
+      FROM BOARD_T
+     WHERE BOARD_NO = #{boardNo}
+  </delete>
+
+  <update id="modifyBoard" parameterType="BoardDTO">
+    UPDATE BOARD_T
+       SET BOARD_TITLE = #{boardTitle}
+         , BOARD_CONTENT = #{boardContent}
+         , BOARD_MODIFIED_AT = #{boardModifiedAt}
+         , BOARD_STATE = 1
+     WHERE BOARD_NO = #{boardNo}
+  </update>
+  <delete id="removeBoardFile" parameterType="int">
+    DELETE
+      FROM BOARD_FILE_T
+     WHERE BOARD_FILE_NO = #{boardFileNo}
+  </delete>
+
+  
+</mapper>

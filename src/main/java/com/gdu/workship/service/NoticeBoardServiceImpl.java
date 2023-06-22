@@ -36,6 +36,7 @@ import com.gdu.workship.domain.NoticeFileDTO;
 import com.gdu.workship.mapper.NoticeBoardMapper;
 import com.gdu.workship.util.MyFileUtil;
 import com.gdu.workship.util.PageUtil;
+import com.gdu.workship.util.PageUtil2;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +45,7 @@ import lombok.RequiredArgsConstructor;
 public class NoticeBoardServiceImpl implements NoticeBoardService {
 
   private final NoticeBoardMapper noticeBoardMapper;
-  private final PageUtil pageUtil;
+  private final PageUtil2 pageUtil;
   private final MyFileUtil myFileUtil;
   
   @Override
@@ -138,6 +139,16 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     model.addAttribute("n", noticeBoardMapper.getNoticeByNo(noticeNo));
     System.out.println(noticeBoardMapper.getNoticeByNo(noticeNo));
     model.addAttribute("noticeFileList", noticeBoardMapper.getNoticeFileList(noticeNo));
+    
+    // 이전글(prevNo), 다음글(nextNo)
+    int nextNo = noticeBoardMapper.prevAndNextBoard(noticeNo).getNextNo();
+    int prevNo = noticeBoardMapper.prevAndNextBoard(noticeNo).getPrevNo();
+    if(nextNo == 0) nextNo = noticeNo;
+    if(prevNo == 0) prevNo = noticeNo;
+    
+    model.addAttribute("nextNo", nextNo);
+    model.addAttribute("prevNo", prevNo);
+    
   }
   
   @Override

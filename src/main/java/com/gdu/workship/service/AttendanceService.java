@@ -13,4 +13,10 @@ public interface AttendanceService {
 	public Map<String, Object> aEnd(int memberNo);
 	public Map<String, Object> search(HttpServletRequest request);
 	
+	public void updateAllScehduler();
+	
+	public void getAttendManagePage(Model model);
+	public void attendManageSearch(HttpServletRequest request, Model model);
+	public Map<String, Object> modifyAttendance(HttpServletRequest request);
+	
 }

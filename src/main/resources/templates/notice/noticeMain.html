@@ -12,9 +12,6 @@
   .enable_link {
     cursor: pointer;
   }
-  .pagination {
-    margin: 0 5px;
-  }
 </style>
 <script th:inline="javascript">
 
@@ -73,61 +70,59 @@
                 <h3><a th:href="@{/notice/noticeList.do}">공지사항</a></h3>
             </div>
             
-            <hr>
-    
             <div class="board-table">
-                <table border="1" id="listTable" class="table" align="center">
-                    <thead>
-                        <tr>
-                            <th style="width: 50px;">게시글 번호</th>
-                            <th style="width: 100px;">제목</th>
-                            <th style="width: 50px;">작성자</th>
-                            <th style="width: 50px;">작성일</th>
-                            <th style="width: 50px;">조회수</th>
-                        </tr>
-                    </thead>
-                    <tbody id="noticeBoardList">
-                      <th:block th:if="${#lists.isEmpty(noticeList)}">
-                        <tr> 
-                          <td colspan="5">현재 게시글이 없습니다.</td>
+              <table id="listTable" class="table text-center">
+                <thead>
+                  <tr>
+                    <th style="width: 10%">게시글 번호</th>
+                    <th style="width: 35%;">제목</th>
+                    <th style="width: 20%;">작성자</th>
+                    <th style="width: 25%;">작성일</th>
+                    <th style="width: 10%;">조회수</th>
+                  </tr>
+                </thead>
+                <tbody id="noticeBoardList">
+                  <th:block th:if="${#lists.isEmpty(noticeList)}">
+                    <tr> 
+                      <td colspan="5">현재 게시글이 없습니다.</td>
+                    </tr>
+                  </th:block>
+                    
+                  <th:block th:unless="${#lists.isEmpty(noticeList)}">
+                    <th:block th:each="notice:${noticeList}">
+                      <th:block th:if="${notice.noticeState == 1}">
+                        <tr class="list">
+                          <td th:text="${notice.noticeNo}"></td>
+                          <!--/* 본인이 작성한 공지사항은 조회수가 증가하지 않는다. */-->
+                          <td th:if="${session.loginMember.emailId == notice.memberDTO.emailId}">
+                            <a th:href="@{/notice/increaseHit.do(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeTitle}"></a>
+                          </td>
+                          <td th:unless="${session.loginMember.emailId == notice.memberDTO.emailId}">
+                            <a th:href="@{/notice/noticeDetail.html(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeTitle}"></a>
+                          </td>
+                          <td th:text="|${notice.memberDTO.memberName} ${notice.memberDTO.jobDTO.jobName}|"></td>
+                          <td th:text="${#dates.format(notice.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
+                          <td th:text="${notice.noticeHit}"></td>
                         </tr>
                       </th:block>
-                      
-                      <th:block th:unless="${#lists.isEmpty(noticeList)}">
-                        <th:block th:each="notice:${noticeList}">
-                          <th:block th:if="${notice.noticeState == 1}">
-                            <tr class="list">
-                              <td th:text="${notice.noticeNo}"></td>
-                              <!--/* 본인이 작성한 공지사항은 조회수가 증가하지 않는다. */-->
-                              <td th:if="${session.loginMember.emailId == notice.memberDTO.emailId}">
-                                <a th:href="@{/notice/increaseHit.do(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeTitle}"></a>
-                              </td>
-                              <td th:unless="${session.loginMember.emailId == notice.memberDTO.emailId}">
-                                <a th:href="@{/notice/noticeDetail.html(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeTitle}"></a>
-                              </td>
-                              <td th:text="|${notice.memberDTO.memberName} ${notice.memberDTO.jobDTO.jobName}|"></td>
-                              <td th:text="${#dates.format(notice.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
-                              <td th:text="${notice.noticeHit}"></td>
-                            </tr>
-                          </th:block>
-                        </th:block>
-                      </th:block>
-                    </tbody>
-                </table>
+                    </th:block>
+                  </th:block>
+                </tbody>
+              </table>
                 
-                <div class="searchWrap">
-              		<form id="frmSearch" th:action="@{/notice/noticeList.do}">
-              			<select name="column" id="column">
-              				<option value="NOTICE_TITLE" selected="selected">제목</option>
-              				<option value="NOTICE_CONTENT">내용</option>
-              			</select>
-              			<input type="text" name="query" id="query">
-              			<button type="submit">검색</button>
-              		</form>
-                  <div class="writeWrap">
-                    <input type="button" class="btn btn-primary btn-rounded btn-md" id="btnWrite" value="글쓰기" onclick="fnWriteNotice()">
-                  </div>
-                </div> <!--/* search_wrap 끝나는 지점 */-->
+              <div class="searchWrap">
+            		<form id="frmSearch" th:action="@{/notice/noticeList.do}">
+            			<select name="column" id="column">
+            				<option value="NOTICE_TITLE" selected="selected">제목</option>
+            				<option value="NOTICE_CONTENT">내용</option>
+            			</select>
+            			<input type="text" name="query" id="query">
+            			<button type="submit">검색</button>
+            		</form>
+                <div class="writeWrap">
+                  <input type="button" class="btn btn-primary btn-rounded btn-md" id="btnWrite" value="글쓰기" onclick="fnWriteNotice()">
+                </div>
+              </div> <!--/* search_wrap 끝나는 지점 */-->
               
               <div class="pagination">
                 <div id="pagination2" style="text-align: center;" th:utext="${pagination}"></div>  

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('게시판')}"></head>
+<style>
+	.second-title {
+		color: black;
+	}
+	#boardCategory {
+		height: 10px;
+	
+	}
+
+</style>
+<script>
+</script>
+<body>
+
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+          <div class="board-main">
+            <div class="board-title row">
+                <h2><a th:href="@{/board/DIVBoard.html}" class="second-title">개발게시판</a></h2>
+                <div class="dropdown">
+									<button class="btn btn-primary dropdown-toggle has-ripple" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >게시판<span class="ripple ripple-animate" style="height: 102.438px; width: 102.438px; animation-duration: 0.7s; animation-timing-function: linear; background: rgb(255, 255, 255); opacity: 0.4; top: -23.419px; left: 49.781px;"></span></button>
+            			<div class="dropdown-menu" style="">
+										<a class="dropdown-item" th:href="@{/board/HRBoard.html}">인사게시판</a>
+										<a class="dropdown-item" th:href="@{/board/GADBoard.html}">총무게시판</a>
+										<a class="dropdown-item" th:href="@{/board/DIVBoard.html}">개발게시판</a>
+									</div>
+            		</div>
+            <hr>
+           
+                <div class="pagination">
+                <div style="text-align: center;" th:utext="${pagination}"></div>  
+              </div>
+            </div> <!--/* board-table 끝나는 지점 */-->
+          </div> <!--/* board-main 끝나는 지점 */-->
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

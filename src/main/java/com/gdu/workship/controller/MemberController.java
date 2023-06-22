@@ -52,7 +52,7 @@ public class MemberController {
   @GetMapping("/member/memberDetail.html")
   public String editMember(@RequestParam("memberNo") int memberNo, Model model) {
     memberService.memberDetail(memberNo, model);
-    return "/member/memberDetail";
+    return "member/memberDetail";
   }
   
   @PostMapping("/member/modifyMember.do")

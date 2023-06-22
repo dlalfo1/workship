@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship todoList')}"></head>
+<link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<!--/* 새로운 할 일 등록 모달 */-->
+<div class="modal fade" id="addTodoModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title text-center">새로운 할 일 등록하기</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <form id="frmAddTodo" method="post" th:action="@{/todolist/addTodolist.do}">
+          <table class="table"  style="float: none; margin: 0 auto; width: 90%;">
+            <tr>
+              <th><h5>할 일</h5></th>
+              <td>
+                <input type="text" class="form-control form-control-lg" name="todoTitle" maxlength="50" placeholder="할 일을 입력하세요!">
+              </td>
+            </tr>
+            <tr>
+              <th><h5>메모</h5></th>
+              <td>
+                <textarea class="form-control" name="todoMemo" rows="3" cols="20"></textarea>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-primary" onclick="fnAddTodo()">등록하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<body>
+  <div class="container-scroller">
+
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+  
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+    
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+	        <div class="card-group" style="display: flex;">
+	        
+	          <!--/* 할 일 */-->
+	          <div class="col-md-4">
+	            <div class="card h-100">
+	              <div class="card-header text-white bg-info rounded-top">
+	                <p class="card-title text-white text-center mb-0">할 일</p>
+	              </div>
+	              <div class="card-body border border-info rounded-bottom">
+	                <div class="list-wrapper">
+	                  <ul class="d-flex flex-column-reverse sort-list todo-list" id="undo">
+	                    <th:block th:if="${#lists.isEmpty(undo)}">
+	                      <span class="preventMove" id="noUndo">등록된 할 일이 없습니다.</span>
+	                      <span class="movable"></span>
+	                    </th:block>
+	                    <th:block th:unless="${#lists.isEmpty(undo)}">
+		                    <th:block th:each="undo:${undo}">
+		                      <li class="movable">
+		                        <span class="invisible" th:text="${undo?.todolistNo}"></span>
+		                        <span th:text="${undo?.todoTitle}" data-toggle="tooltip" th:title="${undo?.todoMemo}" data-placement="bottom" data-trigger="click"></span>
+		                        <i class="remove ti-close"></i>
+		                      </li>
+		                    </th:block>
+	                    </th:block>
+	                    <li class="preventMove btn btn-inverse-info" id="undoFixed" data-toggle="modal" data-target="#addTodoModal">
+	                    새로운 할 일 추가하기
+	                    </li>
+	                  </ul>
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+	          
+	          <script th:inline="javascript">
+	            
+	          $('[data-toggle="tooltip"]').tooltip();
+	            
+	            function fnAddTodo(){
+	            	$('#frmAddTodo').submit();
+	            }
+	            let addResult = /*[[${addResult}]]*/ null;
+	            if(addResult != null && addResult != '') {
+	            	if(addResult == '1'){
+	            		alert('할 일이 등록되었습니다.');
+	            	} else{
+	            		alert('등록에 실패했습니다.');
+	            	}
+	            }
+	          </script>
+	          
+	          <!--/* 진행중 */-->
+	          <div class="col-md-4">
+	            <div class="card h-100">
+	              <div class="card-header text-white bg-warning rounded-top">
+	                <p class="card-title text-white text-center mb-0">진행중</p>
+	              </div>
+	              <div class="card-body border border-warning rounded-bottom">
+	                <div class="list-wrapper">
+	                  <ul class="d-flex flex-column-reverse sort-list todo-list" id="doing">
+	                    <li class="invisible preventMove" id="doingFixed"></li>
+                      <th:block th:if="${#lists.isEmpty(doing)}">
+                        <span class="preventMove" id="noDoing">등록된 할 일이 없습니다.</span>
+                      </th:block>
+                      <th:block th:unless="${#lists.isEmpty(doing)}">
+                        <th:block th:each="doing:${doing}">
+                          <li class="movable">
+                            <span class="invisible" th:text="${doing?.todolistNo}"></span>
+                            <span th:text="${doing?.todoTitle}" data-toggle="tooltip" th:title="${doing?.todoMemo}" data-placement="bottom" data-trigger="click"></span>
+                            <i class="remove ti-close"></i>
+                          </li>
+                        </th:block>
+                      </th:block>
+	                  </ul>
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+	          
+	          <script>
+	            $('[data-toggle="tooltip"]').tooltip();
+	          </script>
+	          
+	          <!--/* 완료 */-->
+	          <div class="col-md-4">
+	            <div class="card h-100">
+	              <div class="card-header text-white bg-success rounded-top">
+	                <p class="card-title text-white text-center mb-0">완료</p>
+	              </div>
+	              <div class="card-body border border-success rounded-bottom">
+	              
+	                <div class="list-wrapper">
+	                  <ul class="d-flex flex-column-reverse sort-list todo-list" id="done">
+	                    <th:block th:if="${#lists.isEmpty(done)}">
+                        <span class="movable" id="noDone">등록된 할 일이 없습니다.</span>
+                      </th:block>
+                      <th:block th:unless="${#lists.isEmpty(done)}">
+                        <th:block th:each="done:${done}">
+                          <li class="movable">
+                            <span class="invisible" th:text="${done?.todolistNo}"></span>
+                            <span th:text="${done?.todoTitle}" data-toggle="tooltip" th:title="${done?.todoMemo}" data-placement="bottom" data-trigger="click"></span>
+                            <i class="remove ti-close"></i>
+                          </li>
+                        </th:block>
+                      </th:block>
+	                    <li class="preventMove btn btn-inverse-success" id="doneFixed">
+	                      <div class="text-center">완료된 할 일 전체 삭제</div>
+	                    </li>
+	                  </ul>
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+	          
+	          <script th:inline="javascript">
+	          $('[data-toggle="tooltip"]').tooltip();
+	          
+	          $('#doneFixed').on('click', function(){
+	        	  if(confirm('모든 완료된 할 일을 삭제하시겠어요?')){
+	        		  let done = /*[[${#lists.isEmpty(done)}]]*/ null;
+	        		  if(done){
+	        			  alert('삭제할 할 일이 없습니다.');
+	        		  } else{
+	                location.href = '/todolist/deleteAllDone.do';
+	        		  }
+	        	  }
+	          })
+	          
+	          let result = /*[[${result}]]*/ null;
+	          if(result != null){
+	        	  if(result == '1') {
+	        		  alert('모든 완료된 할 일이 삭제되었습니다.');
+	        	  } else if(result == '0'){
+	        		  alert('삭제에 실패했습니다.');
+	        	  }
+	          }
+	          </script>
+	          
+          </div>
+          
+          <script th:inline="javascript">
+         
+          $('#undo').sortable({
+        	  connectWith: "#doing, #done",
+        	  cancel: ".preventMove",
+        	  items: ".movable",
+        	  placeholder: "btn-secondary"
+        	});
+
+        	$('#doing').sortable({
+        		connectWith: "#undo, #done",
+            cancel: ".preventMove",
+            items: ".movable",
+            placeholder: "btn-secondary"
+        	});
+        	
+        	$('#done').sortable({
+        		connectWith: "#undo, #doing",
+        		cancel: ".preventMove",
+        		items: ".movable",
+        		placeholder: "btn-secondary"
+        	});
+        	
+        	$('.movable *').disableSelection();
+        	
+        	var undo = $('#undo');
+        	var doing = $('#doing');
+        	var done = $('#done');
+        	$('.movable').on('mousedown', function(){
+        		let todolistNo = $(this).find('span').first().text();
+        		undo.sortable({
+        			receive: function(){
+        				location.href = '/todolist/updateState.do?todoState=1&todolistNo=' + todolistNo;
+        			}
+        		});
+        		doing.sortable({
+        			receive: function(){
+        				location.href = '/todolist/updateState.do?todoState=2&todolistNo=' + todolistNo;
+        			}
+        		});
+
+        		done.sortable({
+        			receive: function(){
+        				location.href = '/todolist/updateState.do?todoState=3&todolistNo=' + todolistNo;
+        			}
+        		});
+        	})
+        	
+        	$('.ti-close').on('click', function(){
+        		let todolistNo = $(this).prev().prev().text();
+        		let tooltip = $(this).tooltip();
+        		if(!confirm('할 일을 삭제하시겠어요?')){
+        			location.href = '/todolist/todomain.do';
+        		} else {
+        			$.ajax({
+        				type: 'post',
+        				url: '/todolist/removeTodo.do',
+        				data: 'todolistNo=' + todolistNo,
+        				dataType: 'json',
+        				success: function(resData){
+        					let result = resData.deleteResult;
+        					if(result == 1) {
+        						alert('할 일이 삭제되었습니다.');
+        					}
+        				}
+        			})
+        		}
+        	})
+          </script>
+          
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+
+  <!--/* footer 영역 */-->
+  
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

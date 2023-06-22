@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('신고 관리')}"></head>
+<style>
+  .red_text{
+    color: red;
+  }
+  .blue_text{
+    color: blue;
+  }
+  .boardTitle:hover {
+   text-decoration: underline;
+   font-weight: 600;  
+  }
+  .dropdown-item {
+   cursor: pointer;
+  }
+  .dropdown-item:hover {
+   font-weight: 600;  
+  }
+</style>
+<script th:inline="javascript">
+  $(function(){
+    // recordPerPage의 변경
+    /* $('#recordPerPage').on('change', function(){
+      location.href = '${contextPath}/employees/change/record.do?recordPerPage=' + $(this).val();  // session에 recorePerPage 올리기
+    }) 
+    // 세션에 저장된 recordPerPage값으로 <select> 태그의 값을 세팅
+    let recordPerPage = '${sessionScope.recordPerPage}' == '' ? '10' : '${sessionScope.recordPerPage}';
+    $('#recordPerPage').val(recordPerPage);
+    // 제목을 클릭하면 정렬 방식을 바꿈
+    $('.title').on('click', function(){
+      location.href = '${contextPath}/employees/pagination.do?column=' + $(this).data('column') + '&order=' + $(this).data('order') + "&page=${page}";
+    })
+    */
+    fnSearchReport();
+    fnChangePage();
+  })
+</script>
+<body>
+
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          
+          <div class="row">
+            <div class="col-md-10 mb-3 stretch-card grid-margin" style="margin: 0 auto;">
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-title">검색</p>
+                    <div class="searchWrap mb-3">
+                      <form method="get" id="searchReport" th:action="@{/report/searchReport.do}">
+                        <table class="table table-sm table-borderless" style="width: 80%; margin: 0 auto;">
+                          <tbody>
+                            <tr>
+                              <th class="text-center" width="20%">
+                                <label for="query" style="display:inline-block; margin-top:0.9em;">검색어</label>
+                              </th>
+                              <td width="80%">
+                                <select class="form-control form-control-sm mr-sm-2 col-2" style="display:inline-block;" name="column" id="column">
+                                  <option value="M.MEMBER_NAME">신고자</option>
+                                  <option value="R.REPORT_CONTENT" selected="selected">신고내용</option>
+                                </select>
+                                <input type="text" class="form-control col-10" id="query" name="query" style="display:inline-block;" placeholder="검색어를 입력해주세요.">
+                              </td>
+                            </tr>
+                            <tr>
+                              <th class="text-center align-middle" width="20%">
+                                처리 여부
+                              </th>
+                              <td colspan="80%">
+                                <div class="row form-group" style="float: none; margin:0 auto;">
+                                  <div class="form-check" style="display:inline-block; margin-top:0.9em;">
+                                    <label for="all" class="form-check-label">
+                                     <input type="radio" class="form-check-input" name="reportState" id="all" value="" checked>전체&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </label>
+                                  </div>
+                                  <div class="form-check" style="display:inline-block; margin-top:0.9em;">
+                                    <label for="done" class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="reportState" id="done" value="1">처리&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </label>
+                                  </div>
+                                  <div class="form-check" style="display:inline-block; margin-top:0.9em;">
+                                    <label for="undone" class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="reportState" id="undone" value="0">미처리&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </label>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td colspan="2" class="text-center">
+                                <button type="button" id="btnSearch" class="btn btn-primary" onclick="fnSearchReport()">&nbsp;&nbsp;&nbsp;&nbsp;검색&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                <button type="reset" class="btn btn-outline-info">다시 입력</button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </form>
+                    </div>
+                  <script>
+                    
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-12 stretch-card grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-title">신고 목록</p>
+                  <div class="changeRecordPerPage" style="width: 15%;">
+                    <select id="recordPerPage" class="form-control form-control-sm">
+                      <option value="10" selected="selected">10개씩 보기</option>
+                      <option value="20">20개씩 보기</option>
+                      <option value="30">30개씩 보기</option>
+                    </select>
+                  </div>
+                  <table class="table table-hover table-md text-center" style="width: 100%">
+                    <thead>
+                      <tr>
+                        <th width="6%">신고번호</th>
+                        <th width="18%">게시글 제목</th>
+                        <th width="12%">작성자</th>
+                        <th width="14%">신고내용</th>
+                        <th width="12%">신고자</th>
+                        <th width="14%">신고일</th>
+                        <th width="14%">처리일</th>
+                        <th width="10%">처리여부</th>
+                      </tr>
+                    </thead>
+                    <tbody id="reportListBody">
+                      
+                    </tbody>
+                  </table>
+                  <div>
+                    <div id="pagination" style="text-align: center;"></div>
+                  </div>
+                  <script>
+                    
+                    function fnDateFormat(date) {
+                      var d = new Date(date),
+                      year = d.getFullYear(),
+                      month = '' + (d.getMonth() + 1), 
+                      day = '' + d.getDate();
+                      
+                      if (month.length < 2) month = '0' + month; 
+                      if (day.length < 2) day = '0' + day; 
+                      
+                      return [year, month, day].join('/');
+                    }
+                  
+                  
+                    var page = 1;
+                    function fnSearchReport(){
+                    	var column = $('#column').val();
+                    	$('#column').change(function(){
+                        column = $(this).val();
+                        console.log(column);
+                      });
+                    	
+                      var reportState = $('input[name="reportState"]:checked').val()
+                      console.log(reportState);
+                      $.ajax({
+                        type: 'get',
+                        url: '/report/reportSearch.do',
+                        data: 'reportState=' + reportState + '&column=' + column + '&query=' + $('#query').val() + '&page=' + page,
+                        dataType: 'json',
+                        success: function(resData){
+                        	let reportListBody = $('#reportListBody');
+                          reportListBody.empty();
+                          
+                          if(resData.reportSearchList === 0){
+                            reportListBody.append('<tr><td colspan="8">신고 내역이 없습니다.</td></tr>');
+                          } else {
+                            $.each(resData.reportSearchList, function(i, report){
+                              let str = '<tr>';
+                              str += '<td class="reportNo">' + report.reportNo + '</td>';
+                              str += '<td class="boardTitle" style="cursor: pointer;" onclick="openInNewTab(' + '\'/notice/noticeDetail.html?noticeNo=1\')">' + report.boardDTO.boardTitle +'</td>';
+                              str += '<td>' + report.boardDTO.memberDTO.memberName +'</a></td>';
+                              str += '<td>'   + report.reportContent + '</td>';
+                              str += '<td>' + report.memberDTO.memberName + ' ' + report.memberDTO.jobDTO.jobName + '</td>';
+                              str += '<td>' + fnDateFormat(report.reportDate) + '</td>';
+                              if(report.reportDoneDate == null) {
+                                str += '<td>' + '' + '</td>';
+                              } else {
+                                str += '<td>' + fnDateFormat(report.reportDoneDate) + '</td>';
+                              }
+                              switch(report.reportState){ 
+                                case 0: reportState = str += '<td class="dropdown-item show" href="#" data-toggle="modal" data-target="#reportModal"><span class="red_text">미처리</span></td>'; break; 
+                                case 1: reportState = str += '<td class="dropdown-item show" href="#" data-toggle="modal" data-target="#reportModal"><span class="blue_text">처리완료</span></td>'; break; 
+                                default: reportState = '';
+                              }
+                              str += '</tr>'
+                              reportListBody.append(str);
+                                
+                            })
+                          }
+                          $('#pagination').empty();
+                          var pageUtil = resData.pageUtil;
+                          var str2 = '<nav><ul class="pagination pagination-sm justify-content-center">';
+                          if(pageUtil.beginPage == 1){
+                            str2 += '<li class="page-item disabled"><span class="page-link text-secondary">이전</span></li>';
+                          } else {
+                            str2 += '<li class="page-item"><span class="enable_link page-link" data-page="' + (pageUtil.beginPage - 1) + ">이전</span></li>";
+                          }
+                          for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
+                            if(p == page){
+                              str2 += '<li class="page-item active"><a class="page-link">' + p + '</a></li>';
+                            } else {
+                              str2 += '<li class="page-item"><a class="enable_link page-link" data-page="' + p + '">' + p + '</a></li>';
+                            }
+                          }
+                          if(pageUtil.endPage == pageUtil.totalPage){
+                            str2 += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
+                          } else {
+                            str2 += '<li class="page-item"><span class="enable_link" page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
+                          }
+                          str2 += '</ul></nav>';
+                          
+                          $('#pagination').append(str2);
+                          // $('#query').val(''); 검색창 비워주기
+                        } /* success 끝나는 곳 */
+                      }) /* ajax 끝나는 곳 */
+                    }
+                    function fnChangePage(){
+                      $(document).on('click', '.enable_link', function(){
+                        page = $(this).data('page');
+                        fnSearchReport();
+                      })
+                    }
+                    function openInNewTab(url) {
+            	        var win = window.open(url, '_blank');
+            	        win.focus();
+              	    }
+
+                  </script>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--/* report Modal */-->
+          <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="exampleModalLabel">신고</h4>
+                  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">x</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>신고번호 : </p>
+                  <p>신고자 : </p>
+                  <p>신고날짜 : </p>
+                  <p>신고게시글 : </p>
+                  <p>신고횟수 : </p> 
+                  <p>신고내용 : </p> 
+                  <textarea id="rpEtc" cols="48" rows="4" style="resize: none;" readonly></textarea>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" type="button" data-dismiss="modal">처리</button>
+                  <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+                </div>
+              </div>
+            </div>
+          </div> <!--/* Moa Modal 끝 */-->
+          <script>
+            var reportNo = '';
+            $(document).ready(function(){
+        	    $('.show').on('click', function(){
+        	      console.log('클릭');
+        	    	reportNo = $(this).parent().children('.reportNo').val();
+        	      console.log(reportNo);
+        	      $.ajax({      
+        	        type: 'get',
+        	        url: '/report/reportDetail.do',
+        	        data: 'reportNo=' + reportNo,
+        	        dataType: 'json',
+        	        success:function(resData) {
+        	          showList(resData);
+        	        }
+        	      });
+        	    });
+        	    function showList(report){
+        	      var str = '';
+        	      $(".modal-body").empty();
+      	        str += '<div>신고번호 : ' + report.reportNo + '</div>';
+      	        str += '<div>신고자 :' + report.memberDTO.memberName + '</div>';
+      	        str += '<div>신고일 : ' + fnDateFormat(report.reportDate) + '</div>';
+      	        str += '<div>처리일 : ' + fnDateFormat(report.reportDoneDate) + '</div>';
+      	        str += '<div>처리여부 : ' + report.reportState + '</div>';
+      	        str += '<div>신고게시글 : ' + report.boardDTO.boardTitle + '</div>';
+      	        str += '<div>신고횟수 : ' + report.reportCount + '</div>';
+      	        str += '<div>신고내용 : </div>';
+      	        str += '<textarea id="rpEtc" cols="48" rows="4" style="resize: none;" readonly>' + data.reportConent  + '</textarea>';
+      	        $(".modal-body").append(str);
+        	    }
+        	  });
+          </script>
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

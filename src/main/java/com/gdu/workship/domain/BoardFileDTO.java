@@ -13,6 +13,6 @@ public class BoardFileDTO {
 	private BoardDTO boardDTO;
 	private String boardFilePath;
 	private String boardFileOriginName;
-	private String boardFIleSystemName;
+	private String boardFileSystemName;
 	
 }
