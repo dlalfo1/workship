@@ -2,6 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('게시판')}"></head>
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 <style>
 	.second-title {
 		color: black;
@@ -36,10 +37,10 @@
                 <h3><a th:href="@{/board/GADBoard.html}" class="second-title">총무게시판</a></h3>
                 <div class="dropdown">
 									<button class="btn btn-primary dropdown-toggle has-ripple" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height: 10px; ">게시판<span class="ripple ripple-animate" style="height: 102.438px; width: 102.438px; animation-duration: 0.7s; animation-timing-function: linear; background: rgb(255, 255, 255); opacity: 0.4; top: -23.419px; left: 49.781px;"></span></button>
-            			<div class="dropdown-menu" style="">
+            			<div class="dropdown-menu">
 										<a class="dropdown-item" th:href="@{/board/HRBoard.html}">인사게시판</a>
 										<a class="dropdown-item" th:href="@{/board/GADBoard.html}">총무게시판</a>
-										<a class="dropdown-item" th:href="@{/board/DIVBoard.html}">개발게시판</a>
+										<a class="dropdown-item" th:href="@{/board/DEVBoard.html}">개발게시판</a>
 									</div>
             		</div>
             <hr>

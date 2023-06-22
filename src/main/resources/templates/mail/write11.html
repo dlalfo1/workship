@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship 메일쓰기')}"></head>
+<link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
+<link rel="stylesheet" th:href="@{/css/mail/write.css(var=1.0)}">
+
+<body>
+  <div class="container-scroller">
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+   		<nav th:replace="~{/mail/layout/mailsidebar::mailSidebarFrag}"></nav>
+        <div class="content-wrapper">
+        <!--/* 
+          이 안에 div로 잘 구성해서 내용 넣어주시면 됩니다!
+          샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
+          참고할 만 한 html 파일들은 static/pages 에 있습니다!
+        */-->
+
+        	<div class="info">
+        		<span class="title">메일 쓰기</span>
+        		<span><input type="button" value="임시 보관함" id="btnDraftsList"></span>
+        	</div>
+        	<script>
+        	
+        		function fnDraftsList() {
+        			$('#btnDraftsList').on('click', function(){
+        				if(confirm('이 페이지를 벗어나면 작성중인 내용은 저장되지 않습니다.\n그래도 이동하시겠습니까?')) {
+	        				location.href = '/mail/list.html?Category=DRAFTS';        					
+        				}        				
+        			})
+        		}
+        		
+        		$(function(){
+        			fnDraftsList();
+        		})        		
+        	</script>
+        	
+        	
+       		<form method="post" id ="frmSend" enctype="multipart/form-data" th:action="@{/mail/sendMail.do}">
+     <!--    	<th:block th:if="${Type == 'NORMAL'}">
+        	</th:block>
+        	<th:block th:if="${Type == 'REPLY'}">
+	        	<form method="post" id ="frmSend" enctype="multipart/form-data" th:action="@{/mail/sendReply.do}">
+        	</th:block>
+        	<th:block th:if="${Type == 'RELAY'}">
+	        	<form method="post" id ="frmSend" enctype="multipart/form-data" th:action="@{/mail/sendRelay.do}">
+        	</th:block>
+        	<th:block th:if="${Type == 'DRAFTS'}">
+	        	<form method="post" id ="frmSend" enctype="multipart/form-data" th:action="@{/mail/sendDrafts.do}">
+        	</th:block>
+        	 -->
+        		<div class="header">
+        			<!-- 
+        			<input type="hidden" th:name="emailId" th:value="${session.loginMemberDTO.emailId}">
+        			 -->
+        			<button class="btn">보내기</button>
+        			<input class="btn" type="button" value="임시 저장" id="btnDraft">
+        			<input class="btn" type="reset" value="다시 작성" id="btnReset">
+        		</div>
+        		
+        		<script>
+        		
+        			$(function(){
+        				fnSendMail();
+        				fnAddDrafts();
+        				fnReset();
+        			}
+        			
+        			function fnSendMail(){
+        				$('#frmSend').on('submit', function(event){
+        					if($('#to').val() == '') {
+        						alert('받는사람이 지정되지 않았습니다.\n받는사람 주소를 입력해주세요.');
+        						event.preventDefault();
+        						return;
+        					}
+        					
+        					if($('#title').val() == '') {
+        						alert('제목이 작성되지 않았습니다.\n제목을 입력해주세요.');
+        						event.preventDefault();
+        						return;
+        					}
+        					
+        					if(confirm('메일을 발송하시겠습니까?')) {
+        						return;
+        					} else {
+        						event.preventDefault();
+        					}
+        					
+        				})
+        			}
+        			
+        			function fnAddDrafts(){
+        				$('#btnDraft').on('click', function(event){
+        					if($('#to').val() == '') {
+        						alert('받는사람이 지정되지 않았습니다.\n받는사람 주소를 입력해주세요.');
+        						event.preventDefault();
+        						return;
+        					}
+        					
+        					if($('#title').val() == '') {
+        						alert('제목이 작성되지 않았습니다.\n제목을 입력해주세요.');
+        						event.preventDefault();
+        						return;
+        					}
+        					
+	        				if(confirm('메일을 임시보관함에 저장하시겠습니까?')) {
+	        						return
+	        					} else {
+	        						event.preventDefault();
+	        					}
+        				})        				
+        			}
+        			
+        			function fnReset() {
+        				$('#btnReset').on('click', function(event) {
+        					if(confirm('확인을 누르시면 작성중인 내용이 모두 지워집니다.\n그래도 진행하시겠습니까?')) {
+	        					$('#fileList').empty();
+	        					$('#fileList').html('<i class="fa-solid fa-file-circle-plus"></i>파일을 마우스로 끌어 오세요');
+	        					$('.note-editable').html('');
+        					} else {
+        						event.preventDefault();
+        						return;
+        					}        					
+        				})		
+        				
+        			}	
+
+        		</script>
+        		
+        		<table class="contents">
+        			<tbody class="mailcontent">        			
+	        			<tr class="mailBox">
+	        				<th class="fixedCol1">
+	        					<a>받는사람</a>
+	        					<th:block th:if="${Type == 'NORMAL'}">
+	        						<input type="hidden" name="receiver" id="receiver" th:value="">
+	        					</th:block>	        					
+	        				</th>     
+	        				   		
+		        			<td class="fixedCol2">
+		        				<div class="mailInputWrap">
+		        					<div id="toAddrWrap" class="mailInput">
+		        						<ul>
+			        						<li class="mailAddrCreate">
+			        							<div class="addrInput">
+			        								<textarea id="to" name="to" onkeyup="if(window.event.keyCode==13||window.event.ketCode==188){toBlock()}" autoComplete="off"></textarea>
+			        							</div>
+			        						</li>        					
+		        						</ul>
+		        					</div>	  
+		        					<!--       					
+			        				<select name="recentAddr" class="recentAddr">
+			        					<option disabled selected>최근 주소</option>
+			        				</select>	
+			        					         -->				
+		        				</div>
+		        			</td>
+		        			<td class="fixedCol3"><input type="button" value="주소록" class="btnAddr" id="btnAddr"></td>
+		        		</tr>
+		        		
+		        		<script>
+	       				
+		        			$(function() {
+		        				fnAddress();
+		        				toBlock();
+		        				fnCheckAddr();
+		        			})
+		        		
+		       				function fnAddress(){
+		        				$('#btnAddr').on('click', function(){
+			       					location.href = '/mail/address.html';		        					
+		        				})
+		       				}        				
+		       			
+		      				<!--/* 13(엔터) 188(쉼표) */-->
+		       				function toBlock() {
+		       					if(window.event.keyCode == 13) {
+		       						var addr = $("#to").val().replace("\n", "");
+		       					} else if(window.event.keyCode == 188) {
+		       						var addr = $("#to").val().replace(/,$/, "");
+		       					}
+		       					
+		       					if(checkAddr(addr) == false) {
+		       						$('#to').val("");
+		       						return;
+		       					}
+		       					
+		       					let value = "";
+		       					value += '<li class=mailAddrOut>'
+		       						  += '<span class="addrBlock">'
+		       						  += addr
+		       						  += '</span>'
+		       						  += '<sapn class="btnAddrRemove">'
+		       						  += '<i class="fa-regular fa-rectangle-xmark"></i>'
+		       						  += '</span>'
+		       						  += '</li>';
+		       					$('#to').val("");
+		       					$('#toAddrWrap .mailAddrCreate').before(value);
+		       					
+		       					let currTo = $('#to').val();
+		       					if(currTo == '') {
+		       						$('#to').val(addr);
+		       					} else {
+		       						$('#to').val(currTo + "," + addr);
+		       					}
+		       						  
+		       					toLimit();
+		       				}
+		       			
+		       				function checkAddr(addr) {
+		       						
+	       						let addressee = $(this).val();
+	       						
+	       						let regAddressee = /^[A-Za-z0-9_-]+@[A-Za-z0-9]{2,}(\.[A-Za-z]{2,6}){1,2}$/;
+	       						
+	       						verifyAddressee = regAddressee.test(addressee)
+	       						
+	       						if(verifyAddressee == false) {
+	       							alert('잘못된 주소 형식입니다.');
+	       							return;
+	       						}
+
+		       				}
+		       				
+		       			</script>
+		        		
+		        		
+		        		<tr class="mailBox">
+		        			<th class="fixedCol1">
+		        				<a>참조</a>
+		        				<th:block th:if="${Type == 'NORMAL'}">
+	        						<input type="hidden" name="mailRef" id="mailRef" th:value="">
+	        					</th:block>	   
+		        			</th>
+		        			<td colspan="2" class="fixedCol2">
+		        				<div class="mailInputWrap">
+		        					<div id="ccAddrWrap" class="mailInput">
+		        						<ul>
+			        						<li class="mailAddrCreate">
+			        							<div class="addrInput">
+			        								<textarea id="cc" name="cc" onkeyup="if(window.event.keyCode==13||window.event.ketCode==188){toBlock()}" autoComplete="off"></textarea>
+			        							</div>
+			        						</li>	        						
+		        						</ul>
+		        					</div>
+		        				</div>
+		        			</td>
+		        		</tr>	
+		        		
+		        		<tr class="mailBox">
+		        			<th class="fixedCol1">
+		        				<a>숨은참조</a>
+		        				<th:block th:if="${Type == 'NORMAL'}">
+	        						<input type="hidden" name="mailBlind" id="mailBlind" th:value="">
+	        					</th:block>	 
+		        			</th>
+		        			<td colspan="2" class="fixedCol2">
+		        				<div class="mailInputWrap">
+		        					<div id="bccAddrWrap" class="mailInput">
+		        						<ul>
+			        						<li class="mailAddrCreate">
+			        							<div class="addrInput">
+			        								<textarea id="bcc" name="bcc" onkeyup="if(window.event.keyCode==13||window.event.ketCode==188){toBlock()}" autoComplete="off"></textarea>
+			        							</div>
+			        						</li>	        						
+		        						</ul>
+		        					</div>
+		        				</div>
+		        			</td>
+		        		</tr>
+		        		
+		        		<tr class="mailBox">
+		        			<th class="fixedCol1">제목</th>
+		        			<td  colspan="2" class="fixedCol2"><input type="text" id="title" name="title"></td>
+		        		</tr>
+		        		
+		        		<tr>
+		        			<th class="fixedCol1">파일첨부</th>
+		        			<td colspan="2" class="fixedCol2">
+		        				<div>
+		        					<input type="button" value="전체삭제" onclick="fnReoveAll()">
+		        					<input type="file" id="files" name="files" multiple="multiple" onchange="fnFileCheck(this)">
+		        				</div>
+		        				<div class="fileAll" id="fileAll">
+		        					<div class="filesHeader">
+			        					<input type="checkbox" name="chkAll" class="screenOut">
+			        					<div class="filesTitle">
+			        						<span class="text">파일명</span>
+			        					</div>
+			        					<div class="AllSize">
+			        						<span class="text">총용량</span>
+			        						<span class="fileSize">0(KB)</span>
+			        					</div>
+			        				</div>		
+		       						<ul id="fileList">첨부 파일의 목록이 이 곳에 표시됩니다</ul>		
+		        				</div>
+		        			</td>
+		        		</tr>
+		        		
+		        		<script>
+	        			
+		        			function fnRemoveAll(){
+		        				$()
+		        			}
+		        			
+		        			function fnFileCheck(vThis){
+		
+		        				let maxSize = 1024 * 1024 * 10;
+		
+		        				let files = vThis.files;
+		
+		        				$('#fileList').empty();
+		        				
+		        		
+		        				
+		        				$.each(files, function(i, file){
+		        					
+		        					if(file.size > maxSize){
+		        						alert('각 첨부파일의 최대 크기는 10MB입니다.');
+		        						$(vThis).val(''); 
+		        						$('#fileList').text('첨부 파일의 목록이 이 곳에 표시됩니다');
+		        						return;
+		        					}
+		        					
+		        					let fileSize = Math.ceil(file.size / 1024);
+									
+		        					$('#fileList').append('<li><input type="checkbox"><span class="filesTitle">' + file.name + '</span><span class="AllSize">' + fileSize + 'KB' + '</span></li>');
+		        		
+		        				})        
+		        			}       	
+	        			</script>
+		        		
+		        		<tr>
+		        			<td colspan="3">
+		        				<div><textarea id="content" name="content" class="content"></textarea></div>
+		        			</td>
+		        		</tr>
+		        		
+		        		<script>
+						
+							$('#content').summernote({
+								width: '100%',
+								height: 480,
+								lang: 'ko-KR',
+							  	toolbar: [
+							    	['style', ['bold', 'italic', 'underline', 'clear']],
+							    	['font', ['strikethrough', 'superscript', 'subscript']],
+							    	['fontsize', ['fontsize']],
+							    	['color', ['color']],
+							    	['para', ['ul', 'ol', 'paragraph']],
+							    	['table', ['table']],
+									['view', ['fullscreen', 'codeview', 'help']]
+							  	]
+							})
+							
+						</script>
+        			</tbody>
+	        		
+	        	</table>
+	        </form>
+	    
+	    </div>	<!--/* content-wrapper 끝나는 지점 */-->
+	  </div>  <!--/* main-panel 끝나는 지점 */-->     
+	</div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+  </body>
+  </html>

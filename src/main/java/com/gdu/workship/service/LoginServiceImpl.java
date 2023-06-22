@@ -78,13 +78,17 @@ public class LoginServiceImpl implements LoginService {
 	 @Override
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
 	    HttpSession session = request.getSession();
-	    String id = (String) session.getAttribute("loginId");
+	    MemberDTO loginMember = (MemberDTO) session.getAttribute("loginMember");
+	    String id = loginMember.getEmailId();
 	    loginMapper.deleteAutologin(id);
 	    
 	    Cookie cookie = new Cookie("autologinId", "");
 	    cookie.setMaxAge(0);                       
 	    cookie.setPath("/"); 
 	    response.addCookie(cookie);
+	    Cookie cookie2 = new Cookie("autologin", "false");
+	    cookie2.setPath("/"); 
+	    response.addCookie(cookie2);
 	    
 	    session.invalidate();
 	    
@@ -134,6 +138,9 @@ public class LoginServiceImpl implements LoginService {
 	    }
 
 	}
-
-
+	 @Override
+	public boolean loginSuccess(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

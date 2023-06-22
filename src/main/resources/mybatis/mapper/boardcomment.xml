@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace는 @Mapper를 지정한다. -->
+<mapper namespace="com.gdu.workship.mapper.BoardCommentMapper">
+
+	<resultMap type="BoardCommentDTO" id="BoardCommentMap">
+		<id column="COMMENT_NO" property="commentNo" />
+		<result column="COMMENT_CONTENT" property="commentContent" />
+		<result column="COMMENT_STATE" property="commentState" />
+		<result column="COMMENT_DEPTH" property="commentDepth" />
+		<result column="COMMENT_GROUP_NO" property="commentGroupNo" />
+		<result column="COMMENT_CREATED_AT" property="commentCreatedAt" />
+		<result column="BOARD_NO" property="boardNo" />
+		<association javaType="MemberDTO" property="memberDTO" >
+			<id column="MEMBER_NO" property="memberNo" />
+	    <result column="MEMBER_NAME" property="memberName"/>
+	    <result column="EMAIL_ID" property="emailId"/>
+	    <result column="TEL" property="tel"/>
+	    <result column="BIRTHDAY" property="birthday"/>
+	    <result column="JOINED_AT" property="joinedAt"/>
+	    <result column="MODIFIED_AT" property="modifiedAt"/>
+	    <result column="STATUS" property="status"/>
+	    <result column="DAYOFF_COUNT" property="dayoffCount"/>
+	    <result column="PW" property="pw"/>
+	    <result column="PROFILE_FILE_PATH" property="profileFilePath"/>
+	    <result column="PROFILE_FILE_NAME" property="profileFileName"/>
+		</association>
+	</resultMap>
+	
+	<select id="getCommentCount" resultType="int">
+		SELECT COUNT(*)
+		  FROM BOARD_COMMENT_T
+	</select>
+	
+	<select id="getCommentList" parameterType="Map" resultMap="BoardCommentMap">
+		SELECT A.COMMENT_NO, A.COMMENT_WRITER_MEMBER_NO, A.COMMENT_CONTENT, A.COMMENT_STATE, A.COMMENT_DEPTH, A.COMMENT_GROUP_NO, A.COMMENT_CREATED_AT, A.COMMENT_GROUP_ORDER, A.DEPT_NO, A.JOB_NO, A.MEMBER_NAME, A.EMAIL_ID
+			FROM (SELECT BC.COMMENT_NO, BC.COMMENT_WRITER_MEMBER_NO, BC.COMMENT_CONTENT, BC.COMMENT_STATE, BC.COMMENT_DEPTH, BC.COMMENT_GROUP_NO, BC.COMMENT_CREATED_AT, BC.COMMENT_GROUP_ORDER, M.DEPT_NO, M.JOB_NO, M.MEMBER_NAME, M.EMAIL_ID 
+						  FROM BOARD_COMMENT_T BC INNER JOIN MEMBER_T M
+						    ON BC.COMMENT_WRITER_MEMBER_NO = M.MEMBER_NO
+						 WHERE BC.BOARD_NO = #{boardNo}) A
+		 ORDER BY COMMENT_GROUP_NO DESC, COMMENT_GROUP_ORDER ASC
+		 LIMIT #{begin}, #{recordPerPage}
+	</select>
+	
+	<insert id="addComment" useGeneratedKeys="true" keyProperty="commentNo" parameterType="BoardCommentDTO">
+		INSERT INTO BOARD_COMMENT_T(
+		  COMMENT_WRITER_MEMBER_NO
+		, COMMENT_CONTENT
+		, COMMENT_STATE
+		, COMMENT_DEPTH
+		, COMMENT_GROUP_NO
+		, COMMENT_CREATED_AT
+		, COMMENT_GROUP_ORDER
+		, BOARD_NO
+		) VALUES (
+			#{memberDTO.memberNo}
+		, #{commentContent}
+		, 1
+		, 0
+		, 0
+		, NOW()
+		, 1
+		, #{boardNo}
+		)
+	</insert>
+	
+	<update id="addCommentGroupNo" parameterType="BoardCommentDTO">
+		UPDATE BOARD_COMMENT_T
+		   SET COMMENT_GROUP_NO = #{commentGroupNo}
+		 WHERE COMMENT_NO = #{commentNo}
+	</update>
+	
+	<update id='increaseGroupOrder' parameterType="BoardCommentDTO">
+		    UPDATE BBS
+       SET COMMENT_GROUP_ORDER = COMMENT_GROUP_ORDER + 1
+     WHERE COMMENT_GROUP_NO = #{commentGroupNo}        
+       AND COMMENT_GROUP_ORDER > #{commentGroupOrder}
+	</update>
+	
+	<insert id="addReply" parameterType="BoardCommentDTO">  <!-- parameterType="BbsDTO"는 답글을 의미한다. -->
+    INSERT INTO BOARD_COMMENT_T(
+		  	COMMENT_WRITER_MEMER_NO
+			, COMMENT_CONTENT
+			, COMMENT_STATE
+			, COMMENT_DEPTH
+			, COMMENT_GROUP_NO
+			, COMMENT_CREATED_AT
+      , COMMENT_GROUP_ORDER
+    ) VALUES (
+        #{memberDTO.memberNo}
+      , #{commentContent}
+      , 1
+      , #{commentDepth}
+      . #{commentGroupNo}
+      , NOW()
+      , #{commentGroupOrder}
+    )
+  </insert>
+	
+</mapper>

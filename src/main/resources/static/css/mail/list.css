@@ -16,7 +16,7 @@
 	font-weight: bold;
 }
 
-.readMail {
+.totalMail {
 	color: gray;
 }
 
@@ -28,7 +28,7 @@
 .contentCheck {
 	display: flex;
 	justify-content: space-between;
-	border-bottom: 1px solid gray;
+	border-bottom: 3px solid gray;
 	padding-bottom: 16px;
 }
 .category {
@@ -39,6 +39,8 @@
 
 .search{
 	display: flex;
+	align-items: flex-end;
+	gap: 4px;
 }
 
 .category input[type="button"]{
@@ -49,32 +51,71 @@
 
 #column {
 	height: 24px;
-	width: 80px;
+	width: 88px;
 }
+
 ul {
-	padding: 0px;
+	padding: 0px;	
 }
+
 li {
+	height: 40px;
 	list-style: none;
 }
 
-.contentsList {
+.noMail {
 	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100px;
 }
 
 .mailContent {
 	display: flex;
-	justify-content: space-between;
+	gap: 16px;
+	align-items: center;
+	border-bottom: 1px solid gray;
 }
 
 .mailCheck {
 	display: flex;
-	gap: 24px;
+	align-items: center;
+	gap: 40px;
+	width: 20%;
+	padding: 4px;
 }
 
 input[type="radio"] {
 	display: none;
 }
 
+.contentMail {
+	display: flex;
+	justify-content: space-between;
+	width: 80%
+}
 
+.contentMailEmail {
+	width: 35%;
+}
 
+.contentMailTitle {
+	width: 50%;
+}
+
+.contentMailTitle a {
+	color: black;
+}
+
+.contentMailDate {
+	width: 15%;
+}
+
+.pagination {
+	display: flex;
+	justify-content: center;
+}
+
+.disabled {
+	pointer-events: none;
+}

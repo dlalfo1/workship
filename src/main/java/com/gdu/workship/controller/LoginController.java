@@ -42,11 +42,17 @@ public class LoginController {
 	    return "login/findPassword";
 	  }
 	  
-	  public void setCookie(HttpServletResponse response) {
-	    Cookie cookie = new Cookie("cookieName", "cookieValue");
-	    cookie.setMaxAge(0); 
-	    cookie.setPath("/"); 
-	    response.addCookie(cookie);
+	  @PostMapping("/main2.do")
+	  public String loginSuccess(HttpServletRequest request, HttpServletResponse response) {
+	    boolean isAuthenticated = loginService.loginSuccess(request, response);
+
+	    if (isAuthenticated) {
+	      // 로그인 성공 시 메인 화면으로 리다이렉트
+	      return "redirect:/main/main2";
+	    } else {
+	      // 로그인 실패 시 다시 로그인 페이지로 이동하거나 에러 메시지를 보여줄 수 있습니다.
+	      return "redirect:/index"; // 로그인 페이지로 이동
+	    }
 	  }
 	  
 

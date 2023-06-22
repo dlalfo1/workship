@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gdu.workship.domain.DepartmentDTO;
+import com.gdu.workship.domain.MemberDTO;
+import com.gdu.workship.domain.ProjectDTO;
+import com.gdu.workship.mapper.NoticeBoardMapper;
 import com.gdu.workship.service.ProjectService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class ProjectController {
 	
 	private final ProjectService projectService;
+	private final NoticeBoardMapper noticeBoardMapper;
 	
 	@GetMapping("/projectList.do")
 	public String projectList(HttpServletRequest request, Model model) {
@@ -37,9 +42,35 @@ public class ProjectController {
 		return projectService.getProjectWorkList(request);
 	}
 	
+	@GetMapping("/projectUpdate.html")
+	public String projectUpdateHtml(HttpServletRequest request, Model model) {
+		int projectNo = Integer.parseInt(request.getParameter("projectNo"));
+
+		ProjectDTO projectDTO = new ProjectDTO();
+		projectDTO.setProjectNo(projectNo);
+		
+		MemberDTO member = new MemberDTO();
+		member = (MemberDTO)request.getSession().getAttribute("loginMember");
+		String emailId = member.getEmailId();
+		
+		model.addAttribute("member", noticeBoardMapper.getMemberByEmail(emailId));
+		model.addAttribute("projectDTO", projectDTO);
+		
+		return "project/projectUpdate";
+	}
+	
+	@GetMapping("/projectAdd.html")
+	public String projectAddHtml(HttpServletRequest request, Model model) {
+		MemberDTO member = new MemberDTO();
+		member = (MemberDTO)request.getSession().getAttribute("loginMember");
+		String emailId = member.getEmailId();
+		model.addAttribute("member", noticeBoardMapper.getMemberByEmail(emailId)); 
+		return "project/projectAdd"; 
+	}
+	
 	@PostMapping("/projectAdd.do")
-	public String projectAdd(MultipartHttpServletRequest multipartrequest, RedirectAttributes redirectAttributes) {
-		redirectAttributes.addFlashAttribute("addResult", projectService.addProjectM(multipartrequest));
+	public String projectAdd(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+		redirectAttributes.addFlashAttribute("addResult", projectService.addProjectM(request));
 		return "redirect:/project/projectList.do";
 	}
 	
@@ -49,8 +80,8 @@ public class ProjectController {
 		return "project/projectWorkDetail";
 	}
 
-	@PostMapping("/project/projectUpdate.do")
-	public String projectUpdate(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
+	@PostMapping("/projectUpdate.do")
+	public String projectUpdate(HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		redirectAttributes.addFlashAttribute("modifyResult", projectService.updateProjectM(request));
 		return "redirect:/project/projectList.do";
 	}
@@ -61,7 +92,7 @@ public class ProjectController {
 		return "redirect:/project/projectWorkList.do";
 	}
 	
-	@PostMapping("/project/deleteProject.do")
+	@PostMapping("/deleteProject.do")
 	public String deleteProject(@RequestParam("projectNo") int projectNo, RedirectAttributes redirectAttributes) {
 		redirectAttributes.addFlashAttribute("deleteResult", projectService.deleteProjectM(projectNo));
 		return "redirect:/project/projectList.do";
@@ -72,5 +103,6 @@ public class ProjectController {
 		redirectAttributes.addFlashAttribute("deleteResult", projectService.deleteProjectM(projectWorkNo));
 		return "redirect:/project/projectWorkList.do";
 	}
+	
 	
 }

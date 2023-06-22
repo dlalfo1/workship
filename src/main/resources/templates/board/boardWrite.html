@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('공지사항')}"></head>
+<head th:replace="~{/layout/header::headFrag('게시판')}"></head>
 <script>
 
   function fnFileCheck(vThis){
@@ -111,7 +111,6 @@
                 </div>
                 <div class="btnWrap">
                   <input type="button" class="btn btn-primary btn-rounded btn-sm" value="작성완료" onclick="fnAddBoard()">
-                  <input type="button" class="btn btn-outline-secondary btn-rounded btn-sm" value="임시저장" onclick="fnTempSave()">
                   <input type="button" class="btn btn-outline-secondary btn-rounded btn-sm" value="돌아가기" onclick="fnList()"> <!-- 바로 전 목록으로 돌아가기 -->
                 </div>
               </form>

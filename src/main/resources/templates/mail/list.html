@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship 메일목록')}"></head>
+<link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
+<link rel="stylesheet" th:href="@{/css/mail/list.css(var=1.0)}">
+
+<body>
+  <div class="container-scroller">
+  
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+ 
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+    
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>
+      
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+      
+   		<nav th:replace="~{/mail/layout/mailsidebar::mailSidebarFrag}"></nav>
+   		
+        <div class="content-wrapper">
+        <!--/* 
+          이 안에 div로 잘 구성해서 내용 넣어주시면 됩니다!
+          샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
+          참고할 만 한 html 파일들은 static/pages 에 있습니다!
+        */-->
+        	
+        	<!-- 메일 제목 및 읽은 메일 체크 -->
+        	<form id="frmList" th:action="@{/mail/list.html}">
+        	
+	        	<div class="info">
+	        		<th:block th:if="${Category == 'NOREAD'}">
+		        		<span class="title">안읽은 메일함</span>	
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailNoReadRecord}"></span>
+		        		</div>        			
+	        		</th:block>
+	        		<th:block th:if="${Category == 'STARRED'}">
+		        		<span class="title">중요 메일함</span>
+		        		<div class="totalMail">	   
+		        			<span>전체 메일 </span><span th:text="${mailStarRecord}"></span>    		
+		        		</div> 	
+	        		</th:block>
+	        		<th:block th:if="${Category == 'INBOX'}">
+		        		<span class="title">받은 메일함</span>	
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span><span> / 안읽은 메일</span><span th:text="${mailNoReadRecord}"></span>
+		        		</div>        			
+	        		</th:block>
+	        		<th:block th:if="${Category == 'SENT'}">
+		        		<span class="title">보낸 메일함</span>	  
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span>
+		        		</div>      			
+	        		</th:block>
+	        		<th:block th:if="${Category == 'DRAFTS'}">
+		        		<span class="title">임시 보관함</span>	
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span>
+		        		</div>        			
+	        		</th:block>
+	        		<th:block th:if="${Category == 'SPAM'}">
+		        		<span class="title">스팸 메일함</span>
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span>
+		        		</div>	        			
+	        		</th:block>
+	        		<th:block th:if="${Category == 'TRASH'}">
+		        		<span class="title">휴지통</span>	        			
+		        		<div class="totalMail">
+		        			<span>전체 메일 </span><span th:text="${mailTotalRecord}"></span>
+		        		</div>
+	        		</th:block>
+	        	</div>
+	        	
+        		<div class="contents">
+        		
+        			<!-- 메일 이동 및 검색창 구현 -->
+        			<div class="contentCheck">
+        			
+        				<!-- 메일 이동 -->
+        				<div class="category">
+        					<div>
+        						<label for="checkAll" class="form-check-label"></label>
+        						<input type="checkbox" id="checkAll" class="form-check-input">
+        					</div>
+        					
+        					<th:block th:if="${Category == 'INBOX' or Category == 'NOREAD' or Category == 'STARRED'}">
+	        					<div>
+	        						<label for="btnStar" id="lblBtnStar"></label>
+	        						<input type="button" value="중요" id="btnStar">
+	        					</div>
+	        					<div>
+	        						<label for="btnRead" id="lblBtnRead"></label>
+	        						<input type="button" value="읽음" id="btnRead">
+	        					</div>
+	        					<div>
+	        						<label for="btnRemove" id="lblBtnRemove"></label>
+	        						<input type="button" value="삭제" id="btnRemove">
+	        					</div>
+	        					<div>
+	        						<label for="btnSpam" id="lblBtnSpam"></label>
+	        						<input type="button" value="스팸차단" id="btnSpam" >
+	        					</div>
+	        					<div>
+	        						<label for="btnReply" id="lblBtnReply"></label>
+	        						<input type="button" value="답장" id="btnRely">
+	        					</div>
+	        					<div>
+	        						<label for="btnRelay" id="lblBtnRelay"></label>
+	        						<input type="button" value="전달" id="btnRelay">
+	        					</div>
+        					</th:block>
+        					
+        					<th:block th:if="${Category == 'SENT'}">
+        						<div>
+	        						<label for="btnDeleteSent" id="lblBtnDeleteSent"></label>
+	        						<input type="button" value="영구삭제" id="btnDeleteSent" >
+	        					</div>
+        					</th:block>
+
+        					<th:block th:if="${Category == 'DRAFTS'}">
+        						<div>
+	        						<label for="btnDeleteSent" id="lblBtnDeleteSent"></label>
+	        						<input type="button" value="영구삭제" id="btnDeleteSent" >
+	        					</div>
+	        					<div>
+	        						<label for="btnRelay" id="lblBtnRelay"></label>
+	        						<input type="button" value="전달" id="btnRelay">
+	        					</div>
+        					</th:block>
+        					
+        					<th:block th:if="${Category == 'SPAM'}">
+        						<div>
+	        						<label for="btnDeleteReceive" id="lblBtnDeleteReceive"></label>
+	        						<input type="button" value="영구삭제" id="btnDeleteReceive">
+	        					</div>
+	        					<div>
+	        						<label for="btnSpamCancel" id="lblBtnSpamCancel"></label>
+	        						<input type="button" value="스팸해제" id="btnSpamCancel">
+	        					</div>
+        					</th:block>
+        					
+        					<th:block th:if="${Category == 'TRASH'}">
+        						<div>
+	        						<label for="btnRemoveCancel" id="lblBtnRemoveCancel"></label>
+	        						<input type="button" value="메일복원" id="btnRemoveCancel">
+	        					</div>
+	        					<div>
+	        						<label for="btnDeleteReceive" id="lblBtnDeleteReceive"></label>
+	        						<input type="button" value="영구삭제" id="btnDeleteReceive" >
+	        					</div>
+	        					<div>
+	        						<label for="btnSpam" id="lblBtnSpam"></label>
+	        						<input type="button" value="스팸차단" id="btnSpam">
+	        					</div>
+        					</th:block>
+        				</div>
+        				
+			        	<script>
+							
+							$(function(){
+								fnCheckAll();
+								fnCheckOne();
+								fnStarMail();
+								fnReadMail();
+								fnRemoveMail();
+								fnSpamMail();
+								fnDeleteSentMail();
+								fnDeleteReceiveMail();
+								fnSpamMailCancel();
+								fnRemoveMailCancel();
+							})
+							
+							<!--/*  전체선택 체크박스 */-->
+							function fnCheckAll(){
+								$('#checkAll').on('click', function(){
+									$('.checkOne').prop('checked', $(this).prop('checked'));
+								})
+							}
+							
+							<!--/*  개별선택 체크박스 */-->
+							function fnCheckOne(){
+								let chkOne = $('.checkOne');  <!--/* 모든 개별선택 */-->
+								chkOne.on('click', function(){
+									let chkCnt = 0;
+									for(let i = 0; i < chkOne.length; i++){
+										chkCnt += $(chkOne[i]).prop('checked');
+									}
+									$('#checkAll').prop('checked', chkCnt == chkOne.length);
+								})
+							}
+							
+							<!--/* 중요 ajax */-->
+							function fnStarMail() {
+								
+								$('#btnStar').on('click', function() {
+					
+								var checkbox = $('.form-check-input:checked');
+								var chkCount =  $('.form-check-input:checked').length;
+								var checkMailNo = []; 
+								for(let i = 0; i < checkbox.length; i++) {
+									checkMailNo.push($(checkbox[i]).val());
+								}
+			
+									if(chkCount == 0) {
+										alert('선택된 메일이 없습니다.');
+										event.preventDefault();
+										return;
+									} else {
+										if(confirm('선택 메일을 중요메일로 변경하시겠습니까?')) {
+											$.ajax({
+												type: 'post',
+												url: '/mail/updateStar.do',
+												data: JSON.stringify({"checkMailNo" : checkMailNo}),
+												contentType: 'application/json',
+												dataType: 'json',
+												success: function(resData) {
+													if(resData.result > 0) {
+														alert('중요처리로 변경되었습니다.');
+														location.reload();
+													}
+												}											
+											})											
+										} else {
+											event.preventDefault();
+			        						return;
+										}										
+									}									
+								})
+							}
+							
+							<!--/* 읽음 ajax */-->
+							function fnReadMail() {
+								
+								$('#btnRead').on('click', function() {
+					
+								var checkbox = $('.form-check-input:checked');
+								var chkCount =  $('.form-check-input:checked').length;
+								var checkMailNo = []; 
+								for(let i = 0; i < checkbox.length; i++) {
+									checkMailNo.push($(checkbox[i]).val());
+								}
+			
+									if(chkCount == 0) {
+										alert('선택된 메일이 없습니다.');
+										event.preventDefault();
+										return;
+									} else {
+										if(confirm('선택 메일을 읽은 메일로 변경하시겠습니까?')) {
+											$.ajax({
+												type: 'post',
+												url: '/mail/updateStatus.do',
+												data: JSON.stringify({"checkMailNo" : checkMailNo}),
+												contentType: 'application/json',
+												dataType: 'json',
+												success: function(resData) {
+													if(resData.result > 0) {
+														alert('읽음처리로 변경되었습니다.');
+														location.reload();
+													}
+												}											
+											})											
+										}										
+									}									
+								})
+							}
+							
+							<!--/* 삭제 ajax */-->
+							function fnRemoveMail() {
+								
+								$('#btnRemove').on('click', function() {
+					
+								var checkbox = $('.form-check-input:checked');
+								var chkCount =  $('.form-check-input:checked').length;
+								var checkMailNo = []; 
+								for(let i = 0; i < checkbox.length; i++) {
+									checkMailNo.push($(checkbox[i]).val());
+								}
+			
+									if(chkCount == 0) {
+										alert('선택된 메일이 없습니다.');
+										event.preventDefault();
+										return;
+									} else {
+										if(confirm('메일을 삭제하시겠습니까?\n삭제된 메일은 휴지통으로 이동합니다.')) {
+											$.ajax({
+												type: 'post',
+												url: '/mail/updateToTrash.do',
+												data: JSON.stringify({"checkMailNo" : checkMailNo}),
+												contentType: 'application/json',
+												dataType: 'json',
+												success: function(resData) {
+													if(resData.result > 0) {
+														alert('메일이 휴지통으로 이동되었습니다.');
+														location.reload();
+													}
+												}											
+											})											
+										} else {
+											event.preventDefault();
+			        						return;
+										}										
+									}									
+								})
+							}
+							
+							<!--/* 스팸 ajax */-->
+							function fnSpamMail() {
+								
+								$('#btnSpam').on('click', function() {
+					
+								var checkbox = $('.form-check-input:checked');
+								var chkCount =  $('.form-check-input:checked').length;
+								var checkMailNo = []; 
+								for(let i = 0; i < checkbox.length; i++) {
+									checkMailNo.push($(checkbox[i]).val());
+								}
+			
+									if(chkCount == 0) {
+										alert('선택된 메일이 없습니다.');
+										event.preventDefault();
+										return;
+									} else {
+										if(confirm('선택한 메일을 스팸처리 하시겠습니까?')) {
+											$.ajax({
+												type: 'post',
+												url: '/mail/updateToSpam.do',
+												data: JSON.stringify({"checkMailNo" : checkMailNo}),
+												contentType: 'application/json',
+												dataType: 'json',
+												success: function(resData) {
+													if(resData.result > 0) {
+														alert('메일이 스팸메일함으로 이동되었습니다.');
+														location.reload();
+													}
+												}											
+											})											
+										} else {
+											event.preventDefault();
+			        						return;
+										}										
+									}									
+								})
+							} 
+							
+							<!--/* 보낸메일 영구삭제 ajax */-->
+							function fnDeleteSentMail() {
+								$('#btnDeleteSent').on('click', function() {
+									
+									var checkbox = $('.form-check-input:checked');
+									var chkCount =  $('.form-check-input:checked').length;
+									var checkMailNo = []; 
+									for(let i = 0; i < checkbox.length; i++) {
+										checkMailNo.push($(checkbox[i]).val());
+									}
+				
+										if(chkCount == 0) {
+											alert('선택된 메일이 없습니다.');
+											event.preventDefault();
+											return;
+										} else {
+											if(confirm('영구삭제를 진행할 경우,\n삭제된 메일은 복구되지 않습니다.\n그래도 선택된 메일을 영구삭제하시겠습니까?')) {
+												$.ajax({
+													type: 'post',
+													url: '/mail/deleteSentMail.do',
+													data: JSON.stringify({"checkMailNo" : checkMailNo}),
+													contentType: 'application/json',
+													dataType: 'json',
+													success: function(resData) {
+														if(resData.result > 0) {
+															alert('메일이 삭제되었습니다.');
+															location.reload();
+														}
+													}											
+												})											
+											} else {
+												event.preventDefault();
+				        						return;
+											}										
+										}									
+									})
+							}
+							
+							<!--/* 받은메일 영구삭제 ajax */-->
+							function fnDeleteReceiveMail() {
+								$('#btnDeleteReceive').on('click', function() {
+									
+									var checkbox = $('.form-check-input:checked');
+									var chkCount =  $('.form-check-input:checked').length;
+									var checkMailNo = []; 
+									for(let i = 0; i < checkbox.length; i++) {
+										checkMailNo.push($(checkbox[i]).val());
+									}
+				
+									if(chkCount == 0) {
+										alert('선택된 메일이 없습니다.');
+										event.preventDefault();
+										return;
+									} else {
+										if(confirm('영구삭제를 진행할 경우,\n삭제된 메일은 복구되지 않습니다.\n그래도 선택된 메일을 영구삭제하시겠습니까?')) {
+											$.ajax({
+												type: 'post',
+												url: '/mail/deleteReceiveMail.do',
+												data: JSON.stringify({"checkMailNo" : checkMailNo}),
+												contentType: 'application/json',
+												dataType: 'json',
+												success: function(resData) {
+													if(resData.result > 0) {
+														alert('메일이 삭제되었습니다.');
+														location.reload();
+													}
+												}											
+											})											
+										} else {
+											event.preventDefault();
+			        						return;
+										}										
+									}									
+								})
+							}
+							
+							<!--/* 스팸메일 복원 ajax */-->
+							function fnSpamMailCancel() {
+								$('#btnSpamCancel').on('click', function() {
+									
+									var checkbox = $('.form-check-input:checked');
+									var chkCount =  $('.form-check-input:checked').length;
+									var checkMailNo = []; 
+									for(let i = 0; i < checkbox.length; i++) {
+										checkMailNo.push($(checkbox[i]).val());
+									}
+				
+									if(chkCount == 0) {
+										alert('선택된 메일이 없습니다.');
+										event.preventDefault();
+										return;
+									} else {
+										if(confirm('해당 메일을 스팸해제 하시겠습니까?\n해제한 메일은 받은 메일함으로 이동됩니다.')) {
+											$.ajax({
+												type: 'post',
+												url: '/mail/updateSpamCancel.do',
+												data: JSON.stringify({"checkMailNo" : checkMailNo}),
+												contentType: 'application/json',
+												dataType: 'json',
+												success: function(resData) {
+													if(resData.result > 0) {
+														alert('메일이 받은 메일함으로 이동되었습니다.');
+														location.reload();
+													}
+												}											
+											})											
+										} else {
+											event.preventDefault();
+			        						return;
+										}		
+										
+										console.log(checMailNo);
+									}									
+								})
+							}
+							
+							<!--/* 휴지통메일 복원 ajax */-->
+							function fnRemoveMailCancel() {
+								$('#btnRemoveCancel').on('click', function() {
+									
+									var checkbox = $('.form-check-input:checked');
+									var chkCount =  $('.form-check-input:checked').length;
+									var checkMailNo = []; 
+									for(let i = 0; i < checkbox.length; i++) {
+										checkMailNo.push($(checkbox[i]).val());
+									}
+				
+									if(chkCount == 0) {
+										alert('선택된 메일이 없습니다.');
+										event.preventDefault();
+										return;
+									} else {
+										if(confirm('해당 메일을 복원 하시겠습니까?\n복원한 메일은 받은 메일함으로 이동됩니다.')) {
+											$.ajax({
+												type: 'post',
+												url: '/mail/updateRemoveCancel.do',
+												data: JSON.stringify({"checkMailNo" : checkMailNo}),
+												contentType: 'application/json',
+												dataType: 'json',
+												success: function(resData) {
+													if(resData.result > 0) {
+														alert('메일이 받은 메일함으로 이동되었습니다.');
+														location.reload();
+													}
+												}											
+											})											
+										} else {
+											event.preventDefault();
+			        						return;
+										}										
+									}									
+								})
+							}
+			
+						</script>
+        				
+        				
+       					<div class="search">
+       						<select th:name="column" th:id="column">
+       							<th:block th:if="${Category == 'SENT' or Category == 'DRAFTS'}">
+	       							<option th:value="T.MAIL_TO">받는사람</option>							
+       							</th:block>
+       							<th:block th:unless="${Category == 'SENT' or Category == 'DRAFTS'}">
+       								<option th:value="M.EMAIL_ID">보낸사람</option>   
+       							</th:block>
+       							<option th:value="M.MAIL_TITLE">메일제목</option>
+       						</select>
+       						<input list="auto_complete" type="text" th:name="query" th:id="query">       						
+	        				<button><i class="fa-solid fa-magnifying-glass"></i></button>
+       					</div>
+        			</div>
+        		</div>
+        		
+        		<!-- 메일리스트 뿌리기 -->
+       			<div class="contentList">
+   					<div class="searchResult">
+   						<datalist id="auto_complete"></datalist>
+   					</div>	    
+      					    					
+   					<!-- 메일이 없는 경우 -->
+   					<th:block th:if="${#lists.isEmpty(mailList)}">
+   						<h3 class="noMail">보관 메일이 없습니다.</h3>
+   					</th:block>
+      					
+   					<!-- 메일이 있는 경우 -->
+   					<th:block th:unless="${#lists.isEmpty(mailList)}">
+
+       					<!-- 보낸 메일 --> 
+       					<th:block th:if="${Category == 'SENT' or Category == 'DRAFTS' or Category == 'DELETE'}">
+       						<ul>
+       							<th:block th:each="mails:${mailList}">	       							
+		        					<li class="mailContent">
+		        						<div class="mailCheck">
+			        						<div>
+			        							<label th:for="|chk_one${mails.mailNo}|" class="form-check-label"></label>
+			        							<input type="checkbox" th:id="|chk_one${mails.mailNo}|" class="form-check-input checkOne" name="mailByNo" th:value="${mails.mailNo}">
+			        						</div>
+			        						<div class="mailAttach" id="mailAttach">
+			     								<th:block th:if="${mails.mailHasFile == 'Y'}">
+				        							<input type="radio" th:name="mailAttach" value="Y" id="attachState"><label for="attachState"><i class="fa-solid fa-paperclip"></i></label>
+			     								</th:block>
+			        						</div>	     						
+		        						</div>
+		        						<div class="contentMail">
+		        							<div class="contentMailEmail">
+			        							<th:block th:each="names:${mailToList}">
+			        								<th:block th:if="${mails.mailToDTO.mailTo == names.emailId}">
+				        								<span th:text="${names.memberName}"></span>
+			        								</th:block>
+			        							</th:block> 
+			        							<span th:text="|(${mails.mailToDTO.mailTo})|"></span>
+			        						</div>
+			        						<div class="contentMailTitle">
+			        							<a th:href="@{/mail/detail.html(Category=${Category}, mailNo=${mails.mailNo})}" th:text="${mails.mailTitle}"></a>
+			        							<input type="hidden" th:name="mailToCategory" th:value="${mails.mailToDTO.mailToCategory}">
+			        						</div>				        						
+			        						<div class="contentMailDate" th:text="${#dates.format(mails.mailDate, 'yyyy/MM/dd')}"></div>		
+		        						</div>
+		        					</li>			        				
+			        				<input type="hidden" th:name="Category" th:value="${Category}">
+									<input type="hidden" th:name="emailId" th:value="${mails.memberDTO.emailId}">
+       							</th:block>
+       						</ul>
+       						<div class="pagination" th:utext="${pagination}"></div>
+   						</th:block>  
+
+   						<!-- 받는 메일 -->
+   						<th:block th:unless="${Category == 'SENT' or Category == 'DRAFTS'}"> 
+	        				<ul>
+   								<th:block th:each="mails:${mailList}">        							
+		        					<li class="mailContent">
+		        						<div class="mailCheck">
+		        							<div>
+			        							<label th:for="|chk_one${mails.mailNo}|" class="form-check-label"></label>
+			        							<input type="checkbox" th:id="|chk_one${mails.mailNo}|" class="form-check-input checkOne" name="mailByNo" th:value="${mails.mailNo}">
+			        						</div>
+ 			        						<div class="mailStar" id="mailStar">
+			        							<th:block th:if="${mails.mailToDTO.mailToStar == 'N'}">
+				        							<input type="radio" th:name="mailStar" value="N" id="starState"><label for="starState">☆</label>		        							
+			        							</th:block>
+			        							<th:block th:if="${mails.mailToDTO.mailToStar == 'Y'}">
+			        								<input type="radio" th:name="mailStar" value="Y" id="starState"><label for="starState">★</label>	
+			        							</th:block>
+			        						</div>
+			     							<div class="mailRead" id="mailRead">
+			     								<th:block th:if="${mails.mailToDTO.mailToStatus == 'N'}">
+			     									<input type="radio" th:name="mailRead" value="N" id="readState"><label for="readState"><i class="fa-solid fa-envelope"></i></label>
+			     								</th:block>
+			     								<th:block th:if="${mails.mailToDTO.mailToStatus == 'Y'}">
+				        							<input type="radio" th:name="mailRead" value="Y" id="readState"><label for="readState"><i class="fa-solid fa-envelope-open"></i></label>
+			     								</th:block>
+			        						</div>		
+			        						<div class="mailAttach" id="mailAttach">
+			     								<th:block th:if="${mails.mailHasFile == 'Y'}">
+				        							<input type="radio" th:name="mailAttach" value="Y" id="attachState"><label for="attachState"><i class="fa-solid fa-paperclip"></i></label>
+			     								</th:block>
+			        						</div>	        						
+		        						</div>
+		        						<div class="contentMail">
+			        						<div class="contentMailEmail">
+			        							<span th:text="${mails.memberDTO.memberName}"></span>
+			        							(<span th:text="${mails.memberDTO.emailId}"></span>)
+			        						</div>
+			        						<div class="contentMailTitle">
+			        							<a th:href="@{/mail/detail.html(Category=${Category}, mailNo=${mails.mailNo})}" th:text="${mails.mailTitle}" onclick="fnReadChange();"></a>
+			        							<input type="hidden" th:name="mailCategory" th:value="${mails.mailCategory}">
+			        						</div>	
+			        						<div class="contentMailDate" th:text="${#dates.format(mails.mailDate, 'yyyy/MM/dd')}"></div>		
+		        						</div>
+		        					</li>		
+			        				<input type="hidden" th:name="Category" th:value="${Category}">
+									<input type="hidden" th:name="emailId" th:value="${mails.memberDTO.emailId}">
+			        				<input type="hidden" th:name="mailTo" th:value="${mails.mailToDTO.mailTo}">
+   								</th:block>
+	        				</ul>
+	        				<div class="pagination" th:utext="${pagination}"></div>
+   						</th:block>
+       							
+       				</th:block>
+       			</div>
+       			
+        	</form>
+        	
+        	
+        	
+
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+  
+</body>
+</html>
