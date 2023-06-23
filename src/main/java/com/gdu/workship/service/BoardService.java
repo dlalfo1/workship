@@ -17,9 +17,10 @@ public interface BoardService {
   public void getBoardByNo(int boardNo, Model model);
   public ResponseEntity<Resource> download(int boardFileNo, String userAgent);
   public ResponseEntity<Resource> downloadAll(int boardNo);
-  public MemberDTO goWrtie(HttpSession session, Model model);
+  public MemberDTO goWrite(HttpSession session, Model model);
   public int addBoard(MultipartHttpServletRequest request);
   public int removeBoard(int boardNo);
   public int modifyBoard(MultipartHttpServletRequest multipartRequest);
   public int removeBoardFile(int boardFileNo);
+ 
 }

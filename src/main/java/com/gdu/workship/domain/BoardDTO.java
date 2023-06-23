@@ -10,16 +10,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardDTO {
-	
-	private int boardNo;
-	private MemberDTO MemberDTO;
-	private String boardTitle;
-	private String boardContent;
-	private Date boardCreatedAt;
-	private Date boardModifiedAt;
-	private int boardHit;
-	private int boardState;
-	
-	private int prevNo;
-	private int nextNo;
+   
+   private int boardNo;
+   private MemberDTO MemberDTO;
+   private String boardTitle;
+   private String boardContent;
+   private Date boardCreatedAt;
+   private Date boardModifiedAt;
+   private int boardHit;
+   private int boardState;
+   private int boardCategory;
+   
+   private int prevNo;
+   private int nextNo;
 }

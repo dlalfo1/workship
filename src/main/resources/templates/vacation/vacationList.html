@@ -76,10 +76,10 @@
                   <th:block th:unless="${#lists.isEmpty(vacationList)}">
                     <th:block th:each="vacation:${vacationList}">
                       <tr>
-                        <td th:text="${#dates.format(vacation?.approvalDTO.createdAt, 'YYYY-MM-dd')}"></td>
-                        <td th:text="${vacation?.approvalDTO.vacationCategory}"></td>
-                        <td th:text="${#dates.format(vacation?.approvalDTO.vacationStartDate, 'YYYY-MM-dd')}"></td>
-                        <td th:text="${#dates.format(vacation?.approvalDTO.vacationEndDate, 'YYYY-MM-dd')}"></td>
+                        <td th:text="${#dates.format(vacation?.vacationApprovalDTO.createdAt, 'YYYY-MM-dd')}"></td>
+                        <td th:text="${vacation?.vacationApprovalDTO.vacationCategory}"></td>
+                        <td th:text="${#dates.format(vacation?.vacationApprovalDTO.vacationStartDate, 'YYYY-MM-dd')}"></td>
+                        <td th:text="${#dates.format(vacation?.vacationApprovalDTO.vacationEndDate, 'YYYY-MM-dd')}"></td>
                         <td th:text="${vacation?.vacationDay}"></td>
                       </tr>
                     </th:block>

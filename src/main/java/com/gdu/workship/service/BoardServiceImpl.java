@@ -33,12 +33,9 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.gdu.workship.domain.BoardDTO;
 import com.gdu.workship.domain.BoardFileDTO;
 import com.gdu.workship.domain.MemberDTO;
-import com.gdu.workship.domain.NoticeDTO;
-import com.gdu.workship.domain.NoticeFileDTO;
 import com.gdu.workship.mapper.BoardMapper;
-import com.gdu.workship.mapper.NoticeBoardMapper;
 import com.gdu.workship.util.MyFileUtil;
-import com.gdu.workship.util.PageUtil;
+import com.gdu.workship.util.PageUtil2;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,13 +44,57 @@ import lombok.RequiredArgsConstructor;
 public class BoardServiceImpl implements BoardService {
 
 	private final BoardMapper boardMapper;
-	private final PageUtil pageUtil;
+	private final PageUtil2 pageUtil;
 	private final MyFileUtil myFileUtil;
-	
 	
 	@Override
 	public void loadBoardList(HttpServletRequest request, Model model) {
-
+		
+		int boardCategory = Integer.parseInt(request.getParameter("boardCategory"));
+	    Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
+	    int page = Integer.parseInt(opt1.orElse("1"));
+	    
+	    // 파라미터 column이 전달되지 않는 경우 column=""로 처리한다. (column이 없으면 null값, 처음 화면이동 요청..)
+	    Optional<String> opt2 = Optional.ofNullable(request.getParameter("column"));
+	    String column = opt2.orElse("");
+	    
+	    // 파라미터 query가 전달되지 않는 경우 query=""로 처리한다. (query가 없으면 null값, 처음 화면이동 요청..)
+	    Optional<String> opt3 = Optional.ofNullable(request.getParameter("query"));
+	    String query = opt3.orElse("");
+	    Map<String, Object> parameter = new HashMap<>();
+	    parameter.put("query", query);
+	    parameter.put("boardCategory", boardCategory);
+	    int totalRecord = boardMapper.getBoardSearchCount(parameter);
+	    
+	    int recordPerPage = 5;
+	    
+	    Map<String, Object> map = new HashMap<String, Object>();
+	    map.put("column", column);
+	    map.put("query", query);
+	    map.put("boardCategory", boardCategory);
+	    pageUtil.setPageUtil(page, (column.isEmpty() || query.isEmpty()) ? totalRecord : boardMapper.getBoardSearchCount(map), recordPerPage);
+	    
+	    map.put("begin", pageUtil.getBegin());      
+	    map.put("recordPerPage", recordPerPage);
+	    System.out.println(map);
+	    
+	    List<BoardDTO> boardList = boardMapper.getBoardList(map);
+	    System.out.println(boardList + "!!!!!!!!!!!!!!!!!!!!!");
+	    model.addAttribute("boardList", boardList);
+	    model.addAttribute("beginNo", totalRecord - (page - 1) * recordPerPage);
+	    if(column.isEmpty() || query.isEmpty()) {
+	      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/board/boardList.do?boardCategory=" + boardCategory));
+	    } else {
+	      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/board/boardList.do?column=" + column + "&query=" + query + "&boardCategory=" + boardCategory));
+	    }
+	}
+	
+	/*
+	@Override
+	public void loadBoardList(HttpServletRequest request, Model model) {
+		
+		int boardCategory = Integer.parseInt(request.getParameter("boardCategory"));
+		
 	    Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
 	    int page = Integer.parseInt(opt1.orElse("1"));
 	    
@@ -67,11 +108,12 @@ public class BoardServiceImpl implements BoardService {
 	    
 	    int totalRecord = boardMapper.getBoardCount();
 	    
-	    int recordPerPage = 10;
+	    int recordPerPage = 5;
 	    
 	    Map<String, Object> map = new HashMap<String, Object>();
 	    map.put("column", column);
 	    map.put("query", query);
+	    map.put("boardCategory", boardCategory);
 	    pageUtil.setPageUtil(page, (column.isEmpty() || query.isEmpty()) ? totalRecord : boardMapper.getBoardSearchCount(map), recordPerPage);
 	    
 	    map.put("begin", pageUtil.getBegin());      
@@ -85,9 +127,10 @@ public class BoardServiceImpl implements BoardService {
 	    if(column.isEmpty() || query.isEmpty()) {
 	      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/board/boardList.do"));
 	    } else {
-	      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/board/boardList.do?column=" + column + "&query=" + query));
+	      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/board/boardList.do?column=" + column + "&query=" + query + "&boardCategory=" + boardCategory));
 	    }
 	}
+	*/
 
 	@Override
 	public int increaseHit(int boardNo) {
@@ -232,7 +275,7 @@ public class BoardServiceImpl implements BoardService {
 	  }
 
 	@Override
-	public MemberDTO goWrtie(HttpSession session, Model model) {
+	public MemberDTO goWrite(HttpSession session, Model model) {
 		MemberDTO member = new MemberDTO();
 	    member = (MemberDTO) session.getAttribute("loginMember");
 	    String emailId = member.getEmailId();
@@ -248,6 +291,7 @@ public class BoardServiceImpl implements BoardService {
 	    String emailId = request.getParameter("emailId");
 	    int memberNo = boardMapper.getMemberByEmail(emailId).getMemberNo();
 	    String boardContent = request.getParameter("boardContent");
+	    int boardCategory = Integer.parseInt(request.getParameter("boardCategory"));
 	    
 	    // DB로 보낼 NoticeDTO 만들기
 	    MemberDTO memberDTO = new MemberDTO();
@@ -256,6 +300,7 @@ public class BoardServiceImpl implements BoardService {
 	    boardDTO.setBoardTitle(boardTitle);
 	    boardDTO.setMemberDTO(memberDTO);
 	    boardDTO.setBoardContent(boardContent);
+	    boardDTO.setBoardCategory(boardCategory);
 	    
 	    // DB로 NoticeDTO 보내기 (삽입)
 	    int addResult = boardMapper.addBoard(boardDTO);

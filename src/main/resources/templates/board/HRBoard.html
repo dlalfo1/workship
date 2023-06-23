@@ -4,16 +4,64 @@
 <head th:replace="~{/layout/header::headFrag('게시판')}"></head>
 <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 <style>
-	.second-title {
-		color: black;
-	}
-	#boardCategory {
-		height: 10px;
-	
-	}
-
+   .boardMain a {
+    text-decoration: none;
+    color: black;
+  }
+  .blind {
+    display: none;
+  }
+  .invisible {
+    visibility: hidden;
+  }
+  .enable_link {
+    cursor: pointer;
+  }
 </style>
-<script>
+<script th:inline="javascript">
+	
+	
+	function fnWriteBoard() {
+		location.href = '/board/boardWrite.html?boardCategory=1';
+	}
+	
+	/*
+	function fnWriteBoard(){
+		if(deptNo === 1){
+			location.href = '/board/boardWrite.html'
+		} else {
+			alert('작성을 하실 수 없습니다.');
+		}
+	}
+	*/
+	
+	$(function(){
+	// 게시글 달기 결과 메시지
+	let addResult = /*[[${addResult}]]*/ null;  // addResult가 전달되지 않는 경우 null을 사용한다.
+	if(addResult !== null){
+	  if(addResult === 1) {
+	    alert('게시글이 작성되었습니다.');
+	  } else {
+	    alert('게시글 작성에 실패했습니다.');
+	  }
+	}
+	
+	let removeResult = /*[[${removeResult}]]*/ null;  // addResult가 전달되지 않는 경우 null을 사용한다.
+	if(removeResult !== null){
+	  if(removeResult === 1) {
+	    alert('게시글이 삭제되었습니다.');
+	  } else {
+	    alert('게시글 삭제에 실패했습니다.');
+	  }
+	}
+	
+	// 검색어 초기화
+		$('#column').on('change', function(){
+			$('#query').val('');
+		})
+		
+		
+	})
 </script>
 <body>
 
@@ -32,31 +80,95 @@
       <div class="main-panel">
         <div class="content-wrapper">
         
-          <div class="board-main">
-            <div class="board-title row">
-                <h3><a th:href="@{/board/HRBoard.html}" class="second-title">인사게시판</a></h3>
-                <div class="dropdown">
-									<button class="btn btn-primary dropdown-toggle has-ripple" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height: 10px; ">게시판<span class="ripple ripple-animate" style="height: 102.438px; width: 102.438px; animation-duration: 0.7s; animation-timing-function: linear; background: rgb(255, 255, 255); opacity: 0.4; top: -23.419px; left: 49.781px;"></span></button>
-            			<div class="dropdown-menu">
-										<a class="dropdown-item" th:href="@{/board/HRBoard.html}">인사게시판</a>
-										<a class="dropdown-item" th:href="@{/board/GADBoard.html}">총무게시판</a>
-										<a class="dropdown-item" th:href="@{/board/DEVBoard.html}">개발게시판</a>
-									</div>
-            		</div>
-            <hr>
-           
-                <div class="pagination">
-                <div style="text-align: center;" th:utext="${pagination}"></div>  
+          <div class="row">
+            <div class="col-md-12 stretch-card grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <div class="boardMain h3 font-weight-bold position-right translate-middle">인사부게시판
+										<div class="btn-group">
+											  <!--
+										  <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
+										   	게시판
+										  </button>
+										  <ul class="dropdown-menu">
+										    <li><a class="dropdown-item" th:href="@{/board/boardList.do}">게시판목록</a></li>
+										  </ul>
+										   -->
+										</div>
+                  </div>
+                    <table id="listTable" class="table text-center">
+                    <thead>
+		                 <tr>
+		                   <th style="width: 10%">게시글 번호</th>
+		                   <th style="width: 35%;">제목</th>
+		                   <th style="width: 20%;">작성자</th>
+		                   <th style="width: 25%;">작성일</th>
+		                   <th style="width: 10%;">조회수</th>
+		                 </tr>
+		              	</thead>
+                    <tbody id="boardList">
+                      <th:block th:if="${#lists.isEmpty(boardList)}">
+                        <tr> 
+                          <td colspan="5">현재 게시글이 없습니다.</td>
+                        </tr>
+                      </th:block>
+                      
+                      <th:block th:unless="${#lists.isEmpty(boardList)}">
+                        <th:block th:each="board:${boardList}">
+                          <th:block th:if="${board.boardState == 1}">
+                            <tr class="list">
+                              <td th:text="${board.boardNo}"></td>
+                              <!--/* 본인이 작성한 게시글은 조회수가 증가하지 않는다. */-->
+                              <td th:if="${session.loginMember.emailId == board.memberDTO.emailId}">
+                                <a th:href="@{/board/increaseHit.do(boardNo=${board.boardNo})}" th:text="${board.boardTitle}"></a>
+                              </td>
+                              <td th:unless="${session.loginMember.emailId == board.memberDTO.emailId}">
+                                <a th:href="@{/board/boardDetail.html(boardNo=${board.boardNo})}" th:text="${board.boardTitle}"></a>
+                              </td>
+                              <td th:text="|${board.memberDTO.memberName} ${board.memberDTO.jobDTO.jobName}|"></td>
+                              <td th:text="${#dates.format(board.boardCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
+                              <td th:text="${board.boardHit}"></td>
+                              <td>
+											          <!-- 댓글 삭제 버튼 -->
+											          <button class="btn btn-sm btn-danger" th:if="${session.loginMember.emailId == board.memberDTO.emailId}" onclick="deleteComment('${board.commentId}')">삭제</button>
+											        </td>
+                            </tr>
+                          </th:block>
+                        </th:block>
+                      </th:block>
+                    </tbody>
+                </table>
+                  <script>
+                    
+                  </script>
+                  <input type="button" class="btn btn-primary btn-rounded btn-md float-left m-3" id="btnWriteBoard" value="글쓰기" onclick="fnWriteBoard()">
+                  <div class="searchWrap">
+                    <div class="frmWrap" style="margin: 1rem; padding-left: 22rem; padding-right: 2rem;">
+                      <form id="frmSearch" th:action="@{/board/boardList.do}">
+                        <select class="form-control form-control-sm" name="column" id="column" style="display:inline-block; width:80px;">
+                          <option value="board_TITLE" selected="selected">제목</option>
+                          <option value="board_CONTENT">내용</option>
+                        </select>
+                        <input class="form-control form-control-sm col-4" type="text" name="query" id="query" style="display:inline-block;" placeholder="검색어를 입력해주세요.">
+                        <button type="submit" class="btn btn-primary">검색</button>
+                      </form>
+                    </div>
+                  </div> <!--/* search_wrap 끝나는 지점 */-->
+              
+              <div style="text-align: center; margin: 0 auto;">
+                <div th:utext="${pagination}"></div>  
               </div>
             </div> <!--/* board-table 끝나는 지점 */-->
           </div> <!--/* board-main 끝나는 지점 */-->
-
-        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+				</div>
+				 
+       </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
-  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
-  
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점*/-->
+ </div>
   <!--/* footer 영역 */-->
+  
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
 </body>

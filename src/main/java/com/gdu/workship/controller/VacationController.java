@@ -54,5 +54,11 @@ public class VacationController {
 	public Map<String, Object> modifyVacation(HttpServletRequest request){
 		return vacationService.modifyVacation(request);
 	}
+	
+	@ResponseBody
+	@PostMapping("/removeVacation.do")
+	public Map<String, Object> removeVacation(@RequestParam("vacationNo") int vacationNo){
+		return vacationService.removeVacation(vacationNo);
+	}
 
 }

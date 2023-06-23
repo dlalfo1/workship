@@ -2,35 +2,45 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 휴가신청서')}"></head>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+
+<!--/* <link rel="styleshhet" th:href="@{/css/bootstrap.css}"> */-->
 <link rel="stylesheet" th:href="@{/css/mirae.css}" >
-
-
+<script th:replace="~{/layout/common::datepickerSetting}"></script>
 <body>
 
-  <div class="container-scroller">
+  <!--/* 결재선 지정 모달 */-->
+  <div th:replace="~{/approval/approvalModal::modalFrag}"></div>
 
+  <div class="container-scroller">
+  
     <!--/* 상단바 */-->
     <nav th:replace="~{/layout/common::topbarFrag}"></nav>
   
     <!--/* 본문영역 */-->
     <div class="container-fluid page-body-wrapper">
     
-    
       <!--/* 테마설정버튼 영역 */-->
-      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div> 
+        
       <!--/* 사이드바 영역 */-->
       <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
-      
     
       <!--/* 실제 내용 영역 */-->
         <div class="main-panel">
-         <form id="approvalForm" method="post" enctype="multipart/form-data">
+         <form id="approvalForm" method="post" enctype="multipart/form-data" th:action="@{/approval/addApproval.do}">
           <div class="content-wrapper-vacation">
             <div class="document-wrapper" >
               <table>
                 <tr>
                   <th colspan="2" class="docTitle-area">휴가신청서</th>
-                  <td colspan="4">결재라인 들어올 곳</td>
+                  <td colspan="4" id="approval-section" class="approval-section" style="padding-right: 25px;">
+                    <!-- ajax 조회 후 html 태그 삽입 -->
+                    <div id="approvalDiv" style="display: flex; justify-content: flex-end;">
+                    
+                    
+                    <div>
+                  </td>
                 </tr>
                 <tr>
                   <th>제목</th>
@@ -40,29 +50,31 @@
                 </tr>
                 <tr>
                   <th>부서</th>
-                  <td th:text="${department.deptName}">></td>
+                  <td th:text="${session.loginMember.departmentDTO.deptName}"></td>
                   <th>작성자</th>
-                  <td th:text="${member.memberName}"></td>
+                  <td th:text="${session.loginMember.memberName}"></td>
                   <th>작성일</th>
                   <td th:text="${createdAt}"></td>
                 </tr>
                 <tr>
                   <th>휴가종류</th>
                   <td>
-                    <select class="select-style" name="vacationType">
-                      <option value="1">연차</option>
-                      <option value="2">정기휴가</option>
-                      <option value="3">경조사</option>
-                      <option value="4">기타</option>
+                    <select class="select-style" name="vacationCategory">
+                      <option value="연차">연차</option>
+                      <option value="정기휴가">정기휴가</option>
+                      <option value="경조사">경조사</option>
+                      <option value="기타">기타</option>
                     </select>
                   </td>
                   <th>사용시작일</th>
-                  <td>
-                    <input type="text" class="form-control form-control-sm" id="startDate">
+                  <td class="datepicker-wrapper">
+                    <input type="text" id="startDate" name="startDate" style="width: 110px">
+                    <label for="startDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>                
                   </td>
                   <th>사용종료일</th>
-                  <td>
-                    <input type="text" class="form-control form-control-sm"  id="endDate">
+                  <td class="datepicker-wrapper">
+                    <input type="text" id="endDate" name="endDate" style="width: 110px;">
+                    <label for="endDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
                   </td>
                 </tr>
                 <tr>
@@ -78,24 +90,36 @@
                       <span id="spanBtn"><i id="btnFilebox" class="fa-solid fa-circle-chevron-up"></i></span>
                       <label class="button-style" for="files" >파일 첨부하기</label> 
                       <input type="file" id="files" name="files" multiple="multiple" onchange="fnFileCheck(this)" hidden="">
-                      <button class="btn btn-outline-primary btn-fw">모두 삭제</button>
+                      <button type="button" id="btnReset" class="btn btn-outline-primary btn-fw">모두 삭제</button>
                       <span>1개 업로드 완료!</span>
-                    </div>
+                    </div>  
                     <div class="file-list-container" id="filesDrag">
-                      <span class="fileDrop open" id="fileDrop"><i class="fa-solid fa-paperclip"></i>파일을 마우스로 끌어 오세요.</span>
-                      <!--/* 첨부파일 목록 나오는 곳 */-->
+                      <div class="fileDrop open" id="fileDrop">
+                        <div id="fileDropArea">
+                          <i class="fa-solid fa-paperclip"></i>파일을 마우스로 끌어 오세요.
+                        </div>
+                        <!--/* 첨부파일 목록 나오는 곳 */-->
+                      </div>
                     </div>
                   </td>
                 </tr>
               </table>
               <div class="btn-area">
                 <button type="button" class="btn btn-secondary" onclick="fnList()">돌아가기</button>
-                <button type="button" class="btn btn-primary" onclick="fnTemporarySave()">임시저장</button>
-                <button type="button" class="btn btn-primary" onclick="fnApproval()">결재상신</button>
+                <button class="btn btn-primary" id="save" name="status" value="0">임시저장</button>
+                <input type="hidden" name="memberNo" th:value="${session.loginMember.memberNo}">
+                <input type="hidden" name="formNo" th:value="${formNo}">
+                <input type="hidden" name="docStatus" value="1">
+                <input type="hidden" name="approvalStatus" value="0">
+                <input type="hidden" id="approvalCount" name="approvalCount">
+                <input type="hidden" id="approvalSequence" name="approvalSequence" value="0">
+                <input type="hidden" id="memberApprovalStatus" name="memberApprovalStatus" value="0">
+                <input type="hidden" id="vacationState" name="vacationState" value="0">
+                <button type="button" class="btn btn-primary" id="submitApproval" >결재상신</button>
               </div>
               </div> <!--/* document-wrapper 끝나는 지점 */-->
               <div class="approval-wrapper">
-              <button class="btn btn-primary btn-sm" onclick="" style="border-radius: 3px; font-size: 20px;">결재선 설정</button>
+                <button type="button" id="approvalLine" class="btn btn-primary btn-sm"  style="border-radius: 3px; font-size: 20px;" data-toggle="modal" data-target="#exampleModalCenter">결재선 설정</button>
               <div class="approval-reference-area" id="approvalList">
                 <p>결재선</p>
                 <div>
@@ -119,30 +143,27 @@
   
 <script>
 
-  // 돌아가기 버튼
-  function fnList() {
-	  location.href = '/approval/docList.html';
-  }
-
-  // 임시저장 버튼
-  function fnTemporarySave() {
-
-  }
-  
-  // 결재상신 
-  function fnApproval() {
-    $('#approvalForm').attr('th:action', '@{/approval/addApprovalVacation.do}');
-    $('#approvalForm').submit();
-    
-  }
-  
-  $('#startDate').datepicker({
-  
-  })
-  
-  $('#endDate').datepicker({
-  
-  })
+  // datepicker 관련
+  var startDate = $('#startDate');
+  var endDate = $('#endDate');
+  startDate.datepicker({
+    showButtonPanel: false,
+    minDate: 0,
+    onClose: function(selectedDate){
+      endDate.datepicker('option', 'minDate', selectedDate);
+    }
+  });
+  endDate.datepicker({
+    showButtonPanel: false,
+    maxDate: "+1y",
+    beforeShowDay: function(date){
+      var startDateValue = startDate.datepicker('getDate');
+      if (startDateValue) {
+        return [date >= startDateValue];
+      }
+      return [true];
+    }
+  });
 
   $('#content').summernote({
     width: 820,
@@ -165,22 +186,21 @@
       
     $('#fileDrop').addClass('hide').removeClass("open");
     $('#spanBtn').empty();
-    $('#spanBtn').append('<i id="btnFilebox" class="fa-solid fa-circle-chevron-down"></i>');
+    $('#spanBtn').append('<i class="fa-solid fa-circle-chevron-down"></i>');
     $('#filesDrag').css("display", "none");
       
-    
     } else if($('#fileDrop').hasClass('hide')) {
       
     $('#fileDrop').addClass('open').removeClass("hide");
     $('#spanBtn').empty();
-    $('#spanBtn').append('<i id="btnFilebox" class="fa-solid fa-circle-chevron-up"></i>');
+    $('#spanBtn').append('<i class="fa-solid fa-circle-chevron-up"></i>');
     $('#filesDrag').css("display", "block");
     }
 
   })
 
    // 파일첨부 드래그앤드랍
-   var fileList = []; //파일 정보를 담아 둘 배열
+   let fileList = []; //파일 정보를 담아 둘 배열
     $("#fileDrop").on("dragenter", function(e){ // 드래그한 파일이 드롭 영역에 진입할 때 실행
         e.preventDefault();
         e.stopPropagation();
@@ -193,69 +213,106 @@
         e.stopPropagation();
         $(this).css("background-color", "#FFF"); 
     }).on("drop", function(e){ // 드롭 영역에 파일이 드롭되었을 때 실행됩니다
-    	e.preventDefault();
-    
-      // 파일목록에 <span> 태그가 없는 경우 텍스트 지우기
+        e.preventDefault();     
+
+      // 파일목록에 <span> 태그가 없는 경우 모든 태그 지우기
       if($('#fileDrop').find('span').length === 0) { 
-        $('#fileDrop').text(''); 
+        $('#fileDropArea').text(''); 
       }
       
-    	var files = e.originalEvent.dataTransfer.files;
+      let files = e.originalEvent.dataTransfer.files;
         if(files != null && files != undefined){
-            var str = "";
+            let str = "";
             for(i=0; i<files.length; i++){
-                var file = files[i];
+                let file = files[i];
                 fileList.push(file);
-                var fileName = file.name;
-                var fileSize = file.size / 1024 / 1024;
+                let fileName = file.name;
+                let fileSize = file.size / 1024 / 1024;
                 fileSize = fileSize < 1 ? fileSize.toFixed(3) : fileSize.toFixed(1);
-                str += '<span><input type="hidden" name=""><i class="fa-solid fa-xmark"></i></span>';
-                str += '<span><i class="fa-regular fa-image"></i>' + fileName + '</span>';
+                str += '<input type="file" id="files" name="files" multiple="multiple" onchange="fnFileCheck(this)" hidden="">';
+                str += '<span onclick="fnRemoveIcon(this)"><input type="hidden" name=""><i class="fa-solid fa-xmark"></i></span>';
+                str += '<span id="attachFiles" name="files"><i class="fa-regular fa-image"></i>' + fileName + '</span>';
+                
             }
             
-            $('#fileDrop').append(str); 
+            $('#fileDropArea').append(str); 
         }
 
-        $(this).css("background-color", "#FFF");
+        $(this).css("background-color", "#FFF"); // 파일첨부칸 배경색 흰색으로 변경
     });
-
-
-
-  // 파일첨부 기능
-  
-  function fnFileCheck(vThis) {
-    // 최대 크기 10MB
-    let maxSize = 1024 * 1024 * 10;
     
-    // 첨부된 파일 목록
-    let files = vThis.files;
-    
-    // 첨부된 파일 순회(크기 체크 + 첨부된 파일명 표시)
-    
-    // 파일목록에 <span> 태그가 없는 경우 텍스트 지우기
-    if($('#fileDrop').find('span').length === 0) { 
-    	$('#fileDrop').text(''); 
+ // 파일 첨부 <input type="file">
+    function fnFileCheck(vThis) {
+      // 최대 크기 10MB
+      // let maxSize = 1024 * 1024 * 10;
+      
+      // 첨부된 파일 목록
+      let files = vThis.files;
+      
+      // 첨부된 파일 순회(크기 체크 + 첨부된 파일명 표시)
+      
+        // 파일목록에 <span> 태그가 없는 경우 모든 태그 지우기
+        if($('#fileDrop').find('span').length === 0) { 
+          $('#fileDropArea').text(''); 
+        }
+     
+      $.each(files, function(i, file) {
+        // 크기 체크
+        // if(file.size > maxSize){
+          // alert('각 첨부파일의 최대 크기는 10MB입니다.');
+          // $(vThis).val(''); // 첨부된 파일을 모두 지운다.
+          // $('#fileDrop').append('<div id="fileDropArea"><i class="fa-solid fa-paperclip"></i>파일을 마우스로 끌어 오세요.</div>');
+          // return;
+        // }
+      
+        // 첨부된 파일명 표시
+        $('#fileDropArea').append('<span onclick="fnRemoveIcon(this)"><input type="hidden" name=""><i class="fa-solid fa-xmark"></i></span>');
+        $('#fileDropArea').append('<span id="attachFiles"><i class="fa-regular fa-image"></i>' + file.name + '</span>');
+      })
     }
     
-    $.each(files, function(i, file) {
-      // 크기 체크
-      if(file.size > maxSize){
-        alert('각 첨부파일의 최대 크기는 10MB입니다.');
-        $(vThis).val(''); // 첨부된 파일을 모두 지운다.
-        $('#filesDrag').append('<span class="fileDrop open" id="fileDrop"><i class="fa-solid fa-paperclip"></i>파일을 마우스로 끌어 오세요.</span>');
-        return;
+    // 첨부파일 모두 삭제
+    $('#btnReset').on('click', function(){
+      // 첨부된 파일 목록 삭제
+      $('#fileDropArea').find('span').remove();
+      
+      // 파일목록이 모두 삭제된 경우 초기 메시지 표시
+      if ($('#fileDropArea').is(':empty')) {
+        $('#fileDropArea').html('<i class="fa-solid fa-paperclip"></i>파일을 마우스로 끌어 오세요.');
       }
       
-      // 첨부된 파일명 표시
-      $('#fileDrop').append('<span><input type="hidden" name=""><i class="fa-solid fa-xmark"></i></span>');
-      $('#fileDrop').append('<span><i class="fa-regular fa-image"></i>' + file.name + '</span>');
     })
+
+    // 첨부파일 개별 삭제(아이콘 클릭시)
+    // 따로 <span>태그에 클릭 이벤트 주면 안먹음.. why?
+    function fnRemoveIcon(vThis) {
+     $(vThis).empty();
+     $(vThis).next().remove();
+    }
+    
+    
+  // 돌아가기 버튼
+  function fnList() {
+    location.href = '/approval/docList.html';
   }
 
+  // 임시저장 버튼
+  function fnTemporarySave() {
 
+  }
+  
+  // 결재상신
+  $('#submitApproval').on('click', function(){
+    
+    // 총 결재자 수 파라미터 전달
+    let Count = $('#approval-section').find('table').length; 
+    $('#approvalCount').val(Count);
+    
+    $('#approvalForm').submit();
+    
+  })
+    
 </script>
-
-
 
 </body>
 </html>

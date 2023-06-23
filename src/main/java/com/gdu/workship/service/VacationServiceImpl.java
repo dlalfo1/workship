@@ -1,6 +1,5 @@
 package com.gdu.workship.service;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
-import com.gdu.workship.domain.ApprovalDTO;
 import com.gdu.workship.domain.MemberDTO;
+import com.gdu.workship.domain.VacationApprovalDTO;
 import com.gdu.workship.domain.VacationDTO;
 import com.gdu.workship.mapper.VacationMapper;
 import com.gdu.workship.util.PageUtil2;
@@ -67,11 +66,12 @@ public class VacationServiceImpl implements VacationService {
 			parameter.put("vacationCategory", vacationCategory);
 		} catch (Exception e) {
 		}
+		String vacationState = Optional.ofNullable(request.getParameter("vacationState")).orElse("1");
 		String queryNum = Optional.ofNullable(request.getParameter("queryNum")).orElse("");
 		String queryName = Optional.ofNullable(request.getParameter("queryName")).orElse("");
+		parameter.put("vacationState", vacationState);
 		parameter.put("queryNum", queryNum);
 		parameter.put("queryName", queryName);
-		
 		int totalRecord = vacationMapper.getApprovalCount(parameter);
 		int recordPerPage = 10;
 		Optional<String> pageStr = Optional.ofNullable(request.getParameter("page"));
@@ -79,9 +79,9 @@ public class VacationServiceImpl implements VacationService {
 		pageUtil.setPageUtil(page, totalRecord, recordPerPage);
 		parameter.put("begin", pageUtil.getBegin());
 		parameter.put("recordPerPage", recordPerPage);
-		List<ApprovalDTO> approvalList = vacationMapper.approvalSearchList(parameter);
+		List<VacationApprovalDTO> approvalList = vacationMapper.approvalSearchList(parameter);
 		model.addAttribute("approvalList", approvalList);
-		String path = "/vacation/approvalSearch.do?startDate=" + startDate + "&endDate=" + endDate + vacationCategoryPath + "&queryNum=" + queryNum + "&queryName=" + queryName;
+		String path = "/vacation/approvalSearch.do?startDate=" + startDate + "&endDate=" + endDate + vacationCategoryPath + "&vacationState=" + vacationState + "&queryNum=" + queryNum + "&queryName=" + queryName;
 		model.addAttribute("approvalPagination", pageUtil.getPagination(path));
 	}
 	
@@ -90,11 +90,10 @@ public class VacationServiceImpl implements VacationService {
 	public Map<String, Object> updateApproval(HttpServletRequest request) {
 		int approvalNo = Integer.parseInt(request.getParameter("approvalNo"));
 		int updateResult = vacationMapper.updateApproval(approvalNo);
-		ApprovalDTO approvalDTO = vacationMapper.selectApprovalByApprovalNo(approvalNo);
+		VacationApprovalDTO approvalDTO = vacationMapper.selectApprovalByApprovalNo(approvalNo);
 		String vacationStartDate = approvalDTO.getVacationStartDate().toString();
 		String vacationEndDate = approvalDTO.getVacationEndDate().toString();
-		HttpSession session = request.getSession();
-		int memberNo = ((MemberDTO)(session.getAttribute("loginMember"))).getMemberNo();
+		int memberNo = approvalDTO.getMemberDTO().getMemberNo();
 		Map<String, Object> parameter = new HashMap<>();
 		parameter.put("memberNo", memberNo);
 		parameter.put("approvalNo", approvalNo);
@@ -156,6 +155,7 @@ public class VacationServiceImpl implements VacationService {
 		
 	}
 
+	@Transactional
 	@Override
 	public Map<String, Object> modifyVacation(HttpServletRequest request) {
 		int approvalNo = Integer.parseInt(request.getParameter("approvalNo"));
@@ -180,16 +180,30 @@ public class VacationServiceImpl implements VacationService {
 		vacationDTO.setVacationNo(vacationNo);
 		vacationDTO.setVacationDay(modifiedvacationDay);
 		int updateVacationResult = vacationMapper.modifyVacationDay(vacationDTO);
-		int memberNo = vacationMapper.selectMemberNoByVacationNo(vacationNo);
+		int memberNo = vacationMapper.selectMemberNoVacationDayByVacationNo(vacationNo).getMemberDTO().getMemberNo();
 		Map<String, Object> parameter2 = new HashMap<>();
 		parameter2.put("memberNo", memberNo);
 		parameter2.put("vacationDays", vacationDayGap);
 		vacationMapper.updateDayoffCount(parameter2);
 		map.put("updateVacationResult", updateVacationResult);
-		map.put("vacationCategory", vacationCategory);
-		map.put("vacationStartDate", vacationStartDate);
-		map.put("vacationEndDate", vacationEndDate);
-		map.put("vacationDay", modifiedvacationDay);
 		return map;
 	}
+	
+	@Transactional
+	@Override
+	public Map<String, Object> removeVacation(int vacationNo) {
+		VacationDTO vacationDTO = vacationMapper.selectMemberNoVacationDayByVacationNo(vacationNo);
+		int memberNo = vacationDTO.getMemberDTO().getMemberNo();
+		int vacationDay = vacationDTO.getVacationDay() * (-1);
+		int deleteResult = vacationMapper.deleteVacationByVacationNo(vacationNo);
+		Map<String, Object> parameter = new HashMap<>();
+		parameter.put("memberNo", memberNo);
+		parameter.put("vacationDays", vacationDay);
+		int updateDayoffResult = vacationMapper.updateDayoffCount(parameter);
+		Map<String, Object> map = new HashMap<>();
+		map.put("deleteResult", deleteResult);
+		map.put("updateDayoffResult", updateDayoffResult);
+		return map;
+	}
+	
 }

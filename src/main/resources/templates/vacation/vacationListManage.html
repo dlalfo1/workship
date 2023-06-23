@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('workship 연차관리')}"></head>
+<head th:replace="~{/layout/header::headFrag('workship 휴가내역관리')}"></head>
 <link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
 <script th:replace="~{/layout/common::datepickerSetting}"></script>
 <body>
@@ -169,7 +168,7 @@
                          <td>[[${vacation.memberDTO.memberNo}]]</td>
                          <td>[[${vacation.memberDTO.memberName}]]</td>
                          <td>
-                           <span>[[${vacation.approvalDTO.vacationCategory}]]</span>
+                           <span>[[${vacation.vacationApprovalDTO.vacationCategory}]]</span>
                            <select class="invisible" name="vacationCategory" id="selectCategory">
                              <option value="연차">연차</option>
                              <option value="정기휴가">정기휴가</option>
@@ -177,19 +176,19 @@
                              <option value="기타">기타</option>
                            </select>
                         </td>
-                         <td>[[${vacation.approvalDTO.createdAt}]]</td>
+                         <td>[[${#dates.format(vacation.vacationApprovalDTO.createdAt, 'YYYY-MM-dd')}]]</td>
                          <td>
-                           <span>[[${vacation.approvalDTO.vacationStartDate}]]</span>
-                           <input type="text" class="invisible" th:value="${vacation.approvalDTO.vacationStartDate}">
+                           <span>[[${#dates.format(vacation.vacationApprovalDTO.vacationStartDate, 'YYYY-MM-dd')}]]</span>
+                           <input type="text" class="invisible" th:value="${#dates.format(vacation.vacationApprovalDTO.vacationStartDate, 'YYYY-MM-dd')}">
                          </td>
                          <td>
-                           <span>[[${vacation.approvalDTO.vacationEndDate}]]</span>
-                           <input type="text" class="invisible" th:value="${vacation.approvalDTO.vacationEndDate}">
+                           <span>[[${#dates.format(vacation.vacationApprovalDTO.vacationEndDate,'YYYY-MM-dd')}]]</span>
+                           <input type="text" class="invisible" th:value="${#dates.format(vacation.vacationApprovalDTO.vacationEndDate, 'YYYY-MM-dd')}">
                          </td>
                          <td class="vacationDay">[[${vacation.vacationDay}]]</td>
                          <td>
                            <input type="hidden" class="vacationNo" th:value="${vacation.vacationNo}">
-                           <input type="hidden" class="approvalNo" th:value="${vacation.approvalDTO.approvalNo}">
+                           <input type="hidden" class="approvalNo" th:value="${vacation.vacationApprovalDTO.approvalNo}">
                            <input type="button" class="btn btn-sm btn-outline-secondary inputBtn" value="수정">
                            <div class="btn-group invisible">
                              <input type="button" class="btn btn-sm btn-inverse-secondary cancelBtn" value="취소">
@@ -232,11 +231,6 @@
 						    	var vacationCategory = btn.closest('tr').find('select').val();
 						    	var vacationStartDate = btn.closest('tr').find('input[type=text]').first().val();
 						    	var vacationEndDate = btn.closest('tr').find('input[type=text]').last().val();
-						    	console.log(approvalNo);
-						    	console.log(vacationNo);
-						    	console.log(vacationCategory);
-						    	console.log(vacationStartDate);
-						    	console.log(vacationEndDate);
 						    	$.ajax({
 						    		type: 'post',
 						    		url: '/vacation/modifyVacation.do',
@@ -244,23 +238,65 @@
 						    		dataType: 'json',
 						    		success: function(resData){
 						    			if(resData.updateApprovalResult == 'fail' || resData.updateVacationResult == 'fail'){
-						    				alert('수정에 실패하였습니다.');
+						    				Swal.fire({
+						    					icon: 'error',
+						    					title: '수정에 실패하였습니다.',
+						    					toast: true,
+						    					confirmButtonText: '확인',
+						    					timer: 2000,
+						    					timerProgressShow: true
+						    				})
 						    			} else {
-		                    btn.closest('tr').find('input[type=text]').addClass('invisible');
-		                    btn.closest('tr').find('span').removeClass('invisible');
-		                    btn.parent().prev().removeClass('invisible');
-		                    btn.closest('tr').find('select').addClass('invisible');
-		                    btn.parent().addClass('invisible');
-		                    btn.closest('tr').find('span').first().text(resData.vacationCategory);
-		                    btn.closest('tr').find('span').first().next().text(resData.vacationStartDate);
-		                    btn.closest('tr').find('span').last().text(resData.vacationEndDate);
-		                    btn.closest('tr').find('.vacationDay').text(resData.vacationDay);
+						    				Swal.fire({
+						    					icon: 'success',
+						    					title: '휴가 정보가 수정되었습니다.',
+						    					confirmButtonText: '확인',
+						    					toast:true,
+						    					timer: 2000,
+						    					timerProgressShow: true
+						    				})
+						    				btn.closest('tr').find('input[type=text]').addClass('invisible');
+                        btn.closest('tr').find('span').removeClass('invisible');
+                        btn.parent().prev().removeClass('invisible');
+                        btn.closest('tr').find('select').addClass('invisible');
+                        btn.parent().addClass('invisible');
+                        btn.closest('tr').find('span').first().text(resData.vacationCategory);
+                        btn.closest('tr').find('span').first().next().text(resData.vacationStartDate);
+                        btn.closest('tr').find('span').last().text(resData.vacationEndDate);
+                        btn.closest('tr').find('.vacationDay').text(resData.vacationDay);
 						    			}
 						    		}
 						    	})
 						    })
 						    
 						    $('.deleteBtn').on('click', function(){
+						    	var btn = $(this);
+						    	var vacationNo = btn.closest('td').find('.vacationNo').val();
+						    	$.ajax({
+						    		type: 'post',
+						    		url: '/vacation/removeVacation.do',
+						    		data: 'vacationNo=' + vacationNo,
+						    		dataType: 'json',
+						    		success: function(resData){
+						    			if(resData.deleteResult == 1 && resData.updateDayoffResult == 1){
+							    		  Swal.fire({
+							    			  icon: 'success',
+							    			  title: '휴가 내역이 삭제되었습니다.',
+							    			  confirmButtonText: '확인',
+							    			  toast: true
+							    		  });
+							    		  btn.closest('tr').addClass('invisible');
+						    			} else {
+						    				Swal.fire({
+	                        icon: 'success',
+	                        title: '휴가 내역 삭제에 실패했습니다.',
+	                        confirmButtonText: '확인',
+	                        time: 2000,
+	                        timeProgressShow: true
+	                      })
+						    			}
+						    		}
+						    	})
 						    	
 						    })
 						  </script>
