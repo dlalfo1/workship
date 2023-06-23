@@ -287,6 +287,8 @@ input[type="text"] {
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+  
 <script th:inline="javascript">
 
   function fnRecordPerPage(){
@@ -311,7 +313,7 @@ input[type="text"] {
         // let columnorder = /*[[${columnorder}]]*/ '';
         let columnorder = $(this).data('columnorder');
         let columnsearch = /*[[${columnsearch}]]*/ '';
-        let query = /*[[${query}]]*/ '';
+        let query = /*[[${query}]]*/ '';  
         let page = /*[[${page}]]*/ '';  
         let order =/*[[${order}]]*/ '';  
         
@@ -389,6 +391,7 @@ input[type="text"] {
  
  </script> 
   <!--/* footer 영역 */-->
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
 </body>

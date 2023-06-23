@@ -304,13 +304,14 @@
             APPROVAL_STATUS = #{approvalStatus}
          </if>
        </where>       
-
   </select> 
   
   <select id="getApprovalCountByQuery" parameterType="Map" resultType="int">
-    SELECT COUNT(*)
-      FROM APPROVAL_T
+     SELECT COUNT(DISTINCT(A.APPROVAL_NO))
+      FROM APPROVAL_T A INNER JOIN APPROVAL_LINE_T L 
+        ON A.APPROVAL_NO = L.APPROVAL_NO 
     WHERE ${columnsearch} LIKE CONCAT('%', #{query}, '%')
+      AND (A.MEMBER_NO = #{memberNo} OR L.MEMBER_NO = #{memberNo})
   </select>  
   
   <select id="getApprovalList" parameterType="Map" resultMap="ApprovalMap">

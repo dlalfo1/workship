@@ -385,16 +385,19 @@ public class ApprovalServiceImpl implements ApprovalService {
     // 검색시 받는 정렬 칼럼
     Optional<String> opt6 = Optional.ofNullable(request.getParameter("columnsearch"));
     String columnsearch = opt6.orElse("DOC_TITLE");
-    
      // 파라미터 approvalStatus가 전달되지 않은 경우 approvalStatus=5로 처리한다. (5는 없음)
      Optional<String> opt7 = Optional.ofNullable(request.getParameter("approvalStatus"));
      int approvalStatus = Integer.parseInt(opt7.orElse("5")); // 전체보기   
+     
+     
     
-     
-     
+    // 세션에 있는 로그인 정보 가져오기
+    MemberDTO memberDTO = (MemberDTO)session.getAttribute("loginMember");
+    
     Map<String, Object> map1 = new HashMap<String, Object>();
     map1.put("query", query);
     map1.put("columnsearch", columnsearch);
+    map1.put("memberNo", memberDTO.getMemberNo());
 
     int totalRecord = 0;
     
@@ -413,15 +416,10 @@ public class ApprovalServiceImpl implements ApprovalService {
     if ((page - 1) * recordPerPage >= totalRecord) {
         page = Math.max(totalPage, 1);
     }
-    
+
     // 검색에 따라 
     // PageUtil(Pagination에 필요한 모든 정보 계산하기
     pageUtil.setPageUtil(page, totalRecord, recordPerPage);
-    
-    // 세션에 있는 로그인 정보 가져오기
-    MemberDTO memberDTO = (MemberDTO)session.getAttribute("loginMember");
-    session.getAttribute("loginMember");
-    
     // DB로 보낼 Map 만들기
     Map<String, Object> map2 = new HashMap<String, Object>();
     map2.put("begin", pageUtil.getBegin() -1);
@@ -435,6 +433,7 @@ public class ApprovalServiceImpl implements ApprovalService {
     
     // 전체 목록 가져오기
     List<ApprovalDTO> approvalList = approvalMapper.getApprovalList(map2);
+    
     
     model.addAttribute("approvalList", approvalList); 
 
