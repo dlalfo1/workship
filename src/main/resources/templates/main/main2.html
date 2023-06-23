@@ -38,6 +38,7 @@
                       <div class="row">
                         <div class="col-4">
                           <img class="rounded-circle" th:src="@{/images/faces/face1.jpg}">
+                        <!-- <img class="rounded-circle" th:src="@{/member/display.do(memberNo=${m.memberNo})}"> -->
                         </div>
                         <div class="col-8 text-white text-center">
                           <h3 th:text="${session.loginMember.memberName}"></h3>
@@ -108,11 +109,18 @@
 	                          dataType: 'json',
 	                          success: function(resData){
 	                        	  var result = resData.result;
-	                        	  if(result == 'fail') {
-	                        		  alert('이미 출근 처리되었습니다.');
-	                        	  } else {
-	                        		  $('#aStartTime').text(result.substr(11, 8));
-	                        	  }
+	                        	  if(result == 'fail'){
+	                              Swal.fire({
+	                                icon: 'warning',
+	                                title: '이미 출근 처리되었습니다.',
+	                                html: $('#aStartTime').text() +'에 출근하셨습니다.<br>이상이 있으면 인사팀으로 문의해주세요.',
+	                                padding: '1.5rem 1.5rem 1.25rem',
+	                                width: '25rem',
+	                                confirmButtonText: '확인'
+	                              })
+	                            } else {
+	                              location.reload();
+	                            }
 	                          }
 	                        })
 	                      };
@@ -127,15 +135,25 @@
 	                           success: function(resData){
 	                             var result = resData.result;
 	                             if(result == 'noStart') {
-	                               Swal.fire(
-	                            	   '출근 처리가 되지 않았습니다.',
-	                            	   '문제가 있을 경우 인사팀에 문의해주세요.',
-	                            	   'error'
-	                               )
-	                             } else if(result == 'alreadyEnd'){
-	                            	 alert('이미 퇴근 처리되었습니다.');
+	                               Swal.fire({
+	                                 icon: 'error',
+	                                 title: '출근 처리가 되지 않았습니다.',
+	                                 html: '출근 처리를 위해서는 인사팀으로 문의해주세요.',
+	                                 padding: '1.5rem 1.5rem 1.25rem',
+	                                 width: '28rem',
+	                                 confirmButtonText: '확인'
+	                               })
+	                             } else if(result == 'alreadyEnd') {
+	                               Swal.fire({
+	                                 icon: 'warning',
+	                                 title: '이미 퇴근 처리되었습니다.',
+	                                 html: $('#aEndTime').text() + '에 퇴근하셨습니다.<br>이상이 있으면 인사팀으로 문의해주세요.',
+	                                 padding: '1.5rem 1.5rem 1.25rem',
+	                                 width: '25rem',
+	                                 confirmButtonText: '확인'
+	                               })
 	                             } else {
-	                            	 $('#aEndTime').text(result.substr(11, 8));
+	                               $('#aEndTime').text(result.substr(11, 8));
 	                             }
 	                           }
 	                         })
