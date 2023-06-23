@@ -75,9 +75,10 @@
     SELECT COUNT(*)
       FROM RETIRED_MEMBER_T
   </select>
-  <select id="getRetiredMemberList" resultType="RetiredMemberDTO">
+  <select id="getRetiredMemberList" parameterType="Map" resultType="RetiredMemberDTO">
     SELECT RETIRED_MEMBER_NO, MEMBER_NAME, TEL, JOINED_AT, RETIRED_AT
       FROM RETIRED_MEMBER_T
+      LIMIT #{begin}, #{recordPerPage} 
   </select>
   
   <select id="selectDept" parameterType="int" resultType="DepartmentDTO">

@@ -3,6 +3,42 @@
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('사원 조회')}"></head>
 <style>
+  .memberMain a {
+    text-decoration: none;
+    color: black;
+  }
+  .gubunTab > ul {
+    width:100%;
+    height: 50px; 
+    list-style-type: none; 
+    margin: 0 auto; 
+    padding:0;
+  }
+  .gubunTab > ul > li {
+    float:left; 
+    height:50px; 
+    line-height: 55px; 
+    text-align:center;
+  }
+  .gubunTab > ul > li a{
+    text-decoration: none; 
+    color:black; 
+    font-size: 18px; 
+    font-weight: 500;
+  }
+  .gubunTab > ul > li a:hover{
+    font-size: 18px; 
+    text-decoration: underline;
+    font-weight: 900;
+  }
+  .membertr td a{
+    text-decoration: none;
+    color: black;
+  }
+  .membertr td a:hover {
+    font-weight: 600;
+    text-decoration: underline;
+  }
   .blind {
     display: none;
   }
@@ -42,28 +78,25 @@
           	page = pageUtil.totalPage
           }
           console.log('page :' + page);
-          var str2 = '<div>';
-          // 이전 블록
+          var str2 = '<nav><ul class="pagination pagination-sm justify-content-center">';
           if(pageUtil.beginPage == 1){
-            str2 += '<span class="hidden">◀</span>';
+            str2 += '<li class="page-item disabled"><span class="page-link text-secondary">이전</span></li>';
           } else {
-            str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + (pageUtil.beginPage - 1) + '">◀</span>';
+            str2 += '<li class="page-item"><span class="enable_link page-link" data-query="' + query + '" data-page="' + (pageUtil.beginPage - 1) + ">이전</span></li>";
           }
-          // 페이지 번호
           for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
             if(p == page){
-              str2 += '<strong style="display:inline" class="pagination">' + p + '</strong>';
+              str2 += '<li class="page-item active"><a class="page-link">' + p + '</a></li>';
             } else {
-              str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + p + '">' + p + '</span>';
+              str2 += '<li class="page-item"><a class="enable_link page-link" data-query="' + query + '" data-page="' + p + '">' + p + '</a></li>';
             }
           }
-          // 다음 블록
           if(pageUtil.endPage == pageUtil.totalPage){
-            str2 += '<span class="hidden">▶</span>';
+            str2 += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
           } else {
-            str2 += '<span style="display:inline" class="enable_link pagination" data-query="' + query + '" data-page="' + (pageUtil.endPage + 1) + '">▶</span>';
+            str2 += '<li class="page-item"><span class="enable_link" page-link" data-query="' + query + '" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
           }
-          str2 += '</div>';
+          str2 += '</ul></nav>';
           console.log(str2);
           $('#pagination').append(str2);
           
@@ -100,7 +133,7 @@
 	    		  memberListbody.append('<tr><td colspan="6">현재 사원이 없습니다.</td></tr>');
           } else {
             $.each(resData.memberList, function(i, member){ 
-              let str = '<tr>';
+              let str = '<tr class="membertr">';
               let status;
               switch(member.status){ 
                 case 0: status = '재직'; break; 
@@ -175,28 +208,25 @@
     	          page = pageUtil.endPage
     	        }
     	        console.log('page :' + page);
-    	        var str2 = '<div>';
-    	        // 이전 블록
-    	        if(pageUtil.beginPage == 1){
-    	          str2 += '<span class="hidden">◀</span>';
-    	        } else {
-    	          str2 += '<span style="display:inline" class="enable_link pagination data-page="' + (pageUtil.beginPage - 1) + '">◀</span>';
-    	        }
-    	        // 페이지 번호
-    	        for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
-    	          if(p == page){
-    	            str2 += '<strong style="display:inline" class="pagination">' + p + '</strong>';
-    	          } else {
-    	            str2 += '<span style="display:inline" class="enable_link pagination" data-page="' + p + '">' + p + '</span>';
-    	          }
-    	        }
-    	        // 다음 블록
-    	        if(pageUtil.endPage == pageUtil.totalPage){
-    	          str2 += '<span class="hidden">▶</span>';
-    	        } else {
-    	          str2 += '<span style="display:inline" class="enable_link pagination" data-page="' + (pageUtil.endPage + 1) + '">▶</span>';
-    	        }
-    	        str2 += '</div>';
+    	        var str2 = '<nav><ul class="pagination pagination-sm justify-content-center">';
+                if(pageUtil.beginPage == 1){
+                  str2 += '<li class="page-item disabled"><span class="page-link text-secondary">이전</span></li>';
+                } else {
+                  str2 += '<li class="page-item"><span class="enable_link page-link" data-page="' + (pageUtil.beginPage - 1) + ">이전</span></li>";
+                }
+                for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
+                  if(p == page){
+                    str2 += '<li class="page-item active"><a class="page-link">' + p + '</a></li>';
+                  } else {
+                    str2 += '<li class="page-item"><a class="enable_link page-link" data-page="' + p + '">' + p + '</a></li>';
+                  }
+                }
+                if(pageUtil.endPage == pageUtil.totalPage){
+                  str2 += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
+                } else {
+                  str2 += '<li class="page-item"><span class="enable_link" page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
+                }
+                str2 += '</ul></nav>';
     	        console.log(str2);
     	        $('#pagination').append(str2);
 	        
@@ -291,85 +321,88 @@
       <div class="main-panel">
         <div class="content-wrapper">
         
-          <div class="member-main">
-            <div class="member-title">
-                <h3>사원 조회</h3>
-            </div>
+          <div class="row">
+            <div class="col-md-12 stretch-card grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <div class="memberMain h3 font-weight-bold"><a th:href="@{/member/memberList.do}">사원조회</a></div>
             
-            <div class="gubunTab">
-              <ul>
-               <li style="width: 80px;"><a th:href="@{/member/memberList.do}">전체</a></li>
-                <!--/* <li><a onclick="fnMemberList()">전체</a></li> */-->
-                <th:block th:if="${#lists.isEmpty(deptList)}">
-              	</th:block>
-                <th:block th:if="${not #lists.isEmpty(deptList)}">
-                  <th:block th:each="dept:${deptList}">
-              		  <li style="width: 80px;"><a href="javascript:void(0);" th:text="${dept.deptName}" th:onclick="fnLoadListByDept([[${dept.deptNo}]])"></a></li>
-                  </th:block>
-              	</th:block>
-                <li style="width: 80px;"><a href="javascript:void(0);" th:onclick="fnLoadRetiredList()">퇴직자</a></li>
-              </ul>
-            </div>
-            
-            <div class="memberList">
-              <table id="listTable" class="table table-hover text-center">
-                <thead id="memberhead">
-                  <tr>
-                    <th style="width: 50px;">사원번호</th>
-                    <th style="width: 80px;">사원명</th>
-                    <th style="width: 80px;">부서명</th>
-                    <th style="width: 80px;">직위</th>
-                    <th style="width: 100px;">입사일</th>
-                    <th style="width: 80px;" class="status">상태</th>
-                  </tr>
-                </thead>
-                <tbody id="memberListbody">
-                  <th:block th:if="${#lists.isEmpty(memberList)}">
-                    <tr>
-                      <td colspan="6">현재 사원이 없습니다.</td>
-                    </tr>
-                  </th:block>
-                  <th:block th:unless="${#lists.isEmpty(memberList)}">
-                    <th:block th:each="member:${memberList}">
-                      <tr>
-                        <td class="no"><a th:text="${member.memberNo}"></a></td>
-                        <td><a th:href="@{/member/memberDetail.html(memberNo=${member.memberNo})}" th:text="${member.memberName}"></a></td>
-                        <td><a th:text="${member.departmentDTO.deptName}"></a></td>
-                        <td th:text="${member.jobDTO.jobName}"></td>
-                        <td th:text="${#dates.format(member.joinedAt, 'yyyy/MM/dd')}"></td>
-                        <!--/* <td th:text="${member.status}"></td>  */-->
-                        <td>
-                          <th:block th:switch="${member.status}">
-                            <span th:case="0">재직</span>
-                            <span th:case="1">출장</span>
-                            <span th:case="2">교육</span>
-                            <span th:case="3">휴가</span>
-                            <span th:case="4">퇴직</span>
+                  <div class="gubunTab">
+                    <ul>
+                     <li style="width: 80px;"><a th:href="@{/member/memberList.do}">전체</a></li>
+                      <th:block th:if="${#lists.isEmpty(deptList)}">
+                    	</th:block>
+                      <th:block th:if="${not #lists.isEmpty(deptList)}">
+                        <th:block th:each="dept:${deptList}">
+                    		  <li style="width: 80px;"><a href="javascript:void(0);" th:text="${dept.deptName}" th:onclick="fnLoadListByDept([[${dept.deptNo}]])"></a></li>
+                        </th:block>
+                    	</th:block>
+                      <li style="width: 80px;"><a href="javascript:void(0);" th:onclick="fnLoadRetiredList()">퇴직자</a></li>
+                    </ul>
+                  </div>
+                  
+                  <div class="memberList">
+                    <table id="listTable" class="table table-hover text-center">
+                      <thead id="memberhead">
+                        <tr>
+                          <th style="width: 50px;">사원번호</th>
+                          <th style="width: 80px;">사원명</th>
+                          <th style="width: 80px;">부서명</th>
+                          <th style="width: 80px;">직위</th>
+                          <th style="width: 100px;">입사일</th>
+                          <th style="width: 80px;" class="status">상태</th>
+                        </tr>
+                      </thead>
+                      <tbody id="memberListbody">
+                        <th:block th:if="${#lists.isEmpty(memberList)}">
+                          <tr>
+                            <td colspan="6">현재 사원이 없습니다.</td>
+                          </tr>
+                        </th:block>
+                        <th:block th:unless="${#lists.isEmpty(memberList)}">
+                          <th:block th:each="member:${memberList}">
+                            <tr class="membertr">
+                              <td class="no" th:text="${member.memberNo}"></td>
+                              <td><a th:href="@{/member/memberDetail.html(memberNo=${member.memberNo})}" th:text="${member.memberName}"></a></td>
+                              <td th:text="${member.departmentDTO.deptName}"></td>
+                              <td th:text="${member.jobDTO.jobName}"></td>
+                              <td th:text="${#dates.format(member.joinedAt, 'yyyy/MM/dd')}"></td>
+                              <td>
+                                <th:block th:switch="${member.status}">
+                                  <span th:case="0">재직</span>
+                                  <span th:case="1">출장</span>
+                                  <span th:case="2">교육</span>
+                                  <span th:case="3">휴가</span>
+                                  <span th:case="4">퇴직</span>
+                                </th:block>
+                              </td>
+                            </tr>
                           </th:block>
-                        </td>
-                      </tr>
-                    </th:block>
-                  </th:block>
-                </tbody>
-              </table>
-            </div> <!--/* memberList 끝나는 지점 */-->
-            <div class="searchWrap">
-              <form id="frmSearch" th:action="@{/member/memberList.do}">
-                <select name="column" id="column">
-                  <option value="M.MEMBER_NO">사원번호</option>
-                  <option value="M.MEMBER_NAME" selected="selected">사원명</option>
-                  <option value="D.DEPT_NAME">부서명</option>
-                </select>
-                <input type="text" name="query" id="query">
-                <button>검색</button>
-              </form>
+                        </th:block>
+                      </tbody>
+                    </table>
+                  </div> <!--/* memberList 끝나는 지점 */-->
+                  <div class="searchWrap text-center" style="margin: 1rem;">
+                    <form id="frmSearch" th:action="@{/member/memberList.do}">
+                      <select class="form-control form-control-sm" name="column" id="column" style="display:inline-block; width:110px;">
+                        <option value="M.MEMBER_NO">사원번호</option>
+                        <option value="M.MEMBER_NAME" selected="selected">사원명</option>
+                        <option value="D.DEPT_NAME">부서명</option>
+                      </select>
+                      <input class="form-control form-control-sm col-3" type="text" name="query" id="query" style="display:inline-block;" placeholder="검색어를 입력해주세요.">
+                      <button type="submit" class="btn btn-primary">검색</button>
+                    </form>
+                  </div>
+                  <div>
+                    <div id="pagination" style="text-align: center;" th:utext="${pagination}"></div>
+                    <!--/* <div class="pagination" style="text-align: center;" th:utext="${pagination}"></div> */-->
+                  </div>
+            
+                </div>
+              </div>
             </div>
-            <div>
-              <div id="pagination" style="text-align: center;" th:utext="${pagination}"></div>
-              <!--/* <div class="pagination" style="text-align: center;" th:utext="${pagination}"></div> */-->
-            </div>
-          </div> <!--/* member-main 끝나는 지점 */-->
-
+          </div>
+          
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->

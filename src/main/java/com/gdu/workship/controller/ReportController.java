@@ -28,6 +28,7 @@ public class ReportController {
                                           , @RequestParam(value="recordPerPage", required=false, defaultValue="10") int recordPerPage) {
     session.setAttribute("recordPerPage", recordPerPage);
     return reportService.loadReportSearchList(request);
+    
   }
   
   @GetMapping(value="/report/reportDetail.do", produces="application/json")

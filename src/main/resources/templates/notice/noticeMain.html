@@ -16,6 +16,14 @@
   .enable_link {
     cursor: pointer;
   }
+  .list td a{
+    text-decoration: none;
+    color: black;
+  }
+  .list td a:hover {
+    font-weight: 600;
+    text-decoration: underline;
+  }
 /*   .pagination {
    text-align: center;
    margin: 0 auto;
@@ -102,7 +110,14 @@
                                 <td th:text="${beginNo - noticeStat.index}"></td>
                                 <!--/* 본인이 작성한 공지사항은 조회수가 증가하지 않는다. */-->
                                 <td th:if="${session.loginMember.emailId == notice.memberDTO.emailId}">
-                                  <a th:href="@{/notice/noticeDetail.html(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeTitle}"></a>
+                                  <a class="noticeTitle" th:href="@{/notice/noticeDetail.html(noticeNo=${notice.noticeNo})}">
+                                  <th:block th:if="${#strings.length(notice.noticeTitle) > 10}" >
+                                    <span th:text="|${#strings.substring(notice.noticeTitle,0,9)}...|"></span>
+                                  </th:block>
+                                  <th:block th:unless="${#strings.length(notice.noticeTitle) > 10">
+                                    <span th:text="${notice.noticeTitle}"></span>
+                                  </th:block>
+                                  </a>
                                 </td>
                                 <td th:unless="${session.loginMember.emailId == notice.memberDTO.emailId}">
                                   <a th:href="@{/notice/increaseHit.do(noticeNo=${notice.noticeNo})}" th:text="${notice.noticeTitle}"></a>
