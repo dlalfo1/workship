@@ -92,8 +92,20 @@
             </div>
           </div>
         </div>
-        <script>
+        <script th:inline="javascript">
           $('#btnVacationApproval').on('click', function(){
+        	  var dayoffCount = /*[[${dayoffCount}]]*/ null;
+        	  if(dayoffCount == 13) {
+        		  Swal.fire({
+        			  icon: 'warning',
+        			  title: '휴가신청불가능',
+        			  text: '휴가는 1년에 13일만 신청 가능합니다.',
+        			  confirmButtonText: '확인',
+        			  padding: '1.5rem 1.5rem 1.25rem',
+                width: '24rem'
+        		  })
+        		  return;
+        	  }
         	  location.href= '/approval/documentList.html?formNo=1';
           })
         </script>
