@@ -99,5 +99,12 @@
       , #{commentGroupOrder}
     )
   </insert>
+ 	<!-- 댓글 삭제 -->
+ 	<delete id="removeComment">
+ 	
+ 		DELETE FROM BOARD_COMMENT_T
+ 		WHERE COMMENT_NO = #{commentNo}
+ 		
+ 	</delete>
 	
 </mapper>

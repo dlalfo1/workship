@@ -139,7 +139,11 @@
                 str += ' - ' + boardComment.commentContent;
                 if(emailId != ''){
                   if(emailId == boardComment.memberDTO.emailId && boardComment.commentState == 1){
-                     str += '<input type="button" value="삭제" class="btnCommentRemove" data-comment_no="' + boardComment.commentNo + '">';
+                     str += '<input type="button" value="삭제" class="btnCommentRemove" data-comment_no="' +
+                     boardComment.commentNo +
+                     '" onclick="fnRemoveComment(' +
+                     boardComment.commentNo +
+                     ')">';
                   } else if(emailId != boardComment.memberDTO.emailId && boardComment.commentDepth == 0){
                     str += '<input type="button" value="답글" class="btnOpenReply">';
                   }
@@ -162,6 +166,23 @@
           }
     });
     }
+    function fnRemoveComment(commentNo) {
+        if (confirm('댓글을 삭제하시겠습니까?')) {
+          $.ajax({
+            type: 'post',
+            url: '/boardComment/removeComment.do',
+            data: { commentNo: commentNo },
+            dataType: 'json',
+            success: function (resData) {
+              if (resData.isRemove) {
+                alert('댓글이 삭제되었습니다.');
+                //fnCommentList();
+                }
+            }
+          });
+        }
+    	history.go(0);
+      }
 </script>
 <body>
 
@@ -182,13 +203,13 @@
         
           <div class="board-main">
             <div class="board-title">
-                <h3><a th:href="@{/board/boardList.do}">부서별게시판</a></h3>
+                <h2><a th:href="@{/board/boardList.do}">부서별게시판</a></h2>
             </div>
             
             <hr>
             
-            <div class="board-detail">
-              <div class="page-button">
+            <div class="board-detail ">
+              <div class="page-button ">
                 <button type="button" class="btn btn-outline-secondary btn-sm" id="btnPrev">이전</button>
                 <button type="button" class="btn btn-outline-secondary btn-sm" id="btnNext">다음</button>
                 <button type="button" class="btn btn-outline-dark btn-sm" onclick="fnList()">목록</button>

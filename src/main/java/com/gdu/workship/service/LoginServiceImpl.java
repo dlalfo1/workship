@@ -41,8 +41,8 @@ public class LoginServiceImpl implements LoginService {
 		if(loginMemberDTO != null) {
 			
 			autologin(request, response);
-				HttpSession session = request.getSession();
-				session.setAttribute("loginMember", loginMemberDTO);
+			HttpSession session = request.getSession();
+			session.setAttribute("loginMember", loginMemberDTO);
 				
 			int updateResult = loginMapper.updateMemberAccess(emailId);
 			if(updateResult == 0) {

@@ -10,6 +10,7 @@
 		<id column="BOARD_NO" property="boardNo"/>
 		<result column="BOARD_TITLE" property="boardTitle"/>
 		<result column="BOARD_CONTENT" property="boardContent"/>	
+		<result column="BOARD_CATEGORY" property="boardCategory"/>	
 		<result column="BOARD_CREATED_AT" property="boardCreatedAt"/>	
 		<result column="BOARD_MODIFIED_AT" property="boardModifiedAt"/>	
 		<result column="BOARD_HIT" property="boardHit"/>	
@@ -85,16 +86,20 @@
       FROM BOARD_T
   </select>
   <select id="getBoardList" parameterType="Map" resultMap="BoardMap">
-    SELECT A.BOARD_NO, A.MEMBER_NAME, A.BOARD_TITLE, A.BOARD_CONTENT, A.BOARD_CREATED_AT, A.BOARD_MODIFIED_AT, A.BOARD_HIT, A.BOARD_STATE, A.JOB_NAME
-      FROM (SELECT B.BOARD_NO, M.MEMBER_NAME, B.BOARD_TITLE, B.BOARD_CONTENT, B.BOARD_CREATED_AT, B.BOARD_MODIFIED_AT, B.BOARD_HIT, B.BOARD_STATE, J.JOB_NAME
+    SELECT A.BOARD_NO, A.MEMBER_NAME, A.BOARD_TITLE, A.BOARD_CONTENT, A.BOARD_CATEGORY, A.BOARD_CREATED_AT, A.BOARD_MODIFIED_AT, A.BOARD_HIT, A.BOARD_STATE, A.JOB_NAME
+      FROM (SELECT B.BOARD_NO, M.MEMBER_NAME, B.BOARD_TITLE, B.BOARD_CONTENT, B.BOARD_CATEGORY, B.BOARD_CREATED_AT, B.BOARD_MODIFIED_AT, B.BOARD_HIT, B.BOARD_STATE, J.JOB_NAME
               FROM BOARD_T B INNER JOIN MEMBER_T M
                 ON M.MEMBER_NO = B.MEMBER_NO INNER JOIN JOB_T J
                 ON M.JOB_NO = J.JOB_NO
+						 WHERE B.BOARD_CATEGORY = #{boardCategory}
+                
            <where>
            <!-- 전달된 column 그대로 부를 수 있다. mybatis.org 동적 sql 참고-->
             <if test="column != '' and query != ''">
-              ${column} LIKE CONCAT('%', #{query}, '%')
+               AND ${column} LIKE CONCAT('%', #{query}, '%')
             </if>
+            
+            
            </where>) A
      ORDER BY B.BOARD_NO DESC
      LIMIT #{begin}, #{recordPerPage}
@@ -105,6 +110,7 @@
       FROM BOARD_T B RIGHT OUTER JOIN MEMBER_T M
         ON M.MEMBER_NO = B.MEMBER_NO
     <where>
+    B.BOARD_CATEGORY = #{boardCategory}
       <if test="column != '' and query != ''">
         ${column} LIKE CONCAT('%', #{query}, '%')
       </if>
@@ -119,8 +125,8 @@
   </update>
     
   <select id="getBoardByNo" parameterType="int" resultMap="BoardMap">
-    SELECT A.BOARD_NO, A.MEMBER_NAME, A.BOARD_TITLE, A.BOARD_CONTENT, A.BOARD_CREATED_AT, A.BOARD_MODIFIED_AT, A.BOARD_HIT, A.BOARD_STATE, A.DEPT_NAME, A.JOB_NAME, A.MEMBER_NO, A.DEPT_NO, A.JOB_NO, A.EMAIL_ID, A.TEL, A.BIRTHDAY, A.JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME
-      FROM (SELECT B.BOARD_NO, MDJ.MEMBER_NAME, B.BOARD_TITLE, B.BOARD_CONTENT, B.BOARD_CREATED_AT, B.BOARD_MODIFIED_AT, B.BOARD_HIT, B.BOARD_STATE, MDJ.DEPT_NAME, MDJ.JOB_NAME, MDJ.MEMBER_NO, MDJ.DEPT_NO, MDJ.JOB_NO, MDJ.EMAIL_ID, MDJ.TEL, MDJ.BIRTHDAY, MDJ.JOINED_AT, MDJ.MODIFIED_AT, MDJ.STATUS, MDJ.DAYOFF_COUNT, MDJ.PW, MDJ.PROFILE_FILE_PATH, MDJ.PROFILE_FILE_NAME
+    SELECT A.BOARD_NO, A.MEMBER_NAME, A.BOARD_TITLE, A.BOARD_CONTENT, A.BOARD_CATEGORY, A.BOARD_CREATED_AT, A.BOARD_MODIFIED_AT, A.BOARD_HIT, A.BOARD_STATE, A.DEPT_NAME, A.JOB_NAME, A.MEMBER_NO, A.DEPT_NO, A.JOB_NO, A.EMAIL_ID, A.TEL, A.BIRTHDAY, A.JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME
+      FROM (SELECT B.BOARD_NO, MDJ.MEMBER_NAME, B.BOARD_TITLE, B.BOARD_CONTENT, B.BOARD_CATEGORY, B.BOARD_CREATED_AT, B.BOARD_MODIFIED_AT, B.BOARD_HIT, B.BOARD_STATE, MDJ.DEPT_NAME, MDJ.JOB_NAME, MDJ.MEMBER_NO, MDJ.DEPT_NO, MDJ.JOB_NO, MDJ.EMAIL_ID, MDJ.TEL, MDJ.BIRTHDAY, MDJ.JOINED_AT, MDJ.MODIFIED_AT, MDJ.STATUS, MDJ.DAYOFF_COUNT, MDJ.PW, MDJ.PROFILE_FILE_PATH, MDJ.PROFILE_FILE_NAME
               FROM BOARD_T B LEFT OUTER JOIN (SELECT M.MEMBER_NO, M.DEPT_NO, M.JOB_NO, M.MEMBER_NAME, M.EMAIL_ID, M.TEL, M.BIRTHDAY, M.JOINED_AT, M.MODIFIED_AT, M.STATUS, M.DAYOFF_COUNT, M.PW, M.PROFILE_FILE_PATH, M.PROFILE_FILE_NAME, D.DEPT_NAME, J.JOB_NAME
                                                        FROM MEMBER_T M LEFT OUTER JOIN DEPARTMENT_T D
                                                          ON M.DEPT_NO = D.DEPT_NO LEFT OUTER JOIN JOB_T J
@@ -158,6 +164,7 @@
         MEMBER_NO
       , BOARD_TITLE
       , BOARD_CONTENT
+      , BOARD_CATEGORY
       , BOARD_CREATED_AT
       , BOARD_MODIFIED_AT
       , BOARD_HIT
@@ -166,6 +173,7 @@
         #{memberDTO.memberNo}
       , #{boardTitle}
       , #{boardContent}
+      , #{boardCategory}
       , NOW()
       , NOW()
       , 0
