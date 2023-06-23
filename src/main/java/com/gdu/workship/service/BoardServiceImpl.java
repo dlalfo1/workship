@@ -61,8 +61,10 @@ public class BoardServiceImpl implements BoardService {
 	    // 파라미터 query가 전달되지 않는 경우 query=""로 처리한다. (query가 없으면 null값, 처음 화면이동 요청..)
 	    Optional<String> opt3 = Optional.ofNullable(request.getParameter("query"));
 	    String query = opt3.orElse("");
-	    
-	    int totalRecord = boardMapper.getBoardCount();
+	    Map<String, Object> parameter = new HashMap<>();
+	    parameter.put("query", query);
+	    parameter.put("boardCategory", boardCategory);
+	    int totalRecord = boardMapper.getBoardSearchCount(parameter);
 	    
 	    int recordPerPage = 5;
 	    
@@ -77,11 +79,11 @@ public class BoardServiceImpl implements BoardService {
 	    System.out.println(map);
 	    
 	    List<BoardDTO> boardList = boardMapper.getBoardList(map);
-	    System.out.println(boardList);
+	    System.out.println(boardList + "!!!!!!!!!!!!!!!!!!!!!");
 	    model.addAttribute("boardList", boardList);
 	    model.addAttribute("beginNo", totalRecord - (page - 1) * recordPerPage);
 	    if(column.isEmpty() || query.isEmpty()) {
-	      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/board/boardList.do"));
+	      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/board/boardList.do?boardCategory=" + boardCategory));
 	    } else {
 	      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/board/boardList.do?column=" + column + "&query=" + query + "&boardCategory=" + boardCategory));
 	    }

@@ -102,6 +102,7 @@ public class BoardController {
 	    redirectAttributes.addFlashAttribute("removeResult", removeResult);
 	    return "redirect:/board/boardList.do";
 	  }
+	  
 		
 	  @PostMapping("/board/boardEdit.html")
 	  public String boardEdit(@RequestParam("boardNo") int boardNo, Model model) {

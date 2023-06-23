@@ -22,7 +22,7 @@
 	
 	
 	function fnWriteBoard() {
-		location.href = '/board/boardWrite.html';
+		location.href = '/board/boardWrite.html?boardCategory=2';
 	}
 	
 	/*
@@ -86,12 +86,14 @@
                 <div class="card-body">
                   <div class="boardMain h3 font-weight-bold position-right translate-middle">총무부게시판
 										<div class="btn-group">
+										<!--
 										  <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
 										   	게시판
 										  </button>
 										  <ul class="dropdown-menu">
 										    <li><a class="dropdown-item" th:href="@{/board/boardList.do}">게시판목록</a></li>
 										  </ul>
+										-->
 										</div>
                   </div>
                     <table id="listTable" class="table text-center">

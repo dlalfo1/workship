@@ -15,10 +15,13 @@
     <result column="JOINED_AT" property="joinedAt"/>
     <result column="MODIFIED_AT" property="modifiedAt"/>
     <result column="STATUS" property="status"/>
+    <result column="TOTAL_DAYOFF" property="totalDayoff"/>
     <result column="DAYOFF_COUNT" property="dayoffCount"/>
     <result column="PW" property="pw"/>
     <result column="PROFILE_FILE_PATH" property="profileFilePath"/>
     <result column="PROFILE_FILE_NAME" property="profileFileName"/>
+    <result column="AUTOLOGIN_ID" property="autoLoginId"/>
+    <result column="AUTOLOGIN_EXPIRED_AT" property="autoLoginExpiredAt"/>
     <association javaType="JobDTO" property="jobDTO">
       <id column="JOB_NO" property="jobNo"/>
       <result column="JOB_NAME" property="jobName"/>
@@ -46,8 +49,8 @@
      WHERE EMAIL_ID = #{emailId}
   </update>
   
-  <select id="selectAutologin" parameterType="String" resultType="String">
-    SELECT EMAIL_ID
+  <select id="selectAutologin" parameterType="String" resultType="MemberDTO">
+    SELECT MEMBER_NO, JOB_NO, DEPT_NO, MEMBER_NAME, EMAIL_ID, TEL, BIRTHDAY, JOINED_AT, MODIFIED_AT, STATUS, TOTAL_DAYOFF, DAYOFF_COUNT, PW, PROFILE_FILE_PATH, PROFILE_FILE_NAME, AUTOLOGIN_ID, AUTOLOGIN_EXPIRED_AT 
       FROM MEMBER_T
      WHERE AUTOLOGIN_ID = #{autologinId}
        AND AUTOLOGIN_EXPIRED_AT > NOW()

@@ -31,7 +31,8 @@ function fnLogin() {
       $.cookie('autologin', 'false');
     }
   });
-}
+} 
+
 	
 
 // 쿠키에 기억된 아이디와 자동 로그인 상태 보여주기
@@ -47,30 +48,20 @@ function fnRememberId(){
 	    $('#chkRememberId').prop('checked', true);
 	  }
 	}
-/*function fnAutologin(){
-  // autologin 쿠키에 저장된 값에 따라 자동 로그인 체크 상태 변경
-	  let autologin = $.cookie('autologin');
-	  if (autologin == 'true') {
-	    $('#chkAutologin').prop('checked', true);
-	    $('#frmLogin').submit();
-	  } else {
-	    $('#chkAutologin').prop('checked', false);
-	  }*/
+
 	  function fnAutologin() {
 		  let autologin = $.cookie('autologin');
 		  if (autologin == 'true') {
 		    $('#chkAutologin').prop('checked', true);
-		    $('#frmLogin').submit(); 
+		    location.href='/main/main.html'
 		  } else {
 		    $('#chkAutologin').prop('checked', false);
 		  }
 		}
 	  // 자동 로그인 체크 여부에 따라 로그인 처리
-	  if ($.cookie('autologin') == 'true') {
-	    $('#frmLogin').submit();
-	  }
-
-
+	  //if ($.cookie('autologin') == 'true') {
+	 //   $('#frmLogin').submit();
+//	}
 $(function(){
   fnLogin();
   fnRememberId();
@@ -79,6 +70,7 @@ $(function(){
 });
  
 </script>
+
 <body>
 
   <div class="container-scroller">
@@ -127,6 +119,8 @@ $(function(){
   
   <!--/* footer 영역 */-->
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+ 
+
 
 </body>
 </html>
