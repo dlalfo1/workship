@@ -16,7 +16,7 @@ import com.gdu.workship.domain.MailDTO;
 import com.gdu.workship.domain.MailToDTO;
 import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.mapper.MailMapper;
-import com.gdu.workship.util.PageUtil;
+import com.gdu.workship.util.PageUtil2;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class MailServiceImpl implements MailService {
 
 	private final MailMapper mailMapper;
-	private final PageUtil pageUtil;	
+	private final PageUtil2 pageUtil;	
 
 	@Override
 	public void getMailList(HttpServletRequest request, Model model) {
