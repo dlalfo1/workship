@@ -3,16 +3,31 @@
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('사원 정보 수정')}"></head>
 <style>
-  .memberCreate a {
+  .memberMain a {
     text-decoration: none;
     color: black;
   }
   table {
+    width: 85%;
+    height: 100%;
     margin: 0 auto;
     text-align: center;
   }
+  table tr .space1 {
+    padding: 6px 0;
+    border:none;
+  }
+  table tr .space {
+    padding: 10px 0;
+    border:none;
+  }
   table tr th {
+    padding-top: 8px;
     width: 15%;
+  }
+  table td:nth-of-type(1) { width: 25%; }
+  table .imagetd {
+    width: 40%;
   }
   #msgMobile {
    font-size: 14px;
@@ -177,7 +192,7 @@
                      + /[^a-zA-Z0-9]/.test(pw); // 특수문자를 가지고 있으면 true(1), 없으면 false(0)
       verifyPw = (pwLength >= 4) && (pwLength <= 20) && (validCount >= 3);
       if(verifyPw){
-        $('#msgPw').text('사용 가능한 비밀번호입니다.').css('color', '#0000FF');;
+        $('#msgPw').text('사용 가능한 비밀번호입니다.').css('color', '#0000FF');
       } else {
         $('#msgPw').text('4~20자, 소문자+대문자+숫자+특수문자 사용 가능, 3개 이상 조합').css('color', '#FF0000');
       }
@@ -226,7 +241,7 @@
             <div class="col-md-12 stretch-card grid-margin">
               <div class="card">
                 <div class="card-body">
-                  <div class="memberCreate h3 font-weight-bold"><a th:href="@{/notice/noticeList.do}">사원등록</a></div>
+                  <div class="memberMain h3 font-weight-bold"><a th:href="@{/notice/noticeList.do}">사원 조회</a></div>
                   
                   <div class="formWrap" style="padding: 50px 100px;">
                     <form id="frmDetail" method="post" enctype="multipart/form-data">
@@ -239,12 +254,12 @@
                                 <input type="text" class="form-control" id="memberNo" name="memberNo" th:value="${m.memberNo}" readonly>
                               </div>
                             </td>
-                            <td colspan="6" rowspan="3">
-                              <div class="profileImage">
+                            <td class="imagetd" colspan="6" rowspan="3">
+                              <div class="profileImage" style="width: 100%; height: 80%;">
                                 <div class="imageFile">
                                   <img class="rounded-circle" th:src="@{/member/display.do(memberNo=${m.memberNo})}" alt="profileImage" id="imagePreview" width="200px" height="200px">
                                 </div>  
-                                <div class="attachImage" style="text-align: center; justify-content: center;">
+                                <div class="attachImage" style="text-align: center;">
                                   <input type="file" class="form-control-file" id="attachImage" name="attachImage" accept=".jpg, .png">
                                 </div>
                               </div>
@@ -266,6 +281,7 @@
                               </div>
                             </td>
                           </tr>
+                          <tr><td class="space1" colspan="14"></td></tr>
                           <tr>
                             <th colspan="3"><label for="memberName">이름</label></th>
                             <td colspan="11">
@@ -274,6 +290,7 @@
                               </div>
                             </td>
                           </tr>
+                          <tr><td class="space" colspan="14"></td></tr>
                           <tr>
                             <th colspan="3"><label for="tel">휴대폰</label></th>
                             <td colspan="11">
@@ -283,6 +300,7 @@
                               </div>
                             </td>
                           </tr>
+                          <tr><td class="space" colspan="14"></td></tr>
                           <tr>
                             <th colspan="3"><label for="birthday">생년월일</label></th>
                             <td colspan="11">
@@ -291,9 +309,10 @@
                               </div>
                             </td>
                           </tr>
+                          <tr><td class="space" colspan="14"></td></tr>
                           <tr>
                             <th colspan="3"><label>부서 선택</label></th>
-                            <td colspan="5">
+                            <td colspan="4">
                               <div>
                                 <select name="deptNo" class="dept form-control form-control-sm" required style="display:inline-block; width:150px;">
                                   <option value="">부서 선택</option>
@@ -304,7 +323,7 @@
                               </div>
                             </td>
                             <th colspan="3"><label>직위 선택</label></th>
-                            <td colspan="3">
+                            <td colspan="4">
                               <div>
                                 <select name="jobNo" class="job form-control form-control-sm" required style="display:inline-block; width:150px;">
                                   <option value="">직위 선택</option>
@@ -318,9 +337,10 @@
                               </div>
                             </td>
                           </tr>
+                          <tr><td class="space" colspan="14"></td></tr>
                           <tr>
                             <th colspan="3"><label>직원 상태 선택</label></th>
-                            <td colspan="3">
+                            <td colspan="4">
                               <div>
                                 <select name="status" class="status form-control form-control-sm" required style="display:inline-block; width:150px;">
                                   <option value="">상태 선택</option>
@@ -332,16 +352,19 @@
                                 </select>
                               </div>
                             </td>
+                            <td colspan="7"></td>
                           </tr>
+                          <tr><td class="space" colspan="14"></td></tr>
                           <tr>
                             <th colspan="3"><label for="memberNo">임시 비밀번호</label></th>
                             <td colspan="11">
                               <div>
-                                <input type="password" class="form-control p-input" id="pw" name="pw" th:value="${m.pw}" placeholder="임시 비밀번호를 입력해주세요" required>
+                                <input type="password" class="form-control" id="pw" name="pw" th:value="${m.pw}" placeholder="임시 비밀번호를 입력해주세요" required>
                                 <div id="msgPw"></div>
                               </div>
                             </td>
                           </tr>
+                          <tr><td class="space" colspan="14"></td></tr>
                           <tr>
                           <td colspan="14">
                             <div>
