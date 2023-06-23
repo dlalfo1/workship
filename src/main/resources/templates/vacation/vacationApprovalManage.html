@@ -185,9 +185,9 @@
 						              <td>[[${approval?.memberDTO.memberNo}]]</td>
 						              <td>[[${approval?.memberDTO.memberName}]]</td>
 						              <td>[[${approval?.vacationCategory}]]</td>
-						              <td>[[${approval?.createdAt}]]</td>
-						              <td>[[${approval?.vacationStartDate}]]</td>
-						              <td>[[${approval?.vacationEndDate}]]</td>
+						              <td>[[${#dates.format(approval?.createdAt, 'YYYY-MM-dd')}]]</td>
+						              <td>[[${#dates.format(approval?.vacationStartDate,'YYYY-MM-dd')}]]</td>
+						              <td>[[${#dates.format(approval?.vacationEndDate, 'YYYY-MM-dd')}]]</td>
 						              <td>
 					                  <input type="hidden" th:value="${approval.approvalNo}">
 						                <th:block th:if="${approval?.vacationState == 1}">

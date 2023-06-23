@@ -4,9 +4,10 @@
 <head th:replace="~{/layout/header::headFrag('게시판')}"></head>
 <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 <style>
-	.second-title {
-		color: black;
-	}
+   .boardMain a {
+    text-decoration: none;
+    color: black;
+  }
   .blind {
     display: none;
   }
@@ -18,21 +19,12 @@
   }
 </style>
 <script th:inline="javascript">
-	
+
 	
 	function fnWriteBoard() {
 		location.href = '/board/boardWrite.html';
 	}
-	
-	/*
-	function fnWriteBoard(){
-		if(deptNo === 1){
-			location.href = '/board/boardWrite.html'
-		} else {
-			alert('작성을 하실 수 없습니다.');
-		}
-	}
-	*/
+
 	
 	$(function(){
 	// 게시글 달기 결과 메시지
@@ -44,6 +36,52 @@
 	    alert('게시글 작성에 실패했습니다.');
 	  }
 	}
+	
+	
+	$('#fnHRBoard').on('click', function(){
+		
+		let deptName = /*[[${session.loginMember.departmentDTO.deptName}]]*/ null;
+		let jobName = /*[[${session.loginMember.jobDTO.jobName}]]*/ null;
+		if(deptName !== '인사팀' && jobName !== '대표이사'){
+			alert('인사팀만 접속 가능합니다.');
+			location.href='/board/boardList.do';
+			event.preventDefault();
+			return;
+		} else {
+			
+		}
+
+	}) 
+
+	$('#fnGADBoard').on('click', function(){
+		
+		let deptName = /*[[${session.loginMember.departmentDTO.deptName}]]*/ null;
+		let jobName = /*[[${session.loginMember.jobDTO.jobName}]]*/ null;
+		if(deptName !== '총무팀' && jobName !== '대표이사'){
+			alert('총무팀만 접속 가능합니다.');
+			location.href='/board/boardList.do';
+			event.preventDefault();
+			return;
+		} else {
+			
+		}
+
+	}) 
+	
+	$('#fnDEVBoard').on('click', function(){
+		
+		let deptName = /*[[${session.loginMember.departmentDTO.deptName}]]*/ null;
+		let jobName = /*[[${session.loginMember.jobDTO.jobName}]]*/ null;
+		if(deptName !== '개발팀' && jobName !== '대표이사'){
+			alert('개발팀만 접속 가능합니다.');
+			location.href='/board/boardList.do';
+			event.preventDefault();
+			return;
+		} else {
+			
+		}
+
+	})
 	
 	let removeResult = /*[[${removeResult}]]*/ null;  // addResult가 전달되지 않는 경우 null을 사용한다.
 	if(removeResult !== null){
@@ -79,31 +117,32 @@
       <div class="main-panel">
         <div class="content-wrapper">
         
-          <div class="board-main">
-            <div class="board-title">
-                <h2><a th:href="@{/board/boardList.do}" class="second-title">부서별게시판</a></h2>
-                <div class="dropdown">
-									<button class="btn btn-primary dropdown-toggle has-ripple" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height: 50px; ">게시판<span class="ripple ripple-animate" style="height: 102.438px; width: 102.438px; animation-duration: 0.7s; animation-timing-function: linear; background: rgb(255, 255, 255); opacity: 0.4; top: -23.419px; left: 49.781px;"></span></button>
-            			<div class="dropdown-menu">
-										<a class="dropdown-item" th:href="@{/board/HRBoard.html}">인사게시판</a>
-										<a class="dropdown-item" th:href="@{/board/GADBoard.html}">총무게시판</a>
-										<a class="dropdown-item" th:href="@{/board/DEVBoard.html}">개발게시판</a>
-									</div>
-            		</div>
-            		
-            <hr>
-            
-            <div class="board-table">
-              <table id="listTable" class="table text-center">
-                <thead>
-                  <tr>
-                    <th style="width: 10%">게시글 번호</th>
-                    <th style="width: 35%;">제목</th>
-                    <th style="width: 20%;">작성자</th>
-                    <th style="width: 25%;">작성일</th>
-                    <th style="width: 10%;">조회수</th>
-                  </tr>
-                </thead>
+          <div class="row">
+            <div class="col-md-12 stretch-card grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <div class="boardMain h3 font-weight-bold position-right translate-middle">부서별게시판
+										<div class="btn-group">
+										  <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
+										   	게시판
+										  </button>
+										  <ul class="dropdown-menu">
+										    <li><a class="dropdown-item" id="fnHRBoard" th:href="@{/board/HRBoard.html(boardCategory=0)}">인사부게시판</a></li>
+										    <li><a class="dropdown-item" id="fnGADBoard" th:href="@{/board/GADBoard.html(boardCategory=1)}">총무부게시판</a></li>
+										    <li><a class="dropdown-item" id="fnDEVBoard" th:href="@{/board/DEVBoard.html(boardCategory=2)}">개발부게시판</a></li>
+										  </ul>
+										</div>
+                  </div>
+                    <table id="listTable" class="table text-center">
+                    <thead>
+		                 <tr>
+		                   <th style="width: 10%">게시글 번호</th>
+		                   <th style="width: 35%;">제목</th>
+		                   <th style="width: 20%;">작성자</th>
+		                   <th style="width: 25%;">작성일</th>
+		                   <th style="width: 10%;">조회수</th>
+		                 </tr>
+		              	</thead>
                     <tbody id="boardList">
                       <th:block th:if="${#lists.isEmpty(boardList)}">
                         <tr> 
@@ -126,39 +165,47 @@
                               <td th:text="|${board.memberDTO.memberName} ${board.memberDTO.jobDTO.jobName}|"></td>
                               <td th:text="${#dates.format(board.boardCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
                               <td th:text="${board.boardHit}"></td>
+                              <td>
+											          <!-- 댓글 삭제 버튼 -->
+											          <button class="btn btn-sm btn-danger" th:if="${session.loginMember.emailId == board.memberDTO.emailId}" onclick="deleteComment('${board.commentId}')">삭제</button>
+											        </td>
                             </tr>
                           </th:block>
                         </th:block>
                       </th:block>
                     </tbody>
                 </table>
-                
-                <div class="searchWrap">
-              		<form id="frmSearch" th:action="@{/board/boardList.do}">
-              			<select name="column" id="column">
-              				<option value="board_TITLE" selected="selected">제목</option>
-              				<option value="board_CONTENT">내용</option>
-              			</select>
-              			<input type="text" name="query" id="query">
-              			<button type="submit">검색</button>
-              		</form>
-                  <div class="writeWrap">
-                    <input type="button" class="btn btn-primary btn-rounded btn-md" id="btnWriteBoard" value="글쓰기" onclick="fnWriteBoard()">
-                  </div>
-                </div> <!--/* search_wrap 끝나는 지점 */-->
+                  <script>
+                    
+                  </script>
+                  <input type="button" class="btn btn-primary btn-rounded btn-md float-left m-3" id="btnWriteBoard" value="글쓰기" onclick="fnWriteBoard()">
+                  <div class="searchWrap">
+                    <div class="frmWrap" style="margin: 1rem; padding-left: 22rem; padding-right: 2rem;">
+                      <form id="frmSearch" th:action="@{/board/boardList.do}">
+                        <select class="form-control form-control-sm" name="column" id="column" style="display:inline-block; width:80px;">
+                          <option value="board_TITLE" selected="selected">제목</option>
+                          <option value="board_CONTENT">내용</option>
+                        </select>
+                        <input class="form-control form-control-sm col-4" type="text" name="query" id="query" style="display:inline-block;" placeholder="검색어를 입력해주세요.">
+                        <button type="submit" class="btn btn-primary">검색</button>
+                      </form>
+                    </div>
+                  </div> <!--/* search_wrap 끝나는 지점 */-->
               
-              <div class="pagination">
-                <div id="pagination2" style="text-align: center;" th:utext="${pagination}"></div>  
+              <div style="text-align: center; margin: 0 auto;">
+                <div th:utext="${pagination}"></div>  
               </div>
             </div> <!--/* board-table 끝나는 지점 */-->
           </div> <!--/* board-main 끝나는 지점 */-->
-
-        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+				</div>
+				 
+       </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점*/-->
-  </div>
+ </div>
   <!--/* footer 영역 */-->
+  
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
 </body>
