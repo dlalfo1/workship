@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.WebUtils;
 
+import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.mapper.LoginMapper;
 
 @Component
@@ -30,13 +31,13 @@ public class AutologinInterceptor implements HandlerInterceptor {
       
       Cookie cookie = WebUtils.getCookie(request, "autologinId");
       
-      if(cookie != null) {  // 쿠키 autologinId가 w존재하는가?
+      if(cookie != null) {  // 쿠키 autologinId가 존재하는가?
         
         String autologinId = cookie.getValue();
-        String emailId = loginMapper.selectAutologin(autologinId);
+        MemberDTO memberDTO = loginMapper.selectAutologin(autologinId);
         
-        if(emailId != null) {
-          session.setAttribute("emailId", emailId);
+        if(memberDTO != null) {
+          session.setAttribute("loginMember", memberDTO);
         }
         
       }

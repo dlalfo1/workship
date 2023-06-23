@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.gdu.workship.domain.BoardCommentDTO;
 import com.gdu.workship.service.BoardCommentService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,5 +41,12 @@ public class BoardCommentController {
 	    return boardCommentService.addReply(request);
 	  }
 	  
+	  @PostMapping(value="/removeComment.do", produces="application/json")
+	  @ResponseBody
+	  public void removeComment(BoardCommentDTO boardCommentDTO) {
+		  boardCommentService.removeComment(boardCommentDTO);
+	  }
+		  
 }
+	  
 

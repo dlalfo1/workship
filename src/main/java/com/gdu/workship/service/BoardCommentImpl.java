@@ -86,5 +86,11 @@ public class BoardCommentImpl implements BoardCommentService {
 		    return result;
 		    
 		  }
+		
+		@Override
+		public int removeComment(BoardCommentDTO boardCommentDTO) {
+			int result = boardCommentMapper.removeComment(boardCommentDTO.getCommentNo()); 
+			return result;
+		}
 
 }
