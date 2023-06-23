@@ -5,8 +5,418 @@
 
 <!-- namespace는 @Mapper를 지정한다. -->
 <mapper namespace="com.gdu.workship.mapper.ApprovalMapper">
+
+  <resultMap type="MemberDTO" id="MemberMap">
+    <id column="MEMBER_NO" property="memberNo"/>
+    <result column="MEMBER_NAME" property="memberName"/>
+    <result column="EMAIL_ID" property="emailId"/>
+    <result column="TEL" property="tel"/>
+    <result column="BIRTHDAY" property="birthday"/>
+    <result column="JOINED_AT" property="joinedAt"/>
+    <result column="MODIFIED_AT" property="modifiedAt"/>
+    <result column="STATUS" property="status"/>
+    <result column="DAYOFF_COUNT" property="dayoffCount"/>
+    <result column="PW" property="pw"/>
+    <result column="PROFILE_FILE_PATH" property="profileFilePath"/>
+    <result column="PROFILE_FILE_NAME" property="profileFileName"/>
+    <association javaType="JobDTO" property="jobDTO">
+      <id column="JOB_NO" property="jobNo"/>
+      <result column="JOB_NAME" property="jobName"/>
+    </association>
+    <association javaType="DepartmentDTO" property="departmentDTO">
+      <id column="DEPT_NO" property="deptNo"/>
+      <result column="DEPT_NAME" property="deptName"/>
+    </association>
+  </resultMap>
   
- 
+   <resultMap type="ApprovalLineDTO" id="ApprovalLinelMap">
+     <id column="APPROVAL_LINE_NO" property="approvalLineNo"/>
+      <result column="APPROVAL_ORDER" property="approvalOrder"/>
+      <result column="MEMBER_APPROVAL_STATUS" property="memberApprovalStatus"/>
+      <result column="APPROVAL_DATE" property="approvalDate"/>
+      <result column="DOC_COMMENT" property="docComment"/>
+      <association javaType="MemberDTO" property="memberDTO">
+        <id column="L_MEMBER_NO" property="memberNo"/>
+        <result column="MEMBER_NAME" property="memberName"/>
+        <result column="EMAIL_ID" property="emailId"/>
+        <result column="TEL" property="tel"/>
+        <result column="BIRTHDAY" property="birthday"/>
+        <result column="JOINED_AT" property="joinedAt"/>
+        <result column="MODIFIED_AT" property="modifiedAt"/>
+        <result column="STATUS" property="status"/>
+        <result column="DAYOFF_COUNT" property="dayoffCount"/>
+        <result column="PW" property="pw"/>
+        <result column="PROFILE_FILE_PATH" property="profileFilePath"/>
+        <result column="PROFILE_FILE_NAME" property="profileFileName"/>
+      <association javaType="JobDTO" property="jobDTO">
+        <id column="JOB_NO" property="jobNo"/>
+        <result column="JOB_NAME" property="jobName"/>
+      </association>
+      <association javaType="DepartmentDTO" property="departmentDTO">
+        <id column="DEPT_NO" property="deptNo"/>
+        <result column="DEPT_NAME" property="deptName"/>
+      </association>
+    </association>
+    <association javaType="ApprovalDTO" property="approvalDTO">
+      <id column="APPROVAL_NO" property="approvalNo"/>
+      <result column="DOC_NAME" property="docName"/>
+      <result column="DOC_TITLE" property="docTitle"/>
+      <result column="CREATED_AT" property="createdAt"/>
+      <result column="DOC_CONTENT" property="docContent"/>
+      <result column="VACATION_CATEGORY" property="vacationCategory"/>
+      <result column="DOC_STATUS" property="docStatus"/>
+      <result column="APPROVAL_STATUS" property="approvalStatus"/>
+      <result column="APPROVAL_COUNT" property="approvalCount"/>
+      <result column="APPROVAL_SEQUENCE" property="approvalSequence"/>
+      <result column="VACATION_START_DATE" property="vacationStartDate"/>
+      <result column="VACATION_END_DATE" property="vacationEndDate"/>
+      <result column="VACATION_STATE" property="vacationState"/>
+      <result column="PAY_DATE" property="payDate"/>
+      <result column="RESIGNATION_DATE" property="resignationDate"/>
+    </association>
+  </resultMap>
   
+   <resultMap type="ApprovalDTO" id="ApprovalMap">
+    <id column="APPROVAL_NO" property="approvalNo"/>
+    <result column="DOC_NAME" property="docName"/>
+    <result column="DOC_TITLE" property="docTitle"/>
+    <result column="CREATED_AT" property="createdAt"/>
+    <result column="DOC_CONTENT" property="docContent"/>
+    <result column="VACATION_CATEGORY" property="vacationCategory"/>
+    <result column="DOC_STATUS" property="docStatus"/>
+    <result column="APPROVAL_STATUS" property="approvalStatus"/>
+    <result column="APPROVAL_COUNT" property="approvalCount"/>
+    <result column="APPROVAL_SEQUENCE" property="approvalSequence"/>
+    <result column="VACATION_START_DATE" property="vacationStartDate"/>
+    <result column="VACATION_END_DATE" property="vacationEndDate"/>
+    <result column="VACATION_STATE" property="vacationState"/>
+    <result column="PAY_DATE" property="payDate"/>
+    <result column="RESIGNATION_DATE" property="resignationDate"/>
+    <association javaType="MemberDTO" property="memberDTO">
+      <id column="MEMBER_NO" property="memberNo"/>
+      <result column="MEMBER_NAME" property="memberName"/>
+      <result column="EMAIL_ID" property="emailId"/>
+      <result column="TEL" property="tel"/>
+      <result column="BIRTHDAY" property="birthday"/>
+      <result column="JOINED_AT" property="joinedAt"/>
+      <result column="MODIFIED_AT" property="modifiedAt"/>
+      <result column="STATUS" property="status"/>
+      <result column="DAYOFF_COUNT" property="dayoffCount"/>
+      <result column="PW" property="pw"/>
+      <result column="PROFILE_FILE_PATH" property="profileFilePath"/>
+      <result column="PROFILE_FILE_NAME" property="profileFileName"/>
+      <association javaType="JobDTO" property="jobDTO">
+        <id column="JOB_NO" property="jobNo"/>
+        <result column="JOB_NAME" property="jobName"/>
+      </association>
+      <association javaType="DepartmentDTO" property="departmentDTO">
+        <id column="DEPT_NO" property="deptNo"/>
+        <result column="DEPT_NAME" property="deptName"/>
+      </association>
+    </association>
+  </resultMap>  
+  
+  
+
+
+  <select id="selectDeptList" resultType="DepartmentDTO">
+    SELECT DEPT_NO, DEPT_NAME
+      FROM DEPARTMENT_T
+  </select>
+  
+  <select id="selectMemberList" parameterType="int" resultMap="MemberMap">
+    SELECT A.MEMBER_NO, A.MEMBER_NAME, A.EMAIL_ID, A.TEL, A.BIRTHDAY, A.JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME, A.DEPT_NO, A.DEPT_NAME, A.JOB_NO, A.JOB_NAME
+      FROM (SELECT M.MEMBER_NO, M.MEMBER_NAME, M.EMAIL_ID, M.TEL, M.BIRTHDAY, M.JOINED_AT, M.MODIFIED_AT, M.STATUS, M.DAYOFF_COUNT, M.PW, M.PROFILE_FILE_PATH, M.PROFILE_FILE_NAME, D.DEPT_NO, D.DEPT_NAME, J.JOB_NO ,J.JOB_NAME
+              FROM DEPARTMENT_T D INNER JOIN MEMBER_T M
+                ON D.DEPT_NO = M.DEPT_NO INNER JOIN JOB_T J
+                ON J.JOB_NO = M.JOB_NO) A
+     WHERE A.DEPT_NO = #{deptNo}
+     ORDER BY JOB_NO
+  </select>
+  
+    <select id="getMemberDTO" parameterType="int" resultMap="MemberMap">
+    SELECT A.MEMBER_NO, A.MEMBER_NAME, A.EMAIL_ID, A.TEL, A.BIRTHDAY, A.JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME, A.DEPT_NO, A.DEPT_NAME, A.JOB_NO, A.JOB_NAME
+      FROM (SELECT M.MEMBER_NO, M.MEMBER_NAME, M.EMAIL_ID, M.TEL, M.BIRTHDAY, M.JOINED_AT, M.MODIFIED_AT, M.STATUS, M.DAYOFF_COUNT, M.PW, M.PROFILE_FILE_PATH, M.PROFILE_FILE_NAME, D.DEPT_NO, D.DEPT_NAME, J.JOB_NO ,J.JOB_NAME
+              FROM DEPARTMENT_T D INNER JOIN MEMBER_T M
+                ON D.DEPT_NO = M.DEPT_NO INNER JOIN JOB_T J
+                ON J.JOB_NO = M.JOB_NO) A
+     WHERE A.MEMBER_NO = #{memberNo}
+   </select>
+  
+  
+  <select id="selectInsertCheckMemberList" parameterType="Map"  resultMap="MemberMap">
+    SELECT A.MEMBER_NO, A.MEMBER_NAME, A.EMAIL_ID, A.TEL, A.BIRTHDAY, A.JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME, A.DEPT_NO, A.DEPT_NAME, A.JOB_NO, A.JOB_NAME
+      FROM (SELECT M.MEMBER_NO, M.MEMBER_NAME, M.EMAIL_ID, M.TEL, M.BIRTHDAY, M.JOINED_AT, M.MODIFIED_AT, M.STATUS, M.DAYOFF_COUNT, M.PW, M.PROFILE_FILE_PATH, M.PROFILE_FILE_NAME, D.DEPT_NO, D.DEPT_NAME, J.JOB_NO ,J.JOB_NAME
+              FROM DEPARTMENT_T D INNER JOIN MEMBER_T M
+                ON D.DEPT_NO = M.DEPT_NO INNER JOIN JOB_T J
+                ON J.JOB_NO = M.JOB_NO) A
+     WHERE A.MEMBER_NO IN
+     <foreach collection="checkedMembers" item="memberNo" open="(" close=")" separator=",">
+      #{memberNo}
+     </foreach>
+  </select>
+  
+   <select id="selectApprovalMmberList" parameterType="Map"  resultMap="MemberMap">
+    SELECT A.MEMBER_NO, A.MEMBER_NAME, A.EMAIL_ID, A.TEL, A.BIRTHDAY, A.JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME, A.DEPT_NO, A.DEPT_NAME, A.JOB_NO, A.JOB_NAME
+      FROM (SELECT M.MEMBER_NO, M.MEMBER_NAME, M.EMAIL_ID, M.TEL, M.BIRTHDAY, M.JOINED_AT, M.MODIFIED_AT, M.STATUS, M.DAYOFF_COUNT, M.PW, M.PROFILE_FILE_PATH, M.PROFILE_FILE_NAME, D.DEPT_NO, D.DEPT_NAME, J.JOB_NO ,J.JOB_NAME
+              FROM DEPARTMENT_T D INNER JOIN MEMBER_T M
+                ON D.DEPT_NO = M.DEPT_NO INNER JOIN JOB_T J
+                ON J.JOB_NO = M.JOB_NO) A
+     WHERE A.MEMBER_NO IN
+     <foreach collection="approvalMembers" item="memberNo" open="(" close=")" separator=",">
+      #{memberNo}
+     </foreach>
+  </select>
+  
+  <select id="selectReferenceMmberList" parameterType="Map"  resultMap="MemberMap">
+    SELECT A.MEMBER_NO, A.MEMBER_NAME, A.EMAIL_ID, A.TEL, A.BIRTHDAY, A.JOINED_AT, A.MODIFIED_AT, A.STATUS, A.DAYOFF_COUNT, A.PW, A.PROFILE_FILE_PATH, A.PROFILE_FILE_NAME, A.DEPT_NO, A.DEPT_NAME, A.JOB_NO, A.JOB_NAME
+      FROM (SELECT M.MEMBER_NO, M.MEMBER_NAME, M.EMAIL_ID, M.TEL, M.BIRTHDAY, M.JOINED_AT, M.MODIFIED_AT, M.STATUS, M.DAYOFF_COUNT, M.PW, M.PROFILE_FILE_PATH, M.PROFILE_FILE_NAME, D.DEPT_NO, D.DEPT_NAME, J.JOB_NO ,J.JOB_NAME
+              FROM DEPARTMENT_T D INNER JOIN MEMBER_T M
+                ON D.DEPT_NO = M.DEPT_NO INNER JOIN JOB_T J
+                ON J.JOB_NO = M.JOB_NO) A
+     WHERE A.MEMBER_NO IN
+     <foreach collection="referenceMembers" item="memberNo" open="(" close=")" separator=",">
+      #{memberNo}
+     </foreach>
+  </select>
+  
+  <insert id="insertApproval" parameterType="ApprovalDTO">
+    INSERT INTO APPROVAL_T (
+        MEMBER_NO
+      , DOC_NAME
+      , DOC_TITLE
+      , CREATED_AT
+      , DOC_CONTENT
+      , DOC_STATUS
+      , APPROVAL_STATUS
+      , APPROVAL_COUNT
+      , APPROVAL_SEQUENCE
+      , VACATION_CATEGORY
+      , VACATION_START_DATE
+      , VACATION_END_DATE
+      , VACATION_STATE
+      , PAY_DATE
+      , RESIGNATION_DATE
+      ) VALUES (
+        #{memberDTO.memberNo}
+      , #{docName}
+      , #{docTitle}
+      , NOW()
+      , #{docContent}
+      , #{docStatus}
+      , #{approvalStatus}
+      , #{approvalCount}
+      , #{approvalSequence}
+       <if test="vacationCategory != null">
+          , #{vacationCategory}
+       </if>
+       <if test="vacationCategory == null">
+          , NULL
+       </if>
+       <if test="vacationStartDate != null">
+          , #{vacationStartDate}
+       </if>
+        <if test="vacationStartDate == null">
+          , NULL
+        </if>
+        <if test="vacationEndDate != null">
+          , #{vacationEndDate}
+        </if>
+        <if test="vacationEndDate == null">
+          , NULL
+        </if>
+        <if test="vacationState != null">
+          , #{vacationState}
+        </if>
+        <if test="vacationState == null">
+          , NULL
+        </if>        
+        <if test="payDate != null">
+          , #{payDate}
+        </if>
+        <if test="payDate == null">
+         , NULL
+        </if>
+        <if test="resignationDate != null">
+          , #{resignationDate}
+        </if>
+        <if test="resignationDate == null">
+          , NULL
+        </if>
+       )
+    <selectKey keyProperty="approvalNo" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+  </insert>
+  
+  <insert id="insertApprovalLine" parameterType="Map"> 
+      INSERT INTO APPROVAL_LINE_T (
+        MEMBER_NO,
+        APPROVAL_NO,
+        APPROVAL_ORDER,
+        MEMBER_APPROVAL_STATUS,
+        APPROVAL_DATE,
+        DOC_COMMENT
+      ) VALUES ( 
+       #{approvalMemberNo}
+       , #{approvalNo}
+       , #{approvalOrder}
+       , #{memberApprovalStatus}
+       , NULL
+       , NULL
+      )
+  </insert>
+  
+  <insert id="insertReferenceLine" parameterType="Map">
+    INSERT INTO APPROVAL_REFERENCE_T (
+        APPROVAL_NO, MEMBER_NO
+      ) VALUES (
+      #{approvalNo}
+    , #{referenceMemberNo}
+       ) 
+  </insert>  
+   
+   
+  <insert id="insertApprovalAttach" parameterType="ApprovalFileDTO">
+    INSERT INTO APPROVAL_FILE_T ( 
+        APPROVAL_NO
+      , APPROVAL_FILE_PATH
+      , APPROVAL_FILE_ORIGIN_NAME
+      , APPROVAL_FILE_SYSTEM_NAME
+      ) VALUES (
+        #{approvalDTO.approvalNo}
+      , #{approvalFilePath} 
+      , #{approvalFileOriginName}
+      , #{approvalFileSystemName}
+      ) 
+  </insert>  
+    
+  <select id="getApprovalCount" resultType="int">
+    SELECT COUNT(*)
+      FROM  APPROVAL_T
+  </select>
+  
+  <select id="getApprovalCountApprovalStatus" parameterType="Map" resultType="int" >
+    SELECT COUNT(*)
+      FROM  APPROVAL_T
+       <where> 
+         <if test="approvalStatus != 5">
+            APPROVAL_STATUS = #{approvalStatus}
+         </if>
+       </where>       
+
+  </select> 
+  
+  <select id="getApprovalCountByQuery" parameterType="Map" resultType="int">
+    SELECT COUNT(*)
+      FROM APPROVAL_T
+    WHERE ${columnsearch} LIKE CONCAT('%', #{query}, '%')
+  </select>  
+  
+  <select id="getApprovalList" parameterType="Map" resultMap="ApprovalMap">
+    SELECT DISTINCT A.APPROVAL_NO, A.DOC_NAME, A.DOC_TITLE, A.MEMBER_NO, DATE_FORMAT(A.CREATED_AT, '%Y-%m-%d') AS CREATED_AT, A.APPROVAL_STATUS, M.MEMBER_NAME, D.DEPT_NAME
+    FROM (
+            SELECT P.APPROVAL_NO, P.DOC_NAME, P.DOC_TITLE, P.MEMBER_NO, P.CREATED_AT, P.APPROVAL_STATUS
+            FROM APPROVAL_T P
+            <where>
+                <if test="columnsearch != '' and query != ''" >
+                    ${columnsearch} LIKE CONCAT('%', #{query}, '%')
+                </if>
+            </where>
+          ) A
+    INNER JOIN APPROVAL_LINE_T L 
+       ON A.APPROVAL_NO = L.APPROVAL_NO 
+    INNER JOIN MEMBER_T M
+       ON M.MEMBER_NO = A.MEMBER_NO
+    INNER JOIN DEPARTMENT_T D
+       ON M.DEPT_NO = D.DEPT_NO
+    <where>
+        <if test="approvalStatus != 5" >
+            A.APPROVAL_STATUS = #{approvalStatus}
+        </if>
+        <if test="memberNo != null">
+            AND (A.MEMBER_NO = #{memberNo} OR L.MEMBER_NO = #{memberNo})
+        </if> 
+    </where>
+    ORDER BY ${columnorder} ${order}
+    LIMIT #{begin}, #{recordPerPage}
+  </select>
+
+  
+  <select id="getApprovalSearchCount" parameterType="Map" resultType="int" >
+    SELECT COUNT(APPROVAL_NO)
+      FROM APPROVAL_T
+       <where>
+         <if test="column != '' and query != ''" >
+          ${column} LIKE CONCAT('%', #{query}, '%')
+         </if>
+       </where>
+  </select>
+   
+  <select id="getApprovalAutoComplete" parameterType="Map" resultType="ApprovalDTO">
+    SELECT DISTINCT ${column}
+      FROM APPROVAL_T
+     WHERE ${column} LIKE CONCAT('%', #{query}, '%')
+  </select> 
+  
+  <select id="selectApprovalByNo" parameterType="ApprovalDTO" resultMap="ApprovalMap">
+    SELECT  A.MEMBER_NO
+          , A.DOC_NAME
+          , A.DOC_TITLE
+          , A.CREATED_AT
+          , A.DOC_CONTENT
+          , A.DOC_STATUS
+          , A.APPROVAL_STATUS
+          , A.APPROVAL_COUNT
+          , A.APPROVAL_SEQUENCE
+          , A.VACATION_CATEGORY
+          , A.VACATION_START_DATE
+          , A.VACATION_END_DATE
+          , A.VACATION_STATE  
+          , A.PAY_DATE
+          , A.RESIGNATION_DATE
+          , M.MEMBER_NAME
+          , M.JOINED_AT
+          , D.DEPT_NAME
+     FROM APPROVAL_T A
+     INNER JOIN MEMBER_T M 
+       ON M.MEMBER_NO = A.MEMBER_NO
+     INNER JOIN DEPARTMENT_T D  
+        ON M.DEPT_NO = D.DEPT_NO
+    WHERE APPROVAL_NO = #{approvalNo} 
+      AND DOC_NAME = #{docName}
+  </select>
+  
+  <select id="selectApprovalFilesByApprovalNo" parameterType="int" resultType="ApprovalFileDTO">
+    SELECT APPROVAL_FILE_NO, APPROVAL_NO, APPROVAL_FILE_PATH, APPROVAL_FILE_ORIGIN_NAME, APPROVAL_FILE_SYSTEM_NAME
+      FROM APPROVAL_FILE_T
+    WHERE APPROVAL_NO = #{approvalNo}
+  </select>
+  
+  <select id="selectApprovalFilesByAttachNo" parameterType="int" resultType="ApprovalFileDTO">
+    SELECT APPROVAL_FILE_NO, APPROVAL_NO, APPROVAL_FILE_PATH, APPROVAL_FILE_ORIGIN_NAME, APPROVAL_FILE_SYSTEM_NAME
+      FROM APPROVAL_FILE_T
+    WHERE APPROVAL_FILE_NO = #{attachNo}  
+  </select>
+  
+  <select id="selectApprovalLineMembers" parameterType="int" resultMap="ApprovalLinelMap">
+    SELECT 
+        A.APPROVAL_NO, A.DOC_NAME, A.DOC_TITLE, 
+        DATE_FORMAT(A.CREATED_AT, '%Y-%m-%d') AS CREATED_AT, A.APPROVAL_STATUS,
+        J.JOB_NAME,
+        L.MEMBER_NO AS L_MEMBER_NO,  L.APPROVAL_ORDER,
+        ML.MEMBER_NAME,
+        L.MEMBER_APPROVAL_STATUS
+    FROM (
+        SELECT P.APPROVAL_NO, P.DOC_NAME, P.DOC_TITLE, P.MEMBER_NO, P.CREATED_AT, P.APPROVAL_STATUS
+        FROM APPROVAL_T P
+    ) A   
+    INNER JOIN APPROVAL_LINE_T L ON A.APPROVAL_NO = L.APPROVAL_NO
+    INNER JOIN MEMBER_T M ON M.MEMBER_NO = A.MEMBER_NO
+    INNER JOIN DEPARTMENT_T D ON M.DEPT_NO = D.DEPT_NO
+    INNER JOIN MEMBER_T ML ON ML.MEMBER_NO = L.MEMBER_NO
+    INNER JOIN JOB_T J ON ML.JOB_NO = J.JOB_NO
+    WHERE A.APPROVAL_NO = #{approvalNo}
+  </select>
   
 </mapper>
