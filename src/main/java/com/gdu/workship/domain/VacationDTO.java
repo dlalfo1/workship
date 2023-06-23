@@ -11,7 +11,7 @@ public class VacationDTO {
 
 	private int vacationNo;
 	private MemberDTO memberDTO;
-	private ApprovalDTO approvalDTO;
+	private VacationApprovalDTO vacationApprovalDTO;
 	private int vacationDay;
 	
 }

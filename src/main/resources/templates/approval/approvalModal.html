@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<link rel="stylesheet" th:href="@{/css/mirae.css}">
+<body>
+
+  <div th:replace="~{/approval/approvalToast::toastFrag}"></div>
+  
+  <div th:fragment="modalFrag" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+     <div class="modal-content">  
+      <div class="modal-body">
+        <div class="left-wrapper">
+          <div class="dept-wrapper" id="deptSection">
+            <div id="deptClick">부서 ▼</div>
+            <div>
+              <ul id="deptList">
+                <!--/* ajax요청 부서리스트 오는 곳 */-->
+              </ul>
+            </div>
+          </div>
+          <div class="member-wrapper" id="memberSection">
+            <div>멤버리스트</div>
+            <div>  
+              <ul id="memberList"> 
+                <!--/* ajax요청 부서리스트 오는 곳 */-->
+              </ul>
+            </div>
+          </div>  
+          </div>
+          <div class="center-wrapper">
+            <div class="center-wrapper-top">
+              <div>
+                <i class="fa-solid fa-circle-chevron-right" id="insertApproval"></i>
+              </div>
+              <div>
+               <i class="fa-solid fa-circle-chevron-left" id="deleteApproval"></i>   
+              </div>          
+            </div>
+            <div class="center-wrapper-bottom">
+              <div>
+                <i class="fa-solid fa-circle-chevron-right" id="insertReference"></i>
+              </div>
+              <div>
+               <i class="fa-solid fa-circle-chevron-left" id="deleteReference"></i>   
+              </div>  
+            </div>
+          </div>
+          <div class="right-wrapper">
+            <div class="approvalSection">결재선
+              <ul id="approvalList">
+                <!--/* ajax요청 부서리스트 오는 곳 */-->
+              </ul>
+             </div> 
+            <div class="referenceSection">참조
+              <ul id="referenceList"> 
+                  <!--/* ajax요청 부서리스트 오는 곳 */-->
+              </ul>
+             </div> 
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+          <button id="approvalAndReferenceLine" type="button" class="btn btn-primary">등록</button>
+        </div>
+      </div>
+    </div>
+    
+<script>
+
+// 부서리스트 가져오기
+$('#deptClick').on('click', function() {
+  
+  // 부서 클릭시 토글기능
+  $('#deptList').toggle();
+    $.ajax({
+      type: 'get',
+      url: '/approval/deptList.do',
+      dataType: 'json',
+      success: function(resData) {
+        
+        $('#deptList').empty();
+        $.each(resData.deptList, function(i, dept) {
+          let str = '<li onclick="fnMemberList(' + dept.deptNo + ')">' + dept.deptName + '</li>';
+          $('#deptList').append(str);
+        })
+        
+       // 모달 내부의 li 태그 제거
+       // 모달창을 닫아도 ajax요청후 append한 <li>태그가 사라지지 않아서 추가함.
+       $('#exampleModalCenter').on('hidden.bs.modal', function() {
+          $(this).find('.modal-body li').remove();
+       });
+       
+      },
+      error: function(jqXHR) {
+        alert('조회된 부서가 없습니다.');
+      }
+    }) // ajax요청 종료
+  }) // 클릭이벤트 종료
+
+  
+  // 부서클릭시 해당부서의 직원 가져오기
+  function fnMemberList(deptNo){
+  
+    $.ajax({
+     type: 'get',
+     url: '/approval/memberList.do',
+     data: 'deptNo=' + deptNo,
+     dataType: 'json',
+     success: function(resData) {
+       $('#memberList').empty();
+       $.each(resData.memberList, function(i, member) {
+        let str = '<li>';
+        // id="memberCheck' + i +
+        str += '<input type="checkbox" class="memberCheck" value="' + member.memberNo + '">';
+        str += '&nbsp;&nbsp;<strong>' + member.memberName + '</strong>&nbsp;&nbsp;' + member.jobDTO.jobName + '&nbsp;' + member.departmentDTO.deptName;
+       
+        $('#memberList').append(str);
+        
+       })
+       
+      // 모달 내부의 li 태그 제거
+      // 모달창을 닫아도 ajax요청후 append한 <li>태그가 사라지지 않아서 추가함.
+      $('#exampleModalCenter').on('hidden.bs.modal', function() {
+          $(this).find('.modal-body li').remove(); 
+      });
+      
+     },
+    }) // ajax요청 종료
+  } // 클릭 이벤트 종료
+
+  
+  // 오른쪽 화살표 버튼 클릭시 결재선 영역에 추가하기
+  $('#insertApproval').on('click', function(){
+    
+    let checkMemberCount =  $('.memberCheck:checked').length; // 체크된 체크박스 수
+    let checkMemberList = $('.memberCheck:checked');  // 체크된 체크박스 리스트
+    
+    if(checkMemberCount === 0) {
+      alert('선택된 멤버가 없습니다.'); 
+      return;
+    }
+    
+    if(checkMemberCount > 3) {
+      alert('결재라인은 최대 3명 선택 가능합니다.');
+      return;
+    }
+    
+    // 이동시 기존 체크박스 해제하기
+    $('#memberList input').prop("checked", false);
+    
+    // $('#myToast').toast('show'); 대체 왜 안 보임?
+        
+    // 체크한 사람 결재선 박스에 넣기
+    let checkedMembers = [];
+    
+    // 체크된 멤버를 순회 후 체크되었다면 체크된 멤버의 value값을 배열에 담는다.
+    for(let i = 0; i < checkMemberList.length; i++ ){
+      checkedMembers.push(checkMemberList[i].value);
+    }
+    
+    // 체크된 멤버를 다시한번 불러온 후 결재선 박스에 담는다.
+    // 현재 구역에 있는 멤버리스트는 memberList를 받아오는 위 ajax요청으로 받은 객체의 정보이기때문에 
+    // 아래의 ajax요청에서 멤버객체를 다시 받아와야 한다.
+    $.ajax({
+      // data속성에 담아서 보낼 파라미터가 없으니 post방식으로 요청한다.
+      type: 'post',
+      url: '/approval/insertCheckApproval.do',
+      data: JSON.stringify({
+       "checkedMembers" : checkedMembers // 배열을 JSON 문자열로 변환 ex) ["1" , "100" . . .]
+      }), 
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function(resData) {
+      // for문 안에서 return시 ajax 자체가 종료되므로 for문 사용이 적절하다.
+      // $.each문은 사용시 조건을 걸어서 return시키면 상위 이벤트가 종료되는게 아니라 each문만 끝난다.
+        for (let i = 0; i < resData.checkMembers.length; i++) {
+          let checkMember = resData.checkMembers[i];
+          let str = '<li>';
+          str += '<input type="checkbox" class="selectApprovalLine" value="' + checkMember.memberNo + '">';
+          str += '&nbsp;&nbsp;<strong>' + checkMember.memberName + '</strong>&nbsp;&nbsp;' + checkMember.jobDTO.jobName + '&nbsp;' + checkMember.departmentDTO.deptName;
+  
+          if ($('#approvalList').find('li').length === 3) {
+            alert('결재라인은 최대 3명 선택 가능합니다.');
+            return;
+          }
+  
+          if ($('#approvalList').find('li').length !== 0) {
+            let selectMemberList = $('#approvalList input');
+            for (let j = 0; j < selectMemberList.length; j++) {
+              let selectMember = selectMemberList[j];
+              if (checkMember.memberNo == $(selectMember).attr('value')) {
+                alert('동일한 멤버는 추가할 수 없습니다.');
+                return;
+              }
+            }
+          }
+          
+          $('#approvalList').append(str);
+          
+        }
+      },
+      error: function(jqXHR) {
+        alert('결재선에 추가할 수 없습니다.');
+      }
+    }) // ajax 종료
+  })  // 클릭이벤트 종료
+
+  // 왼쪽 화살표 버튼 클릭시 결재선 영역에서 제외하기
+  $('#deleteApproval').on('click', function(){
+    
+    let checkMemberCount =  $('.selectApprovalLine:checked').length; // 체크된 체크박스 수
+    let checkMemberList = $('.selectApprovalLine:checked');  // 체크한 체크박스 리스트
+  
+    // 이동시 기존 체크박스 해제하기
+    // $('#approvalList input[name='selectMembers']').prop("checked", false);
+    if(checkMemberCount == 0) {
+     alert('선택된 멤버가 없습니다.');
+     return;
+    } else {
+     $.each(checkMemberList, function(i, checkMember) {
+      $(checkMember).closest('li').remove();
+     })
+    }
+  })
+    
+  // 오른쪽 화살표 버튼 클릭시 참조선 영역에 추가하기
+  $('#insertReference').on('click', function(){
+    
+    let checkMemberCount =  $('.memberCheck:checked').length; // 체크된 체크박스 수
+    let checkMemberList = $('.memberCheck:checked');  // 체크된 체크박스 리스트
+    
+    if(checkMemberCount == 0) {
+      alert('선택된 멤버가 없습니다.');
+      return;
+    }
+    
+    if(checkMemberCount > 5) {
+      alert('참조라인은 최대 5명 선택 가능합니다.');
+      return;
+    }
+    
+    // 이동시 기존 체크박스 해제하기
+    $('#memberList input').prop("checked", false);
+    
+    // $('#myToast').toast('show'); 대체 왜 안 보임?
+        
+    // 체크한 사람 결재선 박스에 넣기
+    let checkedMembers = [];
+    
+    // 체크된 멤버를 순회 후 체크되었다면 체크된 멤버의 value값을 배열에 담는다.
+    for(let i = 0; i < checkMemberList.length; i++ ){
+      checkedMembers.push(checkMemberList[i].value);
+    }
+    
+    // 체크된 멤버를 다시한번 불러온 후 결재선 박스에 담는다.
+    // 현재 구역에 있는 멤버리스트는 memberList를 받아오는 위 ajax요청으로 받은 객체의 정보이기때문에 
+    // 아래의 ajax요청에서 멤버객체를 다시 받아와야 한다.
+    $.ajax({
+      // data속성에 담아서 보낼 파라미터가 없으니 post방식으로 요청한다.
+      type: 'post',
+      url: '/approval/insertCheckApproval.do',
+      data: JSON.stringify({
+       "checkedMembers" : checkedMembers // 배열을 JSON 문자열로 변환 ex) ["1" , "100" . . .]
+      }), 
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function(resData) {
+      // for문 안에서 return시 ajax 자체가 종료되므로 for문 사용이 적절하다.
+      // $.each문은 사용시 조건을 걸어서 return시키면 상위 이벤트가 종료되는게 아니라 each문만 끝난다.
+        for (let i = 0; i < resData.checkMembers.length; i++) {
+          let checkMember = resData.checkMembers[i];
+          let str = '<li>';
+          str += '<input type="checkbox" class="selectReferenceLine" value="' + checkMember.memberNo + '">';
+         /* str += '<input type="hidden" name="referenceOrder" value="' + i + '" >'; */
+          str += '&nbsp;&nbsp;<strong>' + checkMember.memberName + '</strong>&nbsp;&nbsp;' + checkMember.jobDTO.jobName + '&nbsp;' + checkMember.departmentDTO.deptName;
+  
+          if ($('#referenceList').find('li').length >= 5) {
+            alert('참조라인은 최대 5명 선택 가능합니다.');
+            return;
+          }
+          
+          if ($('#referenceList').find('li').length !== 0) {
+              let selectMemberList = $('#referenceList input');
+              for (let j = 0; j < selectMemberList.length; j++) {
+                let selectMember = selectMemberList[j];
+                if (checkMember.memberNo == $(selectMember).attr('value')) {
+                  alert('동일한 멤버는 추가할 수 없습니다.');
+                  return;
+                }
+              }
+            }
+          
+          $('#referenceList').append(str); 
+        }
+      },
+      error: function(jqXHR) {
+        alert('참조선에 추가할 수 없습니다.');
+      }
+    }) // ajax 요청 종료
+  })  // 클릭이벤트 종료
+  
+  
+  // 왼쪽 화살표 버튼 클릭시 참조선 영역에서 제외하기
+  $('#deleteReference').on('click', function(){
+    
+    let checkMemberCount =  $('.selectReferenceLine:checked').length; // 체크된 체크박스 수
+    let checkMemberList = $('.selectReferenceLine:checked');  // 체크한 체크박스 리스트
+  
+    // 이동시 기존 체크박스 해제하기
+    // $('#approvalList input[name='selectMembers']').prop("checked", false);
+    if(checkMemberCount == 0) {
+        alert('선택된 멤버가 없습니다.');
+        return;
+    } else {
+        $.each(checkMemberList, function(i, checkMember) {
+        $(checkMember).closest('li').remove();
+        })
+        
+    }
+  })
+
+  // 결재선, 참조선 등록하기
+  $('#approvalAndReferenceLine').on('click', function(){
+    
+      // 결재선 등록버튼 눌렀을 때 기존 목록 지우기
+      $('#approvalList p').find('li').remove();
+      $('#referenceList p').find('li').remove();
+      $('#approval-section').find('table').remove();
+      
+      let approvalMemberList =  $('#approvalList input')  // 결재선에 있는 멤버
+      let referenceMemberList =  $('#referenceList input')  // 참조선에 있는 멤버
+      
+      if(approvalMemberList.length === 0) {
+        alert('결재선 멤버를 선택하세요.');
+        return;
+      }
+      
+      // 결재선에 있는 멤버 담을 배열 
+      let approvalMembers = [];
+      
+      // 결재선에 있는 멤버의 value값을 배열에 담는다.
+      for(let i = 0; i < approvalMemberList.length; i++ ){
+        approvalMembers.push(approvalMemberList[i].value);
+      }
+      
+      // 참조선에 있는 멤버 담을 배열 
+      let referenceMembers = [];
+      
+      // 참조선에 있는 멤버의 value값을 배열에 담는다.
+      for(let i = 0; i < referenceMemberList.length; i++ ){
+        referenceMembers.push(referenceMemberList[i].value);
+      }     
+      
+      // 참조멤버는 필수가 아니므로 참조멤버가 있을 때만 배열을 보낸다.
+      let data = {
+          "approvalMembers": approvalMembers
+      };
+      
+      if (referenceMembers.length > 0) {
+        data.referenceMembers = referenceMembers;
+      }
+      
+      $.ajax({
+        type: 'post',
+        url: '/approval/approvalAndReferenceLine.do',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function(resData){
+          for(let i = 0; i < resData.approvalMembers.length; i++){
+            let aMember = resData.approvalMembers[i]; 
+            let str = '<li class="approvalMember" value="' + aMember.memberNo + '">';
+            str += '&nbsp;&nbsp;<strong>' + aMember.memberName + '</strong>&nbsp;&nbsp;' + aMember.jobDTO.jobName + '&nbsp;' + aMember.departmentDTO.deptName;
+           
+            $('#approvalList p').append(str);    
+            
+            // 우측 상단 결재박스 
+            let td = '';
+            td += '<table class="appLineTb" style="margin-right: 0; margin-left: 0; margin-top: 0; margin-bottom: 0; justify-content: flex-end;">';
+            td += '<tr>';
+            td += '<th>' + aMember.memberName + '<br>'+ aMember.jobDTO.jobName;
+            td += '<input type="hidden" name="approvalMemberNo" value="' + aMember.memberNo + '">'; 
+            td += '<input type="hidden" name="approvalOrder" value="' + i + '">'; 
+            td += '<tr>';
+            td += '<td>';
+            
+            $('#approvalDiv').append(td);
+            
+          }
+          
+          if(resData.referenceMembers && resData.referenceMembers.length > 0){
+            
+          for(let i = 0; i < resData.referenceMembers.length; i++){
+              let rMember = resData.referenceMembers[i];
+              let str = '<li class="referenceMember" value="' + rMember.memberNo + '">';
+          /*  str += '<input type="hidden" name="referenceOrder" value="' + i + '">';  */
+              str += '<input type="hidden" name="referenceMemberNo" value="' + rMember.memberNo + '">'; 
+              str += '&nbsp;&nbsp;<strong>' + rMember.memberName + '</strong>&nbsp;&nbsp;' + rMember.jobDTO.jobName + '&nbsp;' + rMember.departmentDTO.deptName;
+             
+              console.log(rMember);
+              $('#referenceList p').append(str);   
+            }           
+          }
+        },
+        error: function(jqXHR){
+          alert('결재선이 등록되지 않았습니다.');
+        }
+        
+      }) // ajax요청 종료
+   
+      // 모달 창 숨기기
+      $('#exampleModalCenter').modal('hide');
+  
+  }) // 클릭이벤트 종료
+
+
+
+
+</script>
+  </div>  <!-- /* modalFrag 끝나는 지점 */ -->
+
+</body>
+</html>

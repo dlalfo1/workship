@@ -38,6 +38,7 @@
     <typeAlias alias="AttendManageDTO"      type="com.gdu.workship.domain.AttendManageDTO"/>
     <typeAlias alias="TodolistDTO"          type="com.gdu.workship.domain.TodolistDTO"/>
     <typeAlias alias="VacationDTO"          type="com.gdu.workship.domain.VacationDTO"/>
+    <typeAlias alias="VacationApprovalDTO"  type="com.gdu.workship.domain.VacationApprovalDTO"/>
   </typeAliases>
 
 </configuration>

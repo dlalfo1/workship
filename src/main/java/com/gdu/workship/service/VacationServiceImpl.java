@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
-import com.gdu.workship.domain.ApprovalDTO;
 import com.gdu.workship.domain.MemberDTO;
+import com.gdu.workship.domain.VacationApprovalDTO;
 import com.gdu.workship.domain.VacationDTO;
 import com.gdu.workship.mapper.VacationMapper;
 import com.gdu.workship.util.PageUtil2;
@@ -79,7 +79,7 @@ public class VacationServiceImpl implements VacationService {
 		pageUtil.setPageUtil(page, totalRecord, recordPerPage);
 		parameter.put("begin", pageUtil.getBegin());
 		parameter.put("recordPerPage", recordPerPage);
-		List<ApprovalDTO> approvalList = vacationMapper.approvalSearchList(parameter);
+		List<VacationApprovalDTO> approvalList = vacationMapper.approvalSearchList(parameter);
 		model.addAttribute("approvalList", approvalList);
 		String path = "/vacation/approvalSearch.do?startDate=" + startDate + "&endDate=" + endDate + vacationCategoryPath + "&vacationState=" + vacationState + "&queryNum=" + queryNum + "&queryName=" + queryName;
 		model.addAttribute("approvalPagination", pageUtil.getPagination(path));
@@ -90,7 +90,7 @@ public class VacationServiceImpl implements VacationService {
 	public Map<String, Object> updateApproval(HttpServletRequest request) {
 		int approvalNo = Integer.parseInt(request.getParameter("approvalNo"));
 		int updateResult = vacationMapper.updateApproval(approvalNo);
-		ApprovalDTO approvalDTO = vacationMapper.selectApprovalByApprovalNo(approvalNo);
+		VacationApprovalDTO approvalDTO = vacationMapper.selectApprovalByApprovalNo(approvalNo);
 		String vacationStartDate = approvalDTO.getVacationStartDate().toString();
 		String vacationEndDate = approvalDTO.getVacationEndDate().toString();
 		int memberNo = approvalDTO.getMemberDTO().getMemberNo();

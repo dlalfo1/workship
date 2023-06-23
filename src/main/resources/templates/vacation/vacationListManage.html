@@ -168,7 +168,7 @@
                          <td>[[${vacation.memberDTO.memberNo}]]</td>
                          <td>[[${vacation.memberDTO.memberName}]]</td>
                          <td>
-                           <span>[[${vacation.approvalDTO.vacationCategory}]]</span>
+                           <span>[[${vacation.vacationApprovalDTO.vacationCategory}]]</span>
                            <select class="invisible" name="vacationCategory" id="selectCategory">
                              <option value="연차">연차</option>
                              <option value="정기휴가">정기휴가</option>
@@ -176,19 +176,19 @@
                              <option value="기타">기타</option>
                            </select>
                         </td>
-                         <td>[[${vacation.approvalDTO.createdAt}]]</td>
+                         <td>[[${#dates.format(vacation.vacationApprovalDTO.createdAt, 'YYYY-MM-dd')}]]</td>
                          <td>
-                           <span>[[${vacation.approvalDTO.vacationStartDate}]]</span>
-                           <input type="text" class="invisible" th:value="${vacation.approvalDTO.vacationStartDate}">
+                           <span>[[${#dates.format(vacation.vacationApprovalDTO.vacationStartDate, 'YYYY-MM-dd')}]]</span>
+                           <input type="text" class="invisible" th:value="${#dates.format(vacation.vacationApprovalDTO.vacationStartDate, 'YYYY-MM-dd')}">
                          </td>
                          <td>
-                           <span>[[${vacation.approvalDTO.vacationEndDate}]]</span>
-                           <input type="text" class="invisible" th:value="${vacation.approvalDTO.vacationEndDate}">
+                           <span>[[${#dates.format(vacation.vacationApprovalDTO.vacationEndDate,'YYYY-MM-dd')}]]</span>
+                           <input type="text" class="invisible" th:value="${#dates.format(vacation.vacationApprovalDTO.vacationEndDate, 'YYYY-MM-dd')}">
                          </td>
                          <td class="vacationDay">[[${vacation.vacationDay}]]</td>
                          <td>
                            <input type="hidden" class="vacationNo" th:value="${vacation.vacationNo}">
-                           <input type="hidden" class="approvalNo" th:value="${vacation.approvalDTO.approvalNo}">
+                           <input type="hidden" class="approvalNo" th:value="${vacation.vacationApprovalDTO.approvalNo}">
                            <input type="button" class="btn btn-sm btn-outline-secondary inputBtn" value="수정">
                            <div class="btn-group invisible">
                              <input type="button" class="btn btn-sm btn-inverse-secondary cancelBtn" value="취소">
