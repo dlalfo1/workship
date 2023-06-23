@@ -14,5 +14,6 @@ public interface VacationService {
 	public Map<String, Object> updateApproval(HttpServletRequest request);
 	public void getVacationList(HttpServletRequest request, Model model);
 	public Map<String, Object> modifyVacation(HttpServletRequest request);
+	public Map<String, Object> removeVacation(int vacationNo);
 	
 }

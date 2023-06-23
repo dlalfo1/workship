@@ -61,7 +61,7 @@
       <div class="collapse" id="board-basic">
         <ul class="nav flex-coulmn sub-menu">
           <li class="nav-item"> <a class="nav-link" th:href="@{/notice/noticeMain.html}">공지사항</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/board/boardList.do}">부서별 게시판</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/board/boardList.do(boardCategory=${session.loginMember.departmentDTO.deptNo})}">부서별 게시판</a> </li>
         </ul>
       </div>
     </li>

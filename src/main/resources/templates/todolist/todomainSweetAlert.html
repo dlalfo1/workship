@@ -21,7 +21,7 @@
             <tr>
               <th><h5>할 일</h5></th>
               <td>
-                <input type="text" class="form-control form-control-lg" id="todoTitle" name="todoTitle" maxlength="50" placeholder="할 일을 입력하세요!">
+                <input type="text" class="form-control form-control-lg" name="todoTitle" maxlength="50" placeholder="할 일을 입력하세요!">
               </td>
             </tr>
             <tr>
@@ -79,7 +79,8 @@
 		                    <th:block th:each="undo:${undo}">
 		                      <li class="movable">
 		                        <span class="invisible" th:text="${undo?.todolistNo}"></span>
-		                        <span th:text="${undo?.todoTitle}" data-toggle="tooltip" th:title="${undo?.todoMemo}" data-placement="bottom" data-trigger="click"></span>
+		                        <h4 class="todoTitle" th:text="${undo?.todoTitle}"></h4>
+		                        <input type="hidden" th:value="${undo?.todoMemo}">
 		                        <i class="remove ti-close"></i>
 		                      </li>
 		                    </th:block>
@@ -95,37 +96,24 @@
 	          
 	          <script th:inline="javascript">
 	            
-	          $('[data-toggle="tooltip"]').tooltip();
+	          $('.todoTitle').on('click', function(){
+	        	  Swal.fire({
+	        		  title: '메모',
+	        		  text: $(this).next().val(),
+	        		  toast: true,
+	        		  showConfirmButton: false
+	        	  })
+	          })
 	            
 	            function fnAddTodo(){
-	            	if($('#todoTitle').val() == '' || $('#todoTitle').val() == null){
-	            		Swal.fire({
-	            			icon: 'info',
-	            			title: '할 일을 입력해주세요.',
-	            			toast: true,
-	            			timer: 1000,
-	            			timerProgressBar: true
-	            		})
-	            		return;
-	            	} 
 	            	$('#frmAddTodo').submit();
 	            }
 	            let addResult = /*[[${addResult}]]*/ null;
 	            if(addResult != null && addResult != '') {
 	            	if(addResult == '1'){
-	            		Swal.fire({
-	            			icon: 'success',
-	            			title: '할 일이 등록되었습니다.',
-	            			toast: true,
-	            			confirmButtonText: '확인'
-	            		})
+	            		alert('할 일이 등록되었습니다.');
 	            	} else{
-	            		Swal.fire({
-                    icon: 'error',
-                    title: '할 일 등록에 실패하였습니다.',
-                    toast: true,
-                    confirmButtonText: '확인'
-                  })
+	            		alert('등록에 실패했습니다.');
 	            	}
 	            }
 	          </script>
@@ -197,48 +185,22 @@
 	          $('[data-toggle="tooltip"]').tooltip();
 	          
 	          $('#doneFixed').on('click', function(){
-	        	  
-	        	  Swal.fire({
-	        		  title: '모든 완료된 할 일을 삭제하시겠어요?',
-	        			icon: 'question',
-	        			showCancelButton: 'true',
-	        			cancelButtonText: '취소',
-	        			confirmButtonText: '삭제하기',
-	        			padding: '1.5em 1.5rem 1.25rem',
-	        			width: '32rem'
-	        	  }).then((result) => {
-	        		  if(result.isConfirmed){
-	        			  let done = /*[[${#lists.isEmpty(done)}]]*/ null;
-	        			  if(done) {
-	        				  Swal.fire({
-	        					  icon: 'info',
-	        					  title: '삭제할 할 일이 없습니다.',
-	        					  confirmButtonText: '확인',
-	        					  toast: true
-	        				  })
-	        			  } else {
-	        				  location.href = '/todolist/deleteAllDone.do';
-	        			  }
+	        	  if(confirm('모든 완료된 할 일을 삭제하시겠어요?')){
+	        		  let done = /*[[${#lists.isEmpty(done)}]]*/ null;
+	        		  if(done){
+	        			  alert('삭제할 할 일이 없습니다.');
+	        		  } else{
+	                location.href = '/todolist/deleteAllDone.do';
 	        		  }
-	        	  })
+	        	  }
 	          })
 	          
 	          let result = /*[[${result}]]*/ null;
-	          if(result != null) {
+	          if(result != null){
 	        	  if(result == '1') {
-	        		  Swal.fire({
-	        			  icon: 'success',
-	        			  title: '모든 완료된 할 일이 삭제되었습니다.',
-	        			  confirmButtonText: '확인',
-	        			  toast: true
-	        		  })
-	        	  } else if(result == '0') {
-	        		  Swal.fire({
-                  icon: 'error',
-                  title: '삭제에 실패하였습니다.',
-                  confirmButtonText: '확인',
-                  toast: true
-                })
+	        		  alert('모든 완료된 할 일이 삭제되었습니다.');
+	        	  } else if(result == '0'){
+	        		  alert('삭제에 실패했습니다.');
 	        	  }
 	          }
 	          </script>
@@ -296,43 +258,23 @@
         	$('.ti-close').on('click', function(){
         		let todolistNo = $(this).prev().prev().text();
         		let tooltip = $(this).tooltip();
-        		
-        		Swal.fire({
-        			title: '할 일을 삭제하시겠어요?',
-        			icon: 'question',
-        			showCancelButton: true,
-        			cancelButtonText: '취소',
-        			confirmButtonText: '삭제하기',
-        			padding: '1.5rem 1.5rem 1.25rem',
-        			width: '27rem'
-        		}).then((result) => {
-        			if(result.isConfirmed){
-        				new Promise(function(resolve, reject){
-	        				resolve();
-	        				$.ajax({
-	        					type: 'post',
-	        					url: '/todolist/removeTodo.do',
-	        					data: 'todolistNo=' + todolistNo,
-	        					dataType: 'json',
-	        					success: function(resData){
-	        						let result = resData.deleteResult;
-	        						if(result == 1){
-	        							Swal.fire({
-	        								icon: 'success',
-	        								title: '할 일이 삭제되었습니다.',
-	        								toast: true,
-	        								confirmButtonText: '확인',
-	        								timer: 2500,
-	        								timerProgressShow: true
-	        							})
-	        						}
-	        					}
-	        				})
-        			}).then(function(){
-        				location.href = '/todolist/todomain.do';
+        		if(!confirm('할 일을 삭제하시겠어요?')){
+        			location.href = '/todolist/todomain.do';
+        		} else {
+        			$.ajax({
+        				type: 'post',
+        				url: '/todolist/removeTodo.do',
+        				data: 'todolistNo=' + todolistNo,
+        				dataType: 'json',
+        				success: function(resData){
+        					let result = resData.deleteResult;
+        					if(result == 1) {
+        						alert('할 일이 삭제되었습니다.');
+        						location.reload();
+        					}
+        				}
         			})
-        			}
-        		})
+        		}
         	})
           </script>
           

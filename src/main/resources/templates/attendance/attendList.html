@@ -35,12 +35,12 @@
                     <span class="card-subtitle" id="nowTime"></span>
                     <script>
                       function clock(){
-	                      var today = new Date();
-	                      var hours = ('0' + today.getHours()).slice(-2); 
-	                      var minutes = ('0' + today.getMinutes()).slice(-2);
-	                      var seconds = ('0' + today.getSeconds()).slice(-2);
-	                      var time = hours + ':' + minutes + ':' + seconds;
-	                      $('#nowTime').text(time);
+                        var today = new Date();
+                        var hours = ('0' + today.getHours()).slice(-2); 
+                        var minutes = ('0' + today.getMinutes()).slice(-2);
+                        var seconds = ('0' + today.getSeconds()).slice(-2);
+                        var time = hours + ':' + minutes + ':' + seconds;
+                        $('#nowTime').text(time);
                       }
                       clock();
                       setInterval(clock, 1000);
@@ -55,62 +55,73 @@
                     <div class="col-7 text-primary"><h3 id="aEndTime" th:text="${#dates.format(attendanceToday?.aendtime, 'HH:mm:ss')}"></h3></div>
                   </div>
                   <div class="row">
-	                  <div class="col-6">
-	                    <input type="button" onclick="fnAStart()" class="btn btn-outline-primary btn-md" style="width: 100%;" value="출근">
-	                  </div>
-	                  <div class="col-6 text-center">
-	                    <input type="button" onclick="fnAEnd()" class="btn btn-inverse-primary btn-md" style="width: 100%;" value="퇴근">
-	                  </div>
+                    <div class="col-6">
+                      <input type="button" onclick="fnAStart()" class="btn btn-outline-primary btn-md" style="width: 100%;" value="출근">
+                    </div>
+                    <div class="col-6 text-center">
+                      <input type="button" onclick="fnAEnd()" class="btn btn-inverse-primary btn-md" style="width: 100%;" value="퇴근">
+                    </div>
                   </div>
- 	                <script th:inline="javascript">
-	                  function fnAStart(){
-	                    var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
-	                    new Promise(function(resolve, reject){
-                        $.ajax({
-                           type: 'get',
-                           url: '/attendance/aStart.do',
-                           data: 'memberNo=' + memberNo,
-                           dataType: 'json',
-                           success: function(resData){
-                        	   resolve();
-                             var result = resData.result;
-                             if(result == 'fail') {
-                               alert('이미 출근 처리되었습니다.');
-                             } else {
-                               $('#aStartTime').text(result.substr(11, 8));
-                             }
-                           }
-                         });
-	                    }).then(function(){
-	                    	location.href = '/attendance/attendList.do?memberNo=' + memberNo;
-	                    })
-	                  };
-	                  
-	                  function fnAEnd(){
-											var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
-											new Promise(function(resolve, reject){
-												$.ajax({
-													type: 'get',
-													url: '/attendance/aEnd.do',
-													data: 'memberNo=' + memberNo,
-													dataType: 'json',
-													success: function(resData){
-														resolve();
-														var result = resData.result;
-														if(result == 'noStart') {
-														  alert('출근 처리가 되지 않았습니다.');
-														} else if(result == 'alreadyEnd') {
-														  alert('이미 퇴근 처리되었습니다.');
-														} else {
-														  $('#aEndTime').text(result.substr(11, 8));
-														}
-													}
-												}).then(function(){
-											    location.href = '/attendance/attendList.do?memberNo=' + memberNo;
-											})
-										})
-									};
-	                </script>
+                  <script th:inline="javascript">
+                    function fnAStart(){
+                      var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
+                      $.ajax({
+                    	  type: 'get',
+                    	  url: '/attendance/aStart.do',
+                    	  data: 'memberNo=' + memberNo,
+                    	  dataType: 'json',
+                    	  success: function(resData){
+                    		  var result = resData.result;
+                    		  if(result == 'fail'){
+                    			  Swal.fire({
+                    				  icon: 'warning',
+                    				  title: '이미 출근 처리되었습니다.',
+                    				  html: $('#aStartTime').text() +'에 출근하셨습니다.<br>이상이 있으면 인사팀으로 문의해주세요.',
+                    				  padding: '1.5rem 1.5rem 1.25rem',
+                    				  width: '25rem',
+                    				  confirmButtonText: '확인'
+                    			  })
+                    		  } else {
+                    			  location.reload();
+                    		  }
+                    	  }
+                      })
+                    };
+                    
+                    function fnAEnd(){
+                      var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
+                      $.ajax({
+                        type: 'get',
+                        url: '/attendance/aEnd.do',
+                        data: 'memberNo=' + memberNo,
+                        dataType: 'json',
+                        success: function(resData){
+                          var result = resData.result;
+                          if(result == 'noStart') {
+                        	  Swal.fire({
+	                            icon: 'error',
+	                            title: '출근 처리가 되지 않았습니다.',
+	                            html: '출근 처리를 위해서는 인사팀으로 문의해주세요.',
+	                            padding: '1.5rem 1.5rem 1.25rem',
+	                            width: '28rem',
+	                            confirmButtonText: '확인'
+	                          })
+                          } else if(result == 'alreadyEnd') {
+                        	  Swal.fire({
+                              icon: 'warning',
+                              title: '이미 퇴근 처리되었습니다.',
+                              html: $('#aEndTime').text() + '에 퇴근하셨습니다.<br>이상이 있으면 인사팀으로 문의해주세요.',
+                              padding: '1.5rem 1.5rem 1.25rem',
+                              width: '25rem',
+                              confirmButtonText: '확인'
+                            })
+                          } else {
+                            $('#aEndTime').text(result.substr(11, 8));
+                          }
+                        }
+                      })
+                  };
+                  </script>
                 </div>
               </div>
             </div>
@@ -156,48 +167,48 @@
                   <table class="table table-sm table-borderless">
                     <tr><td>기간설정</td></tr>
                     <tr><td>
-	                    <div class="text-center"> 
-		                    <input type="text" class="datepick" id="startDate" name="startDate" style="width: 40%;">
-		                    <label for="startDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
-		                    <span class="font-weight-bold">&nbsp;&nbsp;~&nbsp;&nbsp;</span>
-		                    <input type="text" class="datepick" id="endDate" name="endDate" style="width: 40%;">
-		                    <label for="endDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
-	                    </div>
+                      <div class="text-center"> 
+                        <input type="text" class="datepick" id="startDate" name="startDate" style="width: 40%;">
+                        <label for="startDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
+                        <span class="font-weight-bold">&nbsp;&nbsp;~&nbsp;&nbsp;</span>
+                        <input type="text" class="datepick" id="endDate" name="endDate" style="width: 40%;">
+                        <label for="endDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
+                      </div>
                     </td></tr>
                     <tr><td>근태</td></tr>
                     <tr><td>
-		                  <div class="row" style="padding-left: 1.3rem;">
-		                    <div class="form-check" style="justify-content: space-between;">
-		                      <label for="checkAll" class="form-check-label">
-		                      <input type="checkbox" class="form-check-input" id="checkAll">
-		                      전체&nbsp;&nbsp;
-		                      </label>
-		                    </div>
-		                    <div class="form-check">
-		                      <label for="normal" class="form-check-label" style="justify-content: space-between;">
-		                      <input type="checkbox" name="attendance" class="form-check-input checkOne attendance" id="normal" value="정상">
-		                      정상&nbsp;&nbsp;
-		                      </label>
-		                    </div>
-		                    <div class="form-check">
-		                      <label for="late" class="form-check-label" style="justify-content: space-between;">
-		                      <input type="checkbox" name="attendance" class="form-check-input checkOne attendance" id="late" value="지각">
-		                      지각&nbsp;&nbsp;
-		                      </label>
-		                    </div>
-		                    <div class="form-check">
-		                      <label for="early" class="form-check-label" style="justify-content: space-between;">
-		                      <input type="checkbox" name="attendance" class="form-check-input checkOne attendance" id="early" value="조퇴">
-		                      조퇴&nbsp;&nbsp;
-		                      </label>
-		                    </div>
-		                    <div class="form-check">
-		                      <label for="absent" class="form-check-label" style="justify-content: space-between;">
-		                      <input type="checkbox" name="attendance" class="form-check-input checkOne attendance" id="absent" value="결근">
-		                      결근&nbsp;&nbsp;
-		                      </label>
-		                    </div>
-		                  </div>
+                      <div class="row" style="padding-left: 1.3rem;">
+                        <div class="form-check" style="justify-content: space-between;">
+                          <label for="checkAll" class="form-check-label">
+                          <input type="checkbox" class="form-check-input" id="checkAll">
+                          전체&nbsp;&nbsp;
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <label for="normal" class="form-check-label" style="justify-content: space-between;">
+                          <input type="checkbox" name="attendance" class="form-check-input checkOne attendance" id="normal" value="정상">
+                          정상&nbsp;&nbsp;
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <label for="late" class="form-check-label" style="justify-content: space-between;">
+                          <input type="checkbox" name="attendance" class="form-check-input checkOne attendance" id="late" value="지각">
+                          지각&nbsp;&nbsp;
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <label for="early" class="form-check-label" style="justify-content: space-between;">
+                          <input type="checkbox" name="attendance" class="form-check-input checkOne attendance" id="early" value="조퇴">
+                          조퇴&nbsp;&nbsp;
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <label for="absent" class="form-check-label" style="justify-content: space-between;">
+                          <input type="checkbox" name="attendance" class="form-check-input checkOne attendance" id="absent" value="결근">
+                          결근&nbsp;&nbsp;
+                          </label>
+                        </div>
+                      </div>
                     </td></tr>
                   </table>
                 </div>
@@ -205,33 +216,33 @@
                   var startDate = $('#startDate');
                   var endDate = $('#endDate');
                   startDate.datepicker({
-                	  maxDate: 0,
-                	  onClose: function(selectedDate){
-                		  endDate.datepicker('option', 'minDate', selectedDate);
-                	  }
+                    maxDate: 0,
+                    onClose: function(selectedDate){
+                      endDate.datepicker('option', 'minDate', selectedDate);
+                    }
                   });
                   endDate.datepicker({
                     maxDate: 0,
                     onClose: function(selectedDate){
-                    	startDate.datepicker('option', 'maxDate', selectedDate);
+                      startDate.datepicker('option', 'maxDate', selectedDate);
                     }
                   });
 
                   function fnCheckAll(){
-                	  $('#checkAll').on('click', function(){
-                		  $('.checkOne').prop('checked', $(this).prop('checked'));
-                	  })
+                    $('#checkAll').on('click', function(){
+                      $('.checkOne').prop('checked', $(this).prop('checked'));
+                    })
                   };
                   
                   function fnCheckOne(){
-                	  let chkOne = $('.checkOne');
-                	  chkOne.on('click', function(){
-                		  let chkCnt = 0;
-                		  for(let i = 0; i < chkOne.length; i++){
-                			  chkCnt += $(chkOne[i]).prop('checked');
-                		  }
-                		  $('#checkAll').prop('checked', chkCnt == chkOne.length);
-                	  })
+                    let chkOne = $('.checkOne');
+                    chkOne.on('click', function(){
+                      let chkCnt = 0;
+                      for(let i = 0; i < chkOne.length; i++){
+                        chkCnt += $(chkOne[i]).prop('checked');
+                      }
+                      $('#checkAll').prop('checked', chkCnt == chkOne.length);
+                    })
                   };
                   
                   fnCheckAll(); fnCheckOne();
@@ -243,62 +254,62 @@
           
           <!--/* (끝!) 리스트 뿌려줄 테이블 */-->
           <div class="row">
-						<div class="col-md-12 stretch-card grid-margin">
-							<div class="card">
-							  <div class="card-body">
-								  <p class="card-title">출퇴근 기록</p>
-									<table class="table table-sm table-striped text-center">
-										<thead>
-										  <tr>
-											  <th width="20%">날짜</th>
-											  <th width="20%">출근시간</th>
-											  <th width="20%">퇴근시간</th>
-											  <th width="20%">근무시간</th>
-											  <th width="20%">근태</th>
-										  </tr>
-										</thead>
-										<tbody id="attendanceListTableBody">
-										  <th:block th:if="${#lists.isEmpty(attendanceList)}">
-										    <tr><td colspan="5">조회 결과가 없습니다.</td></tr>
-										  </th:block>
-										  <th:block th:unless="${#lists.isEmpty(attendanceList)}">
-											  <th:block th:each="attendance:${attendanceList}">
-											    <tr>
-											      <td th:text="${#dates.format(attendance?.date, 'YYYY-MM-dd')}"></td>
-											      <td th:text="${#dates.format(attendance?.astarttime, 'HH:mm:ss')}"></td>
-											      <td th:text="${#dates.format(attendance?.aendtime, 'HH:mm:ss')}"></td>
-											      <td th:text="${#dates.format(attendance?.worktime, 'HH:mm:ss')}"></td>
-											      <td th:text="${attendance?.attendance}"></td>
-											    </tr>
-										    </th:block>
-										  </th:block>
-										</tbody>
-										<tr><td colspan="5" id="pagination" class="text-center"></td></tr>
-									</table>
-							  </div>
-							</div>
-						</div>
+            <div class="col-md-12 stretch-card grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-title">출퇴근 기록</p>
+                  <table class="table table-sm table-striped text-center">
+                    <thead>
+                      <tr>
+                        <th width="20%">날짜</th>
+                        <th width="20%">출근시간</th>
+                        <th width="20%">퇴근시간</th>
+                        <th width="20%">근무시간</th>
+                        <th width="20%">근태</th>
+                      </tr>
+                    </thead>
+                    <tbody id="attendanceListTableBody">
+                      <th:block th:if="${#lists.isEmpty(attendanceList)}">
+                        <tr><td colspan="5">조회 결과가 없습니다.</td></tr>
+                      </th:block>
+                      <th:block th:unless="${#lists.isEmpty(attendanceList)}">
+                        <th:block th:each="attendance:${attendanceList}">
+                          <tr>
+                            <td th:text="${#dates.format(attendance?.date, 'YYYY-MM-dd')}"></td>
+                            <td th:text="${#dates.format(attendance?.astarttime, 'HH:mm:ss')}"></td>
+                            <td th:text="${#dates.format(attendance?.aendtime, 'HH:mm:ss')}"></td>
+                            <td th:text="${#dates.format(attendance?.worktime, 'HH:mm:ss')}"></td>
+                            <td th:text="${attendance?.attendance}"></td>
+                          </tr>
+                        </th:block>
+                      </th:block>
+                    </tbody>
+                    <tr><td colspan="5" id="pagination" class="text-center"></td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!--/* 검색 ajax */-->
-					<script>
-					  var page = 1;
+          <script>
+            var page = 1;
             function fnSearch(){
-          	  var checkbox = $('.form-check-input');
-          	  var chkCount = 0;
-          	  for(let i = 0; i < checkbox.length; i++){
-          		  chkCount += $(checkbox[i]).prop('checked');
-          	  }
-          	  if(chkCount == 0){
-          		  for(let i = 0; i < checkbox.length; i++){
-          			  checkbox.prop('checked', true);
-          		  }
-          	  }
-        		  var attendance = [];
-        		  if($('#normal').is(':checked')) attendance.push($('#normal').val());
-        		  if($('#late').is(':checked')) attendance.push($('#late').val());
-        		  if($('#early').is(':checked')) attendance.push($('#early').val());
-        		  if($('#absent').is(':checked')) attendance.push($('#absent').val());
+              var checkbox = $('.form-check-input');
+              var chkCount = 0;
+              for(let i = 0; i < checkbox.length; i++){
+                chkCount += $(checkbox[i]).prop('checked');
+              }
+              if(chkCount == 0){
+                for(let i = 0; i < checkbox.length; i++){
+                  checkbox.prop('checked', true);
+                }
+              }
+              var attendance = [];
+              if($('#normal').is(':checked')) attendance.push($('#normal').val());
+              if($('#late').is(':checked')) attendance.push($('#late').val());
+              if($('#early').is(':checked')) attendance.push($('#early').val());
+              if($('#absent').is(':checked')) attendance.push($('#absent').val());
               $.ajax({
                 type: 'get',
                 url: '/attendance/search.do',
@@ -307,66 +318,66 @@
                 success: function(resData){
                   var result = resData.result;
                   if(result == 'noResult'){
-                	  $('#attendanceListTableBody').empty();
+                    $('#attendanceListTableBody').empty();
                     $('#attendanceListTableBody').append('<tr><td colspan="5">결과가 없습니다.</td></tr>');
                   } else {
-                	  $('#attendanceListTableBody').empty();
-                	  $.each(result, (i, element) => {
+                    $('#attendanceListTableBody').empty();
+                    $.each(result, (i, element) => {
 
-                		  function getDate(date){
-                			  var d = new Date(date);
-                			  month = d.getMonth() + 1;
-                			  day = d.getDate();
-                			  year = d.getFullYear();
-                			  if(month < 10) month = '0' + month;
-                			  if(day < 10) day = '0' + day;
-                			  return[year, month, day].join('-');
-                		  }
-                		  
-                		  function getTime(date){
-                			  var t = new Date(date);
-                			  hour = t.getHours();
-                			  minute = t.getMinutes();
-                			  second = t.getSeconds();
-                			  if(hour < 10) hour = '0' + hour;
-                			  if(minute < 10) minute = '0' + minute;
-                			  if(second < 10) second = '0' + second;
-                			  return[hour, minute, second].join(':');
-                		  }
+                      function getDate(date){
+                        var d = new Date(date);
+                        month = d.getMonth() + 1;
+                        day = d.getDate();
+                        year = d.getFullYear();
+                        if(month < 10) month = '0' + month;
+                        if(day < 10) day = '0' + day;
+                        return[year, month, day].join('-');
+                      }
+                      
+                      function getTime(date){
+                        var t = new Date(date);
+                        hour = t.getHours();
+                        minute = t.getMinutes();
+                        second = t.getSeconds();
+                        if(hour < 10) hour = '0' + hour;
+                        if(minute < 10) minute = '0' + minute;
+                        if(second < 10) second = '0' + second;
+                        return[hour, minute, second].join(':');
+                      }
 
-                		  var list = '';
-                		  var astarttime = (element.astarttime == null)? '' : getTime(element.astarttime);
-                		  var aendtime = (element.aendtime == null)? '' : getTime(element.aendtime);
-                		  var worktime = (element.worktime == null)? '' : getTime(element.worktime);
-                		  list += '<tr>';
-                		  list += '<td>' + getDate(element.date) + '</td>';
-                		  list += '<td>' + astarttime + '</td>';
-                		  list += '<td>' + aendtime + '</td>';
-                		  list += '<td>' + worktime + '</td>';
-                		  list += '<td>' + element.attendance + '</td>';
-                		  list += '</tr>';
-                		  $('#attendanceListTableBody').append(list);
-                	  })
+                      var list = '';
+                      var astarttime = (element.astarttime == null)? '' : getTime(element.astarttime);
+                      var aendtime = (element.aendtime == null)? '' : getTime(element.aendtime);
+                      var worktime = (element.worktime == null)? '' : getTime(element.worktime);
+                      list += '<tr>';
+                      list += '<td>' + getDate(element.date) + '</td>';
+                      list += '<td>' + astarttime + '</td>';
+                      list += '<td>' + aendtime + '</td>';
+                      list += '<td>' + worktime + '</td>';
+                      list += '<td>' + element.attendance + '</td>';
+                      list += '</tr>';
+                      $('#attendanceListTableBody').append(list);
+                    })
                   }
                   $('#pagination').empty();
                   var pageUtil = resData.pageUtil;
                   var str = '<nav><ul class="pagination pagination-sm justify-content-center">';
                   if(pageUtil.beginPage == 1){
-                  	str += '<li class="page-item disabled"><span class="page-link text-secondary">이전</span></li>';
+                    str += '<li class="page-item disabled"><span class="page-link text-secondary">이전</span></li>';
                   } else {
-                  	str += '<li class="page-item"><span class="enable_link page-link" data-page="' + (pageUtil.beginPage - 1) + ">이전</span></li>";
+                    str += '<li class="page-item"><span class="enable_link page-link" data-page="' + (pageUtil.beginPage - 1) + ">이전</span></li>";
                   }
                   for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
-                  	if(p == page){
-                  		str += '<li class="page-item active"><a class="page-link">' + p + '</a></li>';
-                  	} else {
-                  		str += '<li class="page-item"><a class="enable_link page-link" data-page="' + p + '">' + p + '</a></li>';
-                  	}
+                    if(p == page){
+                      str += '<li class="page-item active"><a class="page-link">' + p + '</a></li>';
+                    } else {
+                      str += '<li class="page-item"><a class="enable_link page-link" data-page="' + p + '">' + p + '</a></li>';
+                    }
                   }
                   if(pageUtil.endPage == pageUtil.totalPage){
-                  	str += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
+                    str += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
                   } else {
-                  	str += '<li class="page-item"><span class="enable_link" page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
+                    str += '<li class="page-item"><span class="enable_link" page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
                   }
                   str += '</ul></nav>';
                   
@@ -375,13 +386,13 @@
               }) /* ajax 끝나는 곳 */
             }
             function fnChangePage(){
-            	$(document).on('click', '.enable_link', function(){
-            		page = $(this).data('page');
-            		fnSearch();
-            	})
+              $(document).on('click', '.enable_link', function(){
+                page = $(this).data('page');
+                fnSearch();
+              })
             }
             fnChangePage();
-					</script>
+          </script>
           
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      

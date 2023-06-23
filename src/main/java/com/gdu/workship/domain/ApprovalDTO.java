@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApprovalDTO {
-	
+   
   private int approvalNo;
   private MemberDTO memberDTO;
   private int docName;

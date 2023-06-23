@@ -22,6 +22,7 @@ public interface VacationMapper {
 	public int updateApproval(int approvalNo);
 	public ApprovalDTO selectApprovalByApprovalNo(int approvalNo);
 	public int insertVacation(Map<String, Object> map);
+	public int insertAttendance(Map<String, Object> map);
 	public int getVacationDay(int approvalNo);
 	public int updateDayoffCount(Map<String, Object> map);
 	
@@ -30,6 +31,7 @@ public interface VacationMapper {
 	public List<VacationDTO> vacationSearchList(Map<String, Object> map);
 	public int modifyVacationApproval(Map<String, Object> map);
 	public int modifyVacationDay(VacationDTO vacationDTO);
-	public int selectMemberNoByVacationNo(int vacationNo);
+	public VacationDTO selectMemberNoVacationDayByVacationNo(int vacationNo);
+	public int deleteVacationByVacationNo(int vacationNo);
 	
 }
