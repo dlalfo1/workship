@@ -27,6 +27,7 @@ public class BoardController {
 	
 	@GetMapping("/board/boardMain.html")
 	public String board() {
+		
 		return "board/boardMain";
 	}
 	@GetMapping("/board/HRBoard.html")
@@ -45,7 +46,12 @@ public class BoardController {
 	@GetMapping("/board/boardList.do")
 	public String boardMain(HttpServletRequest request, Model model) {
 		boardService.loadBoardList(request, model);
-		return "board/boardMain";
+		int deptNo = Integer.parseInt(request.getParameter("boardCategory"));
+		String dept = "";
+		if(deptNo == 1) dept = "HR";
+		if(deptNo == 2) dept = "GAD";
+		if(deptNo == 3) dept = "DEV";
+		return "board/" + dept + "Board";
 	}
 	
 	 @GetMapping("/board/increaseHit.do")
@@ -75,17 +81,19 @@ public class BoardController {
 	  }
 	  
 		@GetMapping("/board/boardWrite.html")
-		public String write(HttpSession session, Model model) {
-		  MemberDTO member = boardService.goWrtie(session, model);
+		public String write(HttpServletRequest request, HttpSession session, Model model) {
+		  MemberDTO member = boardService.goWrite(session, model);
+		  model.addAttribute("boardCategory", request.getParameter("boardCategory"));
 		  model.addAttribute("member", member);
 			return "board/boardWrite";
 		}
 		
 		@PostMapping("/board/addBoard.do")
 		public String addBoard(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
-		  int addResult = boardService.addBoard(request);
-	    redirectAttributes.addFlashAttribute("addResult", addResult);
-		  return "redirect:/board/boardList.do";
+			int boardCategory = Integer.parseInt(request.getParameter("boardCategory"));
+			int addResult = boardService.addBoard(request);
+			redirectAttributes.addFlashAttribute("addResult", addResult);
+			return "redirect:/board/boardList.do?boardCategory=" + boardCategory;
 		}
 		
 	  @PostMapping("/board/removeBoard.do")

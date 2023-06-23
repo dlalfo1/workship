@@ -19,6 +19,7 @@ public class BoardDTO {
 	private Date boardModifiedAt;
 	private int boardHit;
 	private int boardState;
+	private int boardCategory;
 	
 	private int prevNo;
 	private int nextNo;
