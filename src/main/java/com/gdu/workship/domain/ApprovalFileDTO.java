@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ApprovalFileDTO {
    
-   private int approvalFileNo;
+  private int approvalFileNo;
   private ApprovalDTO approvalDTO;
   private String approvalFilePath;
   private String approvalFileOriginName;

@@ -65,6 +65,9 @@
       <if test="vacationCategory != null and vacationCategory != ''">
         AND VACATION_CATEGORY IN (${vacationCategory})
       </if>
+      <if test="vacationState != null and vacationState != ''">
+       <![CDATA[AND A.VACATION_STATE <= ${vacationState}]]>
+      </if>
       <if test="queryNum != null and queryNum != ''">
         AND A.MEMBER_NO = #{queryNum}
       </if>
@@ -85,6 +88,9 @@
       <if test="vacationCategory != null and vacationCategory != ''">
         AND VACATION_CATEGORY IN (${vacationCategory})
       </if>
+      <if test="vacationState != null and vacationState != ''">
+       <![CDATA[AND A.VACATION_STATE <= ${vacationState}]]>
+      </if>
       <if test="queryNum != null and queryNum != ''">
         AND A.MEMBER_NO = #{queryNum}
       </if>
@@ -102,8 +108,8 @@
      WHERE APPROVAL_NO = #{approvalNo}
   </update>
   
-  <select id="selectApprovalByApprovalNo" parameterType="int" resultType="ApprovalDTO">
-    SELECT VACATION_CATEGORY, VACATION_START_DATE, VACATION_END_DATE
+  <select id="selectApprovalByApprovalNo" parameterType="int" resultMap="ApprovalMap">
+    SELECT MEMBER_NO, VACATION_CATEGORY, VACATION_START_DATE, VACATION_END_DATE
       FROM APPROVAL_T
      WHERE APPROVAL_NO = #{approvalNo}
   </select>
@@ -111,6 +117,11 @@
   <insert id="insertVacation" parameterType="Map">
     INSERT INTO VACATION_T(MEMBER_NO, APPROVAL_NO, VACATION_DAY)
     VALUES(#{memberNo}, #{approvalNo}, DATEDIFF(#{vacationEndDate}, #{vacationStartDate}) + 1)
+  </insert>
+  
+  <insert id="insertAttendance" parameterType="Map">
+    INSERT INTO ATTENDANCE_T(MEMBER_NO, DATE, ASTARTTIME, AENDTIME, WORKTIME, ATTENDANCE)
+    VALUES(#{memberNo}, #{date}, '00:00:00', '00:00:00', '00:00:00', '휴가')
   </insert>
   
   <select id="getVacationDay" parameterType="int" resultType="int">
@@ -179,10 +190,16 @@
      WHERE VACATION_NO = #{vacationNo}
   </update>
   
-  <select id="selectMemberNoByVacationNo" parameterType="int" resultType="int">
-    SELECT MEMBER_NO
-      FROM VACATION_T
+  <select id="selectMemberNoVacationDayByVacationNo" parameterType="int" resultMap="VacationMap">
+    SELECT M.MEMBER_NO, V.VACATION_DAY
+      FROM VACATION_T V INNER JOIN MEMBER_T M
+        ON V.MEMBER_NO = M.MEMBER_NO
      WHERE VACATION_NO = #{vacationNo}
   </select>
+  
+  <delete id="deleteVacationByVacationNo" parameterType="int">
+    DELETE FROM VACATION_T
+     WHERE VACATION_NO = #{vacationNo}
+  </delete>
   
 </mapper>

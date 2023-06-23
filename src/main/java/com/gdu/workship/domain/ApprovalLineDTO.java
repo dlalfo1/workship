@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ApprovalLineDTO {
 	
-	private int approvalLineNo;
-	private MemberDTO memberDTO;
-	private ApprovalDTO approvalDTO;
+  private int approvalLineNo;
+  private MemberDTO memberDTO;
+  private ApprovalDTO approvalDTO;
   private int approvalOrder;
   private int memberApprovalStatus;
   private Date approvalDate;

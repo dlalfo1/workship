@@ -3,13 +3,8 @@
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <script>
   function fnDocChoice(n) {
-	  switch(n){
-	  case 1: location.href='/approval/documentList.html?form=휴가신청서'; break; 
-	  case 2: location.href='/approval/documentList.html?form=지출결의서'; break;
-	  case 3: location.href='/approval/documentList.html?form=업무협조전'; break;
-	  case 4: location.href='/approval/documentList.html?form=사직서'; break;
-	  }
-}
+    location.href='/approval/documentList.html?formNo=' + n;
+  }
 </script>
 <head th:replace="~{/layout/header::headFrag('workship 결재상신')}"></head>
 <link rel="stylesheet" th:href="@{/css/mirae.css}">
@@ -65,6 +60,7 @@
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   <!--/* footer 영역 */-->
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
