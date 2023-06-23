@@ -247,11 +247,26 @@
               
               var regTime = /^([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
             	if(regTime.test(astarttime) == false) {
-            		alert('출근시간을 확인해주세요!');
+            		Swal.fire({
+            			title: '출근시간을 확인해주세요!',
+            			text: 'HH:mm:ss 형식으로 입력해야 합니다.',
+            			toast: true,
+            		  showConfirmButton: false
+            		})
             	} else if(regTime.test(aendtime) == false) {
-            		alert('퇴근시간을 확인해주세요!');
+            		Swal.fire({
+                  title: '퇴근시간을 확인해주세요!',
+                  text: 'HH:mm:ss 형식으로 입력해야 합니다.',
+                  toast: true,
+                  showConfirmButton: false
+                })
             	} else if(astarttime > aendtime){
-            		alert('출근시간과 퇴근시간을 확인해주세요!');
+            		Swal.fire({
+	                title: '출근시간과 퇴근시간을 확인해주세요!',
+	                text: '퇴근시간은 출근시간보다 늦어야 합니다.',
+	                toast: true,
+	                showConfirmButton: false
+	              })
             	} else {
 	             $.ajax({
 		             type: 'post',
@@ -260,7 +275,12 @@
 		             dataType: 'json',
 		             success: function(resData){
 		           	  if(resData.result == 'fail'){
-		           		  alert('수정에 실패하였습니다.');
+		           		  Swal.fire({
+		           			  icon: 'error',
+		           			  title: '수정에 실패했습니다.',
+		           			  toast: true,
+		           			  confirmButtonText: '확인'
+		           		  })
 		           	  } else {
 		           		  location.reload();
 		           	  }

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('workship 연차관리')}"></head>
+<head th:replace="~{/layout/header::headFrag('workship 연차승인내역관리')}"></head>
 <link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
 <script th:replace="~{/layout/common::datepickerSetting}"></script>
 <body>
@@ -74,6 +73,25 @@
 	                        <input type="checkbox" name="vacationCategory" class="form-check-input checkOne1" id="elseV" value="기타">
 	                        기타&nbsp;&nbsp;
 	                        </label>
+	                      </div>
+	                    </div>
+	                  </td>
+	                </tr>
+	                <tr>
+	                  <th class="text-center" width="20%">승인상태</th>
+	                  <td colspan="4">
+	                    <div class="row form-group" style="justify-content: space-between; float: none; margin: 0 auto; width: 70%;">
+	                      <div class="form-check">
+	                      <label for="vState1" class="form-check-label" style="justify-content: space-around;">
+    	                    <input type="radio" class="form-check-input" name="vacationState" value="1" id="vState1">
+    	                    모두 보기
+	                      </label>
+	                      </div>
+	                      <div class="form-check">
+	                      <label for="vState0" class="form-check-label" style="justify-content: space-around;">
+                          <input type="radio" class="form-check-input" name="vacationState" value="0" id="vState0">
+                          승인대기상태만 보기
+                        </label>
 	                      </div>
 	                    </div>
 	                  </td>
@@ -189,31 +207,57 @@
 							  </table>
 
 								<script>
-				          function fnSearchApproval(){
-				            $('#frmApprovalSearch').submit();
-				          }
-				          
-				          $('.btnAccept').on('click', function(){
-				            var approvalNo = $(this).prev().val();
-				            if(confirm('해당 휴가신청내역을 승인하시겠어요?')){
-				              $.ajax({
-				                type: 'post',
-				                url: '/vacation/updateApproval.do',
-				                data: 'approvalNo=' + approvalNo,
-				                dataType: 'json',
-				                success: function(resData){
-				                  let updateResult = resData.updateResult;
-				                  let insertResult = resData.insertResult;
-				                  if(updateResult == 'success' && insertResult == 'success') {
-				                    alert('휴가신청내역이 승인되었습니다.');
-				                    location.reload();
-				                  } else {
-				                    alert('승인에 실패하였습니다.');
-				                  }
-				                }
-				              })
-				            }
-				          })
+				                  function fnSearchApproval(){
+				                      $('#frmApprovalSearch').submit();
+				                    }
+				                    
+				                    $('.btnAccept').on('click', function(){
+				                      var approvalNo = $(this).prev().val();
+				                      
+				                      Swal.fire({
+				                        title: '해당 휴가신청내역을 승인하시겠어요?',
+				                        icon: 'question',
+				                        showCancelButton: true,
+				                        cancelButtonText: '취소',
+				                        confirmButtonText: '승인',
+				                        padding: '1.5rem 1.5rem 1.25rem',
+				                        width: '30rem'
+				                      }).then((result) => {
+				                        if(result.isConfirmed) {
+				                          $.ajax({
+				                            type:'post',
+				                            url: '/vacation/updateApproval.do',
+				                            data: 'approvalNo=' + approvalNo,
+				                            dataType: 'json',
+				                            success: function(resData){
+				                              let updateResult = resData.updateResult;
+				                              let insertResult = resData.insertResult;
+				                              if(updateResult == 'success' && insertResult == 'success'){
+				                                Swal.fire({
+				                                  title: '휴가신청내역이 승인되었습니다.',
+				                                  icon: 'success',
+				                                  toast: true,
+				                                  confirmButtonText: '확인',
+				                                  timer: 2000,
+				                                  timerProgressShow: true
+				                                })
+				                              } else {
+				                                Swal.fire({
+				                                  title: '승인에 실패하였습니다.',
+				                                  icon: 'error',
+				                                  toast: true,
+				                                  confirmButtonText: '확인',
+				                                  timer: 2000,
+				                                  timerProgressShow: true
+				                                })
+				                              }
+				                            }
+				                          })
+				                          $(this).addClass('invisible');
+				                          $(this).closest('td').text('승인완료');
+				                        }
+				                      })
+				                    })
 				        </script>
 							</div>
 						</div>
