@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.gdu.workship.domain.ApprovalDTO;
 import com.gdu.workship.domain.MemberDTO;
+import com.gdu.workship.domain.VacationApprovalDTO;
 import com.gdu.workship.domain.VacationDTO;
 
 @Mapper
@@ -18,9 +18,9 @@ public interface VacationMapper {
 	
 	// 휴가신청내역관리페이지
 	public int getApprovalCount(Map<String, Object> map);
-	public List<ApprovalDTO> approvalSearchList(Map<String, Object> map);
+	public List<VacationApprovalDTO> approvalSearchList(Map<String, Object> map);
 	public int updateApproval(int approvalNo);
-	public ApprovalDTO selectApprovalByApprovalNo(int approvalNo);
+	public VacationApprovalDTO selectApprovalByApprovalNo(int approvalNo);
 	public int insertVacation(Map<String, Object> map);
 	public int insertAttendance(Map<String, Object> map);
 	public int getVacationDay(int approvalNo);
