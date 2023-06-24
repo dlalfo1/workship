@@ -2,7 +2,30 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{/layout/header::headFrag('workship 일정관리')}"></head>
 <link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
-<script th:replace="~{/layout/common::datepickerSetting}"></script>
+<script th:src="@{/fullcalendar/lib/main.js}"></script>
+<script th:src="@{/fullcalendar/lib/ko.js}"></script>
+<link rel="stylesheet" th:href="@{/fullcalendar/lib/main.css}">
+
+<!--/* 일정 등록 모달 */-->
+<div class="modal fade" id="addScheduleModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title text-center">새로운 일정 등록하기</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-primary" onclick="fnAddSchedule()">등록하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <body>
   <div class="container-scroller">
 
@@ -20,8 +43,40 @@
       <!--/* 실제 내용 영역 */-->
       <div class="main-panel">
         <div class="content-wrapper">
-        
-        아직 아무것도 없는 페이지
+          <div class="col-md-12 grid-margin">
+            <div class="card">
+              <div class="card-body">
+                <div id="calendar"></div>
+              </div>
+            </div>
+          </div>
+          
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+            	headerToolbar: {
+            		left: 'prev,next today',
+            		center: 'title',
+            		right: 'dayGridMonth,listMonth'
+            	},
+            	locale: 'ko',
+              initialView: 'dayGridMonth',
+              themeSystem: 'bootstrap',
+              aspectRatio: 1.5,
+              firstDay: 1,
+              selectable: true,
+              selectMirror: true,
+              navLinks: true,
+              editable: true,
+              
+              select: function(arg){
+            	  
+              }
+            });
+            calendar.render();
+          });
+        </script>
         
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
