@@ -77,9 +77,9 @@ public class MemberServiceImpl implements MemberService {
     System.out.println(memberList);
     // pagination.jsp로 전달할(forward)할 정보 저장하기
     if(column.isEmpty() || query.isEmpty()) {
-      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/memberList.do"));
+      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/member.html"));
     } else {
-      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/memberList.do?column=" + column + "&query=" + query));
+      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/member.html?column=" + column + "&query=" + query));
     }
   }
   
@@ -90,7 +90,7 @@ public class MemberServiceImpl implements MemberService {
     int page = Integer.parseInt(opt1.orElse("1"));
     int totalRecord = memberMapper.getMemberCount();
     
-    int recordPerPage = 5;
+    int recordPerPage = 10;
     
     Optional<String> opt2 = Optional.ofNullable(request.getParameter("column"));
     String column = opt2.orElse("A.MEMBER_NO");
@@ -130,7 +130,7 @@ public class MemberServiceImpl implements MemberService {
     int page = Integer.parseInt(opt1.orElse("1"));
     int totalRecord = memberMapper.getRetiredMemberCount();
     
-    int recordPerPage = 5;
+    int recordPerPage = 10;
     
     Map<String, Object> map = new HashMap<String, Object>();
     // PageUtil(Pagination에 필요한 모든 정보) 계산하기
@@ -138,7 +138,7 @@ public class MemberServiceImpl implements MemberService {
     pageUtil.setPageUtil(page, totalRecord, recordPerPage);
     map.put("begin", pageUtil.getBegin());      // begin은 0부터 시작한다. (PageUtil.java 참고)
 
-    List<RetiredMemberDTO> retiredMemberList = memberMapper.getRetiredMemberList();
+    List<RetiredMemberDTO> retiredMemberList = memberMapper.getRetiredMemberList(map);
     
     Map<String, Object> result = new HashMap<String, Object>();
     result.put("memberList", retiredMemberList);

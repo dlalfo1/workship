@@ -24,8 +24,13 @@ public class MemberController {
 
   private final MemberService memberService;
 
+  @GetMapping("/member/memberCreate.html")
+  public String memberCreate(Model model) {
+    memberService.loadDeptList(model);
+    return "member/memberCreate";
+  }
   
-  @GetMapping("/member/memberList.do") 
+  @GetMapping("/member/member.html") 
   public String memberList(HttpServletRequest request, Model model) {
     memberService.loadMemberList(request, model);
     return "member/member";
@@ -49,16 +54,10 @@ public class MemberController {
     return memberService.verifyEmail(emailId);
   }
   
-  @GetMapping("/member/memberCreate2.html")
-  public String memberCreate(Model model) {
-    memberService.loadDeptList(model);
-    return "member/memberCreate";
-  }
-  
   @PostMapping("/member/addMember.do")
   public String addMember(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
     redirectAttributes.addFlashAttribute("addReuslt", memberService.addMember(request));
-    return "redirect:/member/memberList.do";
+    return "redirect:/member/member.html";
   }
   
   @GetMapping("/member/memberDetail.html")
@@ -71,7 +70,7 @@ public class MemberController {
   public String modifyMember(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
     System.out.println(memberService.modifyMember(request));
     redirectAttributes.addFlashAttribute("modifyResult", memberService.modifyMember(request));
-    return "redirect:/member/memberList.do";
+    return "redirect:/member/member.html";
   }
   @GetMapping("/member/display.do")
   public ResponseEntity<byte[]> display(@RequestParam("memberNo") int memberNo) {
@@ -81,7 +80,7 @@ public class MemberController {
   @PostMapping("/member/removeMember.do")
   public String removeMember(@RequestParam("memberNo") int memberNo, RedirectAttributes redirectAttributes) {
     redirectAttributes.addFlashAttribute("removeResult", memberService.removeMember(memberNo));
-    return "redirect:/member/memberList.do";
+    return "redirect:/member/member.html";
   }
   
   

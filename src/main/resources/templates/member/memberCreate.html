@@ -2,6 +2,49 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('사원 등록')}"></head>
+<style>
+  .memberCreate a {
+    text-decoration: none;
+    color: black;
+  }
+  table {
+    width: 85%;
+    height: 100%;
+    margin: 0 auto;
+    text-align: center;
+  }
+  table tr .space1 {
+    padding: 6px 0;
+    border:none;
+  }
+  table tr .space {
+    padding: 10px 0;
+    border:none;
+  }
+  table tr th {
+    padding-top: 8px;
+    width: 15%;
+  }
+  table td:nth-of-type(1) { width: 25%; }
+  table .imagetd {
+    width: 40%;
+  }
+  #msgId {
+   font-size: 12px;
+   text-align: left;
+   color: #FF0000;
+  }
+  #msgMobile {
+   font-size: 12px;
+   text-align: left;
+   color: red;
+  }
+  #msgPw {
+   font-size: 12px;
+   text-align: left;
+  }
+  
+</style>
 <script>
 
   function isImageFile(file) {
@@ -74,7 +117,7 @@
     		  console.log(emailId);
       verifyEmail = regEmail.test(emailId);
       if(verifyEmail == false){
-        $('#msgId').text('이메일 형식이 올바르지 않습니다.').css('color', '#FF0000').css('font-size', '14px');  // 정규식 실패
+        $('#msgId').text('이메일 형식이 올바르지 않습니다.');  // 정규식 실패
         return;
       } 
       
@@ -86,9 +129,9 @@
         dataType: 'json',
         success: function(resData){  // resData = {"enableEmail": true} 또는 {"enableEmail": false}
           if(resData.enableEmail){
-            $('#msgId').text('사용 가능한 이메일입니다.').css('color', '#0000FF').css('font-size', '14px');
+            $('#msgId').text('사용 가능한 이메일입니다.').css('color', '#0000FF').css('font-size', '12px');
           } else {
-            $('#msgId').text('이미 사용 중인 이메일입니다.').css('color', '#FF0000').css('font-size', '14px');
+            $('#msgId').text('이미 사용 중인 이메일입니다.').css('color', '#FF0000').css('font-size', '12px');
           }
         }
       })
@@ -154,9 +197,9 @@
                      + /[^a-zA-Z0-9]/.test(pw); // 특수문자를 가지고 있으면 true(1), 없으면 false(0)
       verifyPw = (pwLength >= 4) && (pwLength <= 20) && (validCount >= 3);
       if(verifyPw){
-        $('#msgPw').text('사용 가능한 비밀번호입니다.');
+        $('#msgPw').text('사용 가능한 비밀번호입니다.').css('color', '#0000FF');
       } else {
-        $('#msgPw').text('4~20자, 소문자+대문자+숫자+특수문자 사용 가능, 3개 이상 조합');
+        $('#msgPw').text('4~20자, 소문자+대문자+숫자+특수문자 사용 가능, 3개 이상 조합').css('color', '#FF0000');
       }
     
     })
@@ -223,72 +266,118 @@
       <div class="main-panel">
         <div class="content-wrapper">
         
-          <div class="member-main">
-            <div class="member-title">
-                <h3>사원 등록</h3>
+          <div class="row">
+            <div class="col-md-12 stretch-card grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <div class="memberCreate h3 font-weight-bold">사원 등록</div>
+                  
+                  <div class="formWrap" style="padding: 50px 100px;">
+                    <form method="post" id="frmMember" enctype="multipart/form-data" th:action="@{/member/addMember.do}">
+                      <table>
+                        <tbody>
+                          <tr>
+                            <th colspan="3"><label for="emailId">이메일</label></th>
+                              <td colspan="5">
+                                <div>
+                                  <input type="text" class="form-control" id="emailId" name="emailId" placeholder="emailId@workship.com">
+                                  <div id="msgId"></div>
+                                </div>
+                            </td>
+                            <td class="imagetd" colspan="8" rowspan="3">
+                              <div class="profileImage" style="width: 100%; height: 80%;">
+                                <div class="imageFile">
+                                  <label for="attachImage">
+                                  <img class="rounded-circle" th:src="@{/images/faces/face1.jpg}" alt="profileImage" id="imagePreview" width="200px" height="200px">
+                                  </label>
+                                </div>  
+                                <div class="attachImage" style="text-align: center;">
+                                  <input type="file" class="form-control-file" id="attachImage" name="attachImage" accept=".jpg, .png">
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th colspan="3"><label for="memberName">이름</label></th>
+                            <td colspan="5">
+                              <div>
+                                <input type="text" class="form-control" id="memberName" name="memberName" placeholder="이름을 입력해주세요.">
+                              </div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th colspan="3"><label for="tel">휴대폰</label></th>
+                            <td colspan="5">
+                              <div>
+                                <input type="text" class="form-control" id="tel" name="tel" placeholder="-를 제외한 숫자만 입력해주세요">
+                                <div id="msgMobile"></div>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr><td class="space1" colspan="16"></td></tr>
+                          <tr>
+                            <th colspan="3"><label for="birthday">생년월일</label></th>
+                            <td colspan="13">
+                              <div>
+                                <input type="text" class="form-control" id="birthday" name="birthday" placeholder="yyyymmdd">
+                              </div>
+                            </td>
+                          </tr>
+                          <tr><td class="space" colspan="16"></td></tr>
+                          <tr>
+                            <th colspan="3"><label>부서 선택</label></th>
+                            <td class="select" colspan="5">
+                              <div>
+                                <select name="deptNo" class="dept form-control form-control-sm" required style="display:inline-block; width:150px;">
+                                  <option value="">부서 선택</option>
+                                    <th:block th:each="dept:${deptList}">
+                                      <option th:value="${dept.deptNo}" th:text="${dept.deptName}"></option>
+                                    </th:block>
+                                </select>
+                              </div>
+                            </td>
+                            <th colspan="3"><label>직위 선택</label></th>
+                            <td class="select" colspan="5" style="padding-right: 10px;">
+                              <div>
+                                <select name="jobNo" class="job form-control form-control-sm" required style="display:inline-block; width:150px;">
+                                  <option value="">직위 선택</option>
+                                  <option value="6">사원</option>
+                                  <option value="5">대리</option>
+                                  <option value="4">과장</option>
+                                  <option value="3">차장</option>
+                                  <option value="2">부장</option>
+                                  <option value="1">대표이사</option>
+                                </select>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr><td class="space" colspan="16"></td></tr>
+                          <tr>
+                            <th colspan="3"><label for="memberNo">임시 비밀번호</label></th>
+                            <td colspan="13">
+                              <div>
+                                <input type="text" class="form-control" id="pw" name="pw" placeholder="임시 비밀번호를 입력해주세요" required>
+                                <div id="msgPw"></div>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr><td class="space" colspan="16"></td></tr>
+                          <tr>
+                          <td colspan="16">
+                            <div>
+                              <button type="submit" class="btn btn-primary btn-rounded m-1" id="btnSubmit">등록하기</button>
+                              <button type="button" class="btn btn-secondary btn-rounded m-1" id="btnCancel">취소하기</button>
+                            </div>
+                          </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </form>
+                  </div>
+                </div>
+              </div>
             </div>
-            
-            <div class="formWrap">
-              <form method="post" id="frmMember" enctype="multipart/form-data" th:action="@{/member/addMember.do}">
-              
-                <div class="profileImage">
-                  <div class="imageFile">
-                    <img class="rounded-circle" th:src="@{/images/faces/face1.jpg}" alt="profileImage" id="imagePreview" width="200px" height="200px">
-                  </div>
-                  <div class="attachImage">
-                    <input type="file" class="form-control-file" id="attachImage" name="attachImage" accept=".jpg, .png" required>
-                  </div>
-                </div>
-            
-                <div class="inputEmail">
-                    <label for="emailId">이메일</label>
-                    <input type="text" class="form-control p-input" id="emailId" name="emailId" placeholder="" required>
-                    <div id="msgId"></div>
-                </div>
-                <div class="inputName">
-                    <label for="memberName">이름</label>
-                    <input type="text" class="form-control p-input" id="memberName" name="memberName" required>
-                </div>
-                <div class="inputTel">
-                    <label for="tel">휴대폰</label>
-                    <input type="text" class="form-control p-input" id="tel" name="tel" placeholder="-를 제외한 숫자만 입력해주세요">
-                    <div id="msgMobile"></div>
-                </div>
-                <div class="inputbirth">
-                    <label for="birthday">생년월일</label>
-                    <input type="text" class="form-control p-input" id="birthday" name="birthday" placeholder="yyyymmdd">
-                </div>
-                <div class="inputDeptJob">
-                    <div>부서/직위 선택</div>
-                    <div>
-                      <select name="deptNo" class="dept" required>
-                        <option value="">부서 선택</option>
-                        <th:block th:each="dept:${deptList}">
-                            <option th:value="${dept.deptNo}" th:text="${dept.deptName}"></option>
-                        </th:block>
-                      </select>        
-                      <select name="jobNo" class="job" required>
-                        <option value="">직위 선택</option>
-                        <option value="6">사원</option>
-                        <option value="5">대리</option>
-                        <option value="4">과장</option>
-                        <option value="3">차장</option>
-                        <option value="2">부장</option>
-                      </select>          
-                    </div>
-                </div>
-                <div class="tempPw">
-                  <div>임시 비밀번호</div>
-                  <input type="text" class="form-control p-input" id="pw" name="pw" placeholder="임시 비밀번호를 입력해주세요" required> 
-                  <div id="msgPw"></div>
-                </div>
-                <div class="col-12">
-                  <button type="submit" class="btn btn-primary" id="btnSubmit">등록하기</button>
-                  <button type="button" class="btn btn-secondary" id="btnCancel">취소하기</button>
-                </div>
-              </form>
-            </div> <!--/* formWrap 끝나는 지점 */-->
-          </div> <!--/* member-main 끝나는 지점 */-->
+          </div>
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      

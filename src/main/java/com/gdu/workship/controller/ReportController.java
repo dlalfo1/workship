@@ -21,6 +21,11 @@ public class ReportController {
   
   private final ReportService reportService;
   
+  @GetMapping("/report/report.html")
+  public String report() {
+    return "report/report";
+  }
+  
   @GetMapping(value="/report/reportSearch.do", produces="application/json")
   @ResponseBody
   public Map<String, Object> searchReport(HttpSession session
@@ -28,6 +33,7 @@ public class ReportController {
                                           , @RequestParam(value="recordPerPage", required=false, defaultValue="10") int recordPerPage) {
     session.setAttribute("recordPerPage", recordPerPage);
     return reportService.loadReportSearchList(request);
+    
   }
   
   @GetMapping(value="/report/reportDetail.do", produces="application/json")
