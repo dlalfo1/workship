@@ -24,8 +24,12 @@ public class MemberController {
 
   private final MemberService memberService;
 
+  @GetMapping("/member/memberCreate.html")
+  public String memberCreate() {
+    return "member/memberCreate";
+  }
   
-  @GetMapping("/member/memberList.do") 
+  @GetMapping("/member/member.html") 
   public String memberList(HttpServletRequest request, Model model) {
     memberService.loadMemberList(request, model);
     return "member/member";

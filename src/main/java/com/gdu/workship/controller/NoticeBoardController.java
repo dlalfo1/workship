@@ -28,7 +28,7 @@ public class NoticeBoardController {
 
   private final NoticeBoardService noticeBoardService;
   
-  @GetMapping("/notice/noticeList.do")
+  @GetMapping("/notice/noticeMain.html")
   public String noticeMain(HttpServletRequest request, Model model) {
     noticeBoardService.loadNoticeBoardList(request, model);
     return "notice/noticeMain";

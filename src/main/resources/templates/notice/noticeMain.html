@@ -85,7 +85,7 @@
             <div class="col-md-12 stretch-card grid-margin">
               <div class="card">
                 <div class="card-body">
-                  <div class="noticeMain h3 font-weight-bold"><a th:href="@{/notice/noticeList.do}">공지사항</a></div>
+                  <div class="noticeMain h3 font-weight-bold"><a th:href="@{/notice/noticeMain.html}">공지사항</a></div>
                     <table id="listTable" class="table text-center">
                       <thead>
                         <tr>
@@ -137,7 +137,7 @@
                   <input type="button" class="btn btn-primary btn-rounded btn-md float-left m-3" id="btnWrite" value="글쓰기" onclick="fnWriteNotice()">
                   <div class="searchWrap">
                     <div class="frmWrap" style="margin: 1rem; padding-left: 22rem; padding-right: 2rem;">
-                      <form id="frmSearch" th:action="@{/notice/noticeList.do}">
+                      <form id="frmSearch" th:action="@{/notice/noticeMain.html}">
                         <select class="form-control form-control-sm" name="column" id="column" style="display:inline-block; width:80px;">
                           <option value="NOTICE_TITLE" selected="selected">제목</option>
                           <option value="NOTICE_CONTENT">내용</option>

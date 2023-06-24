@@ -21,6 +21,11 @@ public class ReportController {
   
   private final ReportService reportService;
   
+  @GetMapping("/report/report.html")
+  public String report() {
+    return "report/report";
+  }
+  
   @GetMapping(value="/report/reportSearch.do", produces="application/json")
   @ResponseBody
   public Map<String, Object> searchReport(HttpSession session

@@ -21,7 +21,7 @@ public class DepartmentController {
   
   private final DepartmentService departmentService;
   
-  @GetMapping("/department/deptList.html")
+  @GetMapping("/department/dept.html")
   public String deptList(HttpServletRequest request, Model model) {
     departmentService.loadDepartmentList(request, model);
     return "department/dept";

@@ -325,11 +325,11 @@
             <div class="col-md-12 stretch-card grid-margin">
               <div class="card">
                 <div class="card-body">
-                  <div class="memberMain h3 font-weight-bold"><a th:href="@{/member/memberList.do}">사원조회</a></div>
+                  <div class="memberMain h3 font-weight-bold"><a th:href="@{/member/member.html}">사원조회</a></div>
             
                   <div class="gubunTab">
                     <ul>
-                     <li style="width: 80px;"><a th:href="@{/member/memberList.do}">전체</a></li>
+                     <li style="width: 80px;"><a th:href="@{/member/member.html}">전체</a></li>
                       <th:block th:if="${#lists.isEmpty(deptList)}">
                     	</th:block>
                       <th:block th:if="${not #lists.isEmpty(deptList)}">
@@ -383,7 +383,7 @@
                     </table>
                   </div> <!--/* memberList 끝나는 지점 */-->
                   <div class="searchWrap text-center" style="margin: 1rem;">
-                    <form id="frmSearch" th:action="@{/member/memberList.do}">
+                    <form id="frmSearch" th:action="@{/member/member.html}">
                       <select class="form-control form-control-sm" name="column" id="column" style="display:inline-block; width:110px;">
                         <option value="M.MEMBER_NO">사원번호</option>
                         <option value="M.MEMBER_NAME" selected="selected">사원명</option>
