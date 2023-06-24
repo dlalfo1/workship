@@ -43,11 +43,12 @@ public class LoginServiceImpl implements LoginService {
 			autologin(request, response);
 			HttpSession session = request.getSession();
 			session.setAttribute("loginMember", loginMemberDTO);
-				
-			int updateResult = loginMapper.updateMemberAccess(emailId);
-			if(updateResult == 0) {
-				loginMapper.insertMemberAccess(emailId);
-			}
+
+
+			/*
+			 * int updateResult = loginMapper.updateMemberAccess(emailId); if(updateResult
+			 * == 0) { loginMapper.insertMemberAccess(emailId); }
+			 */
 			try {
 				response.sendRedirect(url);
 			} catch (Exception e) {
@@ -109,16 +110,15 @@ public class LoginServiceImpl implements LoginService {
 	      MemberDTO memberDTO = new MemberDTO();
 	      memberDTO.setEmailId(id);
 	      memberDTO.setAutologinId(sessionId);
-	      memberDTO.setSetAutologinExpiredAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30));
+	      memberDTO.setSetAutologinExpiredAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 15));
 	                                    // 현재 + 15일 : java.sql.Date 클래스를 이용해서 작업을 수행한다.
 	                                    // java.sql.Date 클래스는 타임스탬프를 이용해서 날짜를 생성한다.
-	      
 	      // DB로 UserDTO 보내기
 	      loginMapper.insertAutologin(memberDTO);
 	      
 	      // session id를 쿠키에 저장하기
 	      Cookie cookie = new Cookie("autologinId", sessionId);
-	      cookie.setMaxAge(60 * 60 * 24 * 30);      // 초 단위로 15일 지정
+	      cookie.setMaxAge(60 * 60 * 24 * 15);      // 초 단위로 15일 지정
 	      cookie.setPath("/"); // 애플리케이션의 모든 URL에서 autologinId 쿠키를 확인할 수 있다.
 	      response.addCookie(cookie);
 	      
@@ -137,10 +137,5 @@ public class LoginServiceImpl implements LoginService {
 	      
 	    }
 
-	}
-	 @Override
-	public boolean loginSuccess(HttpServletRequest request, HttpServletResponse response) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }
