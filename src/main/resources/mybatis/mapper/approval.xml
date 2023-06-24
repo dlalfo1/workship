@@ -344,15 +344,15 @@
   </select>  
   
   <select id="getApprovalList" parameterType="Map" resultMap="ApprovalMap">
-    SELECT DISTINCT A.APPROVAL_NO, A.DOC_NAME, A.DOC_TITLE, A.MEMBER_NO, DATE_FORMAT(A.CREATED_AT, '%Y-%m-%d') AS CREATED_AT, A.APPROVAL_STATUS, M.MEMBER_NAME, D.DEPT_NAME
+    SELECT DISTINCT A.APPROVAL_NO, A.DOC_NAME, A.DOC_TITLE, A.MEMBER_NO, DATE_FORMAT(A.CREATED_AT, '%Y-%m-%d') AS CREATED_AT, A.APPROVAL_STATUS, M.MEMBER_NAME, D.DEPT_NAME, A.APPROVAL_COUNT
     FROM (
-            SELECT P.APPROVAL_NO, P.DOC_NAME, P.DOC_TITLE, P.MEMBER_NO, P.CREATED_AT, P.APPROVAL_STATUS
-            FROM APPROVAL_T P
-            <where>
-                <if test="columnsearch != '' and query != ''" >
-                    ${columnsearch} LIKE CONCAT('%', #{query}, '%')
-                </if>
-            </where>
+	          SELECT P.APPROVAL_NO, P.DOC_NAME, P.DOC_TITLE, P.MEMBER_NO, P.CREATED_AT, P.APPROVAL_STATUS, P.APPROVAL_COUNT
+	          FROM APPROVAL_T P
+	          <where>
+	              <if test="columnsearch != '' and query != ''" >
+	                  ${columnsearch} LIKE CONCAT('%', #{query}, '%')
+	              </if>
+	          </where>
           ) A
     INNER JOIN APPROVAL_LINE_T L 
        ON A.APPROVAL_NO = L.APPROVAL_NO 
@@ -437,7 +437,7 @@
         J.JOB_NAME,
         L.MEMBER_NO AS L_MEMBER_NO,  L.APPROVAL_ORDER,
         ML.MEMBER_NAME,
-        L.MEMBER_APPROVAL_STATUS
+        L.MEMBER_APPROVAL_STATUS, A.MEMBER_NO
     FROM (
         SELECT P.APPROVAL_NO, P.DOC_NAME, P.DOC_TITLE, P.MEMBER_NO, P.CREATED_AT, P.APPROVAL_STATUS
         FROM APPROVAL_T P

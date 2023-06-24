@@ -204,7 +204,7 @@ input[type="text"] {
               <button id="btnAll" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do'" style="background-color: #4B49AC; border: none;">전체</button>
               <button id="btnProgress" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=1'" style="background-color: rgb(243, 156, 18); border: none;">진행</button>
               <button id="btnComplete" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=2'" style="background-color: rgb(46, 204, 113); border: none;">완료</button>
-              <button id="btnReject" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=3'" style="background-color: rgb(231, 76, 60); border: none;">반려</button>
+              <button id="btnReject" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=4'" style="background-color: rgb(231, 76, 60); border: none;">반려</button>
               <button id="btnWait" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=0'" style="background-color: rgb(158, 158, 158); border: none;">대기</button>
             </div>  <!-- /* record-wrapper 끝나는 지점 */ -->
           </div>
@@ -255,29 +255,29 @@ input[type="text"] {
                             <div class="tag-gray">대기</div>
                           </td>
                         </th:block>
-                        <th:block th:if="${approval.approvalStatus >= 1 && approval.approvalStatus <= 2}">
+                        <th:block th:if="${approval.approvalStatus > 0 && approval.approvalCount != approval.approvalStatus && approval.approvalStatus != 4}">
                           <td>
                             <div class="tag-orange">진행중</div>
                           </td>
                         </th:block>
                         <th:block th:if="${approval.approvalCount == 1 && approval.approvalStatus == 1}">
                           <td>
-                            <div class="tag-red">완료</div>
+                            <div class="tag-green">완료</div>
                           </td>
                         </th:block>
                         <th:block th:if="${approval.approvalCount == 2 && approval.approvalStatus == 2}">
                           <td>
-                            <div class="tag-red">반려</div>
+                            <div class="tag-green">완료</div>
                           </td>
                         </th:block>                                                  
                         <th:block th:if="${approval.approvalCount == 3 && approval.approvalStatus == 3}">
                           <td>
-                            <div class="tag-red">반려</div>
+                            <div class="tag-green">완료</div>
                           </td>
                         </th:block>                                                  
                         <th:block th:if="${approval.approvalStatus == 4}">
                           <td>
-                            <div class="tag-green">반려</div>
+                            <div class="tag-red">반려</div>
                           </td>
                         </th:block>
                       </tr>
