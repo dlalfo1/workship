@@ -85,7 +85,7 @@
             <div class="col-md-12 stretch-card grid-margin">
               <div class="card">
                 <div class="card-body">
-                  <p class="card-title">게시글 수정하기</p>
+                  <p class="card-title">공지사항 수정하기</p>
                     <hr>
           
                   <div class="board-content" style="float: none; margin: 0 auto; padding: 15px 40px 5px; ">
@@ -144,7 +144,7 @@
                       </div>
                       <div class="btnWrap col m-1">
                         <input type="hidden" name="noticeNo" th:value="${n.noticeNo}">
-                        <input type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" value="돌아가기" onclick="fnList()"> <!-- 바로 전 목록으로 돌아가기 -->
+                        <input type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" value="돌아가기" onclick="history.back();"> <!-- 바로 전 목록으로 돌아가기 -->
                         <input type="button" class="btn btn-primary btn-rounded btn-md float-right mx-1" value="수정완료" onclick="fnModifyNotice()">
                       </div>
                     </form>

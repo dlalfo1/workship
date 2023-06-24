@@ -37,7 +37,7 @@ public class DepartmentController {
   public String addDept(HttpServletRequest request, RedirectAttributes redirectAttributes) {
     int addResult = departmentService.addDept(request);
     redirectAttributes.addFlashAttribute("addResult", addResult);
-    return "redirect:/department/deptList.html";
+    return "redirect:/department/dept.html";
   }
   
   @PostMapping(value="/department/modifyDept.do", produces="application/json")
@@ -50,7 +50,7 @@ public class DepartmentController {
   public String removeDept(HttpServletRequest request, RedirectAttributes redirectAttributes) {
     int removeResult = departmentService.removeDept(request);
     redirectAttributes.addFlashAttribute("removeResult", removeResult);
-    return "redirect:/department/deptList.html";
+    return "redirect:/department/dept.html";
   }
 
 }

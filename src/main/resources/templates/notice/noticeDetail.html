@@ -27,6 +27,8 @@
 <script th:inline="javascript">
   var frm;
   var noticeNo = /*[[${n.noticeNo}]]*/ null;
+  var emailId = /*[[${session.loginMember.emailId}]]*/ null;
+  var noticeEmailId = /*[[${n.MemberDTO.emailId}]]*/ null;
   
   $(function(){
     let modifyResult = /*[[${modifyResult}]]*/ null;
@@ -56,7 +58,11 @@
 			  event.preventDefault();
 			  return;
 		  }
-		  location.href='/notice/noticeDetail.html?noticeNo=' + prevNo;
+		  if(emailId == noticeEmailId) {
+  		  location.href='/notice/noticeDetail.html?noticeNo=' + prevNo;
+		  } else {
+  		  location.href='/notice/increaseHit.do?noticeNo=' + prevNo;
+		  }
 	  })
   }
   
@@ -68,7 +74,11 @@
           event.preventDefault();
           return;
         }
-        location.href='/notice/noticeDetail.html?noticeNo=' + nextNo ;
+        if(emailId == noticeEmailId) {
+          location.href='/notice/noticeDetail.html?noticeNo=' + nextNo;
+        } else {
+          location.href='/notice/increaseHit.do?noticeNo=' + nextNo;
+        }
       })
   }
   

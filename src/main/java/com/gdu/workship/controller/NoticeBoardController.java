@@ -45,7 +45,7 @@ public class NoticeBoardController {
     if(increaseResult == 1) {
       return "redirect:/notice/noticeDetail.html?noticeNo=" + noticeNo;
     } else {
-      return "redirect:/notice/noticeList2.do";
+      return "redirect:/notice/noticeMain.html";
     }
   }
   
@@ -76,14 +76,14 @@ public class NoticeBoardController {
 	public String addNotice(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
 	  int addResult = noticeBoardService.addNotice(request);
     redirectAttributes.addFlashAttribute("addResult", addResult);
-	  return "redirect:/notice/noticeList.do";
+	  return "redirect:/notice/noticeMain.html";
 	}
 	
   @PostMapping("/notice/removeNotice.do")
   public String removeNotice(@RequestParam("noticeNo") int noticeNo, RedirectAttributes redirectAttributes) { 
     int removeResult = noticeBoardService.removeNotice(noticeNo);
     redirectAttributes.addFlashAttribute("removeResult", removeResult);
-    return "redirect:/notice/noticeList.do";
+    return "redirect:/notice/noticeMain.html";
   }
 	
   @PostMapping("/notice/editNotice.html")

@@ -208,6 +208,7 @@
     fnCheckMobile();
     fnCreateDate();
     fnCheckPw();
+    fnModifyMember();
     
     // 사원의 부서, 직위, 상태 db값으로 selected
     let deptNo = /*[[${m.departmentDTO.deptNo}]]*/ null;
@@ -368,7 +369,7 @@
                           <tr>
                           <td colspan="14">
                             <div>
-                              <button type="button" class="btn btn-primary btn-rounded m-1" id="btnModify" onclick="fnModifyMember()">수정하기</button>
+                              <button type="button" class="btn btn-primary btn-rounded m-1" id="btnModify">수정하기</button>
                               <button type="button" class="btn btn-danger btn-rounded m-1" id="btnRemove" onclick="fnRemoveMember()">삭제하기</button>
                               <button type="button" class="btn btn-secondary btn-rounded m-1" id="btnCancel" onclick="fnCancel()">취소하기</button>
                             </div>

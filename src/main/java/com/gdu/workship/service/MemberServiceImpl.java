@@ -77,9 +77,9 @@ public class MemberServiceImpl implements MemberService {
     System.out.println(memberList);
     // pagination.jsp로 전달할(forward)할 정보 저장하기
     if(column.isEmpty() || query.isEmpty()) {
-      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/memberList.do"));
+      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/member.html"));
     } else {
-      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/memberList.do?column=" + column + "&query=" + query));
+      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/member/member.html?column=" + column + "&query=" + query));
     }
   }
   

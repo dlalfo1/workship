@@ -29,13 +29,18 @@
   table .imagetd {
     width: 40%;
   }
+  #msgId {
+   font-size: 12px;
+   text-align: left;
+   color: #FF0000;
+  }
   #msgMobile {
-   font-size: 14px;
+   font-size: 12px;
    text-align: left;
    color: red;
   }
   #msgPw {
-   font-size: 14px;
+   font-size: 12px;
    text-align: left;
   }
   
@@ -112,7 +117,7 @@
     		  console.log(emailId);
       verifyEmail = regEmail.test(emailId);
       if(verifyEmail == false){
-        $('#msgId').text('이메일 형식이 올바르지 않습니다.').css('color', '#FF0000').css('font-size', '14px');  // 정규식 실패
+        $('#msgId').text('이메일 형식이 올바르지 않습니다.');  // 정규식 실패
         return;
       } 
       
@@ -124,9 +129,9 @@
         dataType: 'json',
         success: function(resData){  // resData = {"enableEmail": true} 또는 {"enableEmail": false}
           if(resData.enableEmail){
-            $('#msgId').text('사용 가능한 이메일입니다.').css('color', '#0000FF').css('font-size', '14px');
+            $('#msgId').text('사용 가능한 이메일입니다.').css('color', '#0000FF').css('font-size', '12px');
           } else {
-            $('#msgId').text('이미 사용 중인 이메일입니다.').css('color', '#FF0000').css('font-size', '14px');
+            $('#msgId').text('이미 사용 중인 이메일입니다.').css('color', '#FF0000').css('font-size', '12px');
           }
         }
       })
@@ -279,10 +284,12 @@
                                   <div id="msgId"></div>
                                 </div>
                             </td>
-                            <td class="imagetd" colspan="6" rowspan="3">
+                            <td class="imagetd" colspan="8" rowspan="3">
                               <div class="profileImage" style="width: 100%; height: 80%;">
                                 <div class="imageFile">
+                                  <label for="attachImage">
                                   <img class="rounded-circle" th:src="@{/images/faces/face1.jpg}" alt="profileImage" id="imagePreview" width="200px" height="200px">
+                                  </label>
                                 </div>  
                                 <div class="attachImage" style="text-align: center;">
                                   <input type="file" class="form-control-file" id="attachImage" name="attachImage" accept=".jpg, .png">
@@ -307,19 +314,19 @@
                               </div>
                             </td>
                           </tr>
-                          <tr><td class="space" colspan="14"></td></tr>
+                          <tr><td class="space1" colspan="16"></td></tr>
                           <tr>
                             <th colspan="3"><label for="birthday">생년월일</label></th>
-                            <td colspan="11">
+                            <td colspan="13">
                               <div>
                                 <input type="text" class="form-control" id="birthday" name="birthday" placeholder="yyyymmdd">
                               </div>
                             </td>
                           </tr>
-                          <tr><td class="space" colspan="14"></td></tr>
+                          <tr><td class="space" colspan="16"></td></tr>
                           <tr>
                             <th colspan="3"><label>부서 선택</label></th>
-                            <td colspan="4">
+                            <td class="select" colspan="5">
                               <div>
                                 <select name="deptNo" class="dept form-control form-control-sm" required style="display:inline-block; width:150px;">
                                   <option value="">부서 선택</option>
@@ -330,7 +337,7 @@
                               </div>
                             </td>
                             <th colspan="3"><label>직위 선택</label></th>
-                            <td colspan="4">
+                            <td class="select" colspan="5" style="padding-right: 10px;">
                               <div>
                                 <select name="jobNo" class="job form-control form-control-sm" required style="display:inline-block; width:150px;">
                                   <option value="">직위 선택</option>
@@ -344,19 +351,19 @@
                               </div>
                             </td>
                           </tr>
-                          <tr><td class="space" colspan="14"></td></tr>
+                          <tr><td class="space" colspan="16"></td></tr>
                           <tr>
                             <th colspan="3"><label for="memberNo">임시 비밀번호</label></th>
-                            <td colspan="11">
+                            <td colspan="13">
                               <div>
                                 <input type="text" class="form-control" id="pw" name="pw" placeholder="임시 비밀번호를 입력해주세요" required>
                                 <div id="msgPw"></div>
                               </div>
                             </td>
                           </tr>
-                          <tr><td class="space" colspan="14"></td></tr>
+                          <tr><td class="space" colspan="16"></td></tr>
                           <tr>
-                          <td colspan="14">
+                          <td colspan="16">
                             <div>
                               <button type="submit" class="btn btn-primary btn-rounded m-1" id="btnSubmit">등록하기</button>
                               <button type="button" class="btn btn-secondary btn-rounded m-1" id="btnCancel">취소하기</button>

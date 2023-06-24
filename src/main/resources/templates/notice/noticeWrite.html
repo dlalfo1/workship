@@ -76,6 +76,7 @@
   
   $(function(){
 	  
+	  /* 임시저장 ... 주석
 	  emailId = $('#emailId').val();
     $("#files").change(function(){
       
@@ -87,7 +88,7 @@
       // fileChange();
       
     })
-    
+    */
   })
     
   
@@ -154,7 +155,7 @@
             <div class="col-md-12 stretch-card grid-margin">
               <div class="card">
                 <div class="card-body">
-                  <p class="card-title">게시글 작성하기</p>
+                  <p class="card-title">공지사항 작성하기</p>
                     <hr>
                   
                   <div class="board-content" style="float: none; margin: 0 auto; padding: 15px 40px 5px; ">
@@ -170,9 +171,12 @@
                           <div class="col-sm-11"><input type="text" class="form-control" th:value="${member.memberName}" readonly></div>
                           <div><input type="hidden" name="emailId" id="emailId" th:value="${member.emailId}" readonly></div>
                         </div>
+                        <!--/* 임시저장 리스트 보기 */-->
+                        <!--/*
                         <div class="editor col">
                           <button type="button" class="btn btn-sm btn-light" data-toggle="modal" data-target="#jyModal_confirm" onclick="saveList();">임시 저장된 글</button>
                         </div>
+                        */-->
                         <div class="inputText col">
                           <textarea id="noticeContent" name="noticeContent" required="required" style="resize: none;"></textarea>
                         </div>
@@ -200,17 +204,19 @@
                           <input type="hidden" name="delFile" id="delFile"> <!-- 불러올 첨부파일 삭제할 때 넘기는 파일번호 -->
                           <input type="hidden" name="changeName" id="changeName"> <!-- 불러올 첨부파일 삭제할 때 넘기는 파일경로 -->
                         </div>
+                        <!--/* 
                         <div class="wrap-attach">
-                          <!-- 파일 첨부 스타일 -->
+                           파일 첨부 스타일 
                           <ul class="file-wrap"></ul>
-                          <!-- 이미지 첨부 스타일 -->
+                           이미지 첨부 스타일 
                           <ul class="img-wrap"></ul>
-                          <!-- 파일 첨부 시 변형되는 건 다우오피스 참고 -->
+                          파일 첨부 시 변형되는 건 다우오피스 참고 
                         </div>
+                        */-->
                       </div>
                       <div class="btnWrap col m-1">
-                        <input type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" value="돌아가기" onclick="fnList()"> <!-- 바로 전 목록으로 돌아가기 -->
-                        <input type="button" class="btn btn-outline-secondary btn-rounded btn-md btnSave float-right mx-1" value="임시저장">
+                        <input type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" value="돌아가기" onclick="fnList()"> <!--/* 바로 전 목록으로 돌아가기 */-->
+                        <!--/* <input type="button" class="btn btn-outline-secondary btn-rounded btn-md btnSave float-right mx-1" value="임시저장"> */-->
                         <input type="button" class="btn btn-primary btn-rounded btn-md float-right mx-1" value="작성완료" onclick="fnAddNotice()">
                       </div>
                     </form>
@@ -243,7 +249,7 @@
           <!-- 모달 끝 -->
           
           <script>
-          /*
+          /* 임시저장할 때 쓸 함수들.. 주석처리
             function fileChange(){
               // 파일이름 li로 뽑아주는 함수
               
@@ -268,7 +274,8 @@
               $(".file-wrap").html(value);
               
             }*/
-          
+            
+            /*
             $(document).ready(function() {
               $(document).on('click', '.btnSave', function() {
                 
@@ -467,6 +474,7 @@
                 console.log(fileNo);
                 console.log($("#delFile").val()); // 삭제 후 다시 빈칸으로 돌려놓기 !!!!!!!!!!!!!!!!!!!!!!!!!
               } 
+              */
           </script>
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->

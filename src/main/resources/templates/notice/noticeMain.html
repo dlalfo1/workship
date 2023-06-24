@@ -111,12 +111,12 @@
                                 <!--/* 본인이 작성한 공지사항은 조회수가 증가하지 않는다. */-->
                                 <td th:if="${session.loginMember.emailId == notice.memberDTO.emailId}">
                                   <a class="noticeTitle" th:href="@{/notice/noticeDetail.html(noticeNo=${notice.noticeNo})}">
-                                  <th:block th:if="${#strings.length(notice.noticeTitle) > 10}" >
-                                    <span th:text="|${#strings.substring(notice.noticeTitle,0,9)}...|"></span>
-                                  </th:block>
-                                  <th:block th:unless="${#strings.length(notice.noticeTitle) > 10">
-                                    <span th:text="${notice.noticeTitle}"></span>
-                                  </th:block>
+                                    <th:block th:if="${#strings.length(notice.noticeTitle) > 20}" >
+                                      <span th:text="|${#strings.substring(notice.noticeTitle,0,19)}...|"></span>
+                                    </th:block>
+                                    <th:block th:unless="${#strings.length(notice.noticeTitle) > 20}" >
+                                      <span th:text="${notice.noticeTitle}"></span>
+                                    </th:block>
                                   </a>
                                 </td>
                                 <td th:unless="${session.loginMember.emailId == notice.memberDTO.emailId}">
@@ -134,7 +134,9 @@
                   <script>
                     
                   </script>
-                  <input type="button" class="btn btn-primary btn-rounded btn-md float-left m-3" id="btnWrite" value="글쓰기" onclick="fnWriteNotice()">
+                  <th:block th:if="${session.loginMember.departmentDTO.deptName == '인사팀'}">
+                    <input type="button" class="btn btn-primary btn-rounded btn-md float-left m-3" id="btnWrite" value="글쓰기" onclick="fnWriteNotice()">
+                  </th:block>
                   <div class="searchWrap">
                     <div class="frmWrap" style="margin: 1rem; padding-left: 22rem; padding-right: 2rem;">
                       <form id="frmSearch" th:action="@{/notice/noticeMain.html}">
