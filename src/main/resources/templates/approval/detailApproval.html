@@ -27,7 +27,7 @@
     
       <!--/* 실제 내용 영역 */-->
         <div class="main-panel">
-         <form id="submitApproval" method="post" enctype="multipart/form-data" th:action="@{/approval/submitApproval.do}">
+         <form id="submitApproval" method="post" enctype="multipart/form-data">
           <div class="content-wrapper-vacation">
             <div class="document-wrapper" >
               <table>
@@ -39,7 +39,7 @@
                     <th colspan="2" class="docTitle-area">지불결의서</th>
                   </th:block>  
                   <th:block th:if="${approval.docName} == '3'">
-                    <th colspan="2" class="docTitle-area">업부협조전</th>
+                    <th colspan="2" class="docTitle-area">업무협조전</th>
                   </th:block>  
                   <th:block th:if="${approval.docName} == '4'">
                     <th colspan="2" class="docTitle-area">사직서</th>
@@ -47,20 +47,22 @@
                   <td colspan="4" id="approval-section" class="approval-section" style="padding-right: 25px;">
                     <th:block th:each="approvalLine:${approvalLines}">
                       <div style="display: flex; justify-content: flex-end;">
+                      <th:block th:if="${approvalLine.approvalDTO.approvalStatus != 4}"> 
                         <table class="appLineTb" style="margin-right: 0; margin-left: 0; margin-top: 0; margin-bottom: 0; justify-content: flex-end;">
                           <tr style="height: 10px;">
-                            <th th:utext="${#strings.replace(approvalLine.memberDTO.jobDTO.jobName, '&lt;br /&gt;', '<br>')} + '&lt;br&gt;' + ${approvalLine.memberDTO.memberName}">
+                              <th th:utext="${#strings.replace(approvalLine.memberDTO.jobDTO.jobName, '&lt;br /&gt;', '<br>')} + '&lt;br&gt;' + ${approvalLine.memberDTO.memberName}">
                               <div>
                               </div>
                             </th>
                           </tr>
                           <tr>
-                           <th:block th:if="${approvalLine.memberApprovalStatus} != 0 "> 
+                           <th:block th:if="${approvalLine.memberApprovalStatus != 0 && approvalLine.approvalDTO.approvalStatus != 4}"> 
                             <td th:text="${approvalLine.memberDTO.memberName}"></td> <!--/* 결재버튼시 이름 들어올 공간*/-->
                            </th:block> 
                           </tr>
                         </table>
-                      <div>
+                      </th:block>
+                     <div>
                    </th:block>
                   </td>
                 </tr>
@@ -128,13 +130,14 @@
                   <button type="button" class="btn btn-primary" id="rejectBtn" style="display: none; background-color: rgb(231, 76, 60); border: none; ">반려하기</button>
                   <input type="hidden" name="approvalNo" th:value="${approval.approvalNo}">
                   <input type="hidden" name="docName" th:value="${approval.docName}">
-                <div>
+                  <input type="hidden" name="memberNo" th:value="${session.loginMember.memberNo}">
+                </div>
               </div>
-              </div> <!--/* document-wrapper 끝나는 지점 */-->
-          </div>  <!--/* content-wrapper-vacation 끝나는 지점 */-->
+            </div> <!--/* document-wrapper 끝나는 지점 */-->
+         </div>  <!--/* content-wrapper-vacation 끝나는 지점 */-->
         </form>
       </div>  <!--/* main-panel 끝나는 지점 */-->      
-    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+   </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
   <!--/* footer 영역 */-->
@@ -153,16 +156,34 @@
     let addResult = /*[[${approvalResult}]]*/ null;  
     if(addResult !== null){
       if(addResult === 2) {
-        alert('결재 완료했습니다..');
+        alert('결재문서를 승인했습니다.');
       } else {
-        alert('결재 실패했습니다.');
+        alert('결재문서 승인 실패했습니다.');
       }
     }
+    
+    // 반려시 메세지
+    let rejectResult = /*[[${rejectResult}]]*/ null;
+    
+    if(rejectResult !== null){
+      if(rejectResult === 2) {
+        alert('결재문서를 반려했습니다.');
+      } else {
+        alert('결재문서를 반려 실패했습니다.');
+      }
+    }    
 
     
     let loginMemberNo = /*[[${session.loginMember.memberNo}]]*/ null;
     let approvalLines = /*[[${approvalLines}]]*/ null;
     let writeMemberNo = /*[[${approval.memberDTO.memberNo}]]*/ null;
+    let approvalStatus = /*[[${approval.approvalStatus}]]*/ null;
+    
+    if(approvalStatus === 4){
+      let h1 = '<h1>반려된 문서</h1>';
+      $('#approval-section').append(h1);
+    }
+    
     
     for(let i = 0; i < approvalLines.length; i++){
       // 로그인멤버가 결재라인에 있고, 문서의 상태가 반려가 아니고, 멤버의 결재상태가 대기중일 때 결재하기 버튼 보여주기(내가 작성했는데 나를 결재라인에 올릴 일은 없다.)
@@ -176,13 +197,17 @@
     } 
           
      // 결재하기
-     $('#approvalBtn').on('click', function(){
+     $('#approvalBtn').on('click', function(event){
+        if(confirm('결재문서를 승인하시겠습니까?') == false){
+        event.preventDefault();
+        return;
+      }
        
        let str = '<input type="hidden" name="memberNo" value="'+ loginMemberNo +'">'; 
        
        // 결재라인 첫번째 멤버의 결재상태가 0(대기중)일때
        if(approvalLines[0].memberApprovalStatus !== null && approvalLines[0].memberApprovalStatus === 0){
-         $(this).append(str);
+         $('#submitApproval').attr('action', 'action=/approval/submitApproval.do');
          $('#submitApproval').submit();
        } else if(approvalLines[0].memberApprovalStatus >= 1){  // 결재라인 첫번째 멤버의 결재상태가 1(승인)이상일때 (반려 포함)
           alert('이미 결재하였습니다.')
@@ -190,7 +215,7 @@
        }
        
        if(approvalLines[1].memberApprovalStatus !== null && approvalLines[1].memberApprovalStatus === 0){
-          $(this).append(str);
+          $('#submitApproval').attr('action', '/approval/submitApproval.do');
           $('#submitApproval').submit();
        } else if (pprovalLines[1].memberApprovalStatus >= 1){
           alert('이미 결재하였습니다.')
@@ -198,39 +223,26 @@
        }
        
         if (approvalLines[2].memberApprovalStatus !== null && approvalLines[2].memberApprovalStatus === 0) {
-          $(this).append(str);
+          $('#submitApproval').attr('action', "th:action=@{/approval/submitApproval.do}");
           $('#submitApproval').submit();
        } else if(approvalLines[2].memberApprovalStatus >= 1)
            alert('이미 결재하였습니다.')
           return;
-    })
+    }) // 결재버튼 function 끝
       
-      // 반려하기
-      $('#rejectBtn').on('click', function(){
-        
-         // 결재라인 첫번째 멤버의 결재상태가 0(대기중)일때
-         if(approvalLines[0].memberApprovalStatus !== null && approvalLines[0].memberApprovalStatus === 0){
-           $(this).append(str);
-           $('#submitApproval').submit();
-         } else if(approvalLines[0].memberApprovalStatus >= 1){  // 결재라인 첫번째 멤버의 결재상태가 1(승인)이상일때 (반려 포함)
-            alert('이미 결재하였습니다.')
-            return;
-         }
-         if(approvalLines[1].memberApprovalStatus !== null && approvalLines[1].memberApprovalStatus === 0){
-            $(this).append(str);
-            $('#submitApproval').submit();
-         } else if (pprovalLines[1].memberApprovalStatus >= 1){
-            alert('이미 결재하였습니다.')
-            return;
-         }
-         
-          if (approvalLines[2].memberApprovalStatus !== null && approvalLines[2].memberApprovalStatus === 0) {
-            $(this).append(str);
-            $('#submitApproval').submit();
-         } else if(approvalLines[2].memberApprovalStatus >= 1)
-             alert('이미 결재하였습니다.')
-            return;
-        })
+     // 반려하기
+     $('#rejectBtn').on('click', function(event){ 
+       if(confirm('결재문서를 반려하겠습니까?') == false){
+         event.preventDefault();
+         return;
+       }
+        $('#submitApproval').attr('action', '/approval/rejectApproval.do');
+        $('#submitApproval').submit();
+/*         
+        let span = '<span>반려된 문서입니다.</span>'
+        $('#approval-section').html(span);
+*/        
+    }) // 반려버튼 function 끝
           
   
      } // fnInit() 종료

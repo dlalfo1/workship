@@ -268,7 +268,7 @@ public class ApprovalServiceImpl implements ApprovalService {
   }
 
   @Override
-  public int updateApproval(HttpServletRequest request) {
+  public int approvalOfDoc(HttpServletRequest request) {
     
     int updateApprovalResult = 0;
     int updateApprovalLineResult = 0;
@@ -280,10 +280,29 @@ public class ApprovalServiceImpl implements ApprovalService {
     map.put("approvalNo", approvalNo);
     map.put("memberNo", memberNo);
     
-    updateApprovalResult = approvalMapper.updateApproval(approvalNo);
-    updateApprovalLineResult = approvalMapper.updateApprovalLine(map); 
+    updateApprovalResult = approvalMapper.updateApprovalDoc(approvalNo);
+    updateApprovalLineResult = approvalMapper.updateApprovalMember(map); 
           
     return updateApprovalResult + updateApprovalLineResult;
+  }
+  
+  @Override
+  public int RejectOfDoc(HttpServletRequest request) {
+    
+    int updateRejectResult = 0;
+    int updateRejectLineResult = 0;
+    
+    int approvalNo = Integer.parseInt(request.getParameter("approvalNo"));   
+    int memberNo = Integer.parseInt(request.getParameter("memberNo"));    
+    
+    Map<String, Object> map = new HashMap<>();
+    map.put("approvalNo", approvalNo);
+    map.put("memberNo", memberNo);
+    
+    updateRejectResult = approvalMapper.updateRejectDoc(approvalNo);
+    updateRejectLineResult = approvalMapper.updateRejectMember(map); 
+          
+    return updateRejectResult + updateRejectLineResult;
   }
   
   @Override

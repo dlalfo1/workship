@@ -168,7 +168,16 @@ public class ApprovalController {
   @PostMapping("/submitApproval.do") 
   public String submitApproval(HttpServletRequest request, RedirectAttributes redirectAttributes) {
     
-    redirectAttributes.addFlashAttribute("approvalResult", approvalService.updateApproval(request));
+    redirectAttributes.addFlashAttribute("approvalResult", approvalService.approvalOfDoc(request));
+    
+    return "redirect:/approval/detailApproval.do?approvalNo=" + request.getParameter("approvalNo") + "&docName=" + request.getParameter("docName");
+  }
+  
+  // 반려하기
+  @PostMapping("/rejectApproval.do")
+  public String rejectApproval(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    
+    redirectAttributes.addFlashAttribute("rejectResult", approvalService.RejectOfDoc(request));
     
     return "redirect:/approval/detailApproval.do?approvalNo=" + request.getParameter("approvalNo") + "&docName=" + request.getParameter("docName");
   }

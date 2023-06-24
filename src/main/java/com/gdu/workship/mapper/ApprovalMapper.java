@@ -46,10 +46,16 @@ public interface ApprovalMapper {
   public int insertApprovalAttach(ApprovalFileDTO approvalFileDTO);
   
   // 결재시 결재문서 업데이트
-  public int updateApproval(int approvalNo);
+  public int updateApprovalDoc(int approvalNo);
   
   // 결재시 결재라인 업데이트
-  public int updateApprovalLine(Map<String, Object> map);
+  public int updateApprovalMember(Map<String, Object> map);
+  
+  // 반려시 결재문서 업데이트
+  public int updateRejectDoc(int approvalNo);
+  
+  // 반려시 결재라인 업데이트
+  public int updateRejectMember(Map<String, Object> map);  
   
   // 결재문서 리스트 관련
   public int getApprovalCount(); 

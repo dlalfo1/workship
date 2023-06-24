@@ -255,21 +255,31 @@ input[type="text"] {
                             <div class="tag-gray">대기</div>
                           </td>
                         </th:block>
-                        <th:block th:if="${approval.approvalStatus >= 1}">
+                        <th:block th:if="${approval.approvalStatus >= 1 && approval.approvalStatus <= 2}">
                           <td>
                             <div class="tag-orange">진행중</div>
                           </td>
                         </th:block>
-                        <th:block th:if="${approval.approvalCount == approval.approvalStatus}">
+                        <th:block th:if="${approval.approvalCount == 1 && approval.approvalStatus == 1}">
                           <td>
-                            <div class="tag-green">완료</div>
+                            <div class="tag-red">완료</div>
                           </td>
                         </th:block>
-                        <th:block th:if="${approval.approvalStatus == 4}">
+                        <th:block th:if="${approval.approvalCount == 2 && approval.approvalStatus == 2}">
                           <td>
                             <div class="tag-red">반려</div>
                           </td>
-                        </th:block>                                              
+                        </th:block>                                                  
+                        <th:block th:if="${approval.approvalCount == 3 && approval.approvalStatus == 3}">
+                          <td>
+                            <div class="tag-red">반려</div>
+                          </td>
+                        </th:block>                                                  
+                        <th:block th:if="${approval.approvalStatus == 4}">
+                          <td>
+                            <div class="tag-green">반려</div>
+                          </td>
+                        </th:block>
                       </tr>
                     </th:block>
                   </tbody>

@@ -249,16 +249,30 @@
     </selectKey>
   </insert>
   
-  <update id="updateApproval" parameterType="int">
+  <update id="updateApprovalDoc" parameterType="int">
 	  UPDATE APPROVAL_T
 		   SET APPROVAL_STATUS = APPROVAL_STATUS + 1
 		     , APPROVAL_SEQUENCE = APPROVAL_SEQUENCE + 1
 	  	WHERE APPROVAL_NO = #{approvalNo}
   </update>
   
-  <update id="updateApprovalLine" parameterType="Map">
+  <update id="updateApprovalMember" parameterType="Map">
     UPDATE APPROVAL_LINE_T
        SET MEMBER_APPROVAL_STATUS = 1
+         , APPROVAL_DATE = SYSDATE()
+     WHERE MEMBER_NO = #{memberNo}
+       AND APPROVAL_NO = #{approvalNo}     
+  </update>
+  
+    <update id="updateRejectDoc" parameterType="int">
+    UPDATE APPROVAL_T
+       SET APPROVAL_STATUS =4
+      WHERE APPROVAL_NO = #{approvalNo}
+  </update>
+  
+  <update id="updateRejectMember" parameterType="Map">
+    UPDATE APPROVAL_LINE_T
+       SET MEMBER_APPROVAL_STATUS = 2
          , APPROVAL_DATE = SYSDATE()
      WHERE MEMBER_NO = #{memberNo}
        AND APPROVAL_NO = #{approvalNo}     
