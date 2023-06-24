@@ -111,7 +111,7 @@ public class ApprovalServiceImpl implements ApprovalService {
   
   @Override
   @Transactional
-  public int addApproval(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
+  public int addApproval(MultipartHttpServletRequest multipartRequest) {
     
     int memberNo = Integer.parseInt(multipartRequest.getParameter("memberNo"));                          // 사원번호
     int docName = Integer.parseInt(multipartRequest.getParameter("formNo"));                             // 기안이름
@@ -267,6 +267,24 @@ public class ApprovalServiceImpl implements ApprovalService {
     return addApprovalResult + addpprovalLineResult + addReferenceLineResult + addApprovalFileResult;
   }
 
+  @Override
+  public int updateApproval(HttpServletRequest request) {
+    
+    int updateApprovalResult = 0;
+    int updateApprovalLineResult = 0;
+    
+    int approvalNo = Integer.parseInt(request.getParameter("approvalNo"));   
+    int memberNo = Integer.parseInt(request.getParameter("memberNo"));    
+    
+    Map<String, Object> map = new HashMap<>();
+    map.put("approvalNo", approvalNo);
+    map.put("memberNo", memberNo);
+    
+    updateApprovalResult = approvalMapper.updateApproval(approvalNo);
+    updateApprovalLineResult = approvalMapper.updateApprovalLine(map); 
+          
+    return updateApprovalResult + updateApprovalLineResult;
+  }
   
   @Override
   public ApprovalDTO detailApprovalByNo(HttpServletRequest request) {
@@ -274,6 +292,10 @@ public class ApprovalServiceImpl implements ApprovalService {
     int approvalNo = Integer.parseInt(request.getParameter("approvalNo"));
     int docName = Integer.parseInt(request.getParameter("docName"));
     
+    /*
+     * if(request.getParameter("docName") != null){ docName =
+     * Integer.parseInt(request.getParameter("docName")); }
+     */
     // selectApprovalByNo에 보낼 ApprovalDTO
     ApprovalDTO approvalDTO = new ApprovalDTO();
     approvalDTO.setApprovalNo(approvalNo);

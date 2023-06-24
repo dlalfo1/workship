@@ -111,7 +111,7 @@ public class ApprovalController {
   @PostMapping("/addApproval.do") // approvalMemberNo, referenceMemberNo, approvalOrder
   public String addApproval(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes ) {
 
-    int addResult = approvalService.addApproval(multipartRequest, redirectAttributes);
+    int addResult = approvalService.addApproval(multipartRequest);
     redirectAttributes.addFlashAttribute("addResult", addResult);
     return "redirect:/approval/approvalList.do";
     
@@ -163,6 +163,23 @@ public class ApprovalController {
     return approvalService.getAutoComplete(request);
   
   } 
+  
+  // 결재하기
+  @PostMapping("/submitApproval.do") 
+  public String submitApproval(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    
+    redirectAttributes.addFlashAttribute("approvalResult", approvalService.updateApproval(request));
+    
+    return "redirect:/approval/detailApproval.do?approvalNo=" + request.getParameter("approvalNo") + "&docName=" + request.getParameter("docName");
+  }
+  
+  
+  
+  
+  
+  
+  
+  
   
 
 }

@@ -9,7 +9,6 @@
 <script th:replace="~{/layout/common::datepickerSetting}"></script>
 <body>
 
-  <!--/* 결재선 지정 모달 */-->
   <div th:replace="~{/approval/approvalModal::modalFrag}"></div>
 
   <div class="container-scroller">
@@ -28,7 +27,7 @@
     
       <!--/* 실제 내용 영역 */-->
         <div class="main-panel">
-         <form id="approvalForm" method="post" enctype="multipart/form-data" th:action="@{/approval/addApproval.do}">
+         <form id="submitApproval" method="post" enctype="multipart/form-data" th:action="@{/approval/submitApproval.do}">
           <div class="content-wrapper-vacation">
             <div class="document-wrapper" >
               <table>
@@ -47,20 +46,21 @@
                   </th:block>  
                   <td colspan="4" id="approval-section" class="approval-section" style="padding-right: 25px;">
                     <th:block th:each="approvalLine:${approvalLines}">
-                    <div style="display: flex; justify-content: flex-end;">
-                      <table class="appLineTb" style="margin-right: 0; margin-left: 0; margin-top: 0; margin-bottom: 0; justify-content: flex-end;">
-                        <tr style="height: 10px;">
-                          <th th:utext="${#strings.replace(approvalLine.memberDTO.jobDTO.jobName, '&lt;br /&gt;', '<br>')} + '&lt;br&gt;' + ${approvalLine.memberDTO.memberName}">
-                            <div>
-                            </div>
-                          </th>
-                        </tr>
-                        <tr>
-                          <td> <!--/* 결재버튼시 이름 들어올 공간*/-->
-                          </td>
-                        </tr>
-                      </table>
-                    <div>
+                      <div style="display: flex; justify-content: flex-end;">
+                        <table class="appLineTb" style="margin-right: 0; margin-left: 0; margin-top: 0; margin-bottom: 0; justify-content: flex-end;">
+                          <tr style="height: 10px;">
+                            <th th:utext="${#strings.replace(approvalLine.memberDTO.jobDTO.jobName, '&lt;br /&gt;', '<br>')} + '&lt;br&gt;' + ${approvalLine.memberDTO.memberName}">
+                              <div>
+                              </div>
+                            </th>
+                          </tr>
+                          <tr>
+                           <th:block th:if="${approvalLine.memberApprovalStatus} != 0 "> 
+                            <td th:text="${approvalLine.memberDTO.memberName}"></td> <!--/* 결재버튼시 이름 들어올 공간*/-->
+                           </th:block> 
+                          </tr>
+                        </table>
+                      <div>
                    </th:block>
                   </td>
                 </tr>
@@ -126,6 +126,8 @@
                   <button type="button" class="btn btn-primary" id="approvalBtn" style="display: none;">결재하기</button>
                   <button type="button" class="btn btn-primary" id="removeBtn" style="display: none; background-color: rgb(231, 76, 60); border: none;">삭제하기</button>
                   <button type="button" class="btn btn-primary" id="rejectBtn" style="display: none; background-color: rgb(231, 76, 60); border: none; ">반려하기</button>
+                  <input type="hidden" name="approvalNo" th:value="${approval.approvalNo}">
+                  <input type="hidden" name="docName" th:value="${approval.docName}">
                 <div>
               </div>
               </div> <!--/* document-wrapper 끝나는 지점 */-->
@@ -139,49 +141,108 @@
   <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   
 <script th:inline="javascript">
- 
-
    
   // 돌아가기 버튼
   function fnList() {
-    location.href = '/approval/docList.html';
+    location.href = '/approval/approvalList.do';
   }
 
-
   function fnInit(){
+    
+     // 결재 완료시 메세지
+    let addResult = /*[[${approvalResult}]]*/ null;  
+    if(addResult !== null){
+      if(addResult === 2) {
+        alert('결재 완료했습니다..');
+      } else {
+        alert('결재 실패했습니다.');
+      }
+    }
+
     
     let loginMemberNo = /*[[${session.loginMember.memberNo}]]*/ null;
     let approvalLines = /*[[${approvalLines}]]*/ null;
     let writeMemberNo = /*[[${approval.memberDTO.memberNo}]]*/ null;
     
     for(let i = 0; i < approvalLines.length; i++){
-        // 로그인멤버가 결재라인에 있다면 결재하기 버튼 보여주기(내가 작성했는데 나를 결재라인에 올릴 일은 없다.)
-          if(loginMemberNo === approvalLines[i].memberDTO.memberNo){
-              $('#approvalBtn').css('display', 'block');
-              $('#rejectBtn').css('display', 'block');
-              // 내가 작성자이거나 문서의 상태가 대기일때 삭제하기 버튼 보여주기
-              } else if(loginMemberNo === writeMemberNo && approvalLines[i].approvalDTO.approvalStatus === 0){
-                $('#removeBtn').css('display', 'block');          
-              } 
-          } 
-     }
+      // 로그인멤버가 결재라인에 있고, 문서의 상태가 반려가 아니고, 멤버의 결재상태가 대기중일 때 결재하기 버튼 보여주기(내가 작성했는데 나를 결재라인에 올릴 일은 없다.)
+      if(loginMemberNo === approvalLines[i].memberDTO.memberNo && approvalLines[i].approvalDTO.approvalStatus !== 2 && approvalLines[i].memberApprovalStatus === 0){
+        $('#approvalBtn').css('display', 'block');
+        $('#rejectBtn').css('display', 'block');
+        // 내가 작성자이거나 문서의 상태가 대기일때 삭제하기 버튼 보여주기
+      } else if(loginMemberNo === writeMemberNo && approvalLines[i].approvalDTO.approvalStatus === 0){
+          $('#removeBtn').css('display', 'block');          
+      } 
+    } 
+          
+     // 결재하기
+     $('#approvalBtn').on('click', function(){
+       
+       let str = '<input type="hidden" name="memberNo" value="'+ loginMemberNo +'">'; 
+       
+       // 결재라인 첫번째 멤버의 결재상태가 0(대기중)일때
+       if(approvalLines[0].memberApprovalStatus !== null && approvalLines[0].memberApprovalStatus === 0){
+         $(this).append(str);
+         $('#submitApproval').submit();
+       } else if(approvalLines[0].memberApprovalStatus >= 1){  // 결재라인 첫번째 멤버의 결재상태가 1(승인)이상일때 (반려 포함)
+          alert('이미 결재하였습니다.')
+          return;
+       }
+       
+       if(approvalLines[1].memberApprovalStatus !== null && approvalLines[1].memberApprovalStatus === 0){
+          $(this).append(str);
+          $('#submitApproval').submit();
+       } else if (pprovalLines[1].memberApprovalStatus >= 1){
+          alert('이미 결재하였습니다.')
+          return;
+       }
+       
+        if (approvalLines[2].memberApprovalStatus !== null && approvalLines[2].memberApprovalStatus === 0) {
+          $(this).append(str);
+          $('#submitApproval').submit();
+       } else if(approvalLines[2].memberApprovalStatus >= 1)
+           alert('이미 결재하였습니다.')
+          return;
+    })
+      
+      // 반려하기
+      $('#rejectBtn').on('click', function(){
+        
+         // 결재라인 첫번째 멤버의 결재상태가 0(대기중)일때
+         if(approvalLines[0].memberApprovalStatus !== null && approvalLines[0].memberApprovalStatus === 0){
+           $(this).append(str);
+           $('#submitApproval').submit();
+         } else if(approvalLines[0].memberApprovalStatus >= 1){  // 결재라인 첫번째 멤버의 결재상태가 1(승인)이상일때 (반려 포함)
+            alert('이미 결재하였습니다.')
+            return;
+         }
+         if(approvalLines[1].memberApprovalStatus !== null && approvalLines[1].memberApprovalStatus === 0){
+            $(this).append(str);
+            $('#submitApproval').submit();
+         } else if (pprovalLines[1].memberApprovalStatus >= 1){
+            alert('이미 결재하였습니다.')
+            return;
+         }
+         
+          if (approvalLines[2].memberApprovalStatus !== null && approvalLines[2].memberApprovalStatus === 0) {
+            $(this).append(str);
+            $('#submitApproval').submit();
+         } else if(approvalLines[2].memberApprovalStatus >= 1)
+             alert('이미 결재하였습니다.')
+            return;
+        })
+          
+  
+     } // fnInit() 종료
      
      fnInit();
-/*     
-     $('$approvalBtn').on('click', function(){
-      
-        $.ajax({
-          type: 'post',
-          url
-          
-          
-          
-        })
-    })
-*/
+  
+
 
 </script>
+<!--/* footer 영역 */-->
 
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 </body>
 </html>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   

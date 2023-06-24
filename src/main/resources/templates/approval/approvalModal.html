@@ -62,12 +62,12 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-          <button id="approvalAndReferenceLine" type="button" class="btn btn-primary">등록</button>
+          <button id="approvalAndReferenceLine" type="button" class="btn btn-primary" data-dismiss="modal">등록</button>
         </div>
       </div>
     </div>
-<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
-<script>
+    
+<script> 
 
 // 부서리스트 가져오기
 $('#deptClick').on('click', function() {
@@ -303,7 +303,7 @@ $('#deptClick').on('click', function() {
   
   
   // 왼쪽 화살표 버튼 클릭시 참조선 영역에서 제외하기
-  $('#deleteReference').on('click', function(){
+  $('#deleteReference').on('click', function(event){
     
     let checkMemberCount =  $('.selectReferenceLine:checked').length; // 체크된 체크박스 수
     let checkMemberList = $('.selectReferenceLine:checked');  // 체크한 체크박스 리스트
@@ -334,7 +334,6 @@ $('#deptClick').on('click', function() {
       
       if(approvalMemberList.length === 0) {
         alert('결재선 멤버를 선택하세요.');
-        return;
       }
       
       // 결재선에 있는 멤버 담을 배열 
@@ -390,8 +389,6 @@ $('#deptClick').on('click', function() {
             
           }
           
-          if(resData.referenceMembers && resData.referenceMembers.length > 0){
-            
           for(let i = 0; i < resData.referenceMembers.length; i++){
               let rMember = resData.referenceMembers[i];
               let str = '<li class="referenceMember" value="' + rMember.memberNo + '">';
@@ -402,16 +399,12 @@ $('#deptClick').on('click', function() {
               console.log(rMember);
               $('#referenceList p').append(str);   
             }           
-          }
-        },
-        error: function(jqXHR){
-          alert('결재선이 등록되지 않았습니다.');
         }
         
       }) // ajax요청 종료
    
-      // 모달 창 숨기기
-      $('#exampleModalCenter').modal('hide');
+      // 모달 창 숨기기(됐다가 안됨..ㅋ..왜?)
+      // $('#exampleModalCenter').modal('hide');
   
   }) // 클릭이벤트 종료
 

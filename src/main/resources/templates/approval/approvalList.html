@@ -255,17 +255,17 @@ input[type="text"] {
                             <div class="tag-gray">대기</div>
                           </td>
                         </th:block>
-                        <th:block th:if="${approval.approvalStatus == 1}">
+                        <th:block th:if="${approval.approvalStatus >= 1}">
                           <td>
                             <div class="tag-orange">진행중</div>
                           </td>
                         </th:block>
-                        <th:block th:if="${approval.approvalStatus == 2}">
+                        <th:block th:if="${approval.approvalCount == approval.approvalStatus}">
                           <td>
                             <div class="tag-green">완료</div>
                           </td>
-                        </th:block>     
-                        <th:block th:if="${approval.approvalStatus == 3}">
+                        </th:block>
+                        <th:block th:if="${approval.approvalStatus == 4}">
                           <td>
                             <div class="tag-red">반려</div>
                           </td>
@@ -286,8 +286,6 @@ input[type="text"] {
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
-  
-<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   
 <script th:inline="javascript">
 
@@ -313,7 +311,7 @@ input[type="text"] {
         // let columnorder = /*[[${columnorder}]]*/ '';
         let columnorder = $(this).data('columnorder');
         let columnsearch = /*[[${columnsearch}]]*/ '';
-        let query = /*[[${query}]]*/ '';  
+        let query = /*[[${query}]]*/ '';
         let page = /*[[${page}]]*/ '';  
         let order =/*[[${order}]]*/ '';  
         
@@ -347,19 +345,19 @@ input[type="text"] {
   } // fnAutoComplete() 끝
       
       fnAutoComplete();
-      // fnInit();
+      fnInit();
 
 
   function fnInit(){
       let addResult = /*[[${addResult}]]*/ '';
-      if(addResult != '') { 
+      if(addResult !== null) { 
         if(addResult >= '2'){
           alert('결재상신이 완료되었습니다.');
         } else {
-          alert('결재상신이 실패하였습니다.');
+          alert('결재상신이 실패하였습니다.'); 
         }
     
-     let removeResult = '${removeResult}';
+/*     let removeResult = '${removeResult}';
       if(removeResult != '') {
         if(removeResult == '1'){
           alert('카테고리가 삭제되었습니다.');
@@ -367,6 +365,7 @@ input[type="text"] {
           alert('카테고리가 삭제되지 않았습니다.');
         }
       }
+ */     
       
     }
 
@@ -390,9 +389,9 @@ input[type="text"] {
 
  
  </script> 
-  <!--/* footer 영역 */-->
-  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
-  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+<!--/* footer 영역 */-->
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+<footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
 </body>
 </html>

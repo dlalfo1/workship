@@ -45,6 +45,12 @@ public interface ApprovalMapper {
   // 결재 상신시 첨부파일
   public int insertApprovalAttach(ApprovalFileDTO approvalFileDTO);
   
+  // 결재시 결재문서 업데이트
+  public int updateApproval(int approvalNo);
+  
+  // 결재시 결재라인 업데이트
+  public int updateApprovalLine(Map<String, Object> map);
+  
   // 결재문서 리스트 관련
   public int getApprovalCount(); 
   public int getApprovalCountByQuery(Map<String, Object> map);

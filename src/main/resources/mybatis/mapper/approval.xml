@@ -249,6 +249,21 @@
     </selectKey>
   </insert>
   
+  <update id="updateApproval" parameterType="int">
+	  UPDATE APPROVAL_T
+		   SET APPROVAL_STATUS = APPROVAL_STATUS + 1
+		     , APPROVAL_SEQUENCE = APPROVAL_SEQUENCE + 1
+	  	WHERE APPROVAL_NO = #{approvalNo}
+  </update>
+  
+  <update id="updateApprovalLine" parameterType="Map">
+    UPDATE APPROVAL_LINE_T
+       SET MEMBER_APPROVAL_STATUS = 1
+         , APPROVAL_DATE = SYSDATE()
+     WHERE MEMBER_NO = #{memberNo}
+       AND APPROVAL_NO = #{approvalNo}     
+  </update>
+  
   <insert id="insertApprovalLine" parameterType="Map"> 
       INSERT INTO APPROVAL_LINE_T (
         MEMBER_NO,
@@ -311,7 +326,7 @@
       FROM APPROVAL_T A INNER JOIN APPROVAL_LINE_T L 
         ON A.APPROVAL_NO = L.APPROVAL_NO 
     WHERE ${columnsearch} LIKE CONCAT('%', #{query}, '%')
-      AND (A.MEMBER_NO = #{memberNo} OR L.MEMBER_NO = #{memberNo})
+      AND (A.MEMBER_NO = #{memberNo} OR L.MEMBER_NO = #{memberNo}) 
   </select>  
   
   <select id="getApprovalList" parameterType="Map" resultMap="ApprovalMap">
@@ -362,6 +377,7 @@
   
   <select id="selectApprovalByNo" parameterType="ApprovalDTO" resultMap="ApprovalMap">
     SELECT  A.MEMBER_NO
+          , A.APPROVAL_NO
           , A.DOC_NAME
           , A.DOC_TITLE
           , A.CREATED_AT

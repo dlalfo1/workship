@@ -23,11 +23,12 @@ public interface ApprovalService {
   public Map<String, Object> getMemberList(HttpServletRequest request); // 멤버리스트 가져오기
   public Map<String, Object> getInsertCheckMemberList(Map<String, Object> map);
   public Map<String, Object> getApprovalAndReferenceMemSberList(Map<String, Object> map);
-  public int addApproval(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes); // 결재문서 추가하기
+  public int addApproval(MultipartHttpServletRequest multipartRequest); // 결재문서 추가하기
   public ApprovalDTO detailApprovalByNo(HttpServletRequest request); // 결재문서 상세보기
   public List<ApprovalLineDTO> getApprovalLine(HttpServletRequest request); // 결재문서 상세보기시 결재라인 가져오기
   public List<ApprovalFileDTO> detailApprovalFilesByNo(HttpServletRequest request);  // 첨부파일 가져오기
   public ResponseEntity<Resource> download(int attachNo, String userAgent);  // 첨부파일 다운로드
+  public int updateApproval(HttpServletRequest request); // 결재하기
   public void getApprovalList(HttpServletRequest request, Model model, HttpSession session);
   public Map<String, Object> getAutoComplete(HttpServletRequest request);
 
