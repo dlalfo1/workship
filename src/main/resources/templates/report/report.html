@@ -28,9 +28,13 @@
   .modal-tbody tr td {
     padding: 0.9rem;
   }
+  .enable_link {
+    cursor: pointer;
+  }
 </style>
 <script th:inline="javascript">
   $(function(){
+	  fnRecordPerPage();
     fnSearchReport();
     fnChangePage();
     fnDeletePost();
@@ -167,7 +171,10 @@
                       
                       return [year, month, day].join('/');
                     }
-                  
+                    
+                    function fnRecordPerPage() {
+                    	$('#recordPerPage').val(recordPerPage).prop('checked', true);
+                    }
                   
                     var page = 1;
                     var recordPerPage = '[[${session.recordPerPage}]]' == '' ? '10' : '[[${session.recordPerPage}]]';
@@ -182,77 +189,101 @@
                 	      recordPerPage = $(this).val();
                         // $('#recordPerPage').val(recordPerPage); 필요없어 보임 ajax라서..?
                 	      fnSearchReport();
-                	    }) 
+                	    })
                     	
                       var reportState = $('input[name="reportState"]:checked').val()
                       console.log(reportState);
-                      $.ajax({
-                        type: 'get',
-                        url: '/report/reportSearch.do',
-                        data: 'reportState=' + reportState + '&column=' + column + '&query=' + $('#query').val() + '&page=' + page + '&recordPerPage=' + recordPerPage,
-                        dataType: 'json',
-                        success: function(resData){
-                        	let reportListBody = $('#reportListBody');
-                          reportListBody.empty();
-                          
-                          if(resData.reportSearchList === 0){
-                            reportListBody.append('<tr><td colspan="8">신고 내역이 없습니다.</td></tr>');
-                          } else {
-                            $.each(resData.reportSearchList, function(i, report){
-                              let str = '<tr>';
-                              str += '<td class="reportNo">' + report.reportNo + '</td>';
-                              if(report.boardDTO == null) {
-                    	         str += '<td colspan="2"><span style="color: gray; font-style: italic;">삭제된 게시글입니다.</span></td>';
-                              } else {
-                    	         str += '<td class="boardTitle" style="cursor: pointer;" onclick="openInNewTab(' + '\'/notice/noticeDetail.html?noticeNo=1\')">' + report.boardDTO.boardTitle +'</td>';
-                               str += '<td>' + report.boardDTO.memberDTO.memberName +'</a></td>';
-                              }
-                              str += '<td>'   + report.reportContent + '</td>';
-                              str += '<td>' + report.memberDTO.memberName + ' ' + report.memberDTO.jobDTO.jobName + '</td>';
-                              str += '<td>' + fnDateFormat(report.reportDate) + '</td>';
-                              if(report.reportDoneDate == null) {
-                                str += '<td>' + '' + '</td>';
-                              } else {
-                                str += '<td>' + fnDateFormat(report.reportDoneDate) + '</td>';
-                              }
-                              str += '<td class="dropdown-item process" href="#" data-toggle="modal" data-target="#reportModal" onclick="fnReportProcess()"><input type="hidden" value="' + report.reportNo + '">';
-                              switch(report.reportState){ 
-                                case 0: str += '<span class="red_text">미처리</span></td>'; break; 
-                                case 1: str += '<span class="orange_text">반려</span></td>'; break; 
-                                case 2: str += '<span class="blue_text">처리완료</span></td>'; break; 
-                                default: reportState = '';
-                              }
-                              str += '</tr>'
-                              reportListBody.append(str);
-                                
-                            })
-                          }
-                          $('#pagination').empty();
-                          var pageUtil = resData.pageUtil;
-                          var str2 = '<nav><ul class="pagination pagination-sm justify-content-center">';
-                          if(pageUtil.beginPage == 1){
-                            str2 += '<li class="page-item disabled"><span class="page-link text-secondary">이전</span></li>';
-                          } else {
-                            str2 += '<li class="page-item"><span class="enable_link page-link" data-page="' + (pageUtil.beginPage - 1) + ">이전</span></li>";
-                          }
-                          for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
-                            if(p == page){
-                              str2 += '<li class="page-item active"><a class="page-link">' + p + '</a></li>';
-                            } else {
-                              str2 += '<li class="page-item"><a class="enable_link page-link" data-page="' + p + '">' + p + '</a></li>';
+                      
+                    	new Promise(function(resolve, reject){
+                    		$.ajax({
+                          type: 'get',
+                          url: '/report/reportSearch.do',
+                          data: 'reportState=' + reportState + '&column=' + column + '&query=' + $('#query').val() + '&page=' + page + '&recordPerPage=' + recordPerPage,
+                          dataType: 'json',
+                          success: function(resData){
+                        	  $('#pagination').empty();
+                            var pageUtil = resData.pageUtil;
+                            
+                            if(page > pageUtil.totalPage) {
+                              page = pageUtil.totalPage;
                             }
-                          }
-                          if(pageUtil.endPage == pageUtil.totalPage){
-                            str2 += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
-                          } else {
-                            str2 += '<li class="page-item"><span class="enable_link" page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
-                          }
-                          str2 += '</ul></nav>';
-                          
-                          $('#pagination').append(str2);
-                          // $('#query').val(''); 검색창 비워주기
-                        } /* success 끝나는 곳 */
-                      }) /* ajax 끝나는 곳 */
+                            
+                            var str2 = '<nav><ul class="pagination pagination-sm justify-content-center">';
+                            if(pageUtil.beginPage == 1){
+                              str2 += '<li class="page-item disabled"><span class="page-link text-secondary">이전</span></li>';
+                            } else {
+                              str2 += '<li class="page-item"><span class="enable_link page-link" data-page="' + (pageUtil.beginPage - 1) + ">이전</span></li>";
+                            }
+                            for(let p = pageUtil.beginPage; p <= pageUtil.endPage; p++){
+                              if(p == page){
+                                str2 += '<li class="page-item active"><a class="page-link">' + p + '</a></li>';
+                              } else {
+                                str2 += '<li class="page-item"><a class="enable_link page-link" data-page="' + p + '">' + p + '</a></li>';
+                              }
+                            }
+                            if(pageUtil.endPage == pageUtil.totalPage){
+                              str2 += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
+                            } else {
+                              str2 += '<li class="page-item"><span class="enable_link" page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
+                            }
+                            str2 += '</ul></nav>';
+                            
+                            $('#pagination').append(str2);
+                            // $('#query').val(''); 검색창 비워주기
+                            
+                            resolve();
+                            
+                          } /* success 끝나는 곳 */
+                    		}) /* ajax 끝나는 곳 */
+                    	
+                    	}).then(function(){
+                    		
+                      	$.ajax({
+                          type: 'get',
+                          url: '/report/reportSearch.do',
+                          data: 'reportState=' + reportState + '&column=' + column + '&query=' + $('#query').val() + '&page=' + page + '&recordPerPage=' + recordPerPage,
+                          dataType: 'json',
+                          success: function(resData){
+                          	let reportListBody = $('#reportListBody');
+                            reportListBody.empty();
+                            
+                            if(resData.reportSearchList === 0){
+                              reportListBody.append('<tr><td colspan="8">신고 내역이 없습니다.</td></tr>');
+                            } else {
+                              $.each(resData.reportSearchList, function(i, report){
+                                let str = '<tr>';
+                                str += '<td class="reportNo">' + report.reportNo + '</td>';
+                                if(report.boardDTO == null) {
+                      	         str += '<td colspan="2"><span style="color: gray; font-style: italic;">삭제된 게시글입니다.</span></td>';
+                                } else {
+                      	         str += '<td class="boardTitle" style="cursor: pointer;" onclick="openInNewTab(' + '\'/notice/noticeDetail.html?noticeNo=1\')">' + report.boardDTO.boardTitle +'</td>';
+                                 str += '<td>' + report.boardDTO.memberDTO.memberName +'</a></td>';
+                                }
+                                str += '<td>'   + report.reportContent + '</td>';
+                                str += '<td>' + report.memberDTO.memberName + ' ' + report.memberDTO.jobDTO.jobName + '</td>';
+                                str += '<td>' + fnDateFormat(report.reportDate) + '</td>';
+                                if(report.reportDoneDate == null) {
+                                  str += '<td>' + '' + '</td>';
+                                } else {
+                                  str += '<td>' + fnDateFormat(report.reportDoneDate) + '</td>';
+                                }
+                                str += '<td class="dropdown-item process" href="#" data-toggle="modal" data-target="#reportModal" onclick="fnReportProcess()"><input type="hidden" value="' + report.reportNo + '">';
+                                switch(report.reportState){ 
+                                  case 0: str += '<span class="red_text">미처리</span></td>'; break; 
+                                  case 1: str += '<span class="orange_text">반려</span></td>'; break; 
+                                  case 2: str += '<span class="blue_text">처리완료</span></td>'; break; 
+                                  default: reportState = '';
+                                }
+                                str += '</tr>'
+                                reportListBody.append(str);
+                                  
+                              })
+                            }
+                            
+                            
+                          } /* success 끝나는 곳 */
+                        }) /* ajax 끝나는 곳 */
+                    	})
                     }
                     function fnChangePage(){
                       $(document).on('click', '.enable_link', function(){

@@ -16,7 +16,7 @@ public interface MemberMapper {
   public int getMemberCount();
   public List<MemberDTO> getMemberList(Map<String, Object> map);
   public int getRetiredMemberCount();
-  public List<RetiredMemberDTO> getRetiredMemberList();
+  public List<RetiredMemberDTO> getRetiredMemberList(Map<String, Object> map);
   public int getMemberSearchCount(Map<String, Object> map);
   public DepartmentDTO selectDept(int deptNo);
   public JobDTO selectJob(int jobNo);

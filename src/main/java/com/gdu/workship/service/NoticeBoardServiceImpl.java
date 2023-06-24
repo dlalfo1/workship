@@ -75,8 +75,8 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     System.out.println(map);
     
     List<NoticeDTO> noticeList = noticeBoardMapper.getNoticeList(map);
-    System.out.println(noticeList);
     model.addAttribute("noticeList", noticeList);
+    System.out.println("리스트: " + noticeList);
     model.addAttribute("beginNo", totalRecord - (page - 1) * recordPerPage);
     System.out.println("beginNo : " + (totalRecord - (page - 1) * recordPerPage));
     if(column.isEmpty() || query.isEmpty()) {
