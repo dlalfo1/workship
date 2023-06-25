@@ -24,6 +24,7 @@ public interface ApprovalService {
   public Map<String, Object> getInsertCheckMemberList(Map<String, Object> map);
   public Map<String, Object> getApprovalAndReferenceMemSberList(Map<String, Object> map);
   public int addApproval(MultipartHttpServletRequest multipartRequest); // 결재문서 추가하기
+  public int addTemporaryDoc(MultipartHttpServletRequest multipartRequest); // 결재문서 추가하기
   public ApprovalDTO detailApprovalByNo(HttpServletRequest request); // 결재문서 상세보기
   public List<ApprovalLineDTO> getApprovalLine(HttpServletRequest request); // 결재문서 상세보기시 결재라인 가져오기
   public List<ApprovalFileDTO> detailApprovalFilesByNo(HttpServletRequest request);  // 첨부파일 가져오기
@@ -33,6 +34,7 @@ public interface ApprovalService {
   public int removeApproval(HttpServletRequest request); // 삭제하기
   public void getApprovalList(HttpServletRequest request, Model model, HttpSession session); // 결재문서 가져오기
   public void getReferencelList(HttpServletRequest request, Model model, HttpSession session); // 참조문서 가져오기
-  public Map<String, Object> getAutoComplete(HttpServletRequest request); // 자동완성
+  public Map<String, Object> getAutoComplete(HttpServletRequest request, HttpSession session); // 자동완성
+  public Map<String, Object> getReferenceAutoComplete(HttpServletRequest request, HttpSession session); // 자동완성
 
 }

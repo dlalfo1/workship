@@ -196,6 +196,7 @@ table th {
   border: 1px solid #ccc;
   padding: 10px;
   margin-top: 10px;
+  
 }
 
 /* 결재선 및 참조선*/
@@ -621,4 +622,5 @@ display:block;
   width: 100px;
   height: 65px;
 }
+
 

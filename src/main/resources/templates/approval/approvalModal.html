@@ -11,9 +11,10 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
      <div class="modal-content">  
       <div class="modal-body">
+        <div class="body-wrapper"></div>
         <div class="left-wrapper">
           <div class="dept-wrapper" id="deptSection">
-            <div id="deptClick">부서 ▼</div>
+            <div id="deptClick" style="font-size: 17px; font-weight: 1000;">부서 ▼</div>
             <div>
               <ul id="deptList">
                 <!--/* ajax요청 부서리스트 오는 곳 */-->
@@ -21,9 +22,9 @@
             </div>
           </div>
           <div class="member-wrapper" id="memberSection">
-            <div>멤버리스트</div>
+            <div style="font-size: 17px; font-weight: 1000;">멤버리스트</div>
             <div>  
-              <ul id="memberList"> 
+              <ul id="memberList" style="font-size: 17px; font-weight: 500px;"> 
                 <!--/* ajax요청 부서리스트 오는 곳 */-->
               </ul>
             </div>
@@ -48,23 +49,26 @@
             </div>
           </div>
           <div class="right-wrapper">
-            <div class="approvalSection">결재선
+            <div class="approvalSection"><span style="font-size: 20px; font-weight: 1000;">결재선<span>
               <ul id="approvalList">
                 <!--/* ajax요청 부서리스트 오는 곳 */-->
               </ul>
              </div> 
-            <div class="referenceSection">참조
+            <div class="referenceSection" style="font-size: 20px; font-weight: 1000;">참조
               <ul id="referenceList"> 
                   <!--/* ajax요청 부서리스트 오는 곳 */-->
               </ul>
              </div> 
+            <div style="display: flex; justify-content: flex-end;">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" style="margin-top: 25px; justify-content: flex-end;">닫기</button>
+              <button id="approvalAndReferenceLine" type="button" class="btn btn-primary" data-dismiss="modal" style="margin-top: 25px; justify-content: flex-end;">등록</button>
+            </div> 
+          </div>
+        </div>  <!--/* modal-body 끝나는 지점 */-->
+        
+        <div class="modal-footer">
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-          <button id="approvalAndReferenceLine" type="button" class="btn btn-primary" data-dismiss="modal">등록</button>
-        </div>
-      </div>
     </div>
     
 <script> 
@@ -79,10 +83,9 @@ $('#deptClick').on('click', function() {
       url: '/approval/deptList.do',
       dataType: 'json',
       success: function(resData) {
-        
         $('#deptList').empty();
         $.each(resData.deptList, function(i, dept) {
-          let str = '<li onclick="fnMemberList(' + dept.deptNo + ')">' + dept.deptName + '</li>';
+          let str = '<li style="list-style-type: none; font-size: 17px; font-weight: 1000px;" onclick="fnMemberList(' + dept.deptNo + ')">' + dept.deptName + '</li>';
           $('#deptList').append(str);
         })
         
@@ -111,7 +114,7 @@ $('#deptClick').on('click', function() {
      success: function(resData) {
        $('#memberList').empty();
        $.each(resData.memberList, function(i, member) {
-        let str = '<li>';
+        let str = '<li style="list-style-type: none; font-size: 17px; font-weight: 500px;">';
         // id="memberCheck' + i +
         str += '<input type="checkbox" class="memberCheck" value="' + member.memberNo + '">';
         str += '&nbsp;&nbsp;<strong>' + member.memberName + '</strong>&nbsp;&nbsp;' + member.jobDTO.jobName + '&nbsp;' + member.departmentDTO.deptName;
@@ -177,7 +180,7 @@ $('#deptClick').on('click', function() {
       // $.each문은 사용시 조건을 걸어서 return시키면 상위 이벤트가 종료되는게 아니라 each문만 끝난다.
         for (let i = 0; i < resData.checkMembers.length; i++) {
           let checkMember = resData.checkMembers[i];
-          let str = '<li>';
+          let str = '<li style="list-style-type: none; font-size: 14px;">';
           str += '<input type="checkbox" class="selectApprovalLine" value="' + checkMember.memberNo + '">';
           str += '&nbsp;&nbsp;<strong>' + checkMember.memberName + '</strong>&nbsp;&nbsp;' + checkMember.jobDTO.jobName + '&nbsp;' + checkMember.departmentDTO.deptName;
   
@@ -271,7 +274,7 @@ $('#deptClick').on('click', function() {
       // $.each문은 사용시 조건을 걸어서 return시키면 상위 이벤트가 종료되는게 아니라 each문만 끝난다.
         for (let i = 0; i < resData.checkMembers.length; i++) {
           let checkMember = resData.checkMembers[i];
-          let str = '<li>';
+          let str = '<li style="list-style-type: none; font-size: 14px;">';
           str += '<input type="checkbox" class="selectReferenceLine" value="' + checkMember.memberNo + '">';
          /* str += '<input type="hidden" name="referenceOrder" value="' + i + '" >'; */
           str += '&nbsp;&nbsp;<strong>' + checkMember.memberName + '</strong>&nbsp;&nbsp;' + checkMember.jobDTO.jobName + '&nbsp;' + checkMember.departmentDTO.deptName;

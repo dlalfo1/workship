@@ -116,7 +116,7 @@ public class ApprovalServiceImpl implements ApprovalService {
     int docName = Integer.parseInt(multipartRequest.getParameter("formNo"));                             // 기안이름
     String docTitle = multipartRequest.getParameter("title");                                            // 기안제목
     String docContent = multipartRequest.getParameter("content");                                        // 기안 내용
-    int docStatus = Integer.parseInt(multipartRequest.getParameter("docStatus"));                        // 문서상태
+    int docStatus = Integer.parseInt(multipartRequest.getParameter("docStatus"));                        // 문서상태(등록)
     int approvalStatus = Integer.parseInt(multipartRequest.getParameter("approvalStatus"));              // 기안진행상태
     int approvalCount = Integer.parseInt(multipartRequest.getParameter("approvalCount"));                // 총 결재자수
     int approvalSequence = Integer.parseInt(multipartRequest.getParameter("approvalSequence"));          // 총 현재결재순서
@@ -164,8 +164,8 @@ public class ApprovalServiceImpl implements ApprovalService {
     approvalDTO.setMemberDTO(memberDTO);
     approvalDTO.setDocName(docName);
     approvalDTO.setDocTitle(docTitle);
-    approvalDTO.setDocContent(docContent);
     approvalDTO.setDocStatus(docStatus);  
+    approvalDTO.setDocContent(docContent);
     approvalDTO.setApprovalStatus(approvalStatus);
     approvalDTO.setApprovalCount(approvalCount);
     approvalDTO.setApprovalSequence(approvalSequence);
@@ -265,6 +265,163 @@ public class ApprovalServiceImpl implements ApprovalService {
     
     return addApprovalResult + addpprovalLineResult + addReferenceLineResult + addApprovalFileResult;
   }
+  
+  @Override
+  public int addTemporaryDoc(MultipartHttpServletRequest multipartRequest) {
+    
+    int memberNo = Integer.parseInt(multipartRequest.getParameter("memberNo"));                          // 사원번호
+    int docName = Integer.parseInt(multipartRequest.getParameter("formNo"));                             // 기안이름
+    String docTitle = multipartRequest.getParameter("title");                                            // 기안제목
+    String docContent = multipartRequest.getParameter("content");                                        // 기안 내용
+    int docStatus = Integer.parseInt(multipartRequest.getParameter("temporaryDocStatus"));               // 문서상태(임시저장)
+    int approvalStatus = Integer.parseInt(multipartRequest.getParameter("approvalStatus"));              // 기안진행상태
+    int approvalCount = Integer.parseInt(multipartRequest.getParameter("approvalCount"));                // 총 결재자수
+    int approvalSequence = Integer.parseInt(multipartRequest.getParameter("approvalSequence"));          // 총 현재결재순서
+    int memberApprovalStatus = Integer.parseInt(multipartRequest.getParameter("memberApprovalStatus"));  // 총 현재결재순서
+    int vacationState = Integer.parseInt(multipartRequest.getParameter("vacationState"));
+    
+    String vacationCategory = multipartRequest.getParameter("vacationCategory");
+    
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    
+    String startDate = multipartRequest.getParameter("startDate");
+    String endDate = multipartRequest.getParameter("endDate");
+    String strPayDate = multipartRequest.getParameter("payDate");
+    String strResignationDate = multipartRequest.getParameter("resignationDate");
+    
+    System.out.println("지출일자 : " + strPayDate);
+
+    Date vacationStartDate = null;
+    Date vacationEndDate = null;
+    Date payDate = null;
+    Date resignationDate = null;
+   
+    try {
+           if(startDate != null) {
+             vacationStartDate = dateFormat.parse(startDate);
+           }
+           if(endDate != null) {
+             vacationEndDate = dateFormat.parse(endDate);
+           }
+           if(strPayDate != null) {
+             payDate = dateFormat.parse(strPayDate);
+           }
+           if(strResignationDate != null) {
+             resignationDate = dateFormat.parse(strResignationDate);
+           }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+   
+    // insertApproval에 전달할 approvalDTO
+    ApprovalDTO approvalDTO = new ApprovalDTO();
+    MemberDTO memberDTO = new MemberDTO();
+    memberDTO.setMemberNo(memberNo);
+    
+    approvalDTO.setMemberDTO(memberDTO);
+    approvalDTO.setDocName(docName);
+    approvalDTO.setDocTitle(docTitle);
+    approvalDTO.setDocStatus(docStatus);  
+    approvalDTO.setDocContent(docContent);
+    approvalDTO.setApprovalStatus(approvalStatus);
+    approvalDTO.setApprovalCount(approvalCount);
+    approvalDTO.setApprovalSequence(approvalSequence);
+    approvalDTO.setVacationCategory(vacationCategory);
+    approvalDTO.setVacationStartDate(vacationStartDate);
+    approvalDTO.setVacationEndDate(vacationEndDate);
+    approvalDTO.setPayDate(payDate);
+    approvalDTO.setResignationDate(resignationDate);
+    approvalDTO.setVacationState(vacationState);
+    
+    int addApprovalResult = approvalMapper.insertApproval(approvalDTO);
+    
+
+    // insertApprovalLine에 전달할 Map
+    String[] approvalMemberNos =   multipartRequest.getParameterValues("approvalMemberNo"); 
+    String[] approvalOrders = multipartRequest.getParameterValues("approvalOrder"); 
+    
+    int addpprovalLineResult = 0;
+    
+    Map<String, Object> map1 = new HashMap<>();
+    
+    for(int i=0; i < approvalMemberNos.length; i++) {
+      map1.put("approvalMemberNo", approvalMemberNos[i]);
+      map1.put("approvalOrder", approvalOrders[i]);
+      map1.put("memberApprovalStatus", memberApprovalStatus);
+      map1.put("approvalNo", approvalDTO.getApprovalNo());
+      addpprovalLineResult = approvalMapper.insertApprovalLine(map1);
+    }
+    
+
+
+    // insertReferenceLine에 전달할 Map
+    String[] referenceMemberNos =   multipartRequest.getParameterValues("referenceMemberNo"); 
+    int addReferenceLineResult = 0;
+    
+    if(referenceMemberNos != null) {
+
+     
+      Map<String, Object> map2 = new HashMap<>();
+      
+      for(int i = 0; i < referenceMemberNos.length; i ++) {
+        map2.put("referenceMemberNo", referenceMemberNos[i]);
+        map2.put("approvalNo", approvalDTO.getApprovalNo()); // <selectKey> 사용
+        addReferenceLineResult = approvalMapper.insertReferenceLine(map2);
+      }
+
+    }
+    
+    // insertApprovalAttach에 전달할 ApprovalFileDTO
+    List<MultipartFile> files = multipartRequest.getFiles("files");
+    int addApprovalFileResult = 0;
+    
+    for(MultipartFile multipartFile : files) {
+      
+      // 첨부파일이 있을시 실행
+      if(multipartFile != null && multipartFile.isEmpty() == false) {
+        
+        try {
+                
+              // 첨부 파일의 저장 경로
+              String approvalFilePath = myFileUtil.getPath();
+              
+              // 첨부 파일의 저장 경로가 없으면 만들기
+              File dir = new File(approvalFilePath);
+              if(dir.exists() == false) {
+                dir.mkdirs();
+              }
+              
+              // 첨부 파일의 원래 이름
+              String approvalFileOriginName = multipartFile.getOriginalFilename();
+              approvalFileOriginName = approvalFileOriginName.substring(approvalFileOriginName.lastIndexOf("\\") + 1); 
+               
+              // 첨부 파일의 저장 이름
+              String approvalFileSystemName = myFileUtil.getFilesystemName(approvalFileOriginName);
+              
+              // 첨부 파일의 File 객체 (HDD(하드디스크)에 저장할 첨부 파일)
+              File file = new File(dir, approvalFileSystemName);
+              
+              // 첨부 파일을 HDD에 저장
+              multipartFile.transferTo(file);
+              
+              /* DB에 첨부파일 정보 저장하기 */
+              ApprovalFileDTO approvalFileDTO = new ApprovalFileDTO();
+              approvalFileDTO.setApprovalFileOriginName(approvalFileOriginName);
+              approvalFileDTO.setApprovalFileSystemName(approvalFileSystemName);
+              approvalFileDTO.setApprovalFilePath(approvalFilePath);
+              approvalFileDTO.setApprovalDTO(approvalDTO);
+              
+              addApprovalFileResult = approvalMapper.insertApprovalAttach(approvalFileDTO);
+              
+              
+        } catch(Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }    
+    
+      return addApprovalResult + addpprovalLineResult + addReferenceLineResult + addApprovalFileResult;
+  }
 
   @Override
   public int approvalOfDoc(HttpServletRequest request) {
@@ -274,14 +431,28 @@ public class ApprovalServiceImpl implements ApprovalService {
     
     int approvalNo = Integer.parseInt(request.getParameter("approvalNo"));   
     int memberNo = Integer.parseInt(request.getParameter("memberNo"));    
+    int approvalCount = Integer.parseInt(request.getParameter("approvalCount"));    
+    int approvalSequence = Integer.parseInt(request.getParameter("approvalSequence"));    
     
     Map<String, Object> map = new HashMap<>();
     map.put("approvalNo", approvalNo);
     map.put("memberNo", memberNo);
+    map.put("approvalCount", approvalCount);
+    map.put("approvalSequence", approvalSequence);
     
-    updateApprovalResult = approvalMapper.updateApprovalDoc(approvalNo);
+    System.out.println("approvalCount" + approvalCount);
+    System.out.println("approvalSequence" + approvalSequence);
+    
     updateApprovalLineResult = approvalMapper.updateApprovalMember(map); 
-          
+      
+    updateApprovalResult = approvalMapper.updateApprovalDoc(approvalNo);
+    
+    if(approvalCount == approvalSequence + 1) {
+      
+      updateApprovalResult = approvalMapper.completeApprovalDoc(approvalNo);
+      
+    }
+    
     return updateApprovalResult + updateApprovalLineResult;
   }
   
@@ -629,7 +800,7 @@ public class ApprovalServiceImpl implements ApprovalService {
     
   }
   @Override
-  public Map<String, Object> getAutoComplete(HttpServletRequest request) {
+  public Map<String, Object> getAutoComplete(HttpServletRequest request, HttpSession session) {
     
     // 파라미터 column이 전달되지 않는 경우 column=""로 처리한다. (검색할 칼럼)
     Optional<String> opt1 = Optional.ofNullable(request.getParameter("columnsearch"));
@@ -639,13 +810,44 @@ public class ApprovalServiceImpl implements ApprovalService {
     Optional<String> opt2 = Optional.ofNullable(request.getParameter("query"));
     String query = opt2.orElse("");
     
+    MemberDTO memberDTO = (MemberDTO)session.getAttribute("loginMember"); 
+    
     // DB로 보낼 Map 만들기(column + query)
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("column", column);
     map.put("query", query);
+    map.put("memberNo", memberDTO.getMemberNo());
     
     // 검색 결과 목록 가져오기
     List<ApprovalDTO> approvals = approvalMapper.getApprovalAutoComplete(map);
+    
+    Map<String, Object> resultMap = new HashMap<String, Object>();
+    resultMap.put("approvals", approvals);
+
+    return resultMap;
+  }
+  
+  @Override
+  public Map<String, Object> getReferenceAutoComplete(HttpServletRequest request, HttpSession session) {
+    
+    // 파라미터 column이 전달되지 않는 경우 column=""로 처리한다. (검색할 칼럼)
+    Optional<String> opt1 = Optional.ofNullable(request.getParameter("columnsearch"));
+    String column = opt1.orElse("");
+    
+    // 파라미터 query가 전달되지 않는 경우 query=""로 처리한다. (검색어)
+    Optional<String> opt2 = Optional.ofNullable(request.getParameter("query"));
+    String query = opt2.orElse("");
+    
+    MemberDTO memberDTO = (MemberDTO)session.getAttribute("loginMember"); 
+    
+    // DB로 보낼 Map 만들기(column + query)
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("column", column);
+    map.put("query", query);
+    map.put("memberNo", memberDTO.getMemberNo());
+    
+    // 검색 결과 목록 가져오기
+    List<ApprovalDTO> approvals = approvalMapper.getReferenceAutoComplete(map);
     
     Map<String, Object> resultMap = new HashMap<String, Object>();
     resultMap.put("approvals", approvals);

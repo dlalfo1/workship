@@ -251,7 +251,14 @@
   
   <update id="updateApprovalDoc" parameterType="int">
 	  UPDATE APPROVAL_T
-		   SET APPROVAL_STATUS = APPROVAL_STATUS + 1
+		   SET APPROVAL_STATUS = 1
+		     , APPROVAL_SEQUENCE = APPROVAL_SEQUENCE + 1
+	  	WHERE APPROVAL_NO = #{approvalNo}
+  </update>
+  
+  <update id="completeApprovalDoc" parameterType="int">
+	  UPDATE APPROVAL_T
+		   SET APPROVAL_STATUS = 2
 		     , APPROVAL_SEQUENCE = APPROVAL_SEQUENCE + 1
 	  	WHERE APPROVAL_NO = #{approvalNo}
   </update>
@@ -266,7 +273,7 @@
   
     <update id="updateRejectDoc" parameterType="int">
     UPDATE APPROVAL_T
-       SET APPROVAL_STATUS =4
+       SET APPROVAL_STATUS = 3
       WHERE APPROVAL_NO = #{approvalNo}
   </update>
   
@@ -440,9 +447,31 @@
    
   <select id="getApprovalAutoComplete" parameterType="Map" resultType="ApprovalDTO">
     SELECT DISTINCT ${column}
-      FROM APPROVAL_T
+      FROM APPROVAL_T A
+     INNER JOIN APPROVAL_LINE_T L 
+       ON A.APPROVAL_NO = L.APPROVAL_NO 
+    INNER JOIN MEMBER_T M
+       ON M.MEMBER_NO = A.MEMBER_NO
+    INNER JOIN DEPARTMENT_T D
+       ON M.DEPT_NO = D.DEPT_NO
      WHERE ${column} LIKE CONCAT('%', #{query}, '%')
+      AND (A.MEMBER_NO = #{memberNo} OR L.MEMBER_NO = #{memberNo})
   </select> 
+  
+  <select id="getReferenceAutoComplete" parameterType="Map" resultType="ApprovalDTO">
+    SELECT DISTINCT ${column}
+      FROM APPROVAL_T A
+    INNER JOIN APPROVAL_REFERENCE_T R
+       ON A.APPROVAL_NO = R.APPROVAL_NO
+    INNER JOIN MEMBER_T M
+       ON M.MEMBER_NO = R.MEMBER_NO
+    INNER JOIN DEPARTMENT_T D
+       ON M.DEPT_NO = D.DEPT_NO
+    INNER JOIN APPROVAL_LINE_T L
+       ON A.APPROVAL_NO = L.APPROVAL_NO
+     WHERE ${column} LIKE CONCAT('%', #{query}, '%')
+      AND R.MEMBER_NO = #{memberNo}
+  </select>
  
   
   <select id="selectApprovalByNo" parameterType="ApprovalDTO" resultMap="ApprovalMap">

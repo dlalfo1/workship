@@ -114,6 +114,16 @@ public class ApprovalController {
     
   }
   
+  // 임시문서
+  @PostMapping("/temporaryDoc.do") // approvalMemberNo, referenceMemberNo, approvalOrder
+  public String temporaryDoc(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes ) {
+    
+    int addResult = approvalService.addTemporaryDoc(multipartRequest);
+    redirectAttributes.addFlashAttribute("addResult", addResult);
+    return "redirect:/approval/approvalList.do";
+    
+  }
+  
   // 결재문서 상세보기
   @GetMapping("/detailApproval.do")
   public String detailApproval(HttpServletRequest request, Model model) {
@@ -166,10 +176,18 @@ public class ApprovalController {
   }
   @GetMapping(value="/autoComplete.do", produces="application/json")
   @ResponseBody
-  public Map<String, Object> autoComplete(HttpServletRequest request){ 
+  public Map<String, Object> autoComplete(HttpServletRequest request, HttpSession session){ 
     
-    return approvalService.getAutoComplete(request);
+    return approvalService.getAutoComplete(request, session);
   
+    
+  } 
+  @GetMapping(value="/referenceAutoComplete.do", produces="application/json")
+  @ResponseBody
+  public Map<String, Object> referenceAutoComplete(HttpServletRequest request, HttpSession session){ 
+    
+    return approvalService.getReferenceAutoComplete(request, session);
+    
   } 
   
   // 결재하기

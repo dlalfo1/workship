@@ -48,6 +48,9 @@ public interface ApprovalMapper {
   // 결재시 결재문서 업데이트
   public int updateApprovalDoc(int approvalNo);
   
+  // 최종 결재시 결재문서 업데이트
+  public int completeApprovalDoc(int approvalNo);
+  
   // 결재시 결재라인 업데이트
   public int updateApprovalMember(Map<String, Object> map);
   
@@ -89,6 +92,7 @@ public interface ApprovalMapper {
   public int getReferenceCountByQuery(Map<String, Object> map);
   public List<ApprovalDTO> getReferenceList(Map<String, Object> map);
   public int getReferenceSearchCount(Map<String, Object> map);
+  public List<ApprovalDTO> getReferenceAutoComplete(Map<String, Object> map);
   
   // 결재문서 상세보기
   public ApprovalDTO selectApprovalByNo(ApprovalDTO approvalDTO);
