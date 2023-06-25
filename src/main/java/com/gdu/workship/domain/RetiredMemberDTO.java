@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RetiredMemberDTO {
-	private int retiredMemberNo;
-	private String memberName;
-	private String tel;
-	private Date joinedAt;
-	private Date modifiedAt;
+    private int retiredMemberNo;
+    private String memberName;
+    private String tel;
+    private Date joinedAt;
+    private Date retiredAt;
 }
