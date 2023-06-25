@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('게시판')}"></head>
-<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+
 <script>
 
   function fnFileCheck(vThis){
@@ -97,7 +97,7 @@
                   <textarea id="boardContent" name="boardContent" required="required" style="resize: none;" th:text="${b.boardContent}"></textarea>
                 </div>
                 <script>
-                  $('#boardContent').summernote({
+                $('#boardContent').summernote({
                     width: 1280,
                     height: 1024,
                     lang: 'ko-KR',
@@ -111,7 +111,7 @@
                       ['insert', ['link', 'picture', 'video']],
                       ['view', ['fullscreen', 'codeview', 'help']]
                     ]
-                  })
+                  });
                 </script>
                 <div class="attchFile">
                   <label for="files">첨부</label>
@@ -149,6 +149,7 @@
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
   <!--/* footer 영역 */-->
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
 </body>

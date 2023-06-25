@@ -3,8 +3,8 @@
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 로그인페이지')}"></head>
 <script th:inline="javascript">
-	var rememberId = $.cookie('rememberId');
-	var autologin = $.cookie('autologin');
+   var rememberId = $.cookie('rememberId');
+   var autologin = $.cookie('autologin');
 // 로그인하기
 function fnLogin() {
   $('#frmLogin').on('submit', function(event) {
@@ -33,35 +33,35 @@ function fnLogin() {
   });
 } 
 
-	
+   
 
 // 쿠키에 기억된 아이디와 자동 로그인 상태 보여주기
 function fnRememberId(){
   
   // rememberId 쿠키에 저장된 아이디를 가져와서 표시
-	  let rememberId = $.cookie('rememberId');
-	  if (rememberId == undefined || rememberId === '') {
-	    $('#emailId').val('');
-	    $('#chkRememberId').prop('checked', false);
-	  } else {
-	    $('#emailId').val(rememberId);
-	    $('#chkRememberId').prop('checked', true);
-	  }
-	}
+     let rememberId = $.cookie('rememberId');
+     if (rememberId == undefined || rememberId === '') {
+       $('#emailId').val('');
+       $('#chkRememberId').prop('checked', false);
+     } else {
+       $('#emailId').val(rememberId);
+       $('#chkRememberId').prop('checked', true);
+     }
+   }
 
-	  function fnAutologin() {
-		  let autologin = $.cookie('autologin');
-		  if (autologin == 'true') {
-		    $('#chkAutologin').prop('checked', true);
-		    location.href='/main/main.html'
-		  } else {
-		    $('#chkAutologin').prop('checked', false);
-		  }
-		}
-	  // 자동 로그인 체크 여부에 따라 로그인 처리
-	  //if ($.cookie('autologin') == 'true') {
-	 //   $('#frmLogin').submit();
-//	}
+     function fnAutologin() {
+        let autologin = $.cookie('autologin');
+        if (autologin == 'true') {
+          $('#chkAutologin').prop('checked', true);
+          location.href='/main/main.html'
+        } else {
+          $('#chkAutologin').prop('checked', false);
+        }
+      }
+     // 자동 로그인 체크 여부에 따라 로그인 처리
+     //if ($.cookie('autologin') == 'true') {
+    //   $('#frmLogin').submit();
+//   }
 $(function(){
   fnLogin();
   fnRememberId();

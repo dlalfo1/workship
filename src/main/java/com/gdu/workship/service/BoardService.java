@@ -22,5 +22,5 @@ public interface BoardService {
   public int removeBoard(int boardNo);
   public int modifyBoard(MultipartHttpServletRequest multipartRequest);
   public int removeBoardFile(int boardFileNo);
- 
+    
 }

@@ -2,6 +2,11 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('부서 관리')}"></head>
+<style>
+  #msg {
+    margin-left: 100px;
+  }
+</style>
 <script th:inline="javascript">
   $(function() {
 	  let addResult = /*[[${addResult}]]*/ null;
@@ -47,7 +52,6 @@
       <!--/* 실제 내용 영역 */-->
       <div class="main-panel">
         <div class="content-wrapper">
-          <a th:href="@{/department/deptList.html}">부서 관리</a>
           
           <div class="row">
             <div class="col-md-12 stretch-card grid-margin">
@@ -58,8 +62,8 @@
                       <form method="post" id="createDept" class="form-inline" th:action="@{/department/addDept.do}">
                         <label for="inputDeptName" class="col-sm-1 col-form-label">부서명</label>
                         <input type="text" class="form-control mb-2 mr-sm-2 col-sm-4" id="inputDeptName" name="deptName" placeholder="부서명을 입력해주세요.">
-                        <button type="button" id="btnAdd" class="btn btn-primary mb-2">부서 추가</button>
-                        <button type="button" id="btnReset" class="btn btn-outline-info mb-2">다시 입력</button>
+                        <button type="button" id="btnAdd" class="btn btn-primary mx-1 mb-2">부서 추가</button>
+                        <button type="button" id="btnReset" class="btn btn-outline-info mx-1 mb-2">다시 입력</button>
                       </form>
                       <div id="msg" style="display: block;"></div>
                     </div>
@@ -237,7 +241,7 @@
                             } else {
                             	alert('부서명 수정을 실패했습니다.\n부서명을 확인해주세요.');
                             }
-                          	location.href = '/department/deptList.html';
+                          	location.href = '/department/dept.html';
                       		}
                       	})
                     	})
