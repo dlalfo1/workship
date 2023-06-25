@@ -1,7 +1,6 @@
 package com.gdu.workship.controller;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gdu.workship.domain.DepartmentDTO;
-import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.service.ApprovalService;
 
 import lombok.RequiredArgsConstructor;
@@ -111,7 +108,17 @@ public class ApprovalController {
   @PostMapping("/addApproval.do") // approvalMemberNo, referenceMemberNo, approvalOrder
   public String addApproval(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes ) {
 
-    int addResult = approvalService.addApproval(multipartRequest, redirectAttributes);
+    int addResult = approvalService.addApproval(multipartRequest);
+    redirectAttributes.addFlashAttribute("addResult", addResult);
+    return "redirect:/approval/approvalList.do";
+    
+  }
+  
+  // 임시문서
+  @PostMapping("/temporaryDoc.do") // approvalMemberNo, referenceMemberNo, approvalOrder
+  public String temporaryDoc(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes ) {
+    
+    int addResult = approvalService.addTemporaryDoc(multipartRequest);
     redirectAttributes.addFlashAttribute("addResult", addResult);
     return "redirect:/approval/approvalList.do";
     
@@ -156,13 +163,66 @@ public class ApprovalController {
      return "approval/approvalList";
   }
   
+  // 참조 문서 조회하기
+  @GetMapping("/referenceList.do")
+  public String referenceList(HttpServletRequest request, Model model, HttpSession session) {
+    //session에 올라간 recordPerPage 값 날려주기
+    if(request.getHeader("referer").contains("referenceList.do") == false) {
+      request.getSession().removeAttribute("recordPerPage");
+    }
+    approvalService.getReferencelList(request, model, session);
+    return "approval/referenceList";
+    
+  }
   @GetMapping(value="/autoComplete.do", produces="application/json")
   @ResponseBody
-  public Map<String, Object> autoComplete(HttpServletRequest request){ 
+  public Map<String, Object> autoComplete(HttpServletRequest request, HttpSession session){ 
     
-    return approvalService.getAutoComplete(request);
+    return approvalService.getAutoComplete(request, session);
   
+    
+  } 
+  @GetMapping(value="/referenceAutoComplete.do", produces="application/json")
+  @ResponseBody
+  public Map<String, Object> referenceAutoComplete(HttpServletRequest request, HttpSession session){ 
+    
+    return approvalService.getReferenceAutoComplete(request, session);
+    
   } 
   
+  // 결재하기
+  @PostMapping("/submitApproval.do") 
+  public String submitApproval(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    
+    redirectAttributes.addFlashAttribute("approvalResult", approvalService.approvalOfDoc(request));
+    
+    return "redirect:/approval/detailApproval.do?approvalNo=" + request.getParameter("approvalNo") + "&docName=" + request.getParameter("docName");
+  }
+  
+  // 반려하기
+  @PostMapping("/rejectApproval.do")
+  public String rejectApproval(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    
+    redirectAttributes.addFlashAttribute("rejectResult", approvalService.rejectOfDoc(request));
+    
+    return "redirect:/approval/detailApproval.do?approvalNo=" + request.getParameter("approvalNo") + "&docName=" + request.getParameter("docName");
+  }
+  
+  // 삭제하기
+  @PostMapping("/removeApproval.do")
+  public String removeApproval(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    
+    redirectAttributes.addFlashAttribute("removeResult", approvalService.removeApproval(request));
+    
+    return "redirect:/approval/approvalList.do";
+  }
+  
+  
+    
+     
+  }
+  
+  
+  
+  
 
-}

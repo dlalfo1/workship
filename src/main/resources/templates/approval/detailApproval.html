@@ -9,7 +9,6 @@
 <script th:replace="~{/layout/common::datepickerSetting}"></script>
 <body>
 
-  <!--/* 결재선 지정 모달 */-->
   <div th:replace="~{/approval/approvalModal::modalFrag}"></div>
 
   <div class="container-scroller">
@@ -28,39 +27,42 @@
     
       <!--/* 실제 내용 영역 */-->
         <div class="main-panel">
-         <form id="approvalForm" method="post" enctype="multipart/form-data" th:action="@{/approval/addApproval.do}">
+         <form id="submitApproval" method="post" enctype="multipart/form-data">
           <div class="content-wrapper-vacation">
             <div class="document-wrapper" >
               <table>
                 <tr>
                   <th:block th:if="${approval.docName} == '1'">
-                    <th colspan="2" class="docTitle-area">휴가신청서</th>
+                    <th style="height: 180px;"  colspan="2" class="docTitle-area">휴가신청서</th>
                   </th:block>  
                   <th:block th:if="${approval.docName} == '2'">
                     <th colspan="2" class="docTitle-area">지불결의서</th>
                   </th:block>  
                   <th:block th:if="${approval.docName} == '3'">
-                    <th colspan="2" class="docTitle-area">업부협조전</th>
+                    <th colspan="2" class="docTitle-area">업무협조전</th>
                   </th:block>  
                   <th:block th:if="${approval.docName} == '4'">
                     <th colspan="2" class="docTitle-area">사직서</th>
                   </th:block>  
                   <td colspan="4" id="approval-section" class="approval-section" style="padding-right: 25px;">
                     <th:block th:each="approvalLine:${approvalLines}">
-                    <div style="display: flex; justify-content: flex-end;">
-                      <table class="appLineTb" style="margin-right: 0; margin-left: 0; margin-top: 0; margin-bottom: 0; justify-content: flex-end;">
-                        <tr style="height: 10px;">
-                          <th th:utext="${#strings.replace(approvalLine.memberDTO.jobDTO.jobName, '&lt;br /&gt;', '<br>')} + '&lt;br&gt;' + ${approvalLine.memberDTO.memberName}">
-                            <div>
-                            </div>
-                          </th>
-                        </tr>
-                        <tr>
-                          <td> <!--/* 결재버튼시 이름 들어올 공간*/-->
-                          </td>
-                        </tr>
-                      </table>
-                    <div>
+                      <div style="display: flex; justify-content: flex-end;">
+                      <th:block th:if="${approvalLine.approvalDTO.approvalStatus != 4}"> 
+                        <table class="appLineTb" style="height: 140px; margin-right: 0; margin-left: 0; margin-top: 0; margin-bottom: 0; justify-content: flex-end;">
+                          <tr>
+                            <th th:utext="${#strings.replace(approvalLine.memberDTO.jobDTO.jobName, '&lt;br /&gt;', '<br>')} + '&lt;br&gt;' + ${approvalLine.memberDTO.memberName}">
+                              <div>
+                                </div>
+                            </th>
+                          </tr>
+                          <tr>
+                           <th:block th:if="${approvalLine.memberApprovalStatus != 0 && approvalLine.approvalDTO.approvalStatus != 4}"> 
+                            <td style="width: 200px; height: 80px;" th:text="${approvalLine.memberDTO.memberName}"></td> <!--/* 결재버튼시 이름 들어올 공간*/-->
+                           </th:block> 
+                          </tr>
+                        </table>
+                       </th:block>
+                     <div>
                    </th:block>
                   </td>
                 </tr>
@@ -126,61 +128,203 @@
                   <button type="button" class="btn btn-primary" id="approvalBtn" style="display: none;">결재하기</button>
                   <button type="button" class="btn btn-primary" id="removeBtn" style="display: none; background-color: rgb(231, 76, 60); border: none;">삭제하기</button>
                   <button type="button" class="btn btn-primary" id="rejectBtn" style="display: none; background-color: rgb(231, 76, 60); border: none; ">반려하기</button>
-                <div>
-              </div>
-              </div> <!--/* document-wrapper 끝나는 지점 */-->
-          </div>  <!--/* content-wrapper-vacation 끝나는 지점 */-->
+                  <input type="hidden" name="approvalNo" th:value="${approval.approvalNo}">
+                  <input type="hidden" name="approvalCount" th:value="${approval.approvalCount}">
+                  <input type="hidden" name="approvalSequence" th:value="${approval.approvalSequence}">
+                  <input type="hidden" name="docName" th:value="${approval.docName}">
+                  <input type="hidden" name="memberNo" th:value="${session.loginMember.memberNo}">
+                </div>
+              </div>3
+         </div>  <!--/* content-wrapper-vacation 끝나는 지점 */-->
         </form>
       </div>  <!--/* main-panel 끝나는 지점 */-->      
-    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+   </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
-  <!--/* footer 영역 */-->
-  
-<script th:inline="javascript">
- 
+<!--/* footer 영역 */-->
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 
+<script th:inline="javascript">
    
   // 돌아가기 버튼
   function fnList() {
-    location.href = '/approval/docList.html';
+    location.href = '/approval/approvalList.do';
   }
 
-
   function fnInit(){
+    
+     // 결재 완료시 메세지
+    let addResult = /*[[${approvalResult}]]*/ null;  
+    if(addResult !== null){
+      if(addResult === 2) {
+        alert('결재문서를 승인했습니다.');
+      } else {
+        alert('결재문서 승인 실패했습니다.');
+      }
+    }
+    
+    // 반려시 메세지
+    let rejectResult = /*[[${rejectResult}]]*/ null;
+    
+    if(rejectResult !== null){
+      if(rejectResult === 2) {
+        alert('결재문서를 반려했습니다.');
+      } else {
+        alert('결재문서를 반려 실패했습니다.');
+      }
+    }    
     
     let loginMemberNo = /*[[${session.loginMember.memberNo}]]*/ null;
     let approvalLines = /*[[${approvalLines}]]*/ null;
     let writeMemberNo = /*[[${approval.memberDTO.memberNo}]]*/ null;
+    let approvalStatus = /*[[${approval.approvalStatus}]]*/ null;
+    let approvalSequence = /*[[${approval.approvalSequence}]]*/ null;
+    let approvalCount = /*[[${approval.approvalCount}]]*/ null;
+    
+    if(approvalStatus === 3){
+      let rejectText = '<h1 style="color: darkred;">반려된 문서</h1>';
+      $('#approval-section').html(rejectText);
+    }
     
     for(let i = 0; i < approvalLines.length; i++){
-        // 로그인멤버가 결재라인에 있다면 결재하기 버튼 보여주기(내가 작성했는데 나를 결재라인에 올릴 일은 없다.)
-          if(loginMemberNo === approvalLines[i].memberDTO.memberNo){
-              $('#approvalBtn').css('display', 'block');
-              $('#rejectBtn').css('display', 'block');
-              // 내가 작성자이거나 문서의 상태가 대기일때 삭제하기 버튼 보여주기
-              } else if(loginMemberNo === writeMemberNo && approvalLines[i].approvalDTO.approvalStatus === 0){
-                $('#removeBtn').css('display', 'block');          
-              } 
-          } 
-     }
-     
-     fnInit();
-/*     
-     $('$approvalBtn').on('click', function(){
+      // 로그인멤버가 결재라인에 있고, 문서의 상태가 반려가 아니고, 멤버의 결재상태가 대기중일 때 결재하기 버튼 보여주기(내가 작성했는데 나를 결재라인에 올릴 일은 없다.)
+     // if(loginMemberNo === approvalLines[i].memberDTO.memberNo && approvalLines[i].approvalDTO.approvalStatus !== 3 && approvalLines[i].memberApprovalStatus === 0){
+     if(loginMemberNo === approvalLines[i].memberDTO.memberNo){
+        $('#approvalBtn').css('display', 'block');
+        $('#rejectBtn').css('display', 'block');
+        // 내가 작성자이거나 문서의 상태가 대기일때 삭제하기 버튼 보여주기
+      } else if(loginMemberNo === writeMemberNo && approvalLines[i].approvalDTO.approvalStatus === 0){
+          $('#removeBtn').css('display', 'block');          
+      } 
+    } 
+          
+     // 결재하기
+     $('#approvalBtn').on('click', function(event){
+       
+      if(confirm('결재문서를 승인하시겠습니까?') == false){
+      event.preventDefault();
+      return;
+      }
       
-        $.ajax({
-          type: 'post',
-          url
+/*      
+      이걸로 막아버리니까 아예 밑에까지 못가서 결재를 못 함 ㅋ..
+      if(loginMemberNo === approvalLines[0].memberDTO.memberNo && approvalLines[0].memberApprovalStatus === 1) {
+        alert('이미 결재한 문서입니다.'); 
+          return;
+      } else if(loginMemberNo === approvalLines[1].memberDTO.memberNo && approvalLines[0].memberApprovalStatus === 1) {
+          alert('이미 결재한 문서입니다.');
+            return;
+      } else {
+          alert('이미 결재한 문서입니다.');
+            return;
+      }
+ */ 
+       
+      if (approvalCount === 3) {
+        if (approvalLines[0].approvalOrder === approvalSequence && loginMemberNo === approvalLines[0].memberDTO.memberNo) {
+          $('#submitApproval').attr('action', '/approval/submitApproval.do');
+          $('#submitApproval').submit();  
+        }
+        else if (approvalLines[1].approvalOrder === approvalSequence && loginMemberNo === approvalLines[1].memberDTO.memberNo) {
+          $('#submitApproval').attr('action', '/approval/submitApproval.do');
+          $('#submitApproval').submit();  
+        }
+        else if (approvalLines[2].approvalOrder === approvalSequence && loginMemberNo === approvalLines[2].memberDTO.memberNo) {
+          $('#submitApproval').attr('action', '/approval/submitApproval.do');
+          $('#submitApproval').submit();  
+        }
+        else {
+          alert('이전 결재자가 승인하지 않았습니다');
+        }
+      } else if(approvalCount === 2) {
+          if (approvalLines[0].approvalOrder === approvalSequence && loginMemberNo === approvalLines[0].memberDTO.memberNo) {
+            alert('1번째');
+            $('#submitApproval').attr('action', '/approval/submitApproval.do');
+            $('#submitApproval').submit();  
+          } else if (approvalLines[1].approvalOrder === approvalSequence && loginMemberNo === approvalLines[1].memberDTO.memberNo) {
+              alert('2번째');
+              $('#submitApproval').attr('action', '/approval/submitApproval.do');
+              $('#submitApproval').submit();  
+          } else {
+              alert('이전 결재자가 승인하지 않았습니다');
+          } 
+        
+      } else { 
+              $('#submitApproval').attr('action', '/approval/submitApproval.do');
+              $('#submitApproval').submit();  
+      }
+
+  }) // 결재버튼 function 끝
+      
+     // 반려하기
+     $('#rejectBtn').on('click', function(event){ 
+       if(confirm('결재문서를 반려하겠습니까?') == false){
+         event.preventDefault();
+         return;
+       }
+
+
+      if (approvalCount === 3) {
+        if (approvalLines[0].approvalOrder === approvalSequence && loginMemberNo === approvalLines[0].memberDTO.memberNo) {
+          $('#submitApproval').attr('action', '/approval/rejectApproval.do');
+          $('#submitApproval').submit();
+        }
+        else if (approvalLines[1].approvalOrder === approvalSequence && loginMemberNo === approvalLines[1].memberDTO.memberNo) {
+          $('#submitApproval').attr('action', '/approval/rejectApproval.do');
+          $('#submitApproval').submit();  
+        }
+        else if (approvalLines[2].approvalOrder === approvalSequence && loginMemberNo === approvalLines[2].memberDTO.memberNo) {
+          $('#submitApproval').attr('action', '/approval/rejectApproval.do');
+          $('#submitApproval').submit();  
+        }
+        else {
+          alert('이전 결재자가 승인하지 않았습니다');
+        }
+      } else if(approvalCount === 2) {
+          if (approvalLines[0].approvalOrder === approvalSequence && loginMemberNo === approvalLines[0].memberDTO.memberNo) {
+            alert('1번째');
+            $('#submitApproval').attr('action', '/approval/rejectApproval.do');
+            $('#submitApproval').submit();  
+          } else if (approvalLines[1].approvalOrder === approvalSequence && loginMemberNo === approvalLines[1].memberDTO.memberNo) {
+              alert('2번째');
+              $('#submitApproval').attr('action', '/approval/rejectApproval.do');
+              $('#submitApproval').submit();  
+          } else {
+              alert('이전 결재자가 승인하지 않았습니다');
+          } 
+        
+      } else { 
+              $('#submitApproval').attr('action', '/approval/submitApproval.do');
+              $('#submitApproval').submit();  
+      } 
+       
+   }) // 반려버튼 function 끝
           
           
-          
-        })
-    })
-*/
+     // 게시글 삭제하기
+     $('#removeBtn').on('click', function(event){ 
+       if(confirm('결재문서를 삭제하시겠습니까?') == false){
+         event.preventDefault();
+         return;
+       }
+       
+                 
+       $('#submitApproval').attr('action', '/approval/removeApproval.do');
+       $('#submitApproval').submit();  
+       
+     }) // 삭제버튼 function 끝
+       
+  
+     } // fnInit() 종료
+     
+     fnInit(); 
+  
+
 
 </script>
+<!--/* footer 영역 */-->
 
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 </body>
 </html>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
