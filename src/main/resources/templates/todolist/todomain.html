@@ -306,30 +306,25 @@
         			width: '27rem'
         		}).then((result) => {
         			if(result.isConfirmed){
-        				new Promise(function(resolve, reject){
-	        				resolve();
-	        				$.ajax({
-	        					type: 'post',
-	        					url: '/todolist/removeTodo.do',
-	        					data: 'todolistNo=' + todolistNo,
-	        					dataType: 'json',
-	        					success: function(resData){
-	        						let result = resData.deleteResult;
-	        						if(result == 1){
-	        							Swal.fire({
-	        								icon: 'success',
-	        								title: '할 일이 삭제되었습니다.',
-	        								toast: true,
-	        								confirmButtonText: '확인',
-	        								timer: 2500,
-	        								timerProgressShow: true
-	        							})
-	        						}
-	        					}
-	        				})
-        			}).then(function(){
-        				location.href = '/todolist/todomain.do';
-        			})
+        				$.ajax({
+        					type: 'post',
+        					url: '/todolist/removeTodo.do',
+        					data: 'todolistNo=' + todolistNo,
+        					dataType: 'json',
+        					success: function(resData){
+        						let result = resData.deleteResult;
+        						if(result == 1){
+        							Swal.fire({
+        								icon: 'success',
+        								title: '할 일이 삭제되었습니다.',
+        								toast: true,
+        								confirmButtonText: '확인'
+        							}).then((result) => {
+        								location.href= '/todolist/todomain.do';
+        							})
+        						}
+        					}
+        				})
         			}
         		})
         	})

@@ -3,12 +3,10 @@
 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 휴가신청서')}"></head>
 <script th:src="@{/js/bootstrap.min.js}"></script>
-
-<!--/* <link rel="styleshhet" th:href="@{/css/bootstrap.css}"> */-->
-<link rel="stylesheet" th:href="@{/css/mirae.css}" >
+<link rel="stylesheet" th:href="@{/css/mirae.css(ver=1.0)}" >
 <script th:replace="~{/layout/common::datepickerSetting}"></script>
 <body>
-
+  
   <!--/* 결재선 지정 모달 */-->
   <div th:replace="~{/approval/approvalModal::modalFrag}"></div>
 
@@ -28,7 +26,7 @@
     
       <!--/* 실제 내용 영역 */-->
         <div class="main-panel">
-         <form id="approvalForm" method="post" enctype="multipart/form-data" th:action="@{/approval/addApproval.do}">
+         <form id="approvalForm" method="post" enctype="multipart/form-data">
           <div class="content-wrapper-vacation">
             <div class="document-wrapper" >
               <table>
@@ -91,15 +89,17 @@
                       <label class="button-style" for="files" >파일 첨부하기</label> 
                       <input type="file" id="files" name="files" multiple="multiple" onchange="fnFileCheck(this)" hidden="">
                       <button type="button" id="btnReset" class="btn btn-outline-primary btn-fw">모두 삭제</button>
-                      <span>1개 업로드 완료!</span>
                     </div>  
                     <div class="file-list-container" id="filesDrag">
                       <div class="fileDrop open" id="fileDrop">
-                        <div id="fileDropArea">
+                        <div id="fileDropArea" style="height: 20px;">
+                          <div></div>
                           <i class="fa-solid fa-paperclip"></i>파일을 마우스로 끌어 오세요.
+                          </div>
                         </div>
                         <!--/* 첨부파일 목록 나오는 곳 */-->
                       </div>
+       
                     </div>
                   </td>
                 </tr>
@@ -110,6 +110,7 @@
                 <input type="hidden" name="memberNo" th:value="${session.loginMember.memberNo}">
                 <input type="hidden" name="formNo" th:value="${formNo}">
                 <input type="hidden" name="docStatus" value="1">
+                <input type="hidden" id="temporaryDocStatus" name="temporaryDocStatus">
                 <input type="hidden" name="approvalStatus" value="0">
                 <input type="hidden" id="approvalCount" name="approvalCount">
                 <input type="hidden" id="approvalSequence" name="approvalSequence" value="0">
@@ -122,12 +123,14 @@
                 <button type="button" id="approvalLine" class="btn btn-primary btn-sm"  style="border-radius: 3px; font-size: 20px;" data-toggle="modal" data-target="#exampleModalCenter">결재선 설정</button>
               <div class="approval-reference-area" id="approvalList">
                 <p>결재선</p>
+                <br>
                 <div>
                   <!--/* ajax 조회 */-->               
                 </div>
               </div>
               <div class="approval-reference-area" id="referenceList">
                 <p>참조</p>
+                <br>
                 <div>
                   <!--/* ajax 조회 */-->               
                 </div>
@@ -139,10 +142,7 @@
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
-  <!--/* footer 영역 */-->
-  
 <script>
-
   // datepicker 관련
   var startDate = $('#startDate');
   var endDate = $('#endDate');
@@ -277,8 +277,8 @@
       $('#fileDropArea').find('span').remove();
       
       // 파일목록이 모두 삭제된 경우 초기 메시지 표시
-      if ($('#fileDropArea').is(':empty')) {
-        $('#fileDropArea').html('<i class="fa-solid fa-paperclip"></i>파일을 마우스로 끌어 오세요.');
+      if ($('#fileDropArea').children('span').length === 0) {
+        $('#fileDropArea').html('<i class="fa-solid fa-paperclip"></i> 파일을 마우스로 끌어 오세요.');
       }
       
     })
@@ -297,22 +297,34 @@
   }
 
   // 임시저장 버튼
-  function fnTemporarySave() {
+    $('#save').on('click', function(){
+      
+      // 총 결재자 수 파라미터 전달
+      let Count = $('#approval-section').find('table').length; 
+      // 임시저장 문서값
+      let status = 0; 
+      $('#temporaryDocStatus').val(status);
+      $('#approvalCount').val(Count);
+      $('#approvalForm').attr('action', '/approval/temporaryDoc.do')
+      $('#approvalForm').submit();
+    })
+      
 
-  }
   
   // 결재상신
   $('#submitApproval').on('click', function(){
     
     // 총 결재자 수 파라미터 전달
-    let Count = $('#approval-section').find('table').length; 
-    $('#approvalCount').val(Count);
-    
+    let count = $('#approval-section').find('table').length;
+    $('#approvalCount').val(count);
+    $('#approvalForm').attr('action', '/approval/addApproval.do')
     $('#approvalForm').submit();
     
   })
     
 </script>
+<!--/* footer 영역 */-->
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 
 </body>
 </html>

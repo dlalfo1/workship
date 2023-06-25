@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 메인페이지')}"></head>
-<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+<link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
 <body>
 
   <div class="container-scroller">
@@ -176,8 +176,22 @@
                 <div class="col-md-12 stretch-card grid-margin mb-3">
                   <div class="card">
                     <div class="card-body">
-                      <p class="card-title">최신공지사항</p>
-                      <table class="table table-hover table-striped table-responsive-md">
+                      <div>
+	                      <p class="card-title">최근 게시글</p>
+						            <ul class="nav nav-tabs" role="tablist">
+						              <li class="nav-item" role="presentation">
+						                <a class="nav-link active text-center" id="btnNoticeList" data-bs-toggle="tab" data-bs-target="#noticeList" type="button" role="tab" aria-controls="noticeList" aria-selected="true">
+						                  <strong>공지사항</strong>
+						                </a>
+						              </li>
+						              <li class="nav-item" role="presentation">
+						                <a class="nav-link text-secondary text-center" id="btnBoardList" data-bs-toggle="tab" data-bs-target="#boardList" type="button" role="tab" aria-controls="boardList" aria-selected="false">
+						                  <strong th:text="|${departmentName?}게시판|"></strong>
+						                </a>
+						              </li>
+						            </ul>
+					            </div>
+                      <table id="noticeList" class="tab-pane fade show active table table-striped table-hover table-sm table-responsive-md text-center" id="noticeList" role="tabpanel" aria-labelledby="btnNoticeList">
                         <thead class="text-center">
                           <tr>
                             <th width="60%">제목</th>
@@ -198,7 +212,7 @@
 	                              <td class="text-center" th:text="${notice?.memberDTO.memberName}"></td>
 	                              <td class="text-center" th:text="${#dates.format(notice?.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
 	                            </tr>
-	                            <script th:inline="javascript">
+	                            <script>
 	                              function fnNoticeDetail(noticeNo){
 	                            	  location.href = '/notice/noticeDetail.html?noticeNo=' + noticeNo;
 	                              }
@@ -207,9 +221,59 @@
                           </th:block>
                         </tbody>
                       </table>
+                       <table id="boardList" class="tab-pane fade table table-striped table-hover table-sm table-responsive-md text-center" id="boardList" role="tabpanel" aria-labelledby="btnBoardList">
+                        <thead class="text-center">
+                          <tr>
+                            <th width="60%">제목</th>
+                            <th width="15%">작성자</th>
+                            <th width="25%">작성일</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <th:block th:if="${#lists.isEmpty(deptBoardList)}">
+                            <tr> 
+                              <td class="text-center" colspan="3">등록된 최신 게시글이 없습니다.</td>
+                            </tr>
+                          </th:block>
+                          <th:block th:unless="${#lists.isEmpty(deptBoardList)}">
+                            <th:block th:each="board:${deptBoardList}">
+                              <tr th:onclick="fnBoardDetail([[${board?.boardNo}]])">
+                                <td th:text="${board?.boardTitle}"></td>
+                                <td class="text-center" th:text="${board?.memberDTO.memberName}"></td>
+                                <td class="text-center" th:text="${#dates.format(board?.CreatedAt, 'yyyy/MM/dd HH:mm')}"></td>
+                              </tr>
+                              <script th:inline="javascript">
+                                function fnBoardDetail(noticeNo){
+                                  location.href = '/board/board/boardDetail.html?boardNo' + boardNo;
+                                }
+                              </script>
+                            </th:block>
+                          </th:block>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
+
+                <script>
+                $('#btnNoticeList').on('click', function(){
+                    $(this).addClass('active');
+                    $(this).removeClass('text-secondary');
+                    $('#noticeList').addClass('show active');
+                    $('#boardList').removeClass('show active');
+                    $('#btnBoardList').removeClass('active');
+                    $('#btnBoardList').addClass('text-secondary');
+                  })
+                  
+                  $('#btnBoardList').on('click', function(){
+                      $(this).addClass('active');
+                      $(this).removeClass('text-secondary');
+                      $('#boardList').addClass('show active');
+                      $('#noticeList').removeClass('show active');
+                      $('#btnNoticeList').removeClass('active');
+                      $('#btnNoticeList').addClass('text-secondary');
+                  })
+                </script>
                 
                 <!--/* 프로젝트 */-->
                 <div class="col-md-6 stretch-card grid-margin">
@@ -292,6 +356,7 @@
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
 
   <!--/* footer 영역 */-->
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
 
 </body>
