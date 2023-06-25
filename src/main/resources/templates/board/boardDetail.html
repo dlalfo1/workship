@@ -96,6 +96,7 @@
 	  frm.attr('action', '/board/removeBoard.do?boardCategory=' + boardCategory);
 	  frm.submit();
 	}
+	
   function fnAddComment(){
 		$('#btnAddComment').on('click', function(){
         if($('#commentContent').val() == ''){
@@ -117,6 +118,7 @@
         })
       })
     }
+  
     function fnCommentList(){
         $.ajax({
           type: 'get',
@@ -150,7 +152,6 @@
                      boardComment.commentNo +
                      ')">';
                   } else if(emailId != boardComment.memberDTO.emailId && boardComment.commentDepth == 0){
-                    str += '<input type="button" value="답글" class="btnOpenReply">';
                   }
                 }
                 str += '<div class="replyArea blind">';
@@ -169,6 +170,7 @@
           }
     });
     }
+    
     function fnRemoveComment(commentNo) {
         if (confirm('댓글을 삭제하시겠습니까?')) {
           $.ajax({
@@ -186,6 +188,29 @@
         }
     	history.go(0);
       }
+    
+    function fnAddReply(){
+        $('#btnAddReply').on('click', function(){
+          if($(this).prevAll('.replyContent').val() == ''){  
+            alert('답글 내용을 입력하세요.');
+            return;
+          }
+          $.ajax({
+            type: 'post',
+            url: '/boardComment/addReply.do',
+            data: $(this).parent('.frmReply').serialize(),  
+            dataType: 'json',
+            success: function(resData){  
+              if(resData.isAdd){
+                alert('답글이 등록되었습니다.');
+                fnCommentList();
+              }
+            }
+          })
+        })
+      }
+    
+    
 </script>
 <body>
 
@@ -270,6 +295,7 @@
                 </th:block>
                  */-->
                   <button type="button" class="btn btn-primary btn-rounded btn-sm" onclick="fnWrite()">새글쓰기</button>
+                	<input type="hidden" name="boardCategory" th:value="${boardCategory}">
                 <!--/* 
                 <th:block th:if="${session.emailId == b.MemberDTO.emailId}">
                 </th:block>

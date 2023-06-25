@@ -92,29 +92,23 @@
                 ON M.MEMBER_NO = B.MEMBER_NO INNER JOIN JOB_T J
                 ON M.JOB_NO = J.JOB_NO
 						 WHERE B.BOARD_CATEGORY = #{boardCategory}
-                
-           <where>
            <!-- 전달된 column 그대로 부를 수 있다. mybatis.org 동적 sql 참고-->
             <if test="column != '' and query != ''">
                AND ${column} LIKE CONCAT('%', #{query}, '%')
-            </if>
-            
-            
-           </where>) A
-     ORDER BY B.BOARD_NO DESC
+            </if>) A
+     ORDER BY A.BOARD_NO DESC
      LIMIT #{begin}, #{recordPerPage}
   </select>
   
     <select id="getBoardSearchCount" parameterType="Map" resultType="int">
-    SELECT COUNT(B.BOARD_NO)
-      FROM BOARD_T B RIGHT OUTER JOIN MEMBER_T M
-        ON M.MEMBER_NO = B.MEMBER_NO
-    <where>
-    B.BOARD_CATEGORY = #{boardCategory}
-      <if test="column != '' and query != ''">
-        ${column} LIKE CONCAT('%', #{query}, '%')
-      </if>
-    </where>
+    SELECT COUNT(A.BOARD_NO)
+      FROM (SELECT B.BOARD_CATEGORY, B.BOARD_NO, B.BOARD_TITLE, B.BOARD_CONTENT
+				      FROM BOARD_T B RIGHT OUTER JOIN MEMBER_T M
+				        ON M.MEMBER_NO = B.MEMBER_NO
+			       WHERE B.BOARD_CATEGORY = #{boardCategory}
+					      <if test="column != '' and query != ''">	 
+					       AND ${column} LIKE CONCAT('%', #{query}, '%')
+					      </if> ) A
   </select>
   
     <!-- 게시판 조회수 -->

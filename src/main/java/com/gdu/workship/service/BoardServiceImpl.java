@@ -50,6 +50,7 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public void loadBoardList(HttpServletRequest request, Model model) {
 		int boardCategory = Integer.parseInt(request.getParameter("boardCategory"));
+		System.out.println(boardCategory + "@321321312312636@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	    Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
 	    int page = Integer.parseInt(opt1.orElse("1"));
 	    
@@ -63,8 +64,9 @@ public class BoardServiceImpl implements BoardService {
 	    Map<String, Object> parameter = new HashMap<>();
 	    parameter.put("query", query);
 	    parameter.put("boardCategory", boardCategory);
+	    parameter.put("column", column);
 	    int totalRecord = boardMapper.getBoardSearchCount(parameter);
-	    
+	    System.out.println("토탈" + totalRecord);
 	    int recordPerPage = 5;
 	    
 	    Map<String, Object> map = new HashMap<String, Object>();
@@ -78,7 +80,8 @@ public class BoardServiceImpl implements BoardService {
 	    System.out.println(map);
 	    
 	    List<BoardDTO> boardList = boardMapper.getBoardList(map);
-	    System.out.println(boardList + "!!!!!!!!!!!!!!!!!!!!!");
+	    System.out.println("리슷흐 : " + boardList);
+	    model.addAttribute("boardCategory", boardCategory);
 	    model.addAttribute("boardList", boardList);
 	    model.addAttribute("beginNo", totalRecord - (page - 1) * recordPerPage);
 	    if(column.isEmpty() || query.isEmpty()) {

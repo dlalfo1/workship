@@ -4,6 +4,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+
 import com.gdu.workship.domain.BoardCommentDTO;
 
 public interface BoardCommentService {
