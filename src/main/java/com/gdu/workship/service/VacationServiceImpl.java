@@ -45,7 +45,7 @@ public class VacationServiceImpl implements VacationService {
 		Map<String, Object> parameter = new HashMap<>();
 		LocalDate now = LocalDate.now();
 		String thismonth = LocalDate.of(now.getYear(), now.getMonthValue(), 1).toString();
-		String today = LocalDate.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth()).toString();
+		String today = LocalDate.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth() + 1).toString();
 		String startDate = request.getParameter("startDate");
 		String endDate = request.getParameter("endDate");
 		if(startDate == null || startDate.equals("")) startDate = thismonth;
@@ -116,7 +116,7 @@ public class VacationServiceImpl implements VacationService {
 		Map<String, Object> parameter = new HashMap<>();
 		LocalDate now = LocalDate.now();
 		String thismonth = LocalDate.of(now.getYear(), now.getMonthValue(), 1).toString();
-		String today = LocalDate.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth()).toString();
+		String today = LocalDate.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth() + 1).toString();
 		String startDate = request.getParameter("startDate");
 		String endDate = request.getParameter("endDate");
 		if(startDate == null || startDate.equals("")) startDate = thismonth;

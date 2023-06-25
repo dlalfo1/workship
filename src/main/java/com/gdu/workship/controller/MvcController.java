@@ -11,6 +11,11 @@ public class MvcController {
 		return "index";
 	}
 	
+	@GetMapping("/approval/docList.html")
+	public String approvalMain() {
+		return "approval/docList";
+	}
+	
 	@GetMapping("/project/project.html")
 	public String projectMain() {
 		return "project/projectMain";

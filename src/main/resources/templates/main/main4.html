@@ -3,6 +3,53 @@
 <head th:replace="~{/layout/header::headFrag('workship 메인페이지')}"></head>
 <link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
 <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+<style>
+.tag-orange {
+    width : 80px;
+    height : 25px;
+    background-color: rgb(243, 156, 18);
+    margin : auto;
+    color : white;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.tag-red {
+    width : 80px;
+    height : 25px;
+    background-color: rgb(231, 76, 60);
+    margin : auto;
+    color : white;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.tag-green {
+    width : 80px;
+    height : 25px;
+    background-color: rgb(46, 204, 113);
+    margin : auto;
+    color : white;
+    border-radius: 50px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.tag-gray {
+    width : 80px;
+    height : 25px;
+    background-color: rgb(158, 158, 158);
+    margin : auto;
+    color : white;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
 <body>
 
   <div class="container-scroller">
@@ -291,41 +338,7 @@
                 	  location.href='/board/boardWrite.html?boardCategory=' + boardCategory;
                   })
                 </script>
-                
-                <!--/* 프로젝트 */-->
-              <!--   <div class="col-md-6 stretch-card grid-margin">
-                  <div class="card">
-                    <div class="card-body">
-                      <p class="card-title">참여 중인 프로젝트</p>
-                      <table class="table table-sm table-bordered table-responsive-md">
-                        <thead class="text-center">
-                          <tr style="background-color: #F5F7FF;">
-                            <th>프로젝트명</th>
-                            <th>상태</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>파이널 프로젝트 이것도 걍</td>
-                            <td class="text-center"><label class="badge badge-warning">진행중</label></td>
-                          </tr>
-                          <tr>
-                            <td>세미프로젝트 몽몽 최근등록 3개만?</td>
-                            <td class="text-center"><label class="badge badge-success">완료</label></td>
-                          </tr>
-                          <tr>
-                          <tr>
-                            <td>취뽀 프로젝트 하는 게 편할 듯ㅋ</td>
-                            <td class="text-center"><label class="badge badge-info">기획중</label></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-                
-                 -->
-                
+
                 <!--/* ToDo-List */-->
                 <div class="col-md-6 stretch-card grid-margin">
                   <div class="card">
@@ -412,16 +425,16 @@
 	                              <input type="hidden" class="approvalNo" th:value="${approval.approvalNo}">
 	                              <input type="hidden" class="docName" th:value="${approval.docName}">
 	                              <th:block th:if="${approval.approvalStatus == 0}">
-	                                <i class="fa-solid fa-circle fa-2x text-secondary"></i>
+	                                <button class="btn btn-secondary btn-sm">대기</button>
 	                              </th:block>
 	                              <th:block th:if="${approval.approvalStatus == 1}">
-	                                <i class="fa-solid fa-circle fa-2x text-warning"></i>
+	                                <button class="btn btn-warning btn-sm">진행</button>
 	                              </th:block>
 	                              <th:block th:if="${approval.approvalStatus == 2}">
-	                                <i class="fa-solid fa-circle fa-2x text-success"></i>
+	                                <button class="btn btn-success btn-sm">완료</button>
 	                              </th:block>
 	                              <th:block th:if="${approval.approvalStatus == 3}">
-                                  <i class="fa-solid fa-circle fa-2x text-danger"></i>
+                                  <button class="btn btn-danger btn-sm">반려</button>
                                 </th:block>
 	                            </td>
 	                            <td width="80%" th:text="${approval.docTitle}"></td>
