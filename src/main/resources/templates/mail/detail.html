@@ -197,27 +197,31 @@
 	       							</th:block>       							
        							</div>
        						</div>
-      		
-      						<th:block th:if = "${not #lists.isEmpty(mailccList) && mailccList != null}">       		
+       						
+       						<th:block th:unless="${#lists.isEmpty(mailccList)}">
 	       						<div class="mainContent3">
 	       							<span class="mainContent">참조</span>
 	       							<div class="senderContent">
 		       							<th:block th:each="mailccSender:${mailccList}">
-		       								<span class="sender" th:text="|${mailccSender?.memberName}(${mailccSender?.emailId})|"></span>
+		       								<th:block th:if="${mailccSender != null && mailccSender != ''}">
+			       								<span class="sender" th:text="|${mailccSender?.memberName}(${mailccSender?.emailId})|"></span>
+		       								</th:block>
 		       							</th:block>
 		       						</div>
-	       						</div>
-       						</th:block>
-       						
-       						<th:block th:if = "${not #lists.isEmpty(mailccList) && mailccList != null}">       					
+	       						</div>       				
+       						</th:block> 		
+       										
+       						<th:block th:unless="${#lists.isEmpty(mailbccList)}">
 	       						<div class="mainContent3">
 	       							<span class="mainContent">숨은참조</span>
 	       							<div class="senderContent">
 		       							<th:block th:each="mailbccSender:${mailbccList}">
-		       								<span class="sender" th:text="|${mailbccSender?.memberName}(${mailbccSender?.emailId})|"></span>
+		       								<th:block th:if="${mailbccSender != null && mailbccSender != ''}">
+			       								<span class="sender" th:text="|${mailbccSender?.memberName}(${mailbccSender?.emailId})|"></span>
+		       								</th:block>
 		       							</th:block>
 	       							</div>
-	       						</div>     						
+	       						</div>     			       						
        						</th:block>
        						
        						<div class="mainContent4">
@@ -293,17 +297,19 @@
 	       								<span class="sender" th:text="|${mailtoSender?.memberName}(${mailtoSender?.emailId})|"></span>					
 	       							</th:block>
        							</div>
-       						</div>
-       			
-       						<th:block th:if = "${not #lists.isEmpty(mailccList) && mailccList != null}"> 
+       						</div>       			
+       					
+       						<th:block th:unless="${#lists.isEmpty(mailccList)}">
 	       						<div class="mainContent3">
 	       							<span class="mainContent">참조</span>
-	       								<div class="senderContent">
-			       							<th:block th:each="mailccSender:${mailccList}">
-			       								<span class="sender" th:text="|${mailccSender?.memberName}(${mailccSender?.emailId})|"></span>			
-			       							</th:block>
-	       								</div>
-	       						</div>
+	   								<div class="senderContent">
+		       							<th:block th:each="mailccSender:${mailccList}">
+		       								<th:block th:if="${mailccSender != null && mailccSender != ''}">
+			       								<span class="sender" th:text="|${mailccSender.memberName}(${mailccSender.emailId})|"></span>			
+		       								</th:block>
+		       							</th:block>
+	   								</div>
+	       						</div>       				
        						</th:block>
        					
        						<th:block th:if="${mailToMe.mailToRole == 'BCC'}">
@@ -348,11 +354,11 @@
 					        				</div>
 				        				</div>
        								</div>       									
-		       						<div class="maildetailContent" th:text="${sentMail.mailContent}"></div>
+		       						<div class="maildetailContent" th:utext="${sentMail.mailContent}"></div>
        							</th:block>
        							
        							<th:block th:unless="${sentMail.mailHasFile == 'Y'}">
-       								<div class="maildetailContent" th:text="${sentMail.mailContent}"></div>
+       								<div class="maildetailContent" th:utext="${sentMail.mailContent}"></div>
        							</th:block>
        							
        						</div> 
