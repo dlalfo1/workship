@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Mapper;
 import com.gdu.workship.domain.BoardDTO;
 import com.gdu.workship.domain.BoardFileDTO;
 import com.gdu.workship.domain.MemberDTO;
-import com.gdu.workship.domain.NoticeDTO;
 
 @Mapper
 public interface BoardMapper {

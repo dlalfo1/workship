@@ -146,10 +146,11 @@
                     <div class="frmWrap" style="margin: 1rem; padding-left: 22rem; padding-right: 2rem;">
                       <form id="frmSearch" th:action="@{/board/boardList.do}">
                         <select class="form-control form-control-sm" name="column" id="column" style="display:inline-block; width:80px;">
-                          <option value="board_TITLE" selected="selected">제목</option>
-                          <option value="board_CONTENT">내용</option>
+                          <option value="B.BOARD_TITLE" selected="selected">제목</option>
+                          <option value="B.BOARD_CONTENT">내용</option>
                         </select>
                         <input class="form-control form-control-sm col-4" type="text" name="query" id="query" style="display:inline-block;" placeholder="검색어를 입력해주세요.">
+                        <input type="hidden" name="boardCategory" id="boardCategory" th:value="${boardCategory}">
                         <button type="submit" class="btn btn-primary">검색</button>
                       </form>
                     </div>

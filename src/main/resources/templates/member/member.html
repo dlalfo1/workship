@@ -31,6 +31,10 @@
     text-decoration: underline;
     font-weight: 900;
   }
+  .membertr td .rounded-circle {
+    width: 24px;
+    height: 24px;
+  }
   .membertr td a{
     text-decoration: none;
     color: black;
@@ -144,7 +148,7 @@
                 default: status = '';
               }
               str += '<td>' + member.memberNo + '</td>';
-              str += '<td><a href="/member/memberDetail.html?memberNo=' + member.memberNo +'">' + member.memberName + '</td>';
+              str += '<td><img class="rounded-circle" src="/member/display.do?memberNo=' + member.memberNo + '"><a href="/member/memberDetail.html?memberNo=' + member.memberNo +'">' + member.memberName + '</td>';
               str += '<td>' + member.departmentDTO.deptName + '</td>';
               str += '<td>' + member.jobDTO.jobName + '</td>';
               str += '<td>' + fnDateFormat(member.joinedAt) + '</td>';
@@ -334,10 +338,10 @@
                     	</th:block>
                       <th:block th:if="${not #lists.isEmpty(deptList)}">
                         <th:block th:each="dept:${deptList}">
-                    		  <li style="width: 80px;"><a href="javascript:void(0);" th:text="${dept.deptName}" th:onclick="fnLoadListByDept([[${dept.deptNo}]])"></a></li>
+                    		  <li style="width: 100px;"><a href="javascript:void(0);" th:text="${dept.deptName}" th:onclick="fnLoadListByDept([[${dept.deptNo}]])"></a></li>
                         </th:block>
                     	</th:block>
-                      <li style="width: 80px;"><a href="javascript:void(0);" th:onclick="fnLoadRetiredList()">퇴직자</a></li>
+                      <li style="width: 100px;"><a href="javascript:void(0);" th:onclick="fnLoadRetiredList()">퇴직자</a></li>
                     </ul>
                   </div>
                   
@@ -363,7 +367,7 @@
                           <th:block th:each="member:${memberList}">
                             <tr class="membertr">
                               <td class="no" th:text="${member.memberNo}"></td>
-                              <td><a th:href="@{/member/memberDetail.html(memberNo=${member.memberNo})}" th:text="${member.memberName}"></a></td>
+                              <td><img class="rounded-circle" th:src="@{/member/display.do(memberNo=${member.memberNo})}"><a th:href="@{/member/memberDetail.html(memberNo=${member.memberNo})}" th:text="${member.memberName}"></a></td>
                               <td th:text="${member.departmentDTO.deptName}"></td>
                               <td th:text="${member.jobDTO.jobName}"></td>
                               <td th:text="${#dates.format(member.joinedAt, 'yyyy/MM/dd')}"></td>

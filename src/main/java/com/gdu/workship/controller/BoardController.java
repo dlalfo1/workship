@@ -76,7 +76,7 @@ public class BoardController {
 	    if(increaseResult == 1) {
 	      return "redirect:/board/boardDetail.html?boardNo=" + boardNo;
 	    } else {
-	      return "redirect:/board/boardList2.do";
+	      return "redirect:/board/boardList.do";
 	    }
 	  }
 	  
