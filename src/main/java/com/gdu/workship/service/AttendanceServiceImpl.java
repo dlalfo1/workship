@@ -167,7 +167,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 		parameter.put("attendance", attendance);
 		
 		/* recordPerPage 수정하기 */
-		int recordPerPage = 5;
+		int recordPerPage = 10;
 		
 		int searchRecord = attendanceMapper.searchCount(parameter);
 		Optional<String> pageStr = Optional.ofNullable(request.getParameter("page"));
