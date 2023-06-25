@@ -31,7 +31,12 @@ import lombok.RequiredArgsConstructor;
 @Controller
 public class ApprovalController {
   
-   private final ApprovalService approvalService;
+  private final ApprovalService approvalService;
+  
+  @GetMapping("/docList.html")
+  public String approvalDocList() {
+    return "approval/docList";
+  }
   
   // 선택 문서 작성화면으로 넘어가기
   @GetMapping("/documentList.html")
