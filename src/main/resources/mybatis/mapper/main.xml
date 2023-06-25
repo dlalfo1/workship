@@ -38,13 +38,65 @@
     </association>
   </resultMap>
   
+  <resultMap type="BoardDTO" id="BoardMap">
+    <id column="BOARD_NO" property="boardNo"/>
+    <result column="BOARD_TITLE" property="boardTitle"/>
+    <result column="BOARD_CATEGORY" property="boardCategory"/>  
+    <result column="BOARD_CREATED_AT" property="boardCreatedAt"/> 
+    <association javaType="MemberDTO" property="memberDTO">
+      <id column="MEMBER_NO" property="memberNo"/>
+      <result column="MEMBER_NAME" property="memberName"/>
+    </association>
+  </resultMap>
+  
     <select id="getRecentNoticeList" resultMap="NoticeMap">
     SELECT A.NOTICE_NO, A.MEMBER_NAME, A.NOTICE_TITLE, A.NOTICE_CONTENT, A.NOTICE_CREATED_AT, A.NOTICE_MODIFIED_AT, A.NOTICE_HIT, A.NOTICE_STATE
       FROM (SELECT N.NOTICE_NO, M.MEMBER_NAME, N.NOTICE_TITLE, N.NOTICE_CONTENT, N.NOTICE_CREATED_AT, N.NOTICE_MODIFIED_AT, N.NOTICE_HIT, N.NOTICE_STATE
               FROM NOTICE_BOARD_T N INNER JOIN MEMBER_T M
                 ON M.MEMBER_NO = N.MEMBER_NO) A
      ORDER BY N.NOTICE_NO DESC
-     LIMIT 0, 4
+     LIMIT 0, 5
   </select>
-
+  
+  <select id="getRecentBoardList" parameterType="int" resultMap="BoardMap">
+    SELECT B.BOARD_NO, B.BOARD_TITLE, B.BOARD_CATEGORY, B.BOARD_CREATED_AT, M.MEMBER_NAME
+      FROM BOARD_T B INNER JOIN MEMBER_T M
+        ON B.MEMBER_NO = M.MEMBER_NO
+     WHERE BOARD_CATEGORY = #{boardCategory}
+     ORDER BY B.BOARD_NO DESC
+     LIMIT 0, 5
+  </select>
+  
+  <select id="getMailNoReadCount" parameterType="String" resultType="int">
+    SELECT COUNT(DISTINCT M.MAIL_NO)
+      FROM MAIL_T M LEFT JOIN MAIL_TO_T T
+        ON M.MAIL_NO = T.MAIL_NO
+     WHERE T.MAIL_TO = #{emailId} AND T.MAIL_TO_CATEGORY = 'INBOX' AND T.MAIL_TO_STATUS = 'N'
+  </select>
+  
+  <select id="getRecentTodolist" parameterType="int" resultType="TodolistDTO">
+    SELECT TODO_TITLE, TODO_STATE
+      FROM TODOLIST_T
+     WHERE MEMBER_NO = #{memberNo}
+     ORDER BY TODOLIST_NO DESC
+     LIMIT 0,5
+  </select>
+  
+  <select id="getTodoListByStatus" parameterType="Map" resultType="TodolistDTO">
+    SELECT TODO_TITLE, TODO_STATE
+      FROM TODOLIST_T
+     WHERE MEMBER_NO = #{memberNo}
+       AND TODO_STATE = #{todoState}
+     ORDER BY TODOLIST_NO DESC
+     LIMIT 0,5
+  </select>
+  
+  <select id="getRecentApprovalList" parameterType="int" resultType="ApprovalDTO">
+    SELECT APPROVAL_NO, DOC_NAME, DOC_TITLE, APPROVAL_STATUS
+      FROM APPROVAL_T
+     WHERE MEMBER_NO = #{memberNo}
+     ORDER BY APPROVAL_NO DESC
+     LIMIT 0,5
+  </select>
+  
 </mapper>

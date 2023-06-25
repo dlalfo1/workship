@@ -178,12 +178,14 @@
                         </td>
                          <td>[[${#dates.format(vacation.vacationApprovalDTO.createdAt, 'YYYY-MM-dd')}]]</td>
                          <td>
-                           <span>[[${#dates.format(vacation.vacationApprovalDTO.vacationStartDate, 'YYYY-MM-dd')}]]</span>
-                           <input type="text" class="invisible" th:value="${#dates.format(vacation.vacationApprovalDTO.vacationStartDate, 'YYYY-MM-dd')}">
+                           <span class="startDate">[[${#dates.format(vacation.vacationApprovalDTO.vacationStartDate, 'YYYY-MM-dd')}]]</span>
+                           <input type="text" class="datepick invisible vacationStart" th:value="${#dates.format(vacation.vacationApprovalDTO.vacationStartDate, 'YYYY-MM-dd')}">
+                           <label for="vacationStart"><i class="fa-regular fa-calendar invisible" style="margin-left:-35px;"></i></label>
                          </td>
                          <td>
                            <span>[[${#dates.format(vacation.vacationApprovalDTO.vacationEndDate,'YYYY-MM-dd')}]]</span>
-                           <input type="text" class="invisible" th:value="${#dates.format(vacation.vacationApprovalDTO.vacationEndDate, 'YYYY-MM-dd')}">
+                           <input type="text" class="datepick invisible vacationEnd" th:value="${#dates.format(vacation.vacationApprovalDTO.vacationEndDate, 'YYYY-MM-dd')}">
+                           <label for="vacationEnd"><i class="fa-regular fa-calendar invisible" style="margin-left:-35px;"></i></label>
                          </td>
                          <td class="vacationDay">[[${vacation.vacationDay}]]</td>
                          <td>
@@ -204,6 +206,21 @@
 						  </table>
 						  
 						  <script>
+						    var vacationStart = $('.vacationStart');
+						    var vacationEnd = $('.vacationEnd');
+						    vacationStart.datepicker({
+						      minDate: 0,
+						      onClose: function(selectedDate){
+						        vacationEnd.datepicker('option', 'minDate', selectedDate);
+						      }
+						    });
+						    vacationEnd.datepicker({
+						      minDate: 0,
+						      onClose: function(selectedDate){
+						        vacationStart.datepicker('option', 'maxDate', selectedDate);
+						      }
+						    });
+			                
 						    function fnSearchVacation(){
 						    	$('#frmVacationSearch').submit();
 						    }
@@ -212,6 +229,7 @@
 						    	var value = select.prev().text();
 						    	$(this).closest('tr').find('span').addClass('invisible');
 						    	$(this).closest('tr').find('input[type=text]').removeClass('invisible');
+						    	$(this).closest('tr').find('i').removeClass('invisible');
 						    	select.val(value).prop('selected', true);
 						    	select.removeClass('invisible');
 						    	$(this).next().removeClass('invisible');
@@ -220,6 +238,7 @@
 						    $('.cancelBtn').on('click', function(){
 						    	$(this).closest('tr').find('span').removeClass('invisible');
 						    	$(this).closest('tr').find('input[type=text]').addClass('invisible');
+						    	$(this).closest('tr').find('i').addClass('invisible');
 						    	$(this).closest('tr').find('select').addClass('invisible');
 						    	$(this).parent().prev().removeClass('invisible');
 						    	$(this).parent().addClass('invisible')
@@ -256,6 +275,7 @@
 						    					timerProgressShow: true
 						    				})
 						    				btn.closest('tr').find('input[type=text]').addClass('invisible');
+						    				btn.closest('tr').find('i').addClass('invisible');
                         btn.closest('tr').find('span').removeClass('invisible');
                         btn.parent().prev().removeClass('invisible');
                         btn.closest('tr').find('select').addClass('invisible');

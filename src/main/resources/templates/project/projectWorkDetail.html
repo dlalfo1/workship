@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('프로젝트 메인페이지')}"></head>
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+<script>
+	
+function fnDeleteW() {
+	$('.btnDelete').on('click', function(){
+		if(confirm('삭제하시겠습니까?') == false){
+			return;
+		}else{	
+			$('#frmDelete').submit();
+			alert('삭제완료');
+		}
+	})
+}
+
+$(function(){
+	fnDeleteW();
+})
+</script>
+<link rel="stylesheet" th:href="@{/css/project.css?ver=1.0}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />        
+<body>
+
+  <div class="container-scroller">
+
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+  
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+    
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+			<div class="project-work-main">
+				<div th:utext="${projectWorkDTO.projectWorkTitle}"></div>
+				<div>소속 프로젝트명</div>				
+				<div th:utext="${projectDTO.projectTitle}"></div>
+				<div>업무 내용</div>
+				<div th:utext="${projectWorkDTO.projectWorkDetail}"></div>
+				<div>담당자</div>
+				<div th:utext="${projectWorkDTO.memberDTO.memberName}"></div>
+				<div>진행 상태</div>
+				<div th:utext="${projectWorkDTO.ingDTO.ingState}"></div>
+				<div>수정일자</div>
+				<div th:utext="${projectWorkDTO.projectWorkModifiedAt}"></div>
+					<th:block th:if="${projectWorkDTO.memberDTO.memberNo == session.loginMember.memberNo}">
+						<form id="frmUpdate" method="get" th:action="@{/project/projectWorkUpdate.html}">
+							<input type="hidden" name="projectWorkNo" th:value="${projectWorkDTO.projectWorkNo}" required>
+							<button type="submit" class="btn btn-primary" id="btnUpdate">수정</button>
+						</form>
+						<form id="frmDelete" method="post" th:action="@{/project/deleteProjectWork.do}">
+							<input type="hidden" name="projectNo" th:value="${projectDTO.projectNo}" required>
+							<input type="hidden" name="projectWorkNo" th:value="${projectWorkDTO.projectWorkNo}" required>
+							<button type="button" class="btn btn-secondary btnDelete">삭제</button>
+							<span><button id="back" type="button" class="btn btn-secondary" th:onclick="location.href='/project/projectWorkList.html?projectNo=[[${projectDTO.projectNo}]]'">프로젝트 목록</button></span>
+						</form>
+					</th:block>				
+	
+       </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+
+  <!--/* footer 영역 */-->
+  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

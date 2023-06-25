@@ -33,5 +33,6 @@ public interface VacationMapper {
 	public int modifyVacationDay(VacationDTO vacationDTO);
 	public VacationDTO selectMemberNoVacationDayByVacationNo(int vacationNo);
 	public int deleteVacationByVacationNo(int vacationNo);
+	public VacationDTO getVacationInfoByVacationInfo(int vacationNo);
 	
 }
