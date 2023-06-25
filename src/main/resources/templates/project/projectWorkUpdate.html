@@ -9,7 +9,20 @@
 	    history.back();
 	  })
 	}
+	
+	function fnUpdate() {
+		$('#btnUpdate').on('click', function(){
+			if(confirm('등록하시겠습니까') == false){
+				return;
+			}else{	
+				$('#frmUpdate').submit();
+				alert('등록완료');
+				return;
+			}
+		})
+	}
 	 $(function(){
+	   fnUpdate();
 	   fnCancel();
 	 })
 </script>
@@ -31,14 +44,19 @@
       <div class="main-panel">
         <div class="content-wrapper">
         	<div class="ProjectAddWrap">
-				<div class="ProjectAddTitle">
-					<h3>프로젝트 수정</h3>
+				<div class="ProjectWorkAddTitle">
+					<h3>업무 수정</h3>
 				</div>
-				<div class="UFormWrap">
-					<form method="post" th:action="@{/project/projectUpdate.do}">
-						<div class="InputProjectTitle">
-							<label for="ProjectTitle">프로젝트명</label>
-							<input type="text" class="form-control p-input" id="ProjectTitle" name="projectTitle"  placeholder="" style="width: 50%" required>
+				<style>
+					.InputProjectWorkTitle {
+						display: flex;
+					}
+				</style>
+				<div class="formWrap">
+					<form id ="frmUpdate" method="post" th:action="@{/project/projectWorkUpdate.do}">
+						<div class="InputProjectWorkTitle">
+							<label for="ProjectTitle">업무명</label>
+							<input type="text" class="form-control p-input" id="ProjectWorkTitle" name="projectWorkTitle"  th:value="${projectWorkDTO.projectWorkTitle}" style="width: 50%" required>
 						</div>
 						<div class="Start">
 							<label for="startDate">시작일</label>
@@ -49,23 +67,25 @@
 		                    <label for="endDate">종료일</label>
 		                    <input type="text" class="datepick" id="endDate" name="projectEndAt" style="width: 40%;" required>
 		                    <label for="endDate"><i class="fa-regular fa-calendar" style="margin-left:-35px;"></i></label>
-						</div>	
-							<div class="Information">
-								<input type="hidden" name="projectModifiedAt" id="projectModifiedAt" required>
-								<input type="hidden" name="projectNo" th:value="${projectDTO.projectNo}" required>
-								<input type="hidden" name="memberNo" th:value="${member.memberNo}" required>
-								<input type="hidden" name="memberName" th:value="${member.memberName}" required>
-								<input type="hidden" name="deptNo" th:value="${member.departmentDTO.deptNo}" required>
 						</div>
-						<div>
-							<select name="ingNo" class="ingNo" required>
+						<select name="ingNo" class="ingNo" required>
 								<option value="1">보류</option>
 								<option value="2">진행중</option>
 								<option value="3">완료</option>
-							</select>
+						</select>
+						<div class="projectWorkDetail">
+							<div>업무 내용</div>
+							<textarea name="projectWorkDetail" rows="30px" cols="100px" th:utext="${projectWorkDTO.projectWorkDetail}"></textarea>
+						</div>
+						<div class="Information">
+							<input type="hidden" name="projectNo" th:value="${projectWorkDTO.projectDTO.projectNo}" required>
+							<input type="hidden" name="projectWorkNo" th:value="${projectWorkDTO.projectWorkNo}" required>
+							<input type="hidden" name="projectWorkModifiedAt" id="modifyDate" required>
+							<input type="hidden" name="memberNo" th:value="${member.memberNo}" required>
+							<input type="hidden" name="deptNo" th:value="${member.departmentDTO.deptNo}" required>
 						</div>
 						<div>
-							<button type="submit" class="btn btn-primary" id="btnSubmit">수정하기</button>
+							<button type="button" class="btn btn-primary" id="btnUpdate">수정하기</button>
 							<button type="button" class="btn btn-secondary" id="btnCancel">취소하기</button>
 						</div>
 					</form>
@@ -77,8 +97,8 @@
 					    var month = ('0' + (today.getMonth() + 1)).slice(-2);
 					    var date = ('0' + today.getDate()).slice(-2);
 					    var time = year + '-' + month + '-' + date;
-						$('input[name=projectStartAt]').attr('value',time);
-					    $('#startDate').text(time);
+						$('input[name=projectWorkModifiedAt]').attr('value',time);
+					    $('#modifyDate').text(time);
 					}
 					
 					function clock2(){
@@ -87,8 +107,8 @@
 					    var month = ('0' + (today.getMonth() + 1)).slice(-2);
 					    var date = ('0' + today.getDate()).slice(-2);
 					    var time = year + '-' + month + '-' + date;
-						$('input[name=projectModifiedAt]').attr('value',time);
-					    $('#projectModifiedAt').text(time);
+						$('input[name=projectStartAt]').attr('value',time);
+					    $('#startDate').text(time);
 					}
 
 					var startDate = $('#startDate');

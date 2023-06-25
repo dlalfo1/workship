@@ -9,7 +9,20 @@
 	    history.back();
 	  })
 	}
+	
+	function fnRegist() {
+		$('#btnRegist').on('click', function(){
+			if(confirm('등록하시겠습니까') == false){
+				return;
+			}else{	
+				$('#frmRegist').submit();
+				alert('등록완료');
+				return;
+			}
+		})
+	}
 	 $(function(){
+	   fnRegist();
 	   fnCancel();
 	 })
 </script>
@@ -36,7 +49,7 @@
 				</div>
 				
 				<div class="formWrap">
-					<form method="post" th:action="@{/project/projectAdd.do}">
+					<form id ="frmRegist" method="post" th:action="@{/project/projectAdd.do}">
 						<div class="InputProjectTitle">
 							<label for="ProjectTitle">프로젝트명</label>
 							<input type="text" class="form-control p-input" id="ProjectTitle" name="projectTitle"  placeholder="" style="width: 50%" required>
@@ -58,7 +71,7 @@
 							<input type="hidden" name="ingNo" value="2" required>
 						</div>
 						<div>
-							<button type="submit" class="btn btn-primary" id="btnSubmit">등록하기</button>
+							<button type="button" class="btn btn-primary" id="btnRegist">등록하기</button>
 							<button type="button" class="btn btn-secondary" id="btnCancel">취소하기</button>
 						</div>
 					</form>
