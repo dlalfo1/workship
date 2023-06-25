@@ -1,6 +1,5 @@
 package com.gdu.workship.controller;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,23 +36,7 @@ public class LoginController {
 	    loginService.logout(request, response);
 	    return "redirect:/";
 	  }
-	  @GetMapping("/findPassword.do")  // 비밀번호 찾기 화면으로 이동
-	  public String findPwForm() {
-	    return "login/findPassword";
-	  }
 	  
-	  @PostMapping("/main2.do")
-	  public String loginSuccess(HttpServletRequest request, HttpServletResponse response) {
-	    boolean isAuthenticated = loginService.loginSuccess(request, response);
-
-	    if (isAuthenticated) {
-	      // 로그인 성공 시 메인 화면으로 리다이렉트
-	      return "redirect:/main/main2";
-	    } else {
-	      // 로그인 실패 시 다시 로그인 페이지로 이동하거나 에러 메시지를 보여줄 수 있습니다.
-	      return "redirect:/index"; // 로그인 페이지로 이동
-	    }
-	  }
 	  
 
 

@@ -36,6 +36,7 @@ public class ReportServiceImpl implements ReportService {
     HttpSession session = request.getSession();
     Optional<Object> opt2 = Optional.ofNullable(session.getAttribute("recordPerPage"));
     int recordPerPage = (int)(opt2.orElse(10));
+    System.out.println("세션레코드: " + session.getAttribute("recordPerPage"));
     
     Optional<String> opt3 = Optional.ofNullable(request.getParameter("column"));
     String column = opt3.orElse("R.REPORT_CONTENT");

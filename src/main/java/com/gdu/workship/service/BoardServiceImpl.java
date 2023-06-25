@@ -49,8 +49,8 @@ public class BoardServiceImpl implements BoardService {
 	
 	@Override
 	public void loadBoardList(HttpServletRequest request, Model model) {
-		
 		int boardCategory = Integer.parseInt(request.getParameter("boardCategory"));
+		System.out.println(boardCategory + "@321321312312636@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	    Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
 	    int page = Integer.parseInt(opt1.orElse("1"));
 	    
@@ -64,8 +64,9 @@ public class BoardServiceImpl implements BoardService {
 	    Map<String, Object> parameter = new HashMap<>();
 	    parameter.put("query", query);
 	    parameter.put("boardCategory", boardCategory);
+	    parameter.put("column", column);
 	    int totalRecord = boardMapper.getBoardSearchCount(parameter);
-	    
+	    System.out.println("토탈" + totalRecord);
 	    int recordPerPage = 5;
 	    
 	    Map<String, Object> map = new HashMap<String, Object>();
@@ -79,7 +80,8 @@ public class BoardServiceImpl implements BoardService {
 	    System.out.println(map);
 	    
 	    List<BoardDTO> boardList = boardMapper.getBoardList(map);
-	    System.out.println(boardList + "!!!!!!!!!!!!!!!!!!!!!");
+	    System.out.println("리슷흐 : " + boardList);
+	    model.addAttribute("boardCategory", boardCategory);
 	    model.addAttribute("boardList", boardList);
 	    model.addAttribute("beginNo", totalRecord - (page - 1) * recordPerPage);
 	    if(column.isEmpty() || query.isEmpty()) {
@@ -142,15 +144,15 @@ public class BoardServiceImpl implements BoardService {
 	    model.addAttribute("b", boardMapper.getBoardByNo(boardNo));
 	    System.out.println(boardMapper.getBoardByNo(boardNo));
 	    model.addAttribute("boardFileList", boardMapper.getBoardFileList(boardNo));
-	    
+	    int boardCategory = boardMapper.getBoardByNo(boardNo).getBoardCategory();
 	    // 이전글(prevNo), 다음글(nextNo)
 	    int nextNo = boardMapper.prevAndNextBoard(boardNo).getNextNo();
 	    int prevNo = boardMapper.prevAndNextBoard(boardNo).getPrevNo();
 	    if(nextNo == 0) nextNo = boardNo;
 	    if(prevNo == 0) prevNo = boardNo;
-	    
 	    model.addAttribute("nextNo", nextNo);
 	    model.addAttribute("prevNo", prevNo);
+	    model.addAttribute("boardCategory", boardCategory);
 	    
 	  }
 
@@ -293,7 +295,7 @@ public class BoardServiceImpl implements BoardService {
 	    String boardContent = request.getParameter("boardContent");
 	    int boardCategory = Integer.parseInt(request.getParameter("boardCategory"));
 	    
-	    // DB로 보낼 NoticeDTO 만들기
+	    // DB로 보낼 boardDTO 만들기
 	    MemberDTO memberDTO = new MemberDTO();
 	    memberDTO.setMemberNo(memberNo);;
 	    BoardDTO boardDTO = new BoardDTO();
@@ -302,10 +304,10 @@ public class BoardServiceImpl implements BoardService {
 	    boardDTO.setBoardContent(boardContent);
 	    boardDTO.setBoardCategory(boardCategory);
 	    
-	    // DB로 NoticeDTO 보내기 (삽입)
+	    // DB로 BoardDTO 보내기 (삽입)
 	    int addResult = boardMapper.addBoard(boardDTO);
 	    
-	    /* Notice_File_T 테이블에 NoticeFileDTO 넣기 */
+	    /* Board_File_T 테이블에 BoardFileDTO 넣기 */
 	    
 	    // 첨부된 파일 목록
 	    List<MultipartFile> files = request.getFiles("files");  // <input type="file" name="files">
@@ -351,7 +353,7 @@ public class BoardServiceImpl implements BoardService {
 	          
 	          /* DB에 첨부 파일 정보 저장하기 */
 	          
-	          // DB로 보낼 NoticeFileDTO 만들기
+	          // DB로 보낼 BoardFileDTO 만들기
 	          BoardFileDTO boardFileDTO = new BoardFileDTO();
 	          boardFileDTO.setBoardFileOriginName(originName);
 	          boardFileDTO.setBoardFileSystemName(filesystemName);
@@ -411,7 +413,7 @@ public class BoardServiceImpl implements BoardService {
 	    String boardContent = request.getParameter("boardContent");
 	    int boardNo = Integer.parseInt(request.getParameter("boardNo"));
 	    
-	    // DB로 보낼 NoticeDTO 만들기
+	    // DB로 보낼 boardDTO 만들기
 	    BoardDTO boardDTO = new BoardDTO();
 	    boardDTO.setBoardTitle(boardTitle);
 	    boardDTO.setBoardContent(boardContent);
@@ -467,7 +469,7 @@ public class BoardServiceImpl implements BoardService {
 	          
 	          /* DB에 첨부 파일 정보 저장하기 */
 	          
-	          // DB로 보낼 NoticeFileDTO 만들기
+	          // DB로 보낼 boardFileDTO 만들기
 	          BoardFileDTO boardFileDTO = new BoardFileDTO();
 	          boardFileDTO.setBoardFileOriginName(originName);
 	          boardFileDTO.setBoardFileSystemName(filesystemName);
@@ -505,7 +507,7 @@ public class BoardServiceImpl implements BoardService {
 	      }
 	    }
 
-	    // DB에서 noticeFileNo값을 가지는 NOTICE_FILE_T 테이블의 데이터를 삭제
+	    // DB에서 boardFileNo값을 가지는 board_FILE_T 테이블의 데이터를 삭제
 	    int removeResult = boardMapper.removeBoardFile(boardFileNo);
 	    
 	    return removeResult;

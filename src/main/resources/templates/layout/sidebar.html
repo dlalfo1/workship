@@ -4,7 +4,7 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar" th:fragment="sidebarFrag">
   <ul class="nav">
     <li class="nav-item">
-      <a class="nav-link" th:href="@{/main/main.html}">
+      <a class="nav-link" th:href="@{/index.html}">
         <i class="fa-solid fa-border-all menu-icon"></i>
         <span class="menu-title">메인페이지</span>
        </a>
@@ -22,11 +22,11 @@
         <i class="menu-arrow"></i>
       </a>
       <div class="collapse" id="approval-basic">
-        <ul class="nav flex-coulmn ssub-menu">
+        <ul class="nav flex-coulmn sub-menu">
           <li class="nav-item"> <a class="nav-link" th:href="@{/approval/docList.html}">결재상신</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/approvalList.do}">결재조회</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/referenceList.do}">참조문서</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/saveList.do}">임시저장문서</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/approvalList.html}">결재조회</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/referenceList.html}">참조문서</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/saveList.html}">임시저장문서</a> </li>
         </ul>
       </div>
     </li>
@@ -38,15 +38,15 @@
       </a>
       <div class="collapse" id="attendance-basic">
         <ul class="nav flex-coulmn sub-menu">
-          <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendList.do(memberNo=${session.loginMember.memberNo})}">출퇴근기록조회</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">출퇴근기록조회</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">연차조회</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendManage.html}">출퇴근기록관리</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">출퇴근기록관리</a> </li>
           <li class="nav-item"> <a class="nav-link" href="#">연차관리</a> </li>
         </ul>
       </div>
     </li>
     <li class="nav-item">
-       <a class="nav-link" th:href="@{/mail/list.html?mailCategory=INBOX}">
+       <a class="nav-link" th:href="@{/mail/rlist.html}">
        <i class="fa-regular fa-envelope menu-icon"></i>
        <span class="menu-title">메일</span>
       </a>
@@ -60,20 +60,20 @@
       <div class="collapse" id="board-basic">
         <ul class="nav flex-coulmn sub-menu">
           <li class="nav-item"> <a class="nav-link" th:href="@{/notice/noticeMain.html}">공지사항</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/board/boardMain.html}">부서별 게시판</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/board/board.html}">부서별 게시판</a> </li>
         </ul>
       </div>
     </li>
     <li class="nav-item">
        <a class="nav-link" href="#">
-         <i class="fa-regular fa-calendar menu-icon"></i>
+          <i class="fa-regular fa-calendar menu-icon"></i>
          <span class="menu-title">일정관리</span>
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" th:href="@{/todolist/todomain.do}">
-        <i class="fa-solid fa-list-check menu-icon"></i>
-        <span class="menu-title">ToDoList</span>
+       <a class="nav-link" href="#">
+         <i class="fa-solid fa-list-check menu-icon"></i>
+         <span class="menu-title">ToDoList</span>
       </a>
     </li>
     <li class="nav-item">
@@ -96,7 +96,7 @@
       </a>
     </li>
     <li class="nav-item">
-       <a class="nav-link" th:href="@{/report/report.html}">
+       <a class="nav-link" th:href="@{report/report.html}">
        <i class="fa-solid fa-triangle-exclamation menu-icon"></i>
        <span class="menu-title">신고관리</span>
       </a>

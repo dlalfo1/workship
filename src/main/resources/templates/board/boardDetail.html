@@ -23,7 +23,8 @@
 	var boardNo = /*[[${b.boardNo}]]*/ null;
 	var page = 1; // 적절한 값으로 대체
 	var emailId = /*[[${session.loginMember.emailId}]]*/ null;
-	
+	var boardCategory = /*[[${boardCategory}]]*/ null;
+	console.log(boardCategory);
 	$(function(){
 	  let modifyResult = /*[[${modifyResult}]]*/ null;
 	  if(modifyResult !== null){
@@ -70,12 +71,16 @@
 	        event.preventDefault();
 	        return;
 	      }
-	      location.href='/board/boardDetail.html?boardNo=' + nextNo ;
+	      location.href='/board/boardDetail.html?boardNo=' + nextNo;
 	    })
 	}
 	
 	function fnList() {
-		  location.href = '/board/boardList.do';
+			$('#btnList').on('click', function(){
+				let boardCategory = /*[[${boardCategory}]]*/ null;
+				console.log(boardCategory);
+ 		  location.href = '/board/boardList.do?boardCategory=' + boardCategory;
+			})
 	}
 	function fnWrite() {
 		  location.href = '/board/boardWrite.html';
@@ -88,9 +93,10 @@
 	  if(confirm('게시글을 삭제하면 모든 첨부 파일이 함께 삭제됩니다. 그래도 삭제하시겠습니까?') == false){
 	      return;
 	    }
-	  frm.attr('action', '/board/removeBoard.do');
+	  frm.attr('action', '/board/removeBoard.do?boardCategory=' + boardCategory);
 	  frm.submit();
 	}
+	
   function fnAddComment(){
 		$('#btnAddComment').on('click', function(){
         if($('#commentContent').val() == ''){
@@ -112,6 +118,7 @@
         })
       })
     }
+  
     function fnCommentList(){
         $.ajax({
           type: 'get',
@@ -145,11 +152,9 @@
                      boardComment.commentNo +
                      ')">';
                   } else if(emailId != boardComment.memberDTO.emailId && boardComment.commentDepth == 0){
-                    str += '<input type="button" value="답글" class="btnOpenReply">';
                   }
                 }
                 str += '<div class="replyArea blind">';
-                /******************* 답글달 때 전송할 데이터는 4개(content, blogNo, groupNo, memberNo) *******************/
                 str += '  <form class="frmReply">';
                 str += '    <input type="text"   name="commentContent"  class="replyContent" placeholder="답글을 작성해 주세요">';
                 str += '    <input type="hidden" name="boardNo"   value="' + boardComment.boardNo + '">';
@@ -157,7 +162,6 @@
                 str += '    <input type="hidden" name="memberNo" value="${sessionScope.loginNo}">';  // 수업 때 잘못 구현한 부분
                 str += '    <input type="button" value="답글작성완료" class="btnAddReply">';
                 str += '  </form>';
-                /*********************************************************************************************************/
                 str += '</div>';
               }
             
@@ -166,6 +170,7 @@
           }
     });
     }
+    
     function fnRemoveComment(commentNo) {
         if (confirm('댓글을 삭제하시겠습니까?')) {
           $.ajax({
@@ -183,6 +188,29 @@
         }
     	history.go(0);
       }
+    
+    function fnAddReply(){
+        $('#btnAddReply').on('click', function(){
+          if($(this).prevAll('.replyContent').val() == ''){  
+            alert('답글 내용을 입력하세요.');
+            return;
+          }
+          $.ajax({
+            type: 'post',
+            url: '/boardComment/addReply.do',
+            data: $(this).parent('.frmReply').serialize(),  
+            dataType: 'json',
+            success: function(resData){  
+              if(resData.isAdd){
+                alert('답글이 등록되었습니다.');
+                fnCommentList();
+              }
+            }
+          })
+        })
+      }
+    
+    
 </script>
 <body>
 
@@ -203,7 +231,7 @@
         
           <div class="board-main">
             <div class="board-title">
-                <h2><a th:href="@{/board/boardList.do}">부서별게시판</a></h2>
+                <h2>게시판</h2>
             </div>
             
             <hr>
@@ -212,7 +240,7 @@
               <div class="page-button ">
                 <button type="button" class="btn btn-outline-secondary btn-sm" id="btnPrev">이전</button>
                 <button type="button" class="btn btn-outline-secondary btn-sm" id="btnNext">다음</button>
-                <button type="button" class="btn btn-outline-dark btn-sm" onclick="fnList()">목록</button>
+                <button type="button" class="btn btn-outline-dark btn-sm" id="btnList" onclick="fnList()">목록</button>
             </div>
            	<hr> 
             <div class="content-header"> 
@@ -267,12 +295,14 @@
                 </th:block>
                  */-->
                   <button type="button" class="btn btn-primary btn-rounded btn-sm" onclick="fnWrite()">새글쓰기</button>
+                	<input type="hidden" name="boardCategory" th:value="${boardCategory}">
                 <!--/* 
                 <th:block th:if="${session.emailId == b.MemberDTO.emailId}">
                 </th:block>
                  */-->
                   <button type="button" class="btn btn-outline-secondary btn-rounded btn-sm" th:onclick="fnEdit()">수정</button>
                   <button type="button" class="btn btn-danger btn-rounded btn-sm" th:onclick="fnRemove()">삭제</button>
+                  <input type="hidden" name="boardCategory" th:value="${boardCategory}">
                 </form>
             </div>
             </div>

@@ -28,7 +28,7 @@ public class NoticeBoardController {
 
   private final NoticeBoardService noticeBoardService;
   
-  @GetMapping("/notice/noticeList.do")
+  @GetMapping("/notice/noticeMain.html")
   public String noticeMain(HttpServletRequest request, Model model) {
     noticeBoardService.loadNoticeBoardList(request, model);
     return "notice/noticeMain";
@@ -45,7 +45,7 @@ public class NoticeBoardController {
     if(increaseResult == 1) {
       return "redirect:/notice/noticeDetail.html?noticeNo=" + noticeNo;
     } else {
-      return "redirect:/notice/noticeList2.do";
+      return "redirect:/notice/noticeMain.html";
     }
   }
   
@@ -76,14 +76,14 @@ public class NoticeBoardController {
 	public String addNotice(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
 	  int addResult = noticeBoardService.addNotice(request);
     redirectAttributes.addFlashAttribute("addResult", addResult);
-	  return "redirect:/notice/noticeList.do";
+	  return "redirect:/notice/noticeMain.html";
 	}
 	
   @PostMapping("/notice/removeNotice.do")
   public String removeNotice(@RequestParam("noticeNo") int noticeNo, RedirectAttributes redirectAttributes) { 
     int removeResult = noticeBoardService.removeNotice(noticeNo);
     redirectAttributes.addFlashAttribute("removeResult", removeResult);
-    return "redirect:/notice/noticeList.do";
+    return "redirect:/notice/noticeMain.html";
   }
 	
   @PostMapping("/notice/editNotice.html")
@@ -105,7 +105,7 @@ public class NoticeBoardController {
     return "redirect:/notice/noticeDetail.html?noticeNo=" + noticeNo;
   }
   
-  
+  // 구현하기 약속!
 
   // 게시글 임시저장
   @PostMapping(value="/notice/tempSave.do", produces="application/json")

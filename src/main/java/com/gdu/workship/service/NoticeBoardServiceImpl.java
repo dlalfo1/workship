@@ -75,14 +75,14 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     System.out.println(map);
     
     List<NoticeDTO> noticeList = noticeBoardMapper.getNoticeList(map);
-    System.out.println(noticeList);
     model.addAttribute("noticeList", noticeList);
+    System.out.println("리스트: " + noticeList);
     model.addAttribute("beginNo", totalRecord - (page - 1) * recordPerPage);
     System.out.println("beginNo : " + (totalRecord - (page - 1) * recordPerPage));
     if(column.isEmpty() || query.isEmpty()) {
-      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/notice/noticeList.do"));
+      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/notice/noticeMain.html"));
     } else {
-      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/notice/noticeList.do?column=" + column + "&query=" + query));
+      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/notice/noticeMain.html?column=" + column + "&query=" + query));
     }
   }
   
@@ -290,6 +290,7 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     String emailId = request.getParameter("emailId");
     int memberNo = noticeBoardMapper.getMemberByEmail(emailId).getMemberNo();
     String noticeContent = request.getParameter("noticeContent");
+    String strNoticeNo = request.getParameter("noticeNo");
     
     // DB로 보낼 NoticeDTO 만들기
     MemberDTO memberDTO = new MemberDTO();
@@ -300,7 +301,16 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     noticeDTO.setNoticeContent(noticeContent);
     
     // DB로 NoticeDTO 보내기 (삽입)
-    int addResult = noticeBoardMapper.addNotice(noticeDTO);
+    int addResult = 0;
+    if(strNoticeNo != "" && strNoticeNo.isEmpty() == false) {
+      System.out.println("임시저장이 등록?");
+      int noticeNo = Integer.parseInt(strNoticeNo);
+      noticeDTO.setNoticeNo(noticeNo);
+      addResult = noticeBoardMapper.addSaveNotice(noticeDTO);
+    } else {
+      System.out.println("그냥등록");
+      addResult = noticeBoardMapper.addNotice(noticeDTO);
+    }
     
     /* Notice_File_T 테이블에 NoticeFileDTO 넣기 */
     
@@ -337,8 +347,6 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
           
           // 첨부 파일의 File 객체 (HDD에 저장할 첨부 파일)
           File file = new File(dir, filesystemName);
-          
-          Path savePath = Paths.get(path);
           
           // 첨부 파일을 HDD에 저장
           //FileCopyUtils.copy(multipartFile.getInputStream(), new FileOutputStream(savePath.toFile()));
@@ -454,8 +462,6 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
           
           // 첨부 파일의 File 객체 (HDD에 저장할 첨부 파일)
           File file = new File(dir, filesystemName);
-          
-          Path savePath = Paths.get(path);
           
           // 첨부 파일을 HDD에 저장
           //FileCopyUtils.copy(multipartFile.getInputStream(), new FileOutputStream(savePath.toFile()));
