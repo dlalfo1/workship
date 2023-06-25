@@ -10,8 +10,7 @@
 	gap: 16px;
 }
 
-.title {
-	font-size: 24px;
+.fixedCol1 a, .title {
 	font-weight: bold;
 }
 
@@ -26,8 +25,21 @@
 	background-color: transparent;
 }
 
+.receiverBox {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0;
+	padding: 0;
+	gap: 8px;
+}
+
+#to, #cc, #bcc {
+	overflow: hidden;
+	width: 200px;
+}
+
 .mailBox {
-	height: 65px;
+	height: 40px;
 }
 
 .fixedCol1 {
@@ -35,21 +47,23 @@
 }
 
 .fixedCol2 {
-	width: 75%;
+	width: 87%;
 	margin: 0;
+	border-bottom: 2px solid gray;
 }
 
 .fixedCol2 textarea {
 	width: 100%;
 	height: 30px;
+	resize: none;
 	border: none;
-	border-bottom: 2px solid gray;
 }
 
 .fixedCol3 {
+	
 	display: flex;
 	align-content: flex-end;
-	width: 4%;
+	width: 3%;
 }
 
 .header {
@@ -70,10 +84,7 @@
 .contents input[type="text"] {
 	width: 100%;
 	background-color: transparent;
-	border-top: none;
-	border-left: none;
-	border-right: none;
-	border-bottom: 2px solid gray;
+	border: none;
 }
 
 .fileAll {
@@ -85,6 +96,21 @@
 	justify-content: space-between;
 	border-bottom: 1px solid gray;
 	padding: 4px;
+}
+
+.fileEmpty, .fileEmpty:hover {
+	text-decoration: none;
+	color: black;
+	display: flex;
+}
+
+.tool-tip {
+    visibility: hidden;
+  }
+
+.help:hover .tool-tip {
+  visibility: visible;
+  color: gray;
 }
 
 li {

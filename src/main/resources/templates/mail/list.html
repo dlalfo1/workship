@@ -2,6 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
 <head th:replace="~{/layout/header::headFrag('workship 메일목록')}"></head>
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 <link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
 <link rel="stylesheet" th:href="@{/css/mail/list.css(var=1.0)}">
 
@@ -179,16 +180,16 @@
 								fnRemoveMailCancel();
 							})
 							
-							<!--/*  전체선택 체크박스 */-->
+							/* 전체선택 체크박스 */
 							function fnCheckAll(){
 								$('#checkAll').on('click', function(){
 									$('.checkOne').prop('checked', $(this).prop('checked'));
 								})
 							}
 							
-							<!--/*  개별선택 체크박스 */-->
+							/* 개별선택 체크박스 */
 							function fnCheckOne(){
-								let chkOne = $('.checkOne');  <!--/* 모든 개별선택 */-->
+								let chkOne = $('.checkOne');
 								chkOne.on('click', function(){
 									let chkCnt = 0;
 									for(let i = 0; i < chkOne.length; i++){
@@ -198,7 +199,7 @@
 								})
 							}
 							
-							<!--/* 중요 ajax */-->
+							/* 중요 ajax */
 							function fnStarMail() {
 								
 								$('#btnStar').on('click', function() {
@@ -237,7 +238,7 @@
 								})
 							}
 							
-							<!--/* 읽음 ajax */-->
+							/* 읽음 ajax */
 							function fnReadMail() {
 								
 								$('#btnRead').on('click', function() {
@@ -273,7 +274,7 @@
 								})
 							}
 							
-							<!--/* 삭제 ajax */-->
+							/* 삭제 ajax */
 							function fnRemoveMail() {
 								
 								$('#btnRemove').on('click', function() {
@@ -312,7 +313,7 @@
 								})
 							}
 							
-							<!--/* 스팸 ajax */-->
+							/* 스팸 ajax */
 							function fnSpamMail() {
 								
 								$('#btnSpam').on('click', function() {
@@ -351,7 +352,7 @@
 								})
 							} 
 							
-							<!--/* 보낸메일 영구삭제 ajax */-->
+							/* 보낸메일 영구삭제 ajax */
 							function fnDeleteSentMail() {
 								$('#btnDeleteSent').on('click', function() {
 									
@@ -389,7 +390,7 @@
 									})
 							}
 							
-							<!--/* 받은메일 영구삭제 ajax */-->
+							/* 받은메일 영구삭제 ajax */
 							function fnDeleteReceiveMail() {
 								$('#btnDeleteReceive').on('click', function() {
 									
@@ -427,7 +428,7 @@
 								})
 							}
 							
-							<!--/* 스팸메일 복원 ajax */-->
+							/* 스팸메일 복원 ajax */
 							function fnSpamMailCancel() {
 								$('#btnSpamCancel').on('click', function() {
 									
@@ -467,7 +468,7 @@
 								})
 							}
 							
-							<!--/* 휴지통메일 복원 ajax */-->
+							/* 휴지통메일 복원 ajax */
 							function fnRemoveMailCancel() {
 								$('#btnRemoveCancel').on('click', function() {
 									
@@ -557,7 +558,7 @@
 		        						<div class="contentMail">
 		        							<div class="contentMailEmail">
 			        							<th:block th:each="names:${mailToList}">
-			        								<th:block th:if="${mails.mailToDTO.mailTo == names.emailId}">
+			        								<th:block th:if="${mails.mailToDTO.mailTo == names.emailId}">			        									
 				        								<span th:text="${names.memberName}"></span>
 			        								</th:block>
 			        							</th:block> 
@@ -589,18 +590,19 @@
 			        						</div>
  			        						<div class="mailStar" id="mailStar">
 			        							<th:block th:if="${mails.mailToDTO.mailToStar == 'N'}">
-				        							<input type="radio" th:name="mailStar" value="N" id="starState"><label for="starState">☆</label>		        							
+				        							<input type="radio" name="mailStar" value="N" th:id="'starState_' + ${mails.mailNo}" th:data-mailno="${mails.mailNo}"><label th:for="'starState_' + ${mails.mailNo}" >☆</label>		        							
 			        							</th:block>
 			        							<th:block th:if="${mails.mailToDTO.mailToStar == 'Y'}">
-			        								<input type="radio" th:name="mailStar" value="Y" id="starState"><label for="starState">★</label>	
+			        								<input type="radio" name="mailStar" value="Y" th:id="'starState_' + ${mails.mailNo}" th:data-mailno="${mails.mailNo}"><label th:for="'starState_' + ${mails.mailNo}" style="color: #4B49AC;">★</label>	
 			        							</th:block>
 			        						</div>
+			        						
 			     							<div class="mailRead" id="mailRead">
 			     								<th:block th:if="${mails.mailToDTO.mailToStatus == 'N'}">
-			     									<input type="radio" th:name="mailRead" value="N" id="readState"><label for="readState"><i class="fa-solid fa-envelope"></i></label>
+			     									<input type="radio" name="mailRead" value="N" th:id="'readState_' + ${mails.mailNo}" th:data-mailno="${mails.mailNo}"><label th:for="'readState_' + ${mails.mailNo}"><i class="fa-solid fa-envelope"></i></label>
 			     								</th:block>
 			     								<th:block th:if="${mails.mailToDTO.mailToStatus == 'Y'}">
-				        							<input type="radio" th:name="mailRead" value="Y" id="readState"><label for="readState"><i class="fa-solid fa-envelope-open"></i></label>
+				        							<input type="radio" name="mailRead" value="Y" th:id="'readState_' + ${mails.mailNo}" th:data-mailno="${mails.mailNo}"><label th:for="'readState_' + ${mails.mailNo}" ><i class="fa-solid fa-envelope-open"></i></label>
 			     								</th:block>
 			        						</div>		
 			        						<div class="mailAttach" id="mailAttach">
@@ -612,15 +614,16 @@
 		        						<div class="contentMail">
 			        						<div class="contentMailEmail">
 			        							<span th:text="${mails.memberDTO.memberName}"></span>
-			        							(<span th:text="${mails.memberDTO.emailId}"></span>)
+			        							<span th:text="|(${mails.memberDTO.emailId})|"></span>
 			        						</div>
 			        						<div class="contentMailTitle">
-			        							<a th:href="@{/mail/detail.html(Category=${Category}, mailNo=${mails.mailNo})}" th:text="${mails.mailTitle}" onclick="fnReadChange();"></a>
+			        							<a th:href="@{/mail/detail.html(Category=${Category}, mailNo=${mails.mailNo})}" th:text="${mails.mailTitle}" class="mailReadCheck" th:data-mailno="${mails.mailNo}"></a>
 			        							<input type="hidden" th:name="mailCategory" th:value="${mails.mailCategory}">
 			        						</div>	
 			        						<div class="contentMailDate" th:text="${#dates.format(mails.mailDate, 'yyyy/MM/dd')}"></div>		
 		        						</div>
-		        					</li>		
+		        					</li>
+	
 			        				<input type="hidden" th:name="Category" th:value="${Category}">
 									<input type="hidden" th:name="emailId" th:value="${mails.memberDTO.emailId}">
 			        				<input type="hidden" th:name="mailTo" th:value="${mails.mailToDTO.mailTo}">
@@ -628,7 +631,91 @@
 	        				</ul>
 	        				<div class="pagination" th:utext="${pagination}"></div>
    						</th:block>
-       							
+   						
+       					<script>
+			        			
+       						/* 중요상태 변화 */
+   							$(document).on('click', 'input[name="mailStar"]', function(){
+   								
+   								let mailToStar = "";
+   								
+   								let mailNo = $(this).attr("data-mailno");
+   								
+   								if($(this).val() == 'N') {
+   									mailToStar = 'Y';
+   								} else if($(this).val() == 'Y') {
+   									mailToStar = 'N';
+   								}
+   								
+   								$.ajax({
+   									type: 'post',
+   									url: '/mail/changeStar.do',
+   									contentType: 'application/json',
+   									data: JSON.stringify ({
+   										mailToStar: mailToStar,
+   										mailNo: mailNo
+   									}),
+   									dataType: 'json',
+   									success: function(resDate) {
+   										location.reload();   										
+   									}   
+   								})   			
+   							})
+   							
+   							/* 읽음상태 변화 */
+   							$(document).on('click', 'input[name="mailRead"]', function(){
+   								
+   								let mailToStatus = "";
+   								
+   								let mailNo = $(this).attr("data-mailno");
+   								
+   								if($(this).val() == 'N') {
+   									mailToStatus = 'Y';
+   								} else if($(this).val() == 'Y') {
+   									mailToStatus = 'N';
+   								}
+   								
+   								$.ajax({
+   									type: 'post',
+   									url: '/mail/changeStatus.do',
+   									contentType: 'application/json',
+   									data: JSON.stringify ({
+   										mailToStatus: mailToStatus,
+   										mailNo: mailNo
+   									}),
+   									dataType: 'json',
+   									success: function(resDate) {
+   										location.reload();   										
+   									}   
+   								})   	   				
+   							})
+   							
+   							/* 메일 읽으면 읽음 상태로 변화 */
+   							$(document).on('click', '.mailReadCheck', function(e) {
+   								
+   								e.preventDefault();
+   								
+   								let mailNo = $(this).attr("data-mailno");
+   								
+   								var href = $(this).attr('href');
+   								
+   								$.ajax ({
+   									type: 'post',
+   									url: '/mail/mailReadCheck.do',
+   									contentType: 'application/json',
+   									data: JSON.stringify ({
+   										mailNo: mailNo
+   									}),
+   									dataType: 'json',
+   									success: function(resData) {
+   										window.location.href = href;
+   									}
+   								})
+   								console.log(mailNo);
+   							})
+   						
+   						</script>	
+   							
        				</th:block>
        			</div>
        			
@@ -636,11 +723,14 @@
         	
         	
         	
+		  
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   
   <!--/* footer 영역 */-->
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
