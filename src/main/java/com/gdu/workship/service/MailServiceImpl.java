@@ -171,6 +171,8 @@ public class MailServiceImpl implements MailService {
 					break;	
 			}
 		}		
+		
+		List<MailFileDTO> attachList = mailMapper.getMailFileByNo(map);
 
 		model.addAttribute("sentMail", mailMapper.getMailByMailNo(map));	
 		model.addAttribute("mailToMe", mailMapper.getMailToMeByMailToNo(map));
@@ -182,7 +184,8 @@ public class MailServiceImpl implements MailService {
 		model.addAttribute("mailTotalRecord", mailTotalRecord);
 		model.addAttribute("mailNoReadRecord", mailNoReadRecord);
 		model.addAttribute("mailStarRecord", mailStarRecord);	
-		
+		model.addAttribute("attachList", attachList);
+		System.out.println(model);
 
 	}
 	
@@ -532,6 +535,7 @@ public class MailServiceImpl implements MailService {
 
 		
 		int mailFileResult = 0;
+		Map<String, Object> map4 = new HashMap<String, Object>();
 		
 		for(MultipartFile multipartFile : files) {
 			
@@ -546,22 +550,21 @@ public class MailServiceImpl implements MailService {
 						dir.mkdirs();
 					}
 					
-					String mailFileoriginName = multipartFile.getOriginalFilename();
-					mailFileoriginName = mailFileoriginName.substring(mailFileoriginName.lastIndexOf("\\") + 1);
+					String mailFileOriginName = multipartFile.getOriginalFilename();
+					mailFileOriginName = mailFileOriginName.substring(mailFileOriginName.lastIndexOf("\\") + 1);
 					
-					String mailFilesystemName = myFileUtil.getFilesystemName(mailFileoriginName);
+					String mailFileSystemName = myFileUtil.getFilesystemName(mailFileOriginName);
 					
-					File file = new File(dir, mailFilesystemName);
+					File file = new File(dir, mailFileSystemName);
 					
 					multipartFile.transferTo(file);
 			
-					MailFileDTO mailFileDTO = new MailFileDTO();
-					mailFileDTO.setMailFileSystemName(mailFilesystemName);
-					mailFileDTO.setMailFileOriginName(mailFileoriginName);
-					mailFileDTO.setMailFilePath(mailFilePath);
-					mailFileDTO.setMailDTO(mailDTO);
-					
-					mailMapper.addAttach(mailFileDTO);
+					map4.put("mailFileOriginName", mailFileOriginName);
+					map4.put("mailFileSystemName", mailFileSystemName);
+					map4.put("mailFilePath", mailFilePath);
+					map4.put("mailNo", mailDTO.getMailNo());
+
+					mailFileResult += mailMapper.addAttach(map4);
 
 				} catch(Exception e) {
 					e.printStackTrace();

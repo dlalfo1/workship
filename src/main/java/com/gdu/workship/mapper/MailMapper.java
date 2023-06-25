@@ -29,6 +29,7 @@ public interface MailMapper {
 	public MailDTO getMailByMailNo(Map<String, Object> map);
 	public List<MailToDTO> getMailByMailToNo(Map<String, Object> map);
 	public MailToDTO getMailToMeByMailToNo(Map<String, Object> map);
+	public List<MailFileDTO> getMailFileByNo(Map<String, Object> map);
 	
 	/* 체크박스 내 메일 확인 */
 	public List<MailToDTO> getMailToByMailNo(Map<String, Object> map);
@@ -50,6 +51,6 @@ public interface MailMapper {
 	public int sendMailTo(Map<String, Object> map1);
 	public int sendMailCc(Map<String, Object> map2);
 	public int sendMailBcc(Map<String, Object> map3);
-	public int addAttach(MailFileDTO mailFileDTO);
+	public int addAttach(Map<String, Object> map4);
 	
 }

@@ -63,7 +63,7 @@
 		<result column="MAIL_FILE_PATH" property="mailFilePath"/>
 		<result column="MAIL_FILE_ORIGIN_NAME" property="mailFileOriginName"/>
 		<result column="MAIL_FILE_SYSTEM_NAME" property="mailFileSystemName"/>
-		<association javaType="MailDTO" property="MailDTO">
+		<association javaType="MailDTO" property="mailDTO">
 			<id column="MAIL_NO" property="mailNo"/>
 		</association>
 	</resultMap>
@@ -264,13 +264,12 @@
 		 		</foreach>
 		  AND MAIL_TO = #{mailTo}
 	</select>
-<!-- 	
-	<select id="getMailFileByNo" parameterType="Map" resultType="MailFileDTO">
+	<select id="getMailFileByNo" parameterType="Map" resultMap="MailFileMap">
 		SELECT MAIL_NO, MAIL_FILE_NO, MAIL_FILE_PATH, MAIL_FILE_ORIGIN_NAME, MAIL_FILE_SYSTEM_NAME
 		  FROM MAIL_FILE_T
 		 WHERE MAIL_NO = #{mailNo}
 	</select>
-	 -->
+
 	<!-- 메일 상태변경 -->
 	<update id="updateStar" parameterType="Map">
 		UPDATE MAIL_TO_T
