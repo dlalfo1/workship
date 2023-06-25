@@ -68,7 +68,7 @@ public class MemberController {
   
   @PostMapping("/member/modifyMember.do")
   public String modifyMember(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
-    System.out.println(memberService.modifyMember(request));
+    System.out.println("수정결과 ::" + memberService.modifyMember(request));
     redirectAttributes.addFlashAttribute("modifyResult", memberService.modifyMember(request));
     return "redirect:/member/member.html";
   }
