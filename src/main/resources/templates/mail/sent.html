@@ -36,25 +36,27 @@
 	        	</div>
         	</div>  
 
+			<script>
+				function fnInbox() {
+					location.href = '/mail/list.html?Category=INBOX';
+				}
+				function fnSent() {
+					location.href = '/mail/list.html?Category=SENT';
+				}
+				function fnHome() {
+					location.href = '/main/main.html';
+				}
+			</script>
+			
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+  
   <!--/* footer 영역 */-->
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
-
-<script>
-	function fnInbox() {
-		location.href = '/mail/list.html?CATEGORY=INBOX';
-	}
-	function fnSent() {
-		location.href = '/mail/list.html?CATEGORY=SENT';
-	}
-	function fnHome() {
-		location.href = '/index.html';
-	}
-</script>
 
 </body>
 </html>

@@ -80,7 +80,7 @@ li {
 .mailCheck {
 	display: flex;
 	align-items: center;
-	gap: 40px;
+	gap: 25px;
 	width: 20%;
 	padding: 4px;
 }

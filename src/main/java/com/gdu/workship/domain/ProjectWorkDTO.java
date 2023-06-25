@@ -11,6 +11,7 @@ public class ProjectWorkDTO {
 
 	private int projectWorkNo;
 	private ProjectDTO projectDTO;
+	private DepartmentDTO departmentDTO;
 	private MemberDTO memberDTO;
 	private String projectWorkTitle;
 	private String projectWorkDetail;

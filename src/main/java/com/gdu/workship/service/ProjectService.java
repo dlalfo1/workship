@@ -1,7 +1,5 @@
 package com.gdu.workship.service;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
@@ -11,10 +9,10 @@ public interface ProjectService {
 	public int addProjectM(HttpServletRequest request);
 	public int deleteProjectM(int projectNo);
 	public int updateProjectM(HttpServletRequest request);
-	public int addProjectW(MultipartHttpServletRequest multipartHttpRequest);
+	public int addProjectW(HttpServletRequest request);
 	public int deleteProjectW(int projectWorkNo);
-	public int updateProjectW(MultipartHttpServletRequest multipartrequest);
+	public int updateProjectW(HttpServletRequest request);
 	public void projectWDetail(int projectWorkNo, Model model);
 	public void getProjectList(HttpServletRequest request, Model model);
-	public Map<String, Object> getProjectWorkList(HttpServletRequest request);
+	public void getProjectWorkList(HttpServletRequest request, Model model);
 }
