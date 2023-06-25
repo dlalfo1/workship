@@ -29,8 +29,10 @@ public interface ApprovalService {
   public List<ApprovalFileDTO> detailApprovalFilesByNo(HttpServletRequest request);  // 첨부파일 가져오기
   public ResponseEntity<Resource> download(int attachNo, String userAgent);  // 첨부파일 다운로드
   public int approvalOfDoc(HttpServletRequest request); // 결재하기
-  public int RejectOfDoc(HttpServletRequest request); // 결재하기
-  public void getApprovalList(HttpServletRequest request, Model model, HttpSession session);
-  public Map<String, Object> getAutoComplete(HttpServletRequest request);
+  public int rejectOfDoc(HttpServletRequest request); // 반려하기
+  public int removeApproval(HttpServletRequest request); // 삭제하기
+  public void getApprovalList(HttpServletRequest request, Model model, HttpSession session); // 결재문서 가져오기
+  public void getReferencelList(HttpServletRequest request, Model model, HttpSession session); // 참조문서 가져오기
+  public Map<String, Object> getAutoComplete(HttpServletRequest request); // 자동완성
 
 }

@@ -260,21 +260,11 @@ input[type="text"] {
                             <div class="tag-orange">진행중</div>
                           </td>
                         </th:block>
-                        <th:block th:if="${approval.approvalCount == 1 && approval.approvalStatus == 1}">
+                        <th:block th:if="${approval.approvalCount == approval.approvalStatus && approval.approvalStatus != 0}">
                           <td>
                             <div class="tag-green">완료</div>
                           </td>
                         </th:block>
-                        <th:block th:if="${approval.approvalCount == 2 && approval.approvalStatus == 2}">
-                          <td>
-                            <div class="tag-green">완료</div>
-                          </td>
-                        </th:block>                                                  
-                        <th:block th:if="${approval.approvalCount == 3 && approval.approvalStatus == 3}">
-                          <td>
-                            <div class="tag-green">완료</div>
-                          </td>
-                        </th:block>                                                  
                         <th:block th:if="${approval.approvalStatus == 4}">
                           <td>
                             <div class="tag-red">반려</div>
@@ -360,42 +350,29 @@ input[type="text"] {
 
   function fnInit(){
       let addResult = /*[[${addResult}]]*/ '';
-      if(addResult !== null) { 
+      if(addResult !== null) {   
         if(addResult >= '2'){
           alert('결재상신이 완료되었습니다.');
         } else {
           alert('결재상신이 실패하였습니다.'); 
         }
-    
-/*     let removeResult = '${removeResult}';
-      if(removeResult != '') {
-        if(removeResult == '1'){
-          alert('카테고리가 삭제되었습니다.');
-        } else {
-          alert('카테고리가 삭제되지 않았습니다.');
-        }
-      }
- */     
+      }  
       
+      let removeResult = /*[[${removeResult}]]*/ '';
+      if(removeResult !== null) { 
+        if(removeResult >= '2'){
+          alert('결재문서가 삭제되었습니다.');
+        } else {
+          alert('결재문서 삭제 실패햇습니다.'); 
+        }
+     }
     }
 
- }
- 
- 
-   function fnAddCategory() {
-      location.href='${contextPath}/admin/addCategory.form';
-   }
    
    function fnDetailApproval(appNo, docName) {
       location.href='/approval/detailApproval.do?approvalNo=' + appNo + '&docName=' + docName;
    }
    
-   function fnRemoveCategory(n){
-      if(confirm('카테고리를 정말 지우시겠습니까?')) {
-        $('#frm').attr('action', '${contextPath}/admin/removeCategory.do?categoryNo='+n);
-        $('#frm').submit();
-      }
-    }
 
  
  </script> 

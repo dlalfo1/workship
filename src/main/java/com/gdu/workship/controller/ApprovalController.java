@@ -1,7 +1,6 @@
 package com.gdu.workship.controller;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gdu.workship.domain.DepartmentDTO;
-import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.service.ApprovalService;
 
 import lombok.RequiredArgsConstructor;
@@ -156,6 +153,17 @@ public class ApprovalController {
      return "approval/approvalList";
   }
   
+  // 참조 문서 조회하기
+  @GetMapping("/referenceList.do")
+  public String referenceList(HttpServletRequest request, Model model, HttpSession session) {
+    //session에 올라간 recordPerPage 값 날려주기
+    if(request.getHeader("referer").contains("referenceList.do") == false) {
+      request.getSession().removeAttribute("recordPerPage");
+    }
+    approvalService.getReferencelList(request, model, session);
+    return "approval/referenceList";
+    
+  }
   @GetMapping(value="/autoComplete.do", produces="application/json")
   @ResponseBody
   public Map<String, Object> autoComplete(HttpServletRequest request){ 
@@ -177,18 +185,26 @@ public class ApprovalController {
   @PostMapping("/rejectApproval.do")
   public String rejectApproval(HttpServletRequest request, RedirectAttributes redirectAttributes) {
     
-    redirectAttributes.addFlashAttribute("rejectResult", approvalService.RejectOfDoc(request));
+    redirectAttributes.addFlashAttribute("rejectResult", approvalService.rejectOfDoc(request));
     
     return "redirect:/approval/detailApproval.do?approvalNo=" + request.getParameter("approvalNo") + "&docName=" + request.getParameter("docName");
+  }
+  
+  // 삭제하기
+  @PostMapping("/removeApproval.do")
+  public String removeApproval(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    
+    redirectAttributes.addFlashAttribute("removeResult", approvalService.removeApproval(request));
+    
+    return "redirect:/approval/approvalList.do";
+  }
+  
+  
+    
+     
   }
   
   
   
   
-  
-  
-  
-  
-  
 
-}

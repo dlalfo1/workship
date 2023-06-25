@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gdu.workship.domain.ApprovalDTO;
 import com.gdu.workship.domain.ApprovalFileDTO;
@@ -287,7 +286,7 @@ public class ApprovalServiceImpl implements ApprovalService {
   }
   
   @Override
-  public int RejectOfDoc(HttpServletRequest request) {
+  public int rejectOfDoc(HttpServletRequest request) {
     
     int updateRejectResult = 0;
     int updateRejectLineResult = 0;
@@ -311,17 +310,40 @@ public class ApprovalServiceImpl implements ApprovalService {
     int approvalNo = Integer.parseInt(request.getParameter("approvalNo"));
     int docName = Integer.parseInt(request.getParameter("docName"));
     
-    /*
-     * if(request.getParameter("docName") != null){ docName =
-     * Integer.parseInt(request.getParameter("docName")); }
-     */
-    // selectApprovalByNo에 보낼 ApprovalDTO
+
     ApprovalDTO approvalDTO = new ApprovalDTO();
     approvalDTO.setApprovalNo(approvalNo);
     approvalDTO.setDocName(docName);
 
     
     return approvalMapper.selectApprovalByNo(approvalDTO);  
+  }
+  
+  @Override
+  @Transactional
+  public int removeApproval(HttpServletRequest request) {
+    int approvalNo = Integer.parseInt(request.getParameter("approvalNo"));
+    System.out.println("넘버@@@@@@@@@@@@" + approvalNo);
+     
+    int attachCount =  approvalMapper.getAttachCount(approvalNo);
+    int referenceCount = approvalMapper.getReferenceCountByNo(approvalNo);
+    int removeReferenceResult = 0;
+    int removeApprovalFileRusult = 0;
+    
+    if(attachCount != 0) {
+      removeApprovalFileRusult = approvalMapper.deleteApprovalFile(approvalNo);
+    }
+    
+    if(referenceCount != 0) {
+      removeReferenceResult = approvalMapper.deleteReferenceLine(approvalNo);
+    }
+    
+    int removeApprovalLineResult = approvalMapper.deleteApprovalLine(approvalNo);    
+    
+    int removeApprovalResult = approvalMapper.deleteApproval(approvalNo);
+        
+    
+    return removeApprovalResult + removeApprovalLineResult + removeReferenceResult + removeApprovalFileRusult;
   }
   
   @Override
@@ -503,6 +525,109 @@ public class ApprovalServiceImpl implements ApprovalService {
     
   }
   
+  @Override
+  public void getReferencelList(HttpServletRequest request, Model model, HttpSession session) {
+    
+    // 파라미터 page가 전달되지 않은 경우 page=1로 처리한다.
+    Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
+    int page = Integer.parseInt(opt1.orElse("1"));
+  
+    // 세션에 있는 recordPerPage를 가져온다. 세션에 없는 경우(첫 목록 - 1페이지 뿌릴 때) recordPerPage를=10으로 처리한다.
+    //  HttpSession session = request.getSession();
+    Optional<Object> opt2 = Optional.ofNullable(session.getAttribute("recordPerPage"));
+    int recordPerPage = (int)(opt2.orElse(10)); 
+    
+    // 파라미터 order가 전달되지 않은 경우 order=ASC로 처리한다.
+    Optional<String> opt3 = Optional.ofNullable(request.getParameter("order"));
+    String order = opt3.orElse("ASC");
+    
+    // 파라미터 column이 전달되지 않은 경우 cloumn=APPROVAL_NO로 처리한다.
+    Optional<String> opt4 = Optional.ofNullable(request.getParameter("columnorder"));
+    String columnorder = opt4.orElse("APPROVAL_NO");
+    
+    // 파라미터 query이 전달되지 않은 경우 query=""로 처리한다.
+    Optional<String> opt5 = Optional.ofNullable(request.getParameter("query"));
+    String query = opt5.orElse("");
+    
+    // 검색시 받는 정렬 칼럼
+    Optional<String> opt6 = Optional.ofNullable(request.getParameter("columnsearch"));
+    String columnsearch = opt6.orElse("DOC_TITLE");
+     // 파라미터 approvalStatus가 전달되지 않은 경우 approvalStatus=5로 처리한다. (5는 없음)
+     Optional<String> opt7 = Optional.ofNullable(request.getParameter("approvalStatus"));
+     int approvalStatus = Integer.parseInt(opt7.orElse("5")); // 전체보기   
+     
+     
+    
+    // 세션에 있는 로그인 정보 가져오기 
+    MemberDTO memberDTO = (MemberDTO)session.getAttribute("loginMember");
+    
+    Map<String, Object> map1 = new HashMap<String, Object>();
+    map1.put("query", query);
+    map1.put("columnsearch", columnsearch);
+    map1.put("memberNo", memberDTO.getMemberNo());
+
+    int totalRecord = 0;
+    
+    Map<String, Object> map3 = new HashMap<>();
+    map3.put("approvalStatus", approvalStatus);
+    if(approvalStatus == 5) { 
+      totalRecord = approvalMapper.getApprovalCountByQuery(map1);
+    }
+    
+    if(approvalStatus != 5 ) {
+      totalRecord= approvalMapper.getApprovalCountApprovalStatus(map3);
+    } 
+    // 'recordPerPage' 값이 변경되었을 때, 현재 페이지의 데이터가 없는 경우를 확인합니다.
+    int totalPage = (int) Math.ceil((double) totalRecord / recordPerPage);
+
+    if ((page - 1) * recordPerPage >= totalRecord) {
+        page = Math.max(totalPage, 1);
+    }
+
+    // 검색에 따라 
+    // PageUtil(Pagination에 필요한 모든 정보 계산하기
+    pageUtil.setPageUtil(page, totalRecord, recordPerPage);
+    // DB로 보낼 Map 만들기
+    Map<String, Object> map2 = new HashMap<String, Object>();
+    map2.put("begin", pageUtil.getBegin() -1);
+    map2.put("recordPerPage", recordPerPage);
+    map2.put("columnorder", columnorder);
+    map2.put("columnsearch", columnsearch);
+    map2.put("query", query);
+    map2.put("order", order);
+    map2.put("approvalStatus", approvalStatus);
+    map2.put("memberNo", memberDTO.getMemberNo());
+    
+    // 전체 목록 가져오기
+    List<ApprovalDTO> referenceList = approvalMapper.getReferenceList(map2);
+    
+    
+    model.addAttribute("referenceList", referenceList); 
+
+    // order의 값을 알고 있는 서비스에서 전달해주기.
+    // column과 query 파라미터를 넘겨줘야 페이지가 바뀌어도 검색한 문자가 유지된다.
+    model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/approval/approvalList.do?columnorder=" +  columnorder + "&columnsearch=" +  columnsearch + "&order=" + order + "&query=" + query + "&approvalStatus=" + approvalStatus));
+    model.addAttribute("beginNo", totalRecord - (page - 1) * recordPerPage);
+    model.addAttribute("columnorder", columnorder);
+    model.addAttribute("columnsearch", columnsearch);
+    
+    switch(order) {
+    case "ASC" : model.addAttribute("order", "DESC"); break;  
+    case "DESC" : model.addAttribute("order", "ASC"); break; 
+    }
+    
+    model.addAttribute("page", page);
+    model.addAttribute("query", query);
+    
+    // 마지막 페이지로 이동하는 경우 파라미터 값도 같이 변경합니다.
+    if (page > totalPage) {
+        // 마지막 페이지로 설정합니다.
+        page = totalPage;
+        // 파라미터 값을 변경합니다.
+        map2.put("begin", pageUtil.getBegin() -1);
+    }
+    
+  }
   @Override
   public Map<String, Object> getAutoComplete(HttpServletRequest request) {
     

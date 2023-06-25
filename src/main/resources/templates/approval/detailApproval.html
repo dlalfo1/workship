@@ -204,7 +204,7 @@
       }
        
        let str = '<input type="hidden" name="memberNo" value="'+ loginMemberNo +'">'; 
-       
+ /*      
          if(approvalLines[0].approvalOrder < approvalLines[1].approvalOrder && approvalLines[0].memberApprovalStatus === 0){
          alert('이전 결재자가 승인하지 않았습니다.')
          return;
@@ -212,6 +212,7 @@
            alert('이전 결재자가 승인하지 않았습니다.')
            return; 
        }  
+ */      
            $('#submitApproval').attr('action', '/approval/submitApproval.do');
            $('#submitApproval').submit(); 
        
@@ -254,10 +255,17 @@
      }) // 반려버튼 function 끝
           
      // 게시글 삭제하기
-     $('#removeBtn').on('click', function(){ 
+     
+  
+     $('#removeBtn').on('click', function(event){ 
+       if(confirm('결재문서를 삭제하시겠습니까?') == false){
+         event.preventDefault();
+         return;
+       }
+       
+                 
        $('#submitApproval').attr('action', '/approval/removeApproval.do');
        $('#submitApproval').submit();  
-       
        
      }) // 삭제버튼 function 끝
        

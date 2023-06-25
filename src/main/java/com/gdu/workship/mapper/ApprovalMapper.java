@@ -57,6 +57,25 @@ public interface ApprovalMapper {
   // 반려시 결재라인 업데이트
   public int updateRejectMember(Map<String, Object> map);  
   
+  // 결재문서 삭제
+  public int deleteApproval(int approvalNo);
+  
+  // 결재문서 삭제시 결재라인 삭제
+  public int deleteApprovalLine(int approvalNo);
+  
+  // 결재문서 삭제시 참조라인 삭제
+  public int deleteReferenceLine(int approvalNo);
+  
+  // 결재문서 삭제시 첨부파일 삭제
+  public int deleteApprovalFile(int approvalNo);
+  
+  // 참조멤버 카운드
+  public int getReferenceCountByNo(int approvalNo);
+  
+  // 첨부파일 카운드
+  public int getAttachCount(int approvalNo);
+  
+  
   // 결재문서 리스트 관련
   public int getApprovalCount(); 
   public int getApprovalCountByQuery(Map<String, Object> map);
@@ -64,6 +83,12 @@ public interface ApprovalMapper {
   public List<ApprovalDTO> getApprovalList(Map<String, Object> map);
   public int getApprovalSearchCount(Map<String, Object> map);
   public List<ApprovalDTO> getApprovalAutoComplete(Map<String, Object> map);
+  
+  // 참조문서 리스트 관련
+  public int getReferenceCount(); 
+  public int getReferenceCountByQuery(Map<String, Object> map);
+  public List<ApprovalDTO> getReferenceList(Map<String, Object> map);
+  public int getReferenceSearchCount(Map<String, Object> map);
   
   // 결재문서 상세보기
   public ApprovalDTO selectApprovalByNo(ApprovalDTO approvalDTO);

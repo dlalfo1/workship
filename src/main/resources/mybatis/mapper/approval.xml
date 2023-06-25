@@ -325,6 +325,11 @@
       FROM  APPROVAL_T
   </select>
   
+  <select id="getReferenceCount" resultType="int">
+    SELECT COUNT(*)
+      FROM  APPROVAL_REFERENCE_T
+  </select>
+  
   <select id="getApprovalCountApprovalStatus" parameterType="Map" resultType="int" >
     SELECT COUNT(*)
       FROM  APPROVAL_T
@@ -343,16 +348,26 @@
       AND (A.MEMBER_NO = #{memberNo} OR L.MEMBER_NO = #{memberNo}) 
   </select>  
   
+ 
+  <select id="getReferenceCountByQuery" parameterType="Map" resultType="int">
+     SELECT COUNT(DISTINCT(A.APPROVAL_NO))
+      FROM APPROVAL_T A INNER JOIN APPROVAL_REFERENCE_T R
+        ON A.APPROVAL_NO = R.APPROVAL_NO 
+    WHERE ${columnsearch} LIKE CONCAT('%', #{query}, '%')
+      AND R.MEMBER_NO = #{memberNo}
+  </select>  
+  
+  
   <select id="getApprovalList" parameterType="Map" resultMap="ApprovalMap">
-    SELECT DISTINCT A.APPROVAL_NO, A.DOC_NAME, A.DOC_TITLE, A.MEMBER_NO, DATE_FORMAT(A.CREATED_AT, '%Y-%m-%d') AS CREATED_AT, A.APPROVAL_STATUS, M.MEMBER_NAME, D.DEPT_NAME, A.APPROVAL_COUNT
+    SELECT DISTINCT A.APPROVAL_NO, A.DOC_NAME, A.DOC_TITLE, A.MEMBER_NO, DATE_FORMAT(A.CREATED_AT, '%Y-%m-%d') AS CREATED_AT, A.APPROVAL_STATUS, M.MEMBER_NAME, D.DEPT_NAME
     FROM (
-	          SELECT P.APPROVAL_NO, P.DOC_NAME, P.DOC_TITLE, P.MEMBER_NO, P.CREATED_AT, P.APPROVAL_STATUS, P.APPROVAL_COUNT
-	          FROM APPROVAL_T P
-	          <where>
-	              <if test="columnsearch != '' and query != ''" >
-	                  ${columnsearch} LIKE CONCAT('%', #{query}, '%')
-	              </if>
-	          </where>
+            SELECT P.APPROVAL_NO, P.DOC_NAME, P.DOC_TITLE, P.MEMBER_NO, P.CREATED_AT, P.APPROVAL_STATUS
+            FROM APPROVAL_T P
+            <where>
+                <if test="columnsearch != '' and query != ''" >
+                    ${columnsearch} LIKE CONCAT('%', #{query}, '%')
+                </if>
+            </where>
           ) A
     INNER JOIN APPROVAL_LINE_T L 
        ON A.APPROVAL_NO = L.APPROVAL_NO 
@@ -371,7 +386,47 @@
     ORDER BY ${columnorder} ${order}
     LIMIT #{begin}, #{recordPerPage}
   </select>
-
+  
+  <select id="getReferenceList" parameterType="Map" resultMap="ApprovalMap">
+    SELECT DISTINCT A.APPROVAL_NO, A.DOC_NAME, A.DOC_TITLE, A.MEMBER_NO, DATE_FORMAT(A.CREATED_AT, '%Y-%m-%d') AS CREATED_AT, A.APPROVAL_STATUS, M.MEMBER_NAME, D.DEPT_NAME
+    FROM (
+            SELECT P.APPROVAL_NO, P.DOC_NAME, P.DOC_TITLE, P.MEMBER_NO, P.CREATED_AT, P.APPROVAL_STATUS
+            FROM APPROVAL_T P
+            <where>
+                <if test="columnsearch != '' and query != ''" >
+                    ${columnsearch} LIKE CONCAT('%', #{query}, '%')
+                </if>
+            </where>
+          ) A
+		INNER JOIN APPROVAL_REFERENCE_T R
+		   ON A.APPROVAL_NO = R.APPROVAL_NO
+		INNER JOIN MEMBER_T M
+		   ON M.MEMBER_NO = R.MEMBER_NO
+		INNER JOIN DEPARTMENT_T D
+		   ON M.DEPT_NO = D.DEPT_NO
+		INNER JOIN APPROVAL_LINE_T L
+		   ON A.APPROVAL_NO = L.APPROVAL_NO
+    <where>
+        <if test="approvalStatus != 5" >
+            A.APPROVAL_STATUS = #{approvalStatus}
+        </if> 
+        <if test="memberNo != null">
+            AND (R.MEMBER_NO = #{memberNo})
+        </if> 
+    </where>
+    ORDER BY ${columnorder} ${order}
+    LIMIT #{begin}, #{recordPerPage}
+  </select>
+  
+  <select id="getReferenceSearchCount" parameterType="Map" resultType="int" >
+    SELECT COUNT(APPROVAL_NO)
+      FROM APPROVAL_REFERENCE_T
+       <where>
+         <if test="column != '' and query != ''" >
+          ${column} LIKE CONCAT('%', #{query}, '%')
+         </if>
+       </where>
+  </select>
   
   <select id="getApprovalSearchCount" parameterType="Map" resultType="int" >
     SELECT COUNT(APPROVAL_NO)
@@ -388,6 +443,7 @@
       FROM APPROVAL_T
      WHERE ${column} LIKE CONCAT('%', #{query}, '%')
   </select> 
+ 
   
   <select id="selectApprovalByNo" parameterType="ApprovalDTO" resultMap="ApprovalMap">
     SELECT  A.MEMBER_NO
@@ -449,5 +505,43 @@
     INNER JOIN JOB_T J ON ML.JOB_NO = J.JOB_NO
     WHERE A.APPROVAL_NO = #{approvalNo}
   </select>
+  
+  <delete id="deleteApproval" parameterType="int">
+   DELETE 
+     FROM APPROVAL_T
+    WHERE APPROVAL_NO = #{approvalNo}
+  </delete>
+  
+  <delete id="deleteApprovalLine" parameterType="int">
+   DELETE 
+     FROM APPROVAL_LINE_T
+    WHERE APPROVAL_NO = #{approvalNo}
+  </delete>
+  
+  <delete id="deleteReferenceLine" parameterType="int">
+	  DELETE 
+	    FROM APPROVAL_REFERENCE_T
+	   WHERE APPROVAL_NO = #{approvalNo}
+  </delete>
+  
+    <delete id="deleteApprovalFile" parameterType="int">
+	     DELETE 
+	       FROM APPROVAL_FILE_T
+	      WHERE APPROVAL_NO = #{approvalNo}
+  </delete>
+  
+  <select id="getReferenceCountByNo" parameterType="int">
+    SELECT COUNT(*)
+      FROM APPROVAL_REFERENCE_T
+    WHERE APPROVAL_NO = #{approvalNo}
+  </select>  
+  
+   <select id="getAttachCount" parameterType="int">
+    SELECT COUNT(*)
+      FROM APPROVAL_FILE_T
+    WHERE APPROVAL_NO = #{approvalNo}
+  </select> 
+  
+  
   
 </mapper>
