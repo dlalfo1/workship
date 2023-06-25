@@ -197,6 +197,13 @@
      WHERE VACATION_NO = #{vacationNo}
   </select>
   
+  <select id="getVacationInfoByVacationInfo" parameterType="int" resultMap="VacationMap">
+    SELECT A.VACATION_CATEGORY, A.VACATION_START_DATE, A.VACATION_END_DATE, V.VACATION_DAY
+      FROM VACATION_T V INNER JOIN APPROVAL_T A
+        ON V.APPROVAL_NO = A.APPROVAL_NO
+     WHERE V.VACATION_NO = #{vacationNo};
+  </select>
+  
   <delete id="deleteVacationByVacationNo" parameterType="int">
     DELETE FROM VACATION_T
      WHERE VACATION_NO = #{vacationNo}

@@ -1,130 +1,78 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('workship 받은메일함')}"></head>
-<link rel="stylesheet" th:href="@{/css/mail/sidebar.css(var=1.0)}">
-<link rel="stylesheet" th:href="@{/css/mail/address.css(var=1.0)}">
-<body>
 
-  <div class="container-scroller">
-    <!--/* 상단바 */-->
-    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
- 
-    <!--/* 본문영역 */-->
-    <div class="container-fluid page-body-wrapper">
-      <!--/* 테마설정버튼 영역 */-->
-      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
-      <!--/* 사이드바 영역 */-->
-      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
-      
-      <!--/* 실제 내용 영역 */-->
-      <div class="main-panel">
-   		<nav th:replace="~{/mail/layout/mailsidebar::mailSidebarFrag}"></nav>
-        <div class="content-wrapper">
-        <!--/* 
-          이 안에 div로 잘 구성해서 내용 넣어주시면 됩니다!
-          샘플 메인페이지 div 구성은 indexSample.html(바로아래파일)에 남겨두었고,
-          참고할 만 한 html 파일들은 static/pages 에 있습니다!
-        */-->
-        
-        
-   			<form id="frmAddSearch" action="@{/mail/addSearch.do}">
-        	
-		       	<div class="allContents">
-		       		<div class="addressBox">   	
-			        	<div class="department">
-					      <a class="nav-link" data-toggle="collapse" href="#dept-basic" aria-expanded="false" aria-controls="dept-basic">
-					        <span class="menu-title">부서</span>
-					        <i class="menu-arrow"></i>
-					        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#212529" width="16px" height="16px">
-							  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-							</svg>
-					      </a>
-					      <div id="dept-basic">
-					        <ul class="nav sub-menu">
-					          <li class="nav-item">개발부</li>
-					          <li class="nav-item">인사부</li>
-					          <li class="nav-item">총무부</li>
-					        </ul>
-					      </div>
-					    </div>
-						        		
-		        		<div class="searchBox">
-		        			<div class="addSearch">
-			        			<select name="column" id="column">
-			        				<option value="memberName">사원명</option>
-			        				<option value="jobName">직위명</option>
-			        				<option value="deptName">부서명</option>
-			        				<option value="emailId">이메일</option>
-			        			</select>
-			        			<input list="auto_complete" type="text" name="query" id="query">
-			        			<button><i class="fa-solid fa-magnifying-glass"></i></button>	        			
-		        			</div>
-		        			<div class="searchResult">
-			        			<datalist id="auto_complete">조회된사원출력</datalist>	        			
-		        			</div>
-		        		</div>
-		        		
-		        		<div class="addressee">
-		        			<div class="toNormal">
-		        				<div class="btnBox">
-			        				<button class="btnChoice"><i class="fa-solid fa-circle-chevron-right"></i></button>
-			        				<button class="btnCancel"><i class="fa-solid fa-circle-chevron-left"></i></button>        				
-		        				</div>
-		        				<div class="result">
-			        				받는 사람        				
-		        				</div>
-		        			</div>
-		        			<div class="cc">
-		        				<div class="btnBox">
-			        				<button class="btnChoice"><i class="fa-solid fa-circle-chevron-right"></i></button>
-			        				<button class="btnCancel"><i class="fa-solid fa-circle-chevron-left"></i></button>        				
-		        				</div>
-		        				<div class="result">
-			        				참조        				
-		        				</div>
-		        			</div>
-		        			<div class="bc">
-		        				<div class="btnBox">
-			        				<button class="btnChoice"><i class="fa-solid fa-circle-chevron-right"></i></button>
-			        				<button class="btnCancel"><i class="fa-solid fa-circle-chevron-left"></i></button>        				
-		        				</div>
-		        				<div class="result">
-			        				숨은 참조       				
-		        				</div>
-		        			</div>
-		        		</div>    		
-		       		</div>
-		       		
-		       		<div class="addChoice">
-		       			<button class="choiceResult">등록</button>
-		       			<input type="button" class="choiceResult" value="취소" id="btnCancel">
-		       		</div>
-		       		<script>
-		       		
-		       			function fnCancel(){
-		       				$('#btnCancel').on('click', function(){
-		       					history.back();
-		       				})
-		       			}     
-		       			
-		       			$(function(){
-		       				fnCancel();
-		       			})
-		       			
-		       		</script>    
-		       		    	
-		       	</div>
-		       	        	
-       		</form>
 
-        </div>  <!--/* content-wrapper 끝나는 지점 */-->
-      </div>  <!--/* main-panel 끝나는 지점 */-->      
-    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
-  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
-  
-  <!--/* footer 영역 */-->
-  <footer th:replace="~{layout/footer::footerFrag}"></footer> 
-
-</body>
-</html>
+<div th:fragment="modalFrag" class="modal fade" id="addrModal" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+	
+		<div class="modal-content"> 		 
+			<div class="modal-body">	
+											        		
+	       		<div class="searchBox">
+	       			<div class="addSearch">
+	        			<select name="column" id="column">
+	        				<option value="memberName">사원명</option>
+	        				<option value="jobName">직위명</option>
+	        				<option value="deptName">부서명</option>
+	        				<option value="emailId">이메일</option>
+	        			</select>
+	        			<input list="auto_complete" type="text" name="query" id="query">
+	        			<button><i class="fa-solid fa-magnifying-glass"></i></button>	        			
+	       			</div>
+	       			<div class="searchResult">
+	        			<div id="memberList">
+	        				<span>사원명</span>
+	        				<span>직위명</span>
+	        				<span>부서명</span>
+	        				<span>이메일</span>
+	        			</div>	        			
+	       			</div>
+	       		</div>
+			        		
+	       		<div class="addressee">
+	       			<div class="toNormal">
+	       				<div class="btnBox">
+	        				<button class="btnChoice"><i class="fa-solid fa-circle-chevron-right"></i></button>
+	        				<button class="btnCancel"><i class="fa-solid fa-circle-chevron-left"></i></button>        				
+	       				</div>
+	       				<div class="receiverChoice">
+	       					<h4><strong>받는사람</strong></h4>
+		       				<div class="result">
+		        				<!-- 받는 사람 -->    				
+		       				</div>
+	       				</div>
+	       			</div>
+	       			<div class="ccBox">
+	       				<div class="btnBox">
+	        				<button class="btnChoice"><i class="fa-solid fa-circle-chevron-right"></i></button>
+	        				<button class="btnCancel"><i class="fa-solid fa-circle-chevron-left"></i></button>        				
+	       				</div>
+	       				<div class="receiverChoice">
+	       					<h4><strong>참조</strong></h4>
+		       				<div class="result">
+		        				<!-- 참조 -->        				
+		       				</div>
+	       				</div>
+	       			</div>
+	       			<div class="bccBox">
+	       				<div class="btnBox">
+	        				<button class="btnChoice"><i class="fa-solid fa-circle-chevron-right"></i></button>
+	        				<button class="btnCancel"><i class="fa-solid fa-circle-chevron-left"></i></button>        				
+	       				</div>
+	       				<div class="receiverChoice">	       				
+	       					<h4><strong>숨은참조</strong></h4>
+		       				<div class="result">
+		        				<!-- 숨은 참조 -->       				
+		       				</div>
+	       				</div>
+	       			</div>
+	       		</div>    		
+	   		</div>
+	   		
+	  		<div class="modal-footer">
+	  			<button type="button" class="btn btn-primary">등록</button>
+	  			<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+	  		</div>
+		</div> 			    	
+   	</div>		       	        	
+</div>

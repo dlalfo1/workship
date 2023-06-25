@@ -14,5 +14,7 @@ public class MailToDTO {
 	private String mailToRole;
 	private String mailToCategory;
 	private String mailToStatus;
-	private String mailToStar;	
+	private String mailToStar;
+	private int prevNo;
+  private int nextNo;
 }
