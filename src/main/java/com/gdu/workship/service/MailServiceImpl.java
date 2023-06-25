@@ -1,6 +1,8 @@
 package com.gdu.workship.service;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +13,16 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gdu.workship.domain.MailDTO;
+import com.gdu.workship.domain.MailFileDTO;
 import com.gdu.workship.domain.MailToDTO;
 import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.mapper.MailMapper;
+import com.gdu.workship.util.MyFileUtil;
 import com.gdu.workship.util.PageUtil2;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +33,24 @@ public class MailServiceImpl implements MailService {
 
 	private final MailMapper mailMapper;
 	private final PageUtil2 pageUtil;	
+	private final MyFileUtil myFileUtil;
+	
+	@Override
+	public void getMailSideCheck(HttpServletRequest request, Model model) {
+	
+		HttpSession session = request.getSession();
+		MemberDTO loginMemberDTO = (MemberDTO)session.getAttribute("loginMember");
+		String emailId = loginMemberDTO.getEmailId();
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("emailId", emailId);
+		
+		int mailNoReadRecord = mailMapper.getMailNoReadCount(map);
+		int mailStarRecord = mailMapper.getMailStarCount(map);	
+		
+		model.addAttribute("mailNoReadRecord", mailNoReadRecord);
+		model.addAttribute("mailStarRecord", mailStarRecord);			
+	}
 
 	@Override
 	public void getMailList(HttpServletRequest request, Model model) {
@@ -77,6 +102,7 @@ public class MailServiceImpl implements MailService {
 			MemberDTO member = mailMapper.getNameByEmail(mailMap);
 			mailToList.add(member);
 		}
+		System.out.println(mailToList);
 
 		
 		model.addAttribute("totalRecord", totalRecord);
@@ -111,6 +137,7 @@ public class MailServiceImpl implements MailService {
 		map.put("Category", Category);
 		map.put("emailId", emailId);
 		
+		
 		int mailTotalRecord = mailMapper.getMailTotalCount(map);
 		int mailNoReadRecord = mailMapper.getMailNoReadCount(map);
 		int mailStarRecord = mailMapper.getMailStarCount(map);	
@@ -144,7 +171,7 @@ public class MailServiceImpl implements MailService {
 					break;	
 			}
 		}		
-	
+
 		model.addAttribute("sentMail", mailMapper.getMailByMailNo(map));	
 		model.addAttribute("mailToMe", mailMapper.getMailToMeByMailToNo(map));
 		model.addAttribute("mailtoList", mailtoList);
@@ -155,6 +182,7 @@ public class MailServiceImpl implements MailService {
 		model.addAttribute("mailTotalRecord", mailTotalRecord);
 		model.addAttribute("mailNoReadRecord", mailNoReadRecord);
 		model.addAttribute("mailStarRecord", mailStarRecord);	
+		
 
 	}
 	
@@ -372,4 +400,175 @@ public class MailServiceImpl implements MailService {
 		map3.put("result", result);
 		return map3;
 	}
+	
+	@Override
+	public Map<String, Object> changeStar(Map<String, Object> map, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession(); 
+		MemberDTO loginMemberDTO = (MemberDTO)session.getAttribute("loginMember"); 
+		String emailId = loginMemberDTO.getEmailId();
+
+		map.put("emailId", emailId);
+		
+		MailToDTO mail = mailMapper.getMailToMeByMailToNo(map);
+		
+		int mailToNo = mail.getMailToNo();
+		map.put("mailToNo", mailToNo);
+		
+		int result = mailMapper.changeStar(map);
+	
+		Map<String, Object> map2 = new HashMap<>();
+		map2.put("result", result);		
+		return map2;
+	}
+	
+	@Override
+	public Map<String, Object> changeStatus(Map<String, Object> map, HttpServletRequest request) {
+
+		HttpSession session = request.getSession(); 
+		MemberDTO loginMemberDTO = (MemberDTO)session.getAttribute("loginMember"); 
+		String emailId = loginMemberDTO.getEmailId();
+
+		map.put("emailId", emailId);
+		
+		MailToDTO mail = mailMapper.getMailToMeByMailToNo(map);
+		
+		int mailToNo = mail.getMailToNo();
+		map.put("mailToNo", mailToNo);
+		
+		int result = mailMapper.changeStatus(map);
+	
+		Map<String, Object> map2 = new HashMap<>();
+		map2.put("result", result);		
+		return map2;
+	}
+	
+	@Override
+	public Map<String, Object> mailReadCheck(Map<String, Object> map, HttpServletRequest request) {
+
+		HttpSession session = request.getSession(); 
+		MemberDTO loginMemberDTO = (MemberDTO)session.getAttribute("loginMember"); 
+		String emailId = loginMemberDTO.getEmailId();
+
+		map.put("emailId", emailId);
+		
+		MailToDTO mail = mailMapper.getMailToMeByMailToNo(map);	
+		
+		int mailToNo = mail.getMailToNo();
+		map.put("mailToNo", mailToNo);
+		
+		int result = mailMapper.mailReadCheck(map);		
+		
+		Map<String, Object> map2 = new HashMap<>();
+		map2.put("result", result);		
+		
+		return map2;
+	}
+	
+	@Override
+	public int sendMail(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
+		
+		HttpSession session = multipartRequest.getSession();
+		MemberDTO loginMemberDTO =(MemberDTO)session.getAttribute("loginMember");
+		String emailId = loginMemberDTO.getEmailId();
+	
+		String title = multipartRequest.getParameter("title");
+		String content = multipartRequest.getParameter("content");
+		
+		List<MultipartFile> files = multipartRequest.getFiles("files");
+		String mailHasFile = (files != null && !files.isEmpty()) ? "Y" : "N";
+		
+		MailDTO mailDTO = new MailDTO();
+		MemberDTO memberDTO = new MemberDTO();
+		memberDTO.setEmailId(emailId);
+		
+		mailDTO.setMemberDTO(memberDTO);
+		mailDTO.setMailTitle(title);
+		mailDTO.setMailContent(content);
+		mailDTO.setMailHasFile(mailHasFile);
+		
+		int sentResult = mailMapper.sendMail(mailDTO);		
+				
+		String receiver = multipartRequest.getParameter("receiver");
+		String[] mailToList = receiver != null ? receiver.split(",") : new String[0];
+
+		int mailToResult = 0;		
+
+		Map<String, Object> map1 = new HashMap<String, Object>();
+				
+		for(int i = 0; i < mailToList.length; i++) {
+			map1.put("mailNo", mailDTO.getMailNo());
+			map1.put("mailTo", mailToList[i]);
+			mailToResult += mailMapper.sendMailTo(map1);					
+
+		}		
+		
+		String mailRef = multipartRequest.getParameter("mailRef");
+		String[] mailCcList = mailRef != null ? mailRef.split(",") : new String[0];
+		
+		int mailCcResult = 0;		
+		
+		Map<String, Object> map2 = new HashMap<String, Object>();
+				
+		for(int i = 0; i < mailCcList.length; i++) {
+			map2.put("mailNo", mailDTO.getMailNo());
+			map2.put("mailTo", mailCcList[i]);
+			mailCcResult += mailMapper.sendMailCc(map2);					
+
+		}			
+
+		String mailBlind = multipartRequest.getParameter("mailBlind");
+		String[] mailBccList = mailBlind != null ? mailBlind.split(",") : new String[0];
+		
+		int mailBccResult = 0;		
+		
+		Map<String, Object> map3 = new HashMap<String, Object>();
+				
+		for(int i = 0; i < mailBccList.length; i++) {
+			map3.put("mailNo", mailDTO.getMailNo());
+			map3.put("mailTo", mailBccList[i]);
+			mailBccResult += mailMapper.sendMailBcc(map3);	
+		}		
+
+		
+		int mailFileResult = 0;
+		
+		for(MultipartFile multipartFile : files) {
+			
+			if(multipartFile != null && multipartFile.isEmpty() == false) {
+				
+				try {
+					
+					String mailFilePath = myFileUtil.getPath();
+					
+					File dir = new File(mailFilePath);
+					if(dir.exists() == false) {
+						dir.mkdirs();
+					}
+					
+					String mailFileoriginName = multipartFile.getOriginalFilename();
+					mailFileoriginName = mailFileoriginName.substring(mailFileoriginName.lastIndexOf("\\") + 1);
+					
+					String mailFilesystemName = myFileUtil.getFilesystemName(mailFileoriginName);
+					
+					File file = new File(dir, mailFilesystemName);
+					
+					multipartFile.transferTo(file);
+			
+					MailFileDTO mailFileDTO = new MailFileDTO();
+					mailFileDTO.setMailFileSystemName(mailFilesystemName);
+					mailFileDTO.setMailFileOriginName(mailFileoriginName);
+					mailFileDTO.setMailFilePath(mailFilePath);
+					mailFileDTO.setMailDTO(mailDTO);
+					
+					mailMapper.addAttach(mailFileDTO);
+
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}			
+		return sentResult + mailToResult + mailCcResult + mailBccResult + mailFileResult;		
+	}
+	
 }

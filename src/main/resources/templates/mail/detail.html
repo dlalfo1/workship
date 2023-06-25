@@ -158,8 +158,20 @@
         					
        					<div class="changePage">
        						<a class="toList" th:href="@{/mail/list.html(Category=${Category})}">목록</a>
-       						<i class="fa-solid fa-chevron-up" onclick="fnPrev()"></i>
-       						<i class="fa-solid fa-chevron-down" onclick="fnNext()"></i>
+       						
+       						<!-- 보낸 메일 -->
+       						<th:block th:if="${Category == 'SENT' or Category == 'DRAFTS'}">
+       							<i class="fa-solid fa-chevron-up" onclick="fnPrev()"></i>
+       							<i class="fa-solid fa-chevron-down" onclick="fnNext()"></i>
+       						</th:block>
+       						
+       						<!-- 받은 메일 -->
+       						<th:block th:unless="${Category == 'SENT' or Category == 'DRAFTS'}">
+       							<i class="fa-solid fa-chevron-up" onclick="fnPrev()"></i>
+       							<i class="fa-solid fa-chevron-down" onclick="fnNext()"></i>
+       						</th:block>
+       						
+       						
        					</div>       					
 					</div>
 
@@ -224,14 +236,26 @@
 					        					</div>
 					        					<div class="AllSize">
 					        						<span class="text">총용량</span>
-					        						<span class="fileSize">0(KB)</span>
+					        						<span class="fileSize">(KB)</span>
 					        					</div>
 					        					<input type="button" th:value="모두저장" onclick="fnSave()">
 					        				</div>		
 					        				<div class="attachList">
-					       						<ul id="fileList">
-					       							<li>파일리스트 올리기</li>
-					       						</ul>					        				
+					        					<th:block th:if="${#lists.isEmpty(attachList)}">	
+					        						<div>
+					        							<th:block th:each="attach:${attachList}">
+					        								<div>
+					        									<a th:href="@{/mail/attachDownload.do?(attachNo=${attach.attachNo})">
+					        										${attach.originName}
+					        									</a>
+					        								</div>
+					        							</th:block>
+					        							<div>
+					        								<a th:href="@{/mail/attachDownloadAll.do(mailNo=${mailNo})">모두 다운로드</a>
+					        							</div>
+					        						</div>				        						
+						       									        				
+					        					</th:block>
 					        				</div>
 				        				</div>
        								</div>
@@ -332,6 +356,8 @@
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
   
   <!--/* footer 영역 */-->
   <footer th:replace="~{layout/footer::footerFrag}"></footer> 
