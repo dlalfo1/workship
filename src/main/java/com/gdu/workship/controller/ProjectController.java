@@ -1,7 +1,5 @@
 package com.gdu.workship.controller;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
@@ -10,14 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gdu.workship.domain.DepartmentDTO;
 import com.gdu.workship.domain.MemberDTO;
 import com.gdu.workship.domain.ProjectDTO;
+import com.gdu.workship.domain.ProjectWorkDTO;
 import com.gdu.workship.mapper.NoticeBoardMapper;
+import com.gdu.workship.mapper.ProjectMapper;
 import com.gdu.workship.service.ProjectService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,9 +23,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Controller
 public class ProjectController {
-	
+
 	private final ProjectService projectService;
 	private final NoticeBoardMapper noticeBoardMapper;
+	private final ProjectMapper projectMapper;
 	
 	@GetMapping("/projectList.do")
 	public String projectList(HttpServletRequest request, Model model) {
@@ -36,10 +34,15 @@ public class ProjectController {
 		return "project/projectMain";
 	}
 	
-	@GetMapping(value="/project/projectWorkList.do", produces="application/json")
-	@ResponseBody
-	public Map<String, Object> projectWorkList(HttpServletRequest request) {
-		return projectService.getProjectWorkList(request);
+	@GetMapping(value="/projectWorkList.html")
+	public String projectWorkList(HttpServletRequest request, Model model) {
+		String memberName = request.getParameter("memberName");
+		String deptName = request.getParameter("deptName");
+		projectService.getProjectWorkList(request, model);	
+		
+		model.addAttribute("memberName", memberName);
+		model.addAttribute("deptName", deptName);
+		return "project/projectWorkList";
 	}
 	
 	@GetMapping("/projectUpdate.html")
@@ -74,8 +77,18 @@ public class ProjectController {
 		return "redirect:/project/projectList.do";
 	}
 	
-	@GetMapping("/project/projectWorkDetail.html")
-	public String projectWorkDetail(@RequestParam("projectWorkNo") int projectWorkNo, Model model) {
+	@GetMapping("/projectWorkDetail.html")
+	public String projectWorkDetail(HttpServletRequest request, Model model) {
+		MemberDTO member = new MemberDTO();
+		member = (MemberDTO)request.getSession().getAttribute("loginMember");
+		String emailId = member.getEmailId();
+		model.addAttribute("member", noticeBoardMapper.getMemberByEmail(emailId)); 
+		int projectWorkNo = Integer.parseInt(request.getParameter("projectWorkNo"));
+		int projectNo = Integer.parseInt(request.getParameter("projectNo"));
+		ProjectWorkDTO projectWorkDTO =  projectMapper.getProjectWByNo(projectWorkNo);
+		ProjectDTO projectDTO = projectMapper.getProject(projectNo);
+		model.addAttribute("projectWorkDTO", projectWorkDTO);
+		model.addAttribute("projectDTO", projectDTO);
 		projectService.projectWDetail(projectWorkNo, model);
 		return "project/projectWorkDetail";
 	}
@@ -86,10 +99,11 @@ public class ProjectController {
 		return "redirect:/project/projectList.do";
 	}
 	
-	@PostMapping("/project/projectWorkUpdate.do")
-	public String projectWorkUpdate(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
+	@PostMapping("/projectWorkUpdate.do")
+	public String projectWorkUpdate(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+		int projectNo = Integer.parseInt(request.getParameter("projectNo")); 
 		redirectAttributes.addFlashAttribute("modifyResult", projectService.updateProjectW(request));
-		return "redirect:/project/projectWorkList.do";
+		return "redirect:/project/projectWorkList.html?projectNo=" + projectNo;
 	}
 	
 	@PostMapping("/deleteProject.do")
@@ -98,10 +112,47 @@ public class ProjectController {
 		return "redirect:/project/projectList.do";
 	}
 	
-	@PostMapping("/project/deleteProjectWork.do")
-	public String deleteProjectWork(@RequestParam("projectWorkNo") int projectWorkNo, RedirectAttributes redirectAttributes) {
-		redirectAttributes.addFlashAttribute("deleteResult", projectService.deleteProjectM(projectWorkNo));
-		return "redirect:/project/projectWorkList.do";
+	@PostMapping("/deleteProjectWork.do")
+	public String deleteProjectWork(HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
+		int projectWorkNo = Integer.parseInt(request.getParameter("projectWorkNo"));
+		int projectNo = Integer.parseInt(request.getParameter("projectNo"));
+		redirectAttributes.addFlashAttribute("deleteResult", projectService.deleteProjectW(projectWorkNo));
+		
+		projectService.getProjectWorkList(request, model);	
+		
+		return "redirect:/project/projectWorkList.html?projectNo=" + projectNo;
+	}
+	
+	@GetMapping("/projectWorkAdd.html")
+	public String projectWorkAdd(HttpServletRequest request, Model model) {
+		MemberDTO member = new MemberDTO();
+		member = (MemberDTO)request.getSession().getAttribute("loginMember");
+		String emailId = member.getEmailId();
+		model.addAttribute("member", noticeBoardMapper.getMemberByEmail(emailId)); 
+		int projectNo = Integer.parseInt(request.getParameter("projectNo"));
+		model.addAttribute("projectNo", projectNo);
+		return "project/projectWorkAdd";
+	}
+	
+	@GetMapping("/projectWorkUpdate.html")
+	public String projectWorkUpdate(HttpServletRequest request, Model model) {
+		MemberDTO member = new MemberDTO();
+		member = (MemberDTO)request.getSession().getAttribute("loginMember");
+		String emailId = member.getEmailId();
+		model.addAttribute("member", noticeBoardMapper.getMemberByEmail(emailId)); 
+		int projectWorkNo = Integer.parseInt(request.getParameter("projectWorkNo"));
+		ProjectWorkDTO projectWorkDTO =  projectMapper.getProjectWByNo(projectWorkNo);
+		model.addAttribute("projectWorkDTO", projectWorkDTO);
+		System.out.println("프로젝트:::" + projectWorkDTO);
+		
+		return "project/projectWorkUpdate";
+	}
+	
+	@PostMapping("/projectWorkAdd.do")
+	public String projectWorkAddDo(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+		int projectNo = Integer.parseInt(request.getParameter("projectNo"));
+		redirectAttributes.addFlashAttribute("addResult", projectService.addProjectW(request));
+		return "redirect:/project/projectWorkList.html?projectNo=" + projectNo;
 	}
 	
 	

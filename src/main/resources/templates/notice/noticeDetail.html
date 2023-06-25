@@ -23,6 +23,18 @@
     font-weight: 500;
     text-decoration: underline;
   }
+  .downloadFileCount {
+    font-weight: 700;
+  }
+  .donwnloadFileAll a {
+    font-size: 17px;
+    text-decoration: none;
+    color: blue;
+  }
+  .donwnloadFileAll a:hover {
+    font-weight: 600;
+    text-decoration: underline;
+  }
 </style>
 <script th:inline="javascript">
   var frm;
@@ -163,10 +175,10 @@
                         </th:block>
                         
                         <th:block th:unless="${#lists.isEmpty(noticeFileList)}">
+                          <div class="donwnloadFileAll" style="margin-top: 10px; padding-left: 10px;"><i class="fa-regular fa-file-zipper"></i>&nbsp;&nbsp;첨부 <span class="downloadFileCount" th:text="${#lists.size(noticeFileList)}"></span>개 <a th:href="@{/notice/downloadAll.do(noticeNo=${n.noticeNo})}">모두 다운로드</a></div>
                           <th:block th:each="noticeFile:${noticeFileList}">
                             <div class="donwnloadFile" style="padding-left: 10px;"><i class="fa-solid fa-download fa-sm"></i>&nbsp;&nbsp;<a th:href="@{/notice/download.do(noticeFileNo=${noticeFile.noticeFileNo})}"><span th:text="${noticeFile.noticeFileOriginName}"></span></a><span></span></div>
                           </th:block>
-                          <div class="donwnloadFile" style="margin-top: 10px; padding-left: 10px;"><a th:href="@{/notice/downloadAll.do(noticeNo=${n.noticeNo})}">모두 다운로드</a></div>
                         </th:block>
                       </div>
                       
@@ -176,7 +188,7 @@
                         <input type="hidden" name="noticeNo" th:value="${n.noticeNo}">
                         <th:block th:if="${session.loginMember.departmentDTO.deptName == '인사팀'}">
                           <input type="hidden" id="refNo">
-                          <button type="button" class="btn btn-primary btn-rounded btn-md mx-1" onclick="fnWrite()">새글쓰기</button>
+                          <button type="button" class="btn btn-primary btn-rounded btn-md mx-1" onclick="fnWrite()">글쓰기</button>
                         </th:block>
                         <th:block th:if="${session.loginMember.emailId != n.MemberDTO.emailId}">
                           <button type="button" class="btn btn-danger btn-rounded btn-md mx-1" data-toggle="modal" data-target="#jyModal_confirm">신고</button>
@@ -194,7 +206,6 @@
           </div>
           
           <!--/* 신고하기 모달창 */-->
-          <!--/* 
           <div class="modal" id="jyModal_confirm">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
@@ -234,10 +245,8 @@
               </div>
             </div>
           </div> 
-          */-->
           <!--/* 신고하기 모달창 */-->
           
-          <!--/* 신고하기 함수
           <script th:inline="javascript">
           
             var reportRefNo = '';
@@ -310,6 +319,7 @@
                       resolve();
                       
                     } else {   // 이력 있음
+                    	alert('게시글을 반복하여 신고할 수 없습니다.');
                       $('.btn-jycancle').click();
                     }
                   },
@@ -346,7 +356,7 @@
             }
             
           </script>
-           */-->
+
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->

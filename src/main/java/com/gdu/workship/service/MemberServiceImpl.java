@@ -304,7 +304,7 @@ public class MemberServiceImpl implements MemberService {
     member.setJobDTO(job);
     
     MultipartFile file = request.getFile("attachImage");
-    if(file != null && file.isEmpty() == false) {
+    if(file != null && !file.isEmpty()) {
       
       try {
         String path = myFileUtil.getPath();
@@ -331,8 +331,8 @@ public class MemberServiceImpl implements MemberService {
 
         File savefile = new File(dir, fileName);
         
-        file.transferTo(savefile); 
-        
+        file.transferTo(savefile);
+          
         /* 썸네일(첨부 파일이 이미지인 경우에만 썸네일이 가능) */
         
         // 첨부 파일의 Content-Type 확인

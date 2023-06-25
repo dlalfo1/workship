@@ -107,24 +107,28 @@
   		  ORDER BY P.PROJECT_NO ASC
   	  	  LIMIT #{begin}, #{recordPerPage}
   	  </select>
+  	  
+  	  <select id="getProjectName" parameterType="int" resultType="String">
+  	  	SELECT PROJECT_TITLE
+  	  	  FROM PROJECT_T
+  	  	 WHERE PROJECT_NO = ${projectNo}  
+  	  </select>
+  	  
   	  <select id="getProjectWList" parameterType="Map" resultMap="ProjectWorkMap">
-		SELECT A.PROJECT_WORK_NO, A.PROJECT_WORK_TITLE, A.PROJECT_WORK_DETAIL, A.PROJECT_WORK_MODIFIED_AT, A.PROJECT_NO, A.PROJECT_TITLE, A.MEMBER_NO, A.MEMBER_NAME, A.ING_NO, A.ING_NAME
-		  FROM (SELECT W.PROJECT_WORK_NO, W.PROJECT_WORK_TITLE, W.PROJECT_WORK_DETAIL, W.PROJECT_WORK_MODIFIED_AT, P.PROJECT_NO, P.PROJECT_TITLE, M.MEMBER_NO, M.MEMBER_NAME, I.ING_NO, I.ING_NAME)
+		SELECT A.PROJECT_WORK_NO, A.PROJECT_WORK_TITLE, A.PROJECT_WORK_DETAIL, A.PROJECT_WORK_MODIFIED_AT, A.PROJECT_NO, A.PROJECT_TITLE, A.MEMBER_NO, A.MEMBER_NAME, A.ING_NO, A.ING_STATE
+		  FROM (SELECT W.PROJECT_WORK_NO, W.PROJECT_WORK_TITLE, W.PROJECT_WORK_DETAIL, W.PROJECT_WORK_MODIFIED_AT, P.PROJECT_NO, P.PROJECT_TITLE, M.MEMBER_NO, M.MEMBER_NAME, I.ING_NO, I.ING_STATE
 		  FROM PROJECT_WORK_T W INNER JOIN PROJECT_T P 
 		  	ON W.PROJECT_NO = P.PROJECT_NO INNER JOIN MEMBER_T M
 		  	ON W.MEMBER_NO = M.MEMBER_NO INNER JOIN ING_T I
 		  	ON W.ING_NO = I.ING_NO
-  	  	    <where>
-  	  	    	<if test="column != '' and query != ''">
-  	  	    		${column} LIKE CONCAT('%' , #{query}, '%')
-  	  	    	</if>
-  	  	    </where>) A
+		  	WHERE W.PROJECT_NO = ${projectNo}
+	  	    	<if test="column != '' and query != ''">
+	  	    		AND ${column} LIKE CONCAT('%' , #{query}, '%')
+	  	    	</if>
+  	  	    ) A
 	  	  <choose>
-	  	  	<when test="column != ''">
-	  	  		ORDER BY ${column} ASC
-	  	  	</when>
 	  	  	<otherwise>
-	  	  		ORDER BY W.PROJECT_WORK_NO ASC
+	  	  		ORDER BY A.PROJECT_WORK_NO ASC
 	  	  	</otherwise>
 	  	  </choose>	    
   	  	  LIMIT #{begin}, #{recordPerPage}
@@ -146,13 +150,15 @@
   	  	INSERT INTO PROJECT_WORK_T (
   	  		PROJECT_NO
   	  	  , MEMBER_NO
+  	  	  , DEPT_NO
   	  	  , PROJECT_WORK_TITLE
   	  	  , PROJECT_WORK_DETAIL
-  	  	  , PROJECT_WORK_STATE
+  	  	  , ING_NO
   	  	  , PROJECT_WORK_MODIFIED_AT
   	  	 ) VALUES (
 			#{projectDTO.projectNo}
-		  , #{memberDTO.memberNo}  	  	 
+		  , #{memberDTO.memberNo} 
+		  , #{departmentDTO.deptNo} 	  	 
 		  , #{projectWorkTitle}  	  	 
 		  , #{projectWorkDetail}  	  	 
 		  , #{ingDTO.ingNo}  	
@@ -163,7 +169,7 @@
 	  <delete id="deleteProjectW">
 	  	DELETE
 	  	  FROM PROJECT_WORK_T
-	  	 WHERE PROJECT_WORK_NO = #{projectWorkNo}  
+	  	 WHERE PROJECT_WORK_NO = #{projectWorkNo}
 	  </delete>
 	  
 	  <update id="updateProjectW">
@@ -173,7 +179,8 @@
 	  	  	  , MEMBER_NO 				 = #{memberDTO.memberNo}
 	  	  	  , PROJECT_WORK_TITLE  	 = #{projectWorkTitle} 
 	  	  	  , PROJECT_WORK_DETAIL  	 = #{projectWorkDetail} 
-	  	  	  , PROJECT_WORK_STATE 		 = #{ingDTO.ingNo}
+	  	  	  , ING_NO			 		 = #{ingDTO.ingNo}
+	  	  	  , DEPT_NO 				 = #{departmentDTO.deptNo}
 	  	  	  , PROJECT_WORK_MODIFIED_AT = #{projectWorkModifiedAt}
 	  	 WHERE PROJECT_WORK_NO = #{projectWorkNo}  
 	  </update>
@@ -217,13 +224,21 @@
       	  FROM DEPARTMENT_T
   	</select>
   	<select id="getProjectWByNo" parameterType="int" resultMap="ProjectWorkMap">
-  		SELECT M.MEMBER_NO, M.MEMBER_NAME, P.PROJECT_NO, I.ING_NO, I.ING_NAME, W.PROJECT_WORK_NO, W.PROJECT_WORK_TITLE, W.PROJECT_WORK_DETAIL, P.PROJECT_MODIFIED_AT
+  		SELECT M.MEMBER_NO, M.MEMBER_NAME, P.PROJECT_NO, I.ING_NO, I.ING_STATE, W.PROJECT_WORK_NO, W.PROJECT_WORK_TITLE, W.PROJECT_WORK_DETAIL, W.PROJECT_WORK_MODIFIED_AT
   		  FROM PROJECT_WORK_T W LEFT OUTER JOIN MEMBER_T M
   		    ON W.MEMBER_NO = M.MEMBER_NO LEFT OUTER JOIN PROJECT_T P
-  		    ON W.PROJECT_NO = P.PROJECT_NO LEFT OUTER JOIN  ING_T I
+  		    ON W.PROJECT_NO = P.PROJECT_NO LEFT OUTER JOIN ING_T I
   		    ON W.ING_NO = I.ING_NO
   		 WHERE W.PROJECT_WORK_NO = #{projectWorkNo}   
   	</select>
   	
+  	<select id="getProject" parameterType="int" resultMap="ProjectMap">
+  		SELECT P.PROJECT_NO, M.MEMBER_NO, M.MEMBER_NAME, D.DEPT_NO, P.PROJECT_START_AT, P.PROJECT_END_AT, P.PROJECT_TITLE, I.ING_NO, I.ING_STATE 
+  		  FROM PROJECT_T P LEFT OUTER JOIN MEMBER_T M
+  		    ON P.MEMBER_NO = M.MEMBER_NO LEFT OUTER JOIN DEPARTMENT_T D
+  		    ON P.DEPT_NO = D.DEPT_NO LEFT OUTER JOIN ING_T I
+  		    ON P.ING_NO = I.ING_NO
+  		 WHERE PROJECT_NO = #{projectNo}    
+  	</select>
  
 </mapper>

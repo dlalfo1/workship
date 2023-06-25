@@ -105,7 +105,7 @@ public class NoticeBoardController {
     return "redirect:/notice/noticeDetail.html?noticeNo=" + noticeNo;
   }
   
-  
+  // 구현하기 약속!
 
   // 게시글 임시저장
   @PostMapping(value="/notice/tempSave.do", produces="application/json")

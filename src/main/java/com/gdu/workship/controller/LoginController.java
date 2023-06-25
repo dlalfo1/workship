@@ -1,6 +1,5 @@
 package com.gdu.workship.controller;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,10 +35,6 @@ public class LoginController {
 	  public String logout(HttpServletRequest request, HttpServletResponse response) {
 	    loginService.logout(request, response);
 	    return "redirect:/";
-	  }
-	  @GetMapping("/findPassword.do")  // 비밀번호 찾기 화면으로 이동
-	  public String findPwForm() {
-	    return "login/findPassword";
 	  }
 	  
 	  

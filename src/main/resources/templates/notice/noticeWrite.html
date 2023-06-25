@@ -7,6 +7,14 @@
     text-decoration: none;
     color: black;
   }
+  .subject:hover {
+    text-decoration: underline;
+    font-weight: 600;  
+    cursor: pointer;
+  }
+  .deleteBtn {
+    cursor: pointer;
+  }
 </style>
 <script th:inline="javascript">
   
@@ -34,8 +42,12 @@
   		
   		// 첨부된 파일명 표시
   		// 삭제 버튼
-  		var insertFileDeletebtn = '<span class="btn-wrap" title="삭제"><span class="deleteBtn" onclick="deleteFile();">X</span></span>';
-  		$('#fileList').append('<div>' + file.name + insertFileDeletebtn + '</div>');
+  		var deleteAll = '<button type="button" class="btn btn-outline-secondary btn-rounded btn-sm m-1 deleteAllBtn" onclick="deleteAll()">모두 삭제</span>';
+  		// var insertFileDeletebtn = '<span class="btn-wrap" title="삭제"><span class="deleteFileBtn">X</span></span>';
+  		// $('#fileList').append('<div>' + file.name + insertFileDeletebtn + '</div>');
+  		$('#fileList').append('<div>' + file.name + '</div>');
+  		$('#fileList').children('.deleteAllBtn').remove();
+  		$('#fileList').append(deleteAll);
   		
   	})
   	
@@ -75,20 +87,19 @@
   
   
   $(function(){
+	  deleteFile();
 	  
-	  /* 임시저장 ... 주석
 	  emailId = $('#emailId').val();
-    $("#files").change(function(){
+    $('#files').change(function(){
       
       // 임시저장된 글 불러와서 첨부파일 변경할 경우 삭제하기 위해 파일 번호 넘기기
-      if($("#fileNo").val() != ""){
+      if($("#fileNo").val() != ''){
         deleteFile();
       }
       
       // fileChange();
       
     })
-    */
   })
     
   
@@ -172,11 +183,9 @@
                           <div><input type="hidden" name="emailId" id="emailId" th:value="${member.emailId}" readonly></div>
                         </div>
                         <!--/* 임시저장 리스트 보기 */-->
-                        <!--/*
                         <div class="editor col">
-                          <button type="button" class="btn btn-sm btn-light" data-toggle="modal" data-target="#jyModal_confirm" onclick="saveList();">임시 저장된 글</button>
+                          <button type="button" class="btn btn-outline-secondary btn-rounded btn-sm" data-toggle="modal" data-target="#jyModal_confirm" onclick="saveList();">임시 저장된 글</button>
                         </div>
-                        */-->
                         <div class="inputText col">
                           <textarea id="noticeContent" name="noticeContent" required="required" style="resize: none;"></textarea>
                         </div>
@@ -204,19 +213,14 @@
                           <input type="hidden" name="delFile" id="delFile"> <!-- 불러올 첨부파일 삭제할 때 넘기는 파일번호 -->
                           <input type="hidden" name="changeName" id="changeName"> <!-- 불러올 첨부파일 삭제할 때 넘기는 파일경로 -->
                         </div>
-                        <!--/* 
                         <div class="wrap-attach">
-                           파일 첨부 스타일 
                           <ul class="file-wrap"></ul>
-                           이미지 첨부 스타일 
                           <ul class="img-wrap"></ul>
-                          파일 첨부 시 변형되는 건 다우오피스 참고 
                         </div>
-                        */-->
                       </div>
                       <div class="btnWrap col m-1">
                         <input type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" value="돌아가기" onclick="fnList()"> <!--/* 바로 전 목록으로 돌아가기 */-->
-                        <!--/* <input type="button" class="btn btn-outline-secondary btn-rounded btn-md btnSave float-right mx-1" value="임시저장"> */-->
+                        <input type="button" class="btn btn-outline-secondary btn-rounded btn-md btnSave float-right mx-1" value="임시저장">
                         <input type="button" class="btn btn-primary btn-rounded btn-md float-right mx-1" value="작성완료" onclick="fnAddNotice()">
                       </div>
                     </form>
@@ -226,7 +230,6 @@
             </div>
           </div>
           <!-- 모달: 제목 있음 / 버튼 2개 -->
-          <!--/* 
           <div class="modal" id="jyModal_confirm">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
@@ -245,11 +248,9 @@
               </div>
             </div>
           </div>
-           */-->
           <!-- 모달 끝 -->
           
           <script>
-          /* 임시저장할 때 쓸 함수들.. 주석처리
             function fileChange(){
               // 파일이름 li로 뽑아주는 함수
               
@@ -273,9 +274,9 @@
               
               $(".file-wrap").html(value);
               
-            }*/
+            }
             
-            /*
+            
             $(document).ready(function() {
               $(document).on('click', '.btnSave', function() {
                 
@@ -296,7 +297,7 @@
                   contentType: false,
                   dataType: 'json',
                   success: function(data){
-                    if(data.result > 0){
+                    if(data.saveResult > 0){
                       alert('게시글이 임시저장되었습니다.');
                       $('input[name=noticeNo]').val(data.noticeNo);
                     }else{
@@ -340,8 +341,8 @@
                               +   '<input type="hidden" class="noticeNo" name="noticeNo" value="' + list[i].noticeNo + '">'
                               +   '<a onclick="selectSave($(this).prev());"><span class="subject">' + list[i].noticeTitle + '</span>'
                               +   '</a>'
-                              +   '<span class="date">' + fnDateFormat(list[i].noticeCreatedAt) + '</span>'
-                              +   '<span class="deleteBtn">'
+                              +   '<span class="date">&nbsp;' + fnDateFormat(list[i].noticeCreatedAt) + '</span>'
+                              +   '<span class="deleteBtn">&nbsp;'
                               +     'X'
                               +   '</span>'
                               + '</div>'
@@ -354,8 +355,8 @@
                             +   '<input type="hidden" class="noticeNo" name="noticeNo" value="' + list[lastNo].noticeNo + '">'
                             +   '<a onclick="selectSave($(this).prev());"><span class="subject">' + list[lastNo].noticeTitle + '</span>'
                             +   '</a>'
-                            +   '<span class="date">' + fnDateFormat(list[lastNo].noticeCreatedAt) + '</span>'
-                            +   '<span class="deleteBtn">'
+                            +   '<span class="date">&nbsp;' + fnDateFormat(list[lastNo].noticeCreatedAt) + '</span>'
+                            +   '<span class="deleteBtn">&nbsp;'
                             +     'X'
                             +   '</span>'
                             + '</div>'
@@ -387,18 +388,20 @@
                     
                     // notice 객체 뿌리기
                     $('input[name=noticeNo]').val(map.save.noticeNo);
-
+                    
                     $('#noticeTitle').val(map.save.noticeTitle);
                     var noticeContent = map.save.noticeContent;
                     console.log('noticeContent : ' + noticeContent);
                     //$('#noticeContent').summernote('editor.insertText', noticeContent);
+                    $('#noticeContent').summernote('code', noticeContent);
                     $(".note-editable").html(noticeContent);
                     
                     // 첨부파일 있으면 뿌리기
                     if(map.noticeFileList != null && map.noticeFileList.length != 0){
                     	let fileList = map.noticeFileList;
                     	let value = '';
-                    	for(var i = 0; i < fileList.length - 1; i++){
+                    	$('#fileList').empty();
+                    	for(var i = 0; i < fileList.length; i++){
                       	console.log(map.noticeFileList);
                         // 파일번호, 파일이름 뿌리고
                         // 기존파일 삭제버튼 클릭시 input파일에 파일번호, 경로 넣어주기 => db에서 삭제 후 서버에서 삭제
@@ -408,19 +411,19 @@
                         // 새로운 파일 선택해서 li 보여질 때 삭제버튼은 기존파일 삭제버튼과 다르게 지정(클래스 부여)
                         $("#fileNo").val(map.noticeFileList[i].noticeFileNo);
                         $("#changeName").val(map.noticeFileList[i].noticeFileSystemName);
-                        value = '<li id="originFile">'
+                        value += '<li class="originFile">'
                         + '<span class="item-file">'
-                        +   '<span class="btn-wrap" title="삭제">'
-                        +     '<span class="deleteBtn" onclick="deleteFile();">X</span>'
-                        +   '</span>'
-                        +   '<span class="name">'
-                        +     map.noticeFileList.noticeFileOriginName
+                     /* +   '<span class="btn-wrap" title="삭제">'
+                        +     '<span class="deleteFileBtn">X</span>'
+                        +   '</span>' */
+                        +   '<span class="name">' 
+                        +     map.noticeFileList[i].noticeFileOriginName
                         +   '</span>'
                         + '</span>'
                         + '</li>';
+                    console.log(value);
                     	}
-                
-                    $('#fileList').html(value);
+                    $('#fileList').append(value);
                     //$('.file-wrap').html(value);
                       
                     }else{
@@ -440,7 +443,9 @@
             	  $(document).on('click', '.deleteBtn', function() {
               	  var saveNoticeNo = $(this).closest('div').find('.noticeNo').val();
               	  console.log(saveNoticeNo);
-              	  alert('삭제?');
+              	  if(confirm('삭제?') == false) {
+              		  return;
+              	  }
               	  
               	  $.ajax({
               		  type: 'post',
@@ -463,8 +468,18 @@
             	  });
               });
               
+          	  $(document).ready(function() {
+                $(document).on('click', '.deleteFileBtn', function() {
+              	  $(this).parent().parent().remove();
+              	  $('#files').val('');
+                })
+              })
+              function deleteAll() {
+          		  $('#fileList').empty();
+          		  $('#files').val('');
+          	  }
               function deleteFile(){
-                $("#originFile").remove(); // li 요소 삭제
+            	  //$("#originFile").remove(); // li 요소 삭제
                 
                 const fileNo = $("#fileNo").val(); // 기존 파일 번호 변수에 담기
                 $("#delFile").val(fileNo); // 삭제할 번호로 넘기기
@@ -474,7 +489,6 @@
                 console.log(fileNo);
                 console.log($("#delFile").val()); // 삭제 후 다시 빈칸으로 돌려놓기 !!!!!!!!!!!!!!!!!!!!!!!!!
               } 
-              */
           </script>
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->

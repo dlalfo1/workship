@@ -92,5 +92,7 @@ public class BoardCommentImpl implements BoardCommentService {
 			int result = boardCommentMapper.removeComment(boardCommentDTO.getCommentNo()); 
 			return result;
 		}
+		
+		
 
 }
