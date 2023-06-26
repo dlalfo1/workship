@@ -4,16 +4,24 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gdu.workship.service.MailService;
 
+import ch.qos.logback.classic.Logger;
 import lombok.RequiredArgsConstructor;
 
 @RequestMapping("/mail")
@@ -83,12 +91,55 @@ public class MailController {
 	public Map<String, Object> updateRemoveCancel(@RequestBody Map<String, Object> map, HttpServletRequest request) {
 		return mailService.updateRemoveCancel(map,request);
 	}
+	
+	@ResponseBody
+	@PostMapping(value="/changeStar.do", produces="application/json")
+	public Map<String, Object> changeStar(@RequestBody Map<String, Object> map, HttpServletRequest request) {
+		return mailService.changeStar(map, request);
+	}
+	
+	@ResponseBody
+	@PostMapping(value="/changeStatus.do", produces="application/json")
+	public Map<String, Object> changeStatus(@RequestBody Map<String, Object> map, HttpServletRequest request) {
+		return mailService.changeStatus(map, request);
+	}
+	
+	@ResponseBody
+	@PostMapping(value="/mailReadCheck.do", produces="application/json")
+	public Map<String, Object> mailReadCheck(@RequestBody Map<String, Object> map, HttpServletRequest request) {
+		return mailService.mailReadCheck(map, request);
+	}
 
 	@GetMapping("/write.html")
-	public String mailWrite() {
+	public String mailWrite(HttpServletRequest request, Model model) {
+		mailService.getMailSideCheck(request, model);
 		return "mail/write";
 	}
 	
+	@GetMapping("/sent.html")
+	public String mailSent(HttpServletRequest request, Model model) {
+		mailService.getMailSideCheck(request, model);
+		return "mail/sent";
+	}
+	
+	@PostMapping("/sendMail.do")
+	public String sendMail(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes) {
+		int addResult = mailService.sendMail(multipartRequest, redirectAttributes);
+		redirectAttributes.addFlashAttribute("addResult", addResult); 
+		return "redirect:/mail/sent.html"; 
+	}
+	
+	@GetMapping("/attachDownload.do")
+	public ResponseEntity<Resource> attachDownload(@RequestParam("mailFileNo") int mailFileNo,
+												   @RequestHeader("User-Agent") String userAgent) {
+		return mailService.attachDownload(mailFileNo, userAgent);
+	}
+	
+	@GetMapping("/attachDownloadAll.do")
+	public ResponseEntity<Resource> attachDownloadAll(@RequestParam("mailNo") int mailNo) {
+		return mailService.attachDownloadAll(mailNo);
+	}
+
 	@GetMapping("/address.html")
 	public String mailAddr() {
 		 return "mail/address";

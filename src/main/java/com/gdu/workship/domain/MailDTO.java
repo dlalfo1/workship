@@ -19,5 +19,5 @@ public class MailDTO {
    private String mailCategory;
    private MailToDTO mailToDTO;
    private int prevNo;
-    private int nextNo;
+   private int nextNo;
 }

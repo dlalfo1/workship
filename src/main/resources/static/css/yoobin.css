@@ -110,3 +110,7 @@
 .tooltip.bottom-right .tooltip-arrow {
 	top:0;left:5px;margin-top:-5px;border-width:0 5px 5px;border-bottom-color:#000
 }
+
+.clickableThing:hover {
+	cursor: pointer;
+}

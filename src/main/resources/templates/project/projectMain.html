@@ -8,7 +8,7 @@
 <script>
 
 	function fnDeleteP() {
-		$('#btnDelete').on('click', function(){
+		$('.btnDelete').on('click', function(){
 			if(confirm('삭제하시겠습니까?') == false){
 				return;
 			}else{	
@@ -17,19 +17,7 @@
 			}
 		})
 	}
-	/* 
-	function fnRegistor() {
-		$('#registor').on('click', function(){
-			if(confirm('등록하시게?') == false){
-				return;
-			}else{	
-				$('#frmDelete').submit();
-				alert('삭제완료');
-			}
-		})
-	}
-	*/
-	
+
 		$(function(){
 			fnDeleteP();
 		})
@@ -54,7 +42,7 @@
         <div class="content-wrapper">
 			<div class="project-main">
 				<div class="project-title">
-					<span style="font-size: 30px;">프로젝트</span>&nbsp;&nbsp;<span><a id="registor" th:href="@{/project/projectAdd.html}"><i class="fa-solid fa-folder-plus fa-xl"></i></a></span>
+					<span style="font-size: 30px;">프로젝트</span>&nbsp;&nbsp;<span><a  th:href="@{/project/projectAdd.html}"><i class="fa-solid fa-folder-plus fa-xl"></i></a></span>
 				</div>
 				<div class="projectList">
 					<table id="listTable" class="table table-hover text-center">
@@ -78,23 +66,21 @@
 								<th:block th:each="project:${projectList}">
 									<tr>
 										<td class="no"><a th:text="${project.projectNo}"></a></td>
-										<td><a th:href="@{/project/projectWorkList.html(projectNo=${project.projectNo})}" th:text="${project.projectTitle}"></a></td>
+										<td><a th:href="@{/project/projectWorkList.html(projectNo=${project.projectNo}, memberName=${project.memberDTO.memberName}, deptName=${project.departmentDTO.deptName})}" th:text="${project.projectTitle}"></a></td>
 										<td th:text="${project.memberDTO.memberName}"></td>
 										<td th:text="${project.departmentDTO.deptName}"></td>
 										<td th:text="${project.IngDTO.ingState}"></td>
 										<td>
-											<form id="frmUpdate" method="get" th:action="@{/project/projectUpdate.html}">
-												<input type="hidden" name="projectNo" th:value="${project.projectNo}" required>
-												<!-- 
-												<input type="hidden" name="memberName" th:value="${member.memberName}" required>
-												<input type="hidden" name="deptNo" th:value="${member.departmentDTO.deptNo}" required>
-												 -->
-												<button type="submit" class="btn btn-primary" id="btnUpdate">수정</button>
-											</form>
-											<form id="frmDelete" method="post" th:action="@{/project/deleteProject.do}">
-												<input type="hidden" name="projectNo" th:value="${project.projectNo}">
-												<button type="button" class="btn btn-secondary" id="btnDelete">삭제</button>
-											</form>
+											<th:block th:if="${project.memberDTO.memberNo == session.loginMember.memberNo}">
+												<form id="frmUpdate" method="get" th:action="@{/project/projectUpdate.html}">
+													<input type="hidden" name="projectNo" th:value="${project.projectNo}" required>
+													<button type="submit" class="btn btn-primary" id="btnUpdate">수정</button>
+												</form>
+												<form id="frmDelete" method="post" th:action="@{/project/deleteProject.do}">
+													<input type="hidden" name="projectNo" th:value="${project.projectNo}" required>
+													<button type="button" class="btn btn-secondary btnDelete">삭제</button>
+												</form>
+											</th:block>
 										</td>
 									</tr>
 								</th:block>

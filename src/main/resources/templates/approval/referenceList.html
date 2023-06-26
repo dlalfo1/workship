@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+                <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
+<head th:replace="~{/layout/header::headFrag('workship 참조문서조회')}"></head>
+<style>
+.tag-orange{
+    width : 80px;
+    height : 25px;
+    background-color: rgb(243, 156, 18);
+    margin : auto;
+    color : white;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.tag-red{
+    width : 80px;
+    height : 25px;
+    background-color: rgb(231, 76, 60);
+    margin : auto;
+    color : white;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.tag-green{
+    width : 80px;
+    height : 25px;
+    background-color: rgb(46, 204, 113);
+    margin : auto;
+    color : white;
+    border-radius: 50px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.tag-gray{
+    width : 80px;
+    height : 25px;
+    background-color: rgb(158, 158, 158);
+    margin : auto;
+    color : white;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/*검색부분*/
+.search-wrapper{
+    width : 100%;
+    height : 80px;
+    display: flex;
+    background-color: white;
+    border : 1px solid rgb(224, 224, 224);
+    border-radius: 5px;
+    padding : 0 20px 0 20px;
+    margin-bottom: 15px;
+}
+.search-wrapper>span{
+    line-height: 80px;
+    font-size : 20px;
+    font-weight : bold;
+}
+
+.search-wrapper>.search-area{
+    width : 600px;
+    height : 40px;
+    margin : auto;
+    display : flex;
+    justify-content: space-between;
+}
+
+.search-wrapper>.search-area>input{
+    width : 520px;
+}
+
+.search-wrapper>.search-area>button{
+    width : 70px;
+}
+
+.menu-wrapper {
+  margin-top: 4px;
+}
+  
+.disabled {
+  pointer-events: none;;
+}
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mySelect,
+.form-control {
+  width: 150px;
+  padding: 5px;
+}
+
+/* Custom Select Styles */
+.mySelect {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  padding: 5px;
+  width: 85px;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+  text-align: center;
+  margin-right: 10px;
+}
+
+.mySelect:focus {
+  outline: none;
+  border-color: #3366cc;
+  box-shadow: 0 0 5px rgba(51, 102, 204, 0.5);
+}
+
+.mySelect option {
+  padding: 5px;
+  font-size: 14px;
+}
+/* Custom Select Styles */
+.mySelect,
+input[type="text"] {
+  height: 35px;
+  line-height: 30px;
+}
+.btnSearch {
+  background-color: #4B49AC;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.btnSearch:hover {
+  background-color: darkblue;
+}
+
+.recordAndmenu-wrapper {
+  display: flex;
+}
+
+</style>
+<body>
+
+
+
+  <div class="container-scroller">
+
+    <!--/* 상단바 */-->
+    <nav th:replace="~{/layout/common::topbarFrag}"></nav>
+  
+    <!--/* 본문영역 */-->
+    <div class="container-fluid page-body-wrapper">
+    
+      <!--/* 테마설정버튼 영역 */-->
+      <div th:replace="~{/layout/common::themeSettingFrag}"></div>   
+      <!--/* 사이드바 영역 */-->
+      <nav th:replace="~{/layout/sidebar::sidebarFrag}"></nav>
+      
+      <!--/* 실제 내용 영역 */-->
+      <div class="main-panel">
+        <div class="content-wrapper">
+        
+        
+          <div class="search-wrapper">  
+            <span>참조문서조회</span>
+            <form class="search-area" id="frmSearch" th:action="@{/approval/referenceList.do}">
+              <!-- submit 할 때 선택된 <option>태그의 value값이 파라미터 name columnsearch 으로 넘어간다. -->
+              <select class="mySelect" th:name="columnsearch" th:id="columnsearch">
+                <option value="DOC_TITLE">문서 제목</option>
+              </select>
+              <input list="auto_complete" type="text" class="form-control" th:name="query" th:id="query" autofocus>
+              <datalist id="auto_complete">
+              <!-- <option> 태그의 value속성으로 자동완성 목록을 뿌려준다. -->
+
+              </datalist> 
+              <button class="btnSearch">검색</button>
+            </form>
+          </div>  <!-- /* search-wrapper 끝나는 지점 */ -->
+          <div class="recordAndmenu-wrapper">
+            <div class="record-wrapper">
+              <select class="mySelect" id="recordPerPage"> 
+               <option value="10" selected>10개 보기</option>
+               <option value="15">15개 보기</option>
+               <option value="20">20개 보기</option>
+              </select>
+            </div>  <!-- /* record-wrapper 끝나는 지점 */ -->
+            <div class="menu-wrapper">
+              <button id="btnAll" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do'" style="background-color: #4B49AC; border: none;">전체</button>
+              <button id="btnProgress" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=1'" style="background-color: rgb(243, 156, 18); border: none;">진행</button>
+              <button id="btnComplete" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=2'" style="background-color: rgb(46, 204, 113); border: none;">완료</button>
+              <button id="btnReject" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=3'" style="background-color: rgb(231, 76, 60); border: none;">반려</button>
+              <button id="btnWait" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=0'" style="background-color: rgb(158, 158, 158); border: none;">대기</button>
+            </div>  <!-- /* record-wrapper 끝나는 지점 */ -->
+          </div>
+          <div class="list-wrappe">
+            <div class="dataTables_wrapper dt-bootstrap4 no-footer">
+              <hr>  
+              <form method="post" id="frm"> 
+                <table class="table table-hover" style="text-align: center;">
+                  <thead>
+                    <tr>
+                      <th class="title" data-columnorder="APPROVAL_NO" data-order="${order}">번호</th>
+                      <th class="title" data-columnorder="DOC_NAME" data-order="${order}">결재문서</th>
+                      <th class="title" data-columnorder="DOC_TITLE" data-order="${order}">제목</th>
+                      <th class="title" data-columnorder="APPROVAL_NO" data-order="${order}">작성자</th>
+                      <th class="title" data-columnorder="CREATED_AT" data-order="${order}">작성일</th>
+                      <th class="title" data-columnorder="APPROVAL_STATUS" data-order="${order}">결재상태</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <th:block th:each="approval:${referenceList}">
+                      <tr th:onclick="|fnDetailApproval(appNo=${approval.approvalNo}, docName=${approval.docName})|"> 
+                        <td class="tableBody" th:text="${approval.approvalNo}">> </td> 
+                        <th:block th:if="${approval.docName == 1}">
+                          <td>  
+                            <div>휴가신청서</div>
+                          </td>
+                        </th:block>
+                        <th:block th:if="${approval.docName == 2}">
+                          <td>  
+                            <div>지불결의서</div>
+                          </td>
+                        </th:block>    
+                        <th:block th:if="${approval.docName == 3}">
+                          <td>  
+                            <div>업무협조전</div>
+                          </td>
+                        </th:block>   
+                        <th:block th:if="${approval.docName == 4}">
+                          <td>  
+                            <div>사직서</div>
+                          </td>
+                        </th:block>                                                                   
+                        <td class="tableBody" th:text="${approval.docTitle}"></td>
+                        <td class="tableBody" th:text="${approval.memberDTO.memberName}">작성자</td>
+                        <td class="tableBody" th:text="${#dates.format(approval.createdAt, 'yyyy/MM/dd')}"></td>
+                       <th:block th:if="${approval.approvalStatus == 0}">
+                          <td>
+                            <div class="tag-gray">대기</div>
+                          </td>
+                        </th:block>
+                        <th:block th:if="${approval.approvalStatus == 1}">
+                          <td>
+                            <div class="tag-orange">진행</div>
+                          </td>
+                        </th:block>
+                        <th:block th:if="${approval.approvalStatus == 2}">
+                          <td>
+                            <div class="tag-green">완료</div>
+                          </td>
+                        </th:block>
+                        <th:block th:if="${approval.approvalStatus == 3}">
+                          <td>
+                            <div class="tag-red">반려</div>
+                          </td>
+                        </th:block>
+                      </tr>
+                    </th:block>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                       <td colspan="6" th:utext="${pagination}"></td>
+                    </tr>
+                 </tfoot>
+                </table>
+              </form>
+            </div> <!--/* dataTables_wrapper dt-bootstrap4 no-footer 끝나는 지점 */--> 
+          </div> <!--/* list-wrappe 끝나는 지점 */--> 
+        </div>  <!--/* content-wrapper 끝나는 지점 */-->
+      </div>  <!--/* main-panel 끝나는 지점 */-->      
+    </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
+  </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
+  
+<script th:inline="javascript">
+
+  function fnRecordPerPage(){
+    
+      // recordPerPage의 변수
+      $('#recordPerPage').on('change', function(){
+         location.href = '/approval/change/record.do?recordPerPage=' + $(this).val();
+      })
+      
+        // recordPerPage값 고정시키기
+        let recordPerPage = /*[[${session.recordPerPage}]]*/ null;
+        
+        if(recordPerPage === null){
+          $('#recordPerPage').val(10);
+        } else {
+          $('#recordPerPage').val(recordPerPage);
+        }
+
+      $('.title').on('click', function(){
+       
+        // pagination은 현재 페이지, 현재 페이지의 정렬상태를 알아야 한다.
+        // let columnorder = /*[[${columnorder}]]*/ '';
+        let columnorder = $(this).data('columnorder');
+        let columnsearch = /*[[${columnsearch}]]*/ '';
+        let query = /*[[${query}]]*/ '';
+        let page = /*[[${page}]]*/ '';  
+        let order =/*[[${order}]]*/ '';  
+        
+        location.href = '/approval/referencelList.do?columnorder=' + columnorder + '&columnsearch=' + columnsearch+ '&query=' + query + '&order=' + order + '&page=' + page;
+     
+      }) 
+
+  }
+  
+     fnRecordPerPage();
+      
+     
+  function fnAutoComplete() {
+     $('#query').on('input', function(){ // 내 키보드가 두번 눌려서 keyp이벤트 및 ajax요청이 전부 다 2번 실행된 것이다.
+        $('#auto_complete').empty();     // 검색어 계속 입력할때마다 초기화.
+        
+        $.ajax({
+          // 요청
+          type: 'get',
+          url: '/approval/referenceAutoComplete.do',
+          data: $('#frmSearch').serialize(), 
+          // 응답
+          dataType: 'json',
+          success: function(resData){
+            $.each(resData.approvals, function(i, approval){
+             $('#auto_complete').append('<option value="' + approval.docTitle + '" />');
+            })
+          }
+        }) // ajax 끝
+     })
+  } // fnAutoComplete() 끝
+      
+      fnAutoComplete();
+      fnInit();
+
+
+   function fnDetailApproval(appNo, docName) {
+      location.href='/approval/detailApproval.do?approvalNo=' + appNo + '&docName=' + docName;
+   }
+   
+
+ 
+ </script> 
+<!--/* footer 영역 */-->
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+<footer th:replace="~{layout/footer::footerFrag}"></footer> 
+
+</body>
+</html>

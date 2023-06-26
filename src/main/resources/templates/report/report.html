@@ -178,6 +178,12 @@
                   
                     var page = 1;
                     var recordPerPage = '[[${session.recordPerPage}]]' == '' ? '10' : '[[${session.recordPerPage}]]';
+                    $(document).on('change', '#recordPerPage', function() {
+                      recordPerPage = $(this).val();
+                      // $('#recordPerPage').val(recordPerPage); 필요없어 보임 ajax라서..?
+                      fnSearchReport();
+                    })
+                    
                     function fnSearchReport(){
                     	var column = $('#column').val();
                     	$('#column').change(function(){
@@ -185,14 +191,10 @@
                         console.log('column : ' + column);
                       });
                     	
-                    	$('#recordPerPage').on('change', function(){
-                	      recordPerPage = $(this).val();
-                        // $('#recordPerPage').val(recordPerPage); 필요없어 보임 ajax라서..?
-                	      fnSearchReport();
-                	    })
-                    	
                       var reportState = $('input[name="reportState"]:checked').val()
                       console.log(reportState);
+                      
+                      var currentPage = page;
                       
                     	new Promise(function(resolve, reject){
                     		$.ajax({
@@ -231,17 +233,17 @@
                             $('#pagination').append(str2);
                             // $('#query').val(''); 검색창 비워주기
                             
-                            resolve();
+                            resolve(currentPage);
                             
                           } /* success 끝나는 곳 */
                     		}) /* ajax 끝나는 곳 */
                     	
-                    	}).then(function(){
-                    		
+                    	}).then(function(currentPage){
+                    		console.log('thenPage: ' + currentPage);
                       	$.ajax({
                           type: 'get',
                           url: '/report/reportSearch.do',
-                          data: 'reportState=' + reportState + '&column=' + column + '&query=' + $('#query').val() + '&page=' + page + '&recordPerPage=' + recordPerPage,
+                          data: 'reportState=' + reportState + '&column=' + column + '&query=' + $('#query').val() + '&page=' + currentPage + '&recordPerPage=' + recordPerPage,
                           dataType: 'json',
                           success: function(resData){
                           	let reportListBody = $('#reportListBody');
