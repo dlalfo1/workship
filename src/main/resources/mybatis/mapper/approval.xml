@@ -250,17 +250,17 @@
   </insert>
   
   <update id="updateApprovalDoc" parameterType="int">
-	  UPDATE APPROVAL_T
-		   SET APPROVAL_STATUS = 1
-		     , APPROVAL_SEQUENCE = APPROVAL_SEQUENCE + 1
-	  	WHERE APPROVAL_NO = #{approvalNo}
+    UPDATE APPROVAL_T
+       SET APPROVAL_STATUS = 1
+         , APPROVAL_SEQUENCE = APPROVAL_SEQUENCE + 1
+      WHERE APPROVAL_NO = #{approvalNo}
   </update>
   
   <update id="completeApprovalDoc" parameterType="int">
-	  UPDATE APPROVAL_T
-		   SET APPROVAL_STATUS = 2
-		     , APPROVAL_SEQUENCE = APPROVAL_SEQUENCE + 1
-	  	WHERE APPROVAL_NO = #{approvalNo}
+    UPDATE APPROVAL_T
+       SET APPROVAL_STATUS = 2
+         , APPROVAL_SEQUENCE = APPROVAL_SEQUENCE + 1
+      WHERE APPROVAL_NO = #{approvalNo}
   </update>
   
   <update id="updateApprovalMember" parameterType="Map">
@@ -337,12 +337,30 @@
       FROM  APPROVAL_REFERENCE_T
   </select>
   
+    
+  <select id="getRetrieveCount" resultType="int">
+    SELECT COUNT(*)
+      FROM  APPROVAL_T
+    WHERE APPROVAL_STATUS = 4
+  </select>
+
+  
   <select id="getApprovalCountApprovalStatus" parameterType="Map" resultType="int" >
     SELECT COUNT(*)
       FROM  APPROVAL_T
        <where> 
          <if test="approvalStatus != 5">
             APPROVAL_STATUS = #{approvalStatus}
+         </if>
+       </where>       
+  </select> 
+  
+  <select id="getRetrieveCountApprovalStatus" parameterType="Map" resultType="int" >
+    SELECT COUNT(*)
+      FROM  APPROVAL_T
+       <where> 
+         <if test="approvalStatus != 5">
+            APPROVAL_STATUS = 4
          </if>
        </where>       
   </select> 
@@ -364,35 +382,56 @@
       AND R.MEMBER_NO = #{memberNo}
   </select>  
   
+  <select id="getRetrieveCountByQuery" parameterType="Map" resultType="int">
+     SELECT COUNT(DISTINCT(A.APPROVAL_NO))
+      FROM APPROVAL_T A INNER JOIN APPROVAL_LINE_T L 
+        ON A.APPROVAL_NO = L.APPROVAL_NO 
+    WHERE ${columnsearch} LIKE CONCAT('%', #{query}, '%')
+      AND (A.APPROVAL_STATUS = 4) 
+  </select>  
   
-  <select id="getApprovalList" parameterType="Map" resultMap="ApprovalMap">
+<select id="getApprovalList" parameterType="Map" resultMap="ApprovalMap">
     SELECT DISTINCT A.APPROVAL_NO, A.DOC_NAME, A.DOC_TITLE, A.MEMBER_NO, DATE_FORMAT(A.CREATED_AT, '%Y-%m-%d') AS CREATED_AT, A.APPROVAL_STATUS, M.MEMBER_NAME, D.DEPT_NAME
     FROM (
-            SELECT P.APPROVAL_NO, P.DOC_NAME, P.DOC_TITLE, P.MEMBER_NO, P.CREATED_AT, P.APPROVAL_STATUS
-            FROM APPROVAL_T P
-            <where>
-                <if test="columnsearch != '' and query != ''" >
-                    ${columnsearch} LIKE CONCAT('%', #{query}, '%')
-                </if>
-            </where>
-          ) A
-    INNER JOIN APPROVAL_LINE_T L 
-       ON A.APPROVAL_NO = L.APPROVAL_NO 
+        SELECT P.APPROVAL_NO, P.DOC_NAME, P.DOC_TITLE, P.MEMBER_NO, P.CREATED_AT, P.APPROVAL_STATUS
+        FROM APPROVAL_T P
+        <where>
+            <if test="columnsearch != '' and query != ''">
+                ${columnsearch} LIKE CONCAT('%', #{query}, '%')
+            </if>
+        </where>
+    ) A
+    INNER JOIN APPROVAL_LINE_T L
+        ON A.APPROVAL_NO = L.APPROVAL_NO
     INNER JOIN MEMBER_T M
-       ON M.MEMBER_NO = A.MEMBER_NO
+        ON M.MEMBER_NO = A.MEMBER_NO
     INNER JOIN DEPARTMENT_T D
-       ON M.DEPT_NO = D.DEPT_NO
+        ON M.DEPT_NO = D.DEPT_NO
     <where>
-        <if test="approvalStatus != 5" >
-            A.APPROVAL_STATUS = #{approvalStatus}
+        <if test="approvalStatus == 4">
+            A.APPROVAL_STATUS IN (0, 1, 2, 3)
+        </if>
+        <if test="approvalStatus == 0">
+            A.APPROVAL_STATUS = 0
+        </if>
+        <if test="approvalStatus == 1">
+            A.APPROVAL_STATUS = 1
+        </if>
+        <if test="approvalStatus == 2">
+            A.APPROVAL_STATUS = 2
+        </if>
+        <if test="approvalStatus == 3">
+            A.APPROVAL_STATUS = 3
         </if>
         <if test="memberNo != null">
             AND (A.MEMBER_NO = #{memberNo} OR L.MEMBER_NO = #{memberNo})
-        </if> 
+        </if>
     </where>
     ORDER BY ${columnorder} ${order}
     LIMIT #{begin}, #{recordPerPage}
-  </select>
+</select>
+
+
   
   <select id="getReferenceList" parameterType="Map" resultMap="ApprovalMap">
     SELECT DISTINCT A.APPROVAL_NO, A.DOC_NAME, A.DOC_TITLE, A.MEMBER_NO, DATE_FORMAT(A.CREATED_AT, '%Y-%m-%d') AS CREATED_AT, A.APPROVAL_STATUS, M.MEMBER_NAME, D.DEPT_NAME
@@ -405,25 +444,62 @@
                 </if>
             </where>
           ) A
-		INNER JOIN APPROVAL_REFERENCE_T R
-		   ON A.APPROVAL_NO = R.APPROVAL_NO
-		INNER JOIN MEMBER_T M
-		   ON M.MEMBER_NO = R.MEMBER_NO
-		INNER JOIN DEPARTMENT_T D
-		   ON M.DEPT_NO = D.DEPT_NO
-		INNER JOIN APPROVAL_LINE_T L
-		   ON A.APPROVAL_NO = L.APPROVAL_NO
+    INNER JOIN APPROVAL_REFERENCE_T R
+       ON A.APPROVAL_NO = R.APPROVAL_NO
+    INNER JOIN MEMBER_T M
+       ON M.MEMBER_NO = R.MEMBER_NO
+    INNER JOIN DEPARTMENT_T D
+       ON M.DEPT_NO = D.DEPT_NO
+    INNER JOIN APPROVAL_LINE_T L
+       ON A.APPROVAL_NO = L.APPROVAL_NO
     <where>
-        <if test="approvalStatus != 5" >
-            A.APPROVAL_STATUS = #{approvalStatus}
-        </if> 
+        <if test="approvalStatus == 4">
+            A.APPROVAL_STATUS IN (0, 1, 2, 3)
+        </if>
+        <if test="approvalStatus == 0">
+            A.APPROVAL_STATUS = 0
+        </if>
+        <if test="approvalStatus == 1">
+            A.APPROVAL_STATUS = 1
+        </if>
+        <if test="approvalStatus == 2">
+            A.APPROVAL_STATUS = 2
+        </if>
+        <if test="approvalStatus == 3">
+            A.APPROVAL_STATUS = 3
+        </if>
         <if test="memberNo != null">
-            AND (R.MEMBER_NO = #{memberNo})
-        </if> 
+            AND (A.MEMBER_NO = #{memberNo} OR L.MEMBER_NO = #{memberNo})
+        </if>
     </where>
     ORDER BY ${columnorder} ${order}
     LIMIT #{begin}, #{recordPerPage}
   </select>
+  
+	<select id="getRetrieveList" parameterType="Map" resultMap="ApprovalMap">
+	    SELECT DISTINCT A.APPROVAL_NO, A.DOC_NAME, A.DOC_TITLE, A.MEMBER_NO, DATE_FORMAT(A.CREATED_AT, '%Y-%m-%d') AS CREATED_AT, A.APPROVAL_STATUS, M.MEMBER_NAME, D.DEPT_NAME
+	    FROM (
+	        SELECT P.APPROVAL_NO, P.DOC_NAME, P.DOC_TITLE, P.MEMBER_NO, P.CREATED_AT, P.APPROVAL_STATUS
+	        FROM APPROVAL_T P
+	        <where>
+	            <if test="columnsearch != '' and query != ''" >
+	                ${columnsearch} LIKE CONCAT('%', #{query}, '%')
+	            </if>
+	        </where>
+	    ) A
+			INNER JOIN APPROVAL_LINE_T L ON A.APPROVAL_NO = L.APPROVAL_NO
+			INNER JOIN MEMBER_T M ON M.MEMBER_NO = A.MEMBER_NO
+			INNER JOIN DEPARTMENT_T D ON M.DEPT_NO = D.DEPT_NO
+	    <where>
+	        A.APPROVAL_STATUS = 4
+	        <if test="memberNo != null">
+	            AND A.MEMBER_NO = #{memberNo}
+	        </if> 
+	    </where>
+	    ORDER BY ${columnorder} ${order}
+	    LIMIT #{begin}, #{recordPerPage}
+	</select>
+
   
   <select id="getReferenceSearchCount" parameterType="Map" resultType="int" >
     SELECT COUNT(APPROVAL_NO)
@@ -439,6 +515,17 @@
     SELECT COUNT(APPROVAL_NO)
       FROM APPROVAL_T
        <where>
+         <if test="column != '' and query != ''" >
+          ${column} LIKE CONCAT('%', #{query}, '%')
+         </if>
+       </where>
+  </select>
+  
+  <select id="getRetrieveSearchCount" parameterType="Map" resultType="int" >
+    SELECT COUNT(APPROVAL_NO)
+      FROM APPROVAL_T A
+       <where>
+         A.APPROVAL_STATUS = 4 
          <if test="column != '' and query != ''" >
           ${column} LIKE CONCAT('%', #{query}, '%')
          </if>
@@ -472,7 +559,19 @@
      WHERE ${column} LIKE CONCAT('%', #{query}, '%')
       AND R.MEMBER_NO = #{memberNo}
   </select>
- 
+  
+   <select id="getRetrieveAutoComplete" parameterType="Map" resultType="ApprovalDTO">
+    SELECT DISTINCT ${column}
+      FROM APPROVAL_T A
+     INNER JOIN APPROVAL_LINE_T L 
+       ON A.APPROVAL_NO = L.APPROVAL_NO 
+    INNER JOIN MEMBER_T M
+       ON M.MEMBER_NO = A.MEMBER_NO
+    INNER JOIN DEPARTMENT_T D
+       ON M.DEPT_NO = D.DEPT_NO
+     WHERE ${column} LIKE CONCAT('%', #{query}, '%')
+      AND A.APPROVAL_STATUS = 4
+  </select> 
   
   <select id="selectApprovalByNo" parameterType="ApprovalDTO" resultMap="ApprovalMap">
     SELECT  A.MEMBER_NO
@@ -548,15 +647,15 @@
   </delete>
   
   <delete id="deleteReferenceLine" parameterType="int">
-	  DELETE 
-	    FROM APPROVAL_REFERENCE_T
-	   WHERE APPROVAL_NO = #{approvalNo}
+    DELETE 
+      FROM APPROVAL_REFERENCE_T
+     WHERE APPROVAL_NO = #{approvalNo}
   </delete>
   
     <delete id="deleteApprovalFile" parameterType="int">
-	     DELETE 
-	       FROM APPROVAL_FILE_T
-	      WHERE APPROVAL_NO = #{approvalNo}
+       DELETE 
+         FROM APPROVAL_FILE_T
+        WHERE APPROVAL_NO = #{approvalNo}
   </delete>
   
   <select id="getReferenceCountByNo" parameterType="int">
@@ -571,6 +670,11 @@
     WHERE APPROVAL_NO = #{approvalNo}
   </select> 
   
+    <update id="updateRetrieveDoc" parameterType="int">
+    UPDATE APPROVAL_T
+       SET APPROVAL_STATUS = 4
+      WHERE APPROVAL_NO = #{approvalNo}
+  </update>
   
   
 </mapper>

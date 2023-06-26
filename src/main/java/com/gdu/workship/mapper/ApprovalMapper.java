@@ -54,7 +54,7 @@ public interface ApprovalMapper {
   // 결재시 결재라인 업데이트
   public int updateApprovalMember(Map<String, Object> map);
   
-  // 반려시 결재문서 업데이트
+  // 결재문서 회수
   public int updateRejectDoc(int approvalNo);
   
   // 반려시 결재라인 업데이트
@@ -71,6 +71,9 @@ public interface ApprovalMapper {
   
   // 결재문서 삭제시 첨부파일 삭제
   public int deleteApprovalFile(int approvalNo);
+  
+  // 결재 문서 회수하기
+  public int updateRetrieveDoc(int approvalNo);
   
   // 참조멤버 카운드
   public int getReferenceCountByNo(int approvalNo);
@@ -93,6 +96,14 @@ public interface ApprovalMapper {
   public List<ApprovalDTO> getReferenceList(Map<String, Object> map);
   public int getReferenceSearchCount(Map<String, Object> map);
   public List<ApprovalDTO> getReferenceAutoComplete(Map<String, Object> map);
+  
+  // 회수문서 리스트 관련
+  public int getRetrieveCount(); 
+  public int getRetrieveCountByQuery(Map<String, Object> map);
+  public int getRetrieveCountApprovalStatus(Map<String, Object> mpa);
+  public List<ApprovalDTO> getRetrieveList(Map<String, Object> map);
+  public int getRetrieveSearchCount(Map<String, Object> map);
+  public List<ApprovalDTO> getRetrieveAutoComplete(Map<String, Object> map);
   
   // 결재문서 상세보기
   public ApprovalDTO selectApprovalByNo(ApprovalDTO approvalDTO);

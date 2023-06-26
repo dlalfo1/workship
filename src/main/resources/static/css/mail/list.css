@@ -4,6 +4,10 @@
 	background-color: white;
 }
 
+.invisible {
+	display: none;
+}
+
 .info {
 	display: flex;
 	align-items: flex-end;

@@ -269,6 +269,18 @@
 		  FROM MAIL_FILE_T
 		 WHERE MAIL_NO = #{mailNo}
 	</select>
+	
+	<select id="getMailFileByMailFileNo" parameterType="int" resultMap="MailFileMap">
+		SELECT MAIL_NO, MAIL_FILE_NO, MAIL_FILE_PATH, MAIL_FILE_ORIGIN_NAME, MAIL_FILE_SYSTEM_NAME
+		  FROM MAIL_FILE_T
+		 WHERE MAIL_FILE_NO = #{mailFileNo}
+	</select>
+	
+	<select id="getMailAttachList" parameterType="int" resultMap="MailFileMap">
+		SELECT MAIL_NO, MAIL_FILE_NO, MAIL_FILE_PATH, MAIL_FILE_ORIGIN_NAME, MAIL_FILE_SYSTEM_NAME
+		  FROM MAIL_FILE_T
+		 WHERE MAIL_NO = #{mailNo}
+	</select>
 
 	<!-- 메일 상태변경 -->
 	<update id="updateStar" parameterType="Map">

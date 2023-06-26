@@ -235,14 +235,13 @@ public class ApprovalController {
   @GetMapping("/retrieveList.do") // 문서리스트 보여주기
   public String retrieveList(HttpServletRequest request, Model model, HttpSession session) {
     
-    // session에 올라간 recordPerPage 값 날려주기
-    // if(request.getHeader("referer").contains("retrieveList.do") == false) {
-    // request.getSession().removeAttribute("recordPerPage");
-      
-      approvalService.getRetrieveList(request, model, session);
-      return "approval/retrieveList";
+     // session에 올라간 recordPerPage 값 날려주기
+     if(request.getHeader("referer").contains("retrieveList.do") == false) {
+     request.getSession().removeAttribute("recordPerPage");
     }
-    
+     approvalService.getRetrieveList(request, model, session);
+     return "approval/retrieveList";
+  }  
 
    @PostMapping("/retrieveApproval.do") // 문서회수하기
    public String retrieveApproval(HttpServletRequest request, RedirectAttributes redirectAttributes) {
