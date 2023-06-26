@@ -28,9 +28,13 @@ public class ReportServiceImpl implements ReportService {
   
   @Override
   public Map<String, Object> loadReportSearchList(HttpServletRequest request) {
-
-    Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
-    int page = Integer.parseInt(opt1.orElse("1"));
+    
+    String strPage = request.getParameter("page");
+    int page = 1;
+    if(strPage != null && strPage.isEmpty() == false) page = Integer.parseInt(strPage);
+    if(page < 1) page = 1;
+    // Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
+    // int page = Integer.parseInt(opt1.orElse("1"));
     int totalRecord = reportMapper.getReportCount();
     
     HttpSession session = request.getSession();
@@ -52,9 +56,11 @@ public class ReportServiceImpl implements ReportService {
     map.put("query", query);
     map.put("reportState", reportState);
     // PageUtil(Pagination에 필요한 모든 정보) 계산하기
-    map.put("recordPerPage", recordPerPage);    // end 대신 recordPerPage를 전달한다.
     pageUtil.setPageUtil(page, (column.isEmpty() && query.isEmpty()) ? totalRecord : reportMapper.getReportSearchCount(map), recordPerPage);
     map.put("begin", pageUtil.getBegin());      // begin은 0부터 시작한다. (PageUtil.java 참고)
+    map.put("recordPerPage", recordPerPage);    // end 대신 recordPerPage를 전달한다.
+    System.out.println("page: " + page);
+    System.out.println("map::: " + map);
     System.out.println("query: " + query);
     
     /*
@@ -72,12 +78,9 @@ public class ReportServiceImpl implements ReportService {
     
     Map<String, Object> result = new HashMap<String, Object>();
     result.put("reportSearchList", reportSearchList);
+    System.out.println("리스트: " + reportSearchList);
     result.put("pageUtil", pageUtil);
-    System.out.println(result.get("pageUtil"));
     System.out.println(result);
-    System.out.println(pageUtil.getBeginPage());
-    System.out.println(pageUtil.getEndPage());
-    System.out.println(pageUtil.getTotalPage());
     return result;
   }
   
