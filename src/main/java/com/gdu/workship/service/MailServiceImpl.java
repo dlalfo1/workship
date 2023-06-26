@@ -696,4 +696,10 @@ public class MailServiceImpl implements MailService {
 		
 	}
 	
+	@Override
+	public void getMemberList(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

@@ -396,14 +396,18 @@
 			(#{mailNo}, #{mailFilePath}, #{mailFileOriginName}, #{mailFileSystemName})
 	</insert>
 	
-	<select id="selectMemberList" parameterType="int" resultMap="MemberMap">
+	<select id="getMemberList" parameterType="int" resultMap="MemberMap">
 	    SELECT A.MEMBER_NO, A.MEMBER_NAME, A.EMAIL_ID, A.DEPT_NO, A.DEPT_NAME, A.JOB_NO, A.JOB_NAME
 	      FROM (SELECT E.MEMBER_NO, E.MEMBER_NAME, E.EMAIL_ID, D.DEPT_NO, D.DEPT_NAME, J.JOB_NO ,J.JOB_NAME
 	              FROM DEPARTMENT_T D INNER JOIN MEMBER_T E
 	                ON D.DEPT_NO = E.DEPT_NO INNER JOIN JOB_T J
-	                ON J.JOB_NO = E.JOB_NO) A
-	     WHERE A.DEPT_NO = #{deptNo}
-	     ORDER BY MEMBER_NO DESC
+	                ON J.JOB_NO = E.JOB_NO
+               <where>
+		  			<if test="column != '' and query != ''">
+		  				( ${column} LIKE CONCAT('%', UPPER(#{query}), '%') OR ${column} LIKE CONCAT('%', LOWER(#{query}), '%') )
+		  			</if>
+			  	</where>) A
+	     ORDER BY MEMBER_NO ASC
 	  </select>
 
 </mapper>
