@@ -131,3 +131,31 @@ li {
 	font-size: 16px;
 }
 
+a {
+	text-decoration: none;
+	color: black;
+}
+
+a:hover {
+	text-decoration: none;
+	color: skyblue;
+}
+
+.fileBox {
+	display: flex;
+	flex-direction : column;
+	gap: 8px;
+}
+
+.filesHeader {
+	display: flex;
+	gap: 200px;
+}
+
+.allSave {
+	border : 1px solid gray;
+	padding: 4px;
+	border-radius: 8px;
+	background-color: #4B49AC;
+	color: white;
+}

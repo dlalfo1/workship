@@ -1,16 +1,29 @@
 package com.gdu.workship.service;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -102,9 +115,7 @@ public class MailServiceImpl implements MailService {
 			MemberDTO member = mailMapper.getNameByEmail(mailMap);
 			mailToList.add(member);
 		}
-		System.out.println(mailToList);
 
-		
 		model.addAttribute("totalRecord", totalRecord);
 		model.addAttribute("mailList", mailList);
 		model.addAttribute("mailToList", mailToList);
@@ -150,6 +161,9 @@ public class MailServiceImpl implements MailService {
 		
 		Map<String, Object> mailMap = new HashMap<>();
 		
+		boolean hasCcNullValue = false;
+		boolean hasBccNullValue = false;
+		
 		for(int i = 0; i < totalMailTo.size(); i++) { 
 			
 			MailToDTO mail = totalMailTo.get(i);
@@ -165,9 +179,15 @@ public class MailServiceImpl implements MailService {
 					break;
 				case "CC" : 
 					mailccList.add(member);
+					if(member == null) {
+						hasCcNullValue = true;
+					}
 					break;
 				case "BCC" : 
 					mailbccList.add(member);
+					if(member == null) {
+						hasBccNullValue = true;
+					}
 					break;	
 			}
 		}		
@@ -184,9 +204,9 @@ public class MailServiceImpl implements MailService {
 		model.addAttribute("mailTotalRecord", mailTotalRecord);
 		model.addAttribute("mailNoReadRecord", mailNoReadRecord);
 		model.addAttribute("mailStarRecord", mailStarRecord);	
-		model.addAttribute("attachList", attachList);
-		System.out.println(model);
-
+		model.addAttribute("attachList", attachList);		
+		model.addAttribute("hasCcNullValue", hasCcNullValue);
+		model.addAttribute("hasBccNullValue", hasBccNullValue);
 	}
 	
 	@Override
@@ -479,7 +499,19 @@ public class MailServiceImpl implements MailService {
 		String content = multipartRequest.getParameter("content");
 		
 		List<MultipartFile> files = multipartRequest.getFiles("files");
-		String mailHasFile = (files != null && !files.isEmpty()) ? "Y" : "N";
+		String mailHasFile = null;
+		for(MultipartFile multipartFile : files) {
+			
+			if(multipartFile != null && multipartFile.isEmpty() == false) {
+				mailHasFile = "Y";
+				break;
+			} else {
+				mailHasFile = "N";
+			}
+		}
+		/*
+		 * String mailHasFile = (files != null && files.isEmpty() == false) ? "Y" : "N";
+		 */
 		
 		MailDTO mailDTO = new MailDTO();
 		MemberDTO memberDTO = new MemberDTO();
@@ -572,6 +604,97 @@ public class MailServiceImpl implements MailService {
 			}
 		}			
 		return sentResult + mailToResult + mailCcResult + mailBccResult + mailFileResult;		
+	}
+	
+	@Override
+	public ResponseEntity<Resource> attachDownload(int mailFileNo, String userAgent) {
+
+		MailFileDTO mailFileDTO = mailMapper.getMailFileByMailFileNo(mailFileNo);
+		
+		File file = new File(mailFileDTO.getMailFilePath(), mailFileDTO.getMailFileSystemName());
+		
+		Resource resource = new FileSystemResource(file);
+		
+		if(resource.exists() == false) {
+			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+		}
+		
+		String originName = mailFileDTO.getMailFileOriginName();
+		try {
+			if(userAgent.contains("Trident")) {
+				originName = URLEncoder.encode(originName, "UTF-8").replace("+", " ");
+			} else if(userAgent.contains("Edg")) {
+		        originName = URLEncoder.encode(originName, "UTF-8");
+		    } else {
+		        originName = new String(originName.getBytes("UTF-8"), "ISO-8859-1");
+		    }
+		} catch(Exception e) {
+		      e.printStackTrace();
+	    }
+		
+		HttpHeaders responseHeader = new HttpHeaders();
+		responseHeader.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		responseHeader.setContentDisposition(ContentDisposition.attachment().filename(originName).build());
+		responseHeader.setContentLength(file.length());
+		
+		return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
+	
+	}
+	
+	@Override
+	public ResponseEntity<Resource> attachDownloadAll(int mailNo) {
+		
+		String tempPath = myFileUtil.getTempPath();
+		File dir = new File(tempPath);
+		if(dir.exists() == false) {
+			dir.mkdirs();
+		}
+		
+		String tempfileName = myFileUtil.getTempFileName();
+		
+		File zfile = new File(tempPath, tempfileName);
+		
+		BufferedInputStream bin = null;
+		ZipOutputStream zout = null;
+		
+		List<MailFileDTO> attachList = mailMapper.getMailAttachList(mailNo);
+		
+		try {
+			
+			zout = new ZipOutputStream(new FileOutputStream(zfile));
+			
+			for(MailFileDTO mailFileDTO : attachList) {
+				
+				ZipEntry zipEntry = new ZipEntry(mailFileDTO.getMailFileOriginName());
+				zout.putNextEntry(zipEntry);
+				
+				bin = new BufferedInputStream(new FileInputStream(new File(mailFileDTO.getMailFilePath(), mailFileDTO.getMailFileSystemName())));
+				
+				byte[] b = new byte[1024];
+				int readByte = 0;
+				while((readByte = bin.read(b)) != -1) {
+					zout.write(b, 0, readByte);
+				}
+				
+				bin.close();
+				zout.closeEntry();
+			}
+			
+			zout.close();
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		Resource resource = new FileSystemResource(zfile);
+		
+		HttpHeaders responseHeader = new HttpHeaders();
+		responseHeader.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		responseHeader.setContentDisposition(ContentDisposition.attachment().filename(tempfileName).build());
+		responseHeader.setContentLength(zfile.length());
+		
+		return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
+		
 	}
 	
 }

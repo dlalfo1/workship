@@ -110,6 +110,7 @@
 	        						<label for="btnSpam" id="lblBtnSpam"></label>
 	        						<input type="button" value="스팸차단" id="btnSpam" >
 	        					</div>
+	        					<!-- 
 	        					<div>
 	        						<label for="btnReply" id="lblBtnReply"></label>
 	        						<input type="button" value="답장" id="btnRely">
@@ -118,6 +119,7 @@
 	        						<label for="btnRelay" id="lblBtnRelay"></label>
 	        						<input type="button" value="전달" id="btnRelay">
 	        					</div>
+	        					 -->
         					</th:block>
         					
         					<th:block th:if="${Category == 'SENT'}">
@@ -132,10 +134,12 @@
 	        						<label for="btnDeleteSent" id="lblBtnDeleteSent"></label>
 	        						<input type="button" value="영구삭제" id="btnDeleteSent" >
 	        					</div>
+	        					<!-- 
 	        					<div>
 	        						<label for="btnRelay" id="lblBtnRelay"></label>
 	        						<input type="button" value="전달" id="btnRelay">
 	        					</div>
+	        					 -->
         					</th:block>
         					
         					<th:block th:if="${Category == 'SPAM'}">
@@ -558,8 +562,8 @@
 		        						<div class="contentMail">
 		        							<div class="contentMailEmail">
 			        							<th:block th:each="names:${mailToList}">
-			        								<th:block th:if="${mails.mailToDTO.mailTo == names.emailId}">			        									
-				        								<span th:text="${names.memberName}"></span>
+			        								<th:block th:if="${mails.mailToDTO.mailTo == names.emailId}">				        									
+					        							<span class="mailToSpan" th:text="${names.memberName}"></span>		         							
 			        								</th:block>
 			        							</th:block> 
 			        							<span th:text="|(${mails.mailToDTO.mailTo})|"></span>
@@ -576,7 +580,11 @@
        							</th:block>
        						</ul>
        						<div class="pagination" th:utext="${pagination}"></div>
-   						</th:block>  
+   						</th:block>
+   						<script>
+   						  $('.contentMailEmail').find('.mailToSpan').addClass('invisible');
+   						  $('.contentMailEmail').find('.mailToSpan:first').removeClass('invisible');
+   						</script>
 
    						<!-- 받는 메일 -->
    						<th:block th:unless="${Category == 'SENT' or Category == 'DRAFTS'}"> 
