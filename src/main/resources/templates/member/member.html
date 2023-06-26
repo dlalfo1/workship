@@ -297,7 +297,8 @@
       }
     }
     // 사원 정보 삭제 결과 메시지
-    let removeResult = /*[[${removeResult}]] */ null;   // removeResult가 전달되지 않는 경우 null을 사용한다.
+    let removeResult = /*[[${removeResult}]]*/ null;   // removeResult가 전달되지 않는 경우 null을 사용한다.
+    console.log('removeResult ::' + removeResult);
     if(removeResult !== null){
       if(removeResult === 1) {
         alert('사원 정보가 삭제되었습니다.');
