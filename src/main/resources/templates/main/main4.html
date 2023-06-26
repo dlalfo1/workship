@@ -333,7 +333,7 @@
                     </div>
                   </div>
                 </div>
-                <script>
+                <script th:inline="javascript">
                   $('.todoStateButton').on('click', function(){
                 	  var memberNo = /*[[${session.loginMember.memberNo}]]*/ null;
                 	  var todoState = $(this).val();
@@ -350,7 +350,7 @@
 	                				 case 1: str += '<td width="20%"><i class="fa-solid fa-circle fa-2x text-info"></i></td>'; break;
 	                				 case 2: str += '<td width="20%"><i class="fa-solid fa-circle fa-2x text-warning"></i></td>'; break;
 	                				 case 3: str += '<td width="20%"><i class="fa-solid fa-circle fa-2x text-success"></i></td>'; break;
-	                				}
+	                				};
                 				  str += '<td width="80%">' + todo.todoTitle + '</td>';
 	                			  str += '</tr>';
 	                			  $('#todolistTable').append(str);

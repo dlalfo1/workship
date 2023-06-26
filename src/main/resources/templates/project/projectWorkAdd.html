@@ -83,8 +83,9 @@
 							<button type="button" class="btn btn-secondary" id="btnCancel">취소하기</button>
 						</div>
 					</form>
+					<input id="PEnd" type="hidden" th:value="${projectDTO.projectEndAt}">
 				</div>
-				<script>
+				<script th:inline="javascript">
 					function clock(){
 					    var today = new Date();
 					    var year = today.getFullYear();
@@ -94,17 +95,17 @@
 						$('input[name=projectStartAt]').attr('value',time);
 					    $('#startDate').text(time);
 					}
-
+					var PEnd = $('#PEnd').val();
 					var startDate = $('#startDate');
 					var endDate = $('#endDate');
 					    startDate.datepicker({
-					  	  maxDate: 0,
+					  	  maxDate: PEnd,
 					  	  onClose: function(selectedDate){
 					  		  endDate.datepicker('option', 'minDate', selectedDate);
 					  	  }
 					    });
 					    endDate.datepicker({
-					      minDate: 0,	
+					      maxDate: PEnd,	
 					      onClose: function(selectedDate){
 					      	startDate.datepicker('option', 'minDate', selectedDate);
 					      }

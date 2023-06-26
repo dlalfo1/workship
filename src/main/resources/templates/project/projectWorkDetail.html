@@ -41,17 +41,17 @@ $(function(){
       <div class="main-panel">
         <div class="content-wrapper">
 			<div class="project-work-main">
-				<div th:utext="${projectWorkDTO.projectWorkTitle}"></div>
+				<div id="pw1" th:utext="${projectWorkDTO.projectWorkTitle}"></div>
 				<div>소속 프로젝트명</div>				
-				<div th:utext="${projectDTO.projectTitle}"></div>
+				<div id="pw2" th:utext="${projectDTO.projectTitle}"></div>
 				<div>업무 내용</div>
-				<div th:utext="${projectWorkDTO.projectWorkDetail}"></div>
+				<div id="pw3" th:utext="${projectWorkDTO.projectWorkDetail}"></div>
 				<div>담당자</div>
-				<div th:utext="${projectWorkDTO.memberDTO.memberName}"></div>
+				<div id="pw4" th:utext="${projectWorkDTO.memberDTO.memberName}"></div>
 				<div>진행 상태</div>
-				<div th:utext="${projectWorkDTO.ingDTO.ingState}"></div>
+				<div id="pw5" th:utext="${projectWorkDTO.ingDTO.ingState}"></div>
 				<div>수정일자</div>
-				<div th:utext="${projectWorkDTO.projectWorkModifiedAt}"></div>
+				<div id="pw6" th:utext="${projectWorkDTO.projectWorkModifiedAt}"></div>
 					<th:block th:if="${projectWorkDTO.memberDTO.memberNo == session.loginMember.memberNo}">
 						<form id="frmUpdate" method="get" th:action="@{/project/projectWorkUpdate.html}">
 							<input type="hidden" name="projectWorkNo" th:value="${projectWorkDTO.projectWorkNo}" required>
