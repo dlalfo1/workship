@@ -26,7 +26,7 @@ public interface ProjectMapper {
 	public List<ProjectDTO> getProjectMList(Map<String, Object> map);
 	public List<ProjectWorkDTO> getProjectWList(Map<String, Object> map);
 	public int getProjectCount();
-	public int getProjectWCount();
+	public int getProjectWCount(int projectNo);
 	public int getProjectSearchCount(Map<String, Object> map);
 	public int getProjectWSearchCount(Map<String, Object> map);
 	public ProjectWorkDTO getProjectWByNo(int projectWorkNo);

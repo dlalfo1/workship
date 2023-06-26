@@ -190,9 +190,10 @@
       	  FROM PROJECT_T
   	  </select>
   	  
-  	  <select id="getProjectWCount" resultType="int">
+  	  <select id="getProjectWCount" parameterType="int" resultType="int">
   	  	SELECT COUNT(*)
   	  	  FROM PROJECT_WORK_T
+  	  	 WHERE PROJECT_NO = #{projectNo} 
   	  </select>
 
 	  <select id="getProjectSearchCount" parameterType="Map" resultType="int">
@@ -202,7 +203,7 @@
 	        		ON P.MEMBER_NO = M.MEMBER_NO
 		    <where>
 		      <if test="column != '' and query != ''">
-		        #{column} LIKE CONCAT('%', #{query}, '%')
+		        ${column} LIKE CONCAT('%', #{query}, '%')
 		      </if>
 		    </where>) A
 	  </select>
@@ -212,11 +213,11 @@
 	      FROM (SELECT W.PROJECT_WORK_NO, M.MEMBER_NO, M.MEMBER_NAME 
 	      		  FROM PROJECT_WORK_T W INNER JOIN MEMBER_T M
 	        		ON W.MEMBER_NO = M.MEMBER_NO
-			    <where>
+	        	 WHERE W.PROJECT_NO = ${projectNo}	
 			      <if test="column != '' and query != ''">
-			        ${column} LIKE CONCAT('%', #{query}, '%')
+			       AND ${column} LIKE CONCAT('%', #{query}, '%')
 			      </if>
-			    </where>) A
+			    ) A
 	  </select>
 	  
 	 <select id="getDeptList" resultType="DepartmentDTO">
