@@ -242,11 +242,11 @@
         }
       } else if(approvalCount === 2) {
           if (approvalLines[0].approvalOrder === approvalSequence && loginMemberNo === approvalLines[0].memberDTO.memberNo) {
-            alert('1번째');
+   
             $('#submitApproval').attr('action', '/approval/submitApproval.do');
             $('#submitApproval').submit();  
           } else if (approvalLines[1].approvalOrder === approvalSequence && loginMemberNo === approvalLines[1].memberDTO.memberNo) {
-              alert('2번째');
+          
               $('#submitApproval').attr('action', '/approval/submitApproval.do');
               $('#submitApproval').submit();  
           } else {
@@ -286,11 +286,11 @@
         }
       } else if(approvalCount === 2) {
           if (approvalLines[0].approvalOrder === approvalSequence && loginMemberNo === approvalLines[0].memberDTO.memberNo) {
-            alert('1번째');
+       
             $('#submitApproval').attr('action', '/approval/rejectApproval.do');
             $('#submitApproval').submit();  
           } else if (approvalLines[1].approvalOrder === approvalSequence && loginMemberNo === approvalLines[1].memberDTO.memberNo) {
-              alert('2번째');
+           
               $('#submitApproval').attr('action', '/approval/rejectApproval.do');
               $('#submitApproval').submit();  
           } else {
