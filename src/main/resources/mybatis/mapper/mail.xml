@@ -269,6 +269,18 @@
 		  FROM MAIL_FILE_T
 		 WHERE MAIL_NO = #{mailNo}
 	</select>
+	
+	<select id="getMailFileByMailFileNo" parameterType="int" resultMap="MailFileMap">
+		SELECT MAIL_NO, MAIL_FILE_NO, MAIL_FILE_PATH, MAIL_FILE_ORIGIN_NAME, MAIL_FILE_SYSTEM_NAME
+		  FROM MAIL_FILE_T
+		 WHERE MAIL_FILE_NO = #{mailFileNo}
+	</select>
+	
+	<select id="getMailAttachList" parameterType="int" resultMap="MailFileMap">
+		SELECT MAIL_NO, MAIL_FILE_NO, MAIL_FILE_PATH, MAIL_FILE_ORIGIN_NAME, MAIL_FILE_SYSTEM_NAME
+		  FROM MAIL_FILE_T
+		 WHERE MAIL_NO = #{mailNo}
+	</select>
 
 	<!-- 메일 상태변경 -->
 	<update id="updateStar" parameterType="Map">
@@ -383,5 +395,19 @@
 		VALUES
 			(#{mailNo}, #{mailFilePath}, #{mailFileOriginName}, #{mailFileSystemName})
 	</insert>
+	
+	<select id="getMemberList" parameterType="int" resultMap="MemberMap">
+	    SELECT A.MEMBER_NO, A.MEMBER_NAME, A.EMAIL_ID, A.DEPT_NO, A.DEPT_NAME, A.JOB_NO, A.JOB_NAME
+	      FROM (SELECT E.MEMBER_NO, E.MEMBER_NAME, E.EMAIL_ID, D.DEPT_NO, D.DEPT_NAME, J.JOB_NO ,J.JOB_NAME
+	              FROM DEPARTMENT_T D INNER JOIN MEMBER_T E
+	                ON D.DEPT_NO = E.DEPT_NO INNER JOIN JOB_T J
+	                ON J.JOB_NO = E.JOB_NO
+               <where>
+		  			<if test="column != '' and query != ''">
+		  				( ${column} LIKE CONCAT('%', UPPER(#{query}), '%') OR ${column} LIKE CONCAT('%', LOWER(#{query}), '%') )
+		  			</if>
+			  	</where>) A
+	     ORDER BY MEMBER_NO ASC
+	  </select>
 
 </mapper>

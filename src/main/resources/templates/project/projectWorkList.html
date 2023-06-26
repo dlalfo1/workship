@@ -72,11 +72,12 @@
 			</table>
 		</div>	<!--/* projectList 끝나는지점 */-->	
 		<div class="searchWrap">
-			<form id="frmSearch" th:action="@{/project/projectWorkList.do}">
+			<form id="frmSearch" th:action="@{/project/projectWorkList.html}">
 				<select name="column" id="column">
 					<option value="M.MEMBER_NAME" selected="selected">담당자</option>
 					<option value="W.PROJECT_WORK_TITLE">업무명</option>
 				</select>
+				<input type="hidden" name="projectNo" th:value="${projectNo}">
 				<input type="text" name="query" id="query">
 				<button>검색</button>
 			<span><button id="back" type="button" class="btn btn-secondary">프로젝트 목록</button></span>

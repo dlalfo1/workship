@@ -53,4 +53,10 @@ public interface MailMapper {
 	public int sendMailBcc(Map<String, Object> map3);
 	public int addAttach(Map<String, Object> map4);
 	
+	/* 첨부파일 다운로드 */
+	public MailFileDTO getMailFileByMailFileNo(int mailFileNo);
+	public List<MailFileDTO> getMailAttachList(int mailNo);
+	
+	/* 주소록 조회 */
+	public List<MemberDTO> getMemberList(Map<String, Object> map);
 }

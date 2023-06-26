@@ -36,12 +36,15 @@ public class ProjectController {
 	
 	@GetMapping(value="/projectWorkList.html")
 	public String projectWorkList(HttpServletRequest request, Model model) {
+		int projectNo = Integer.parseInt(request.getParameter("projectNo")); 
 		String memberName = request.getParameter("memberName");
 		String deptName = request.getParameter("deptName");
 		projectService.getProjectWorkList(request, model);	
 		
 		model.addAttribute("memberName", memberName);
 		model.addAttribute("deptName", deptName);
+		model.addAttribute("projectNo", projectNo);
+		
 		return "project/projectWorkList";
 	}
 	
@@ -130,6 +133,9 @@ public class ProjectController {
 		String emailId = member.getEmailId();
 		model.addAttribute("member", noticeBoardMapper.getMemberByEmail(emailId)); 
 		int projectNo = Integer.parseInt(request.getParameter("projectNo"));
+		ProjectDTO projectDTO = new ProjectDTO();
+		projectDTO = projectMapper.getProject(projectNo);
+		model.addAttribute("projectDTO" , projectDTO);
 		model.addAttribute("projectNo", projectNo);
 		return "project/projectWorkAdd";
 	}

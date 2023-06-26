@@ -4,6 +4,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -24,4 +26,7 @@ public interface MailService {
 	public Map<String, Object> changeStatus(Map<String, Object> map, HttpServletRequest request);
 	public Map<String, Object> mailReadCheck(Map<String, Object> map, HttpServletRequest request);
 	public int sendMail(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes);
+	public ResponseEntity<Resource> attachDownload(int mailFileNo, String userAgent);
+	public ResponseEntity<Resource> attachDownloadAll(int mailNo);	
+	public void getMemberList(Map<String, Object> map);
 }

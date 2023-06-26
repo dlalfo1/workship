@@ -52,7 +52,7 @@ public class LoginServiceImpl implements LoginService {
          try {
             response.sendRedirect(url);
          } catch (Exception e) {
-            e.printStackTrace();
+             
          }
          
       }
@@ -70,7 +70,7 @@ public class LoginServiceImpl implements LoginService {
             out.close();
             
          } catch (Exception e) {
-            e.printStackTrace();
+             
          }
       }
       

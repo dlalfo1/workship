@@ -101,6 +101,7 @@
 	        						<label for="btnSpam" id="lblBtnSpam"></label>
 	        						<input type="button" value="스팸차단" id="btnSpam" onclick="fnSpam()">
 	        					</div>
+	        					<!-- 
 	        					<div>
 	        						<label for="btnReply" id="lblBtnReply"></label>
 	        						<input type="button" value="답장" id="btnReply" onclick="fnReply()">
@@ -109,6 +110,7 @@
 	        						<label for="btnorward" id="lblBtnForward"></label>
 	        						<input type="button" value="전달" id="btnorward" onclick="fnForward()">
 	        					</div>
+	        					 -->
         					</th:block>
         					
         					<th:block th:if="${Category == 'SENT'}">
@@ -123,10 +125,12 @@
 	        						<label for="btnDelete" id="lblBtnDelete"></label>
 	        						<input type="button" value="영구삭제" id="btnDelete" onclick="fnDelete()">
 	        					</div>
+	        					<!-- 
 	        					<div>
 	        						<label for="btnorward" id="lblBtnForward"></label>
 	        						<input type="button" value="전달" id="btnorward" onclick="fnForward()">
 	        					</div>
+	        					 -->
         					</th:block>
         					
         					<th:block th:if="${Category == 'SPAM'}">
@@ -158,19 +162,19 @@
         					
        					<div class="changePage">
        						<a class="toList" th:href="@{/mail/list.html(Category=${Category})}">목록</a>
-       						
-       						<!-- 보낸 메일 -->
-       						<th:block th:if="${Category == 'SENT' or Category == 'DRAFTS'}">
-       							<i class="fa-solid fa-chevron-up" onclick="fnPrev()"></i>
-       							<i class="fa-solid fa-chevron-down" onclick="fnNext()"></i>
+       					<!-- 	
+       						보낸 메일
+       						<th:block th:if="${Category == 'SENT' or Category == 'DRAFTS'}">       							
+                   			   <button type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" id="btnNext">▲</button>
+                  			   <button type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" id="btnPrev">▼</button>
        						</th:block>
        						
-       						<!-- 받은 메일 -->
+       						받은 메일
        						<th:block th:unless="${Category == 'SENT' or Category == 'DRAFTS'}">
-       							<i class="fa-solid fa-chevron-up" onclick="fnPrev()"></i>
-       							<i class="fa-solid fa-chevron-down" onclick="fnNext()"></i>
+       							<button type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" id="btnNext">▲</button>
+                      			<button type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" id="btnPrev">▼</button>
        						</th:block>
-       						
+       					-->
        						
        					</div>       					
 					</div>
@@ -181,7 +185,7 @@
 		
        					<th:block th:if="${Category == 'SENT' or Category == 'DRAFTS'}">
        						<div class="mainContent1">
-	       						<div class="mailTitle" th:text="${sentMail.mailTitle}"></div>
+	       						<div class="sentMailTitle" th:text="${sentMail.mailTitle}"></div>
        						</div>
        						
        						<div class="mainContent2">
@@ -197,27 +201,31 @@
 	       							</th:block>       							
        							</div>
        						</div>
-      		
-      						<th:block th:if = "${not #lists.isEmpty(mailccList) && mailccList != null}">       		
+       						
+       						<th:block th:if="${hasCcNullValue == false}">
 	       						<div class="mainContent3">
 	       							<span class="mainContent">참조</span>
 	       							<div class="senderContent">
 		       							<th:block th:each="mailccSender:${mailccList}">
-		       								<span class="sender" th:text="|${mailccSender?.memberName}(${mailccSender?.emailId})|"></span>
+		       								<th:block th:if="${mailccSender != null && mailccSender != ''}">
+			       								<span class="sender" th:text="|${mailccSender.memberName}(${mailccSender.emailId})|"></span>
+		       								</th:block>
 		       							</th:block>
 		       						</div>
-	       						</div>
-       						</th:block>
-       						
-       						<th:block th:if = "${not #lists.isEmpty(mailccList) && mailccList != null}">       					
+	       						</div>       				
+       						</th:block> 		
+       										
+       						<th:block th:if="${hasBccNullValue == false}">
 	       						<div class="mainContent3">
 	       							<span class="mainContent">숨은참조</span>
 	       							<div class="senderContent">
 		       							<th:block th:each="mailbccSender:${mailbccList}">
-		       								<span class="sender" th:text="|${mailbccSender?.memberName}(${mailbccSender?.emailId})|"></span>
+		       								<th:block th:if="${mailbccSender != null && mailbccSender != ''}">
+			       								<span class="sender" th:text="|${mailbccSender.memberName}(${mailbccSender.emailId})|"></span>
+		       								</th:block>
 		       							</th:block>
 	       							</div>
-	       						</div>     						
+	       						</div>     			       						
        						</th:block>
        						
        						<div class="mainContent4">
@@ -233,33 +241,29 @@
 				        					<div class="filesHeader">
 					        					<div class="filesTitle">
 					        						<span class="text">파일명</span>
-					        					</div>
-					        					<div class="AllSize">
-					        						<span class="text">파일용량</span>
-					        						<span class="fileSize">(KB)</span>
-					        					</div>					        					
+					        					</div>				        					
+		        								<div> 
+			        								<a class="allSave" th:href="@{/mail/attachDownloadAll.do(mailNo=${sentMail.mailNo})}">모두 저장</a>
+			        							</div>		        										        							
 					        				</div>		
 					        				<div class="attachList">
 					        					<th:block th:unless="${#lists.isEmpty(attachList)}">
 					        						<th:block th:each="attach:${attachList}">
 						        						<div>				        							
 					        								<div>
-					        									<a th:href="@{/mail/attachDownload.do(attachNo=${attach.mailFileNo})}" th:text="${attach.mailFileOriginName}"></a>
+					        									<a th:href="@{/mail/attachDownload.do(mailFileNo=${attach.mailFileNo})}" th:text="${attach.mailFileOriginName}"></a>
 					        								</div>		
-					        								<div>
-						        								<a th:href="@{/mail/attachDownloadAll.do(mailNo=${attach.mailDTO.mailNo})}">모두 저장</a>
-						        							</div>		        										        							
 						        						</div>	
 					        						</th:block>
 					        					</th:block>
 					        				</div>
 				        				</div>
        								</div>       									
-		       						<div class="maildetailContent" th:text="${sentMail.mailContent}"></div>
+		       						<div class="maildetailContent" th:utext="${sentMail.mailContent}"></div>
        							</th:block>
        							
        							<th:block th:unless="${sentMail.mailHasFile == 'Y'}">
-       								<div class="maildetailContent" th:text="${sentMail.mailContent}"></div>
+       								<div class="maildetailContent" th:utext="${sentMail.mailContent}"></div>
        							</th:block>
        							
        						</div>    
@@ -275,7 +279,7 @@
 	        							<input type="radio" th:name="mailStar" value="N" id="starState"><label for="starState">☆</label>		        							
 	       							</th:block>
 	       							<th:block th:if="${mailToMe.mailToStar == 'Y'}">
-	       								<input type="radio" th:name="mailStar" value="Y" id="starState"><label for="starState">★</label>	
+	       								<input type="radio" th:name="mailStar" value="Y" id="starState"><label for="starState" style="font-size: 32px; color: #4B49AC;">★</label>	
 	       							</th:block>       							
        							</span>       							
 
@@ -290,20 +294,22 @@
        							<span class="mainContent">받는사람</span>
        							<div class="senderContent">
 	       							<th:block th:each="mailtoSender:${mailtoList}">
-	       								<span class="sender" th:text="|${mailtoSender?.memberName}(${mailtoSender?.emailId})|"></span>					
+	       								<span class="sender" th:text="|${mailtoSender.memberName}(${mailtoSender.emailId})|"></span>					
 	       							</th:block>
        							</div>
-       						</div>
-       			
-       						<th:block th:if = "${not #lists.isEmpty(mailccList) && mailccList != null}"> 
+       						</div>       			
+       					
+       						<th:block th:if="${hasCcNullValue == false}">
 	       						<div class="mainContent3">
 	       							<span class="mainContent">참조</span>
-	       								<div class="senderContent">
-			       							<th:block th:each="mailccSender:${mailccList}">
-			       								<span class="sender" th:text="|${mailccSender?.memberName}(${mailccSender?.emailId})|"></span>			
-			       							</th:block>
-	       								</div>
-	       						</div>
+	   								<div class="senderContent">
+		       							<th:block th:each="mailccSender:${mailccList}">
+		       								<th:block th:if="${mailccSender != null && mailccSender != ''}">
+			       								<span class="sender" th:text="|${mailccSender.memberName}(${mailccSender.emailId})|"></span>			
+		       								</th:block>
+		       							</th:block>
+	   								</div>
+	       						</div>       				
        						</th:block>
        					
        						<th:block th:if="${mailToMe.mailToRole == 'BCC'}">
@@ -326,33 +332,29 @@
 				        					<div class="filesHeader">
 					        					<div class="filesTitle">
 					        						<span class="text">파일명</span>
-					        					</div>
-					        					<div class="AllSize">
-					        						<span class="text">파일용량</span>
-					        						<span class="fileSize">(KB)</span>
-					        					</div>					        					
+					        					</div>				        					
+		        								<div>
+			        								<a class="allSave" th:href="@{/mail/attachDownloadAll.do(mailNo=${sentMail.mailNo})}">모두 저장</a>
+			        							</div>		        										        							
 					        				</div>		
 					        				<div class="attachList">
 					        					<th:block th:unless="${#lists.isEmpty(attachList)}">
 					        						<th:block th:each="attach:${attachList}">
 						        						<div>				        							
 					        								<div>
-					        									<a th:href="@{/mail/attachDownload.do(attachNo=${attach.mailFileNo})}" th:text="${attach.mailFileOriginName}"></a>
+					        									<a th:href="@{/mail/attachDownload.do(mailFileNo=${attach.mailFileNo})}" th:text="${attach.mailFileOriginName}"></a>
 					        								</div>		
-					        								<div>
-						        								<a th:href="@{/mail/attachDownloadAll.do(mailNo=${attach.mailDTO.mailNo})}">모두 저장</a>
-						        							</div>		        										        							
 						        						</div>	
 					        						</th:block>
 					        					</th:block>
 					        				</div>
 				        				</div>
        								</div>       									
-		       						<div class="maildetailContent" th:text="${sentMail.mailContent}"></div>
+		       						<div class="maildetailContent" th:utext="${sentMail.mailContent}"></div>
        							</th:block>
        							
        							<th:block th:unless="${sentMail.mailHasFile == 'Y'}">
-       								<div class="maildetailContent" th:text="${sentMail.mailContent}"></div>
+       								<div class="maildetailContent" th:utext="${sentMail.mailContent}"></div>
        							</th:block>
        							
        						</div> 
