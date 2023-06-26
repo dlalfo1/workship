@@ -1,6 +1,7 @@
 package com.gdu.workship.service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,7 +175,7 @@ public class VacationServiceImpl implements VacationService {
 		map.put("updateApprovalResult", updateApprovalResult);
 		int vacationNo = Integer.parseInt(request.getParameter("vacationNo"));
 		int recentVacationDay = vacationMapper.getVacationDay(approvalNo);
-		int modifiedvacationDay = endDate.compareTo(startDate) + 1;
+		int modifiedvacationDay = (int)ChronoUnit.DAYS.between(startDate, endDate) + 1;
 		int vacationDayGap = modifiedvacationDay - recentVacationDay;
 		VacationDTO vacationDTO = new VacationDTO();
 		vacationDTO.setVacationNo(vacationNo);
@@ -186,9 +187,9 @@ public class VacationServiceImpl implements VacationService {
 		parameter2.put("vacationDays", vacationDayGap);
 		vacationMapper.updateDayoffCount(parameter2);
 		map.put("updateVacationResult", updateVacationResult);
-		map.put("vacationStartDate", vacationStartDate);
-		map.put("vacationEndDate", vacationEndDate);
-		map.put("vacationCategory", vacationCategory);
+		map.put("vStartDate", vacationStartDate);
+		map.put("vEndDate", vacationEndDate);
+		map.put("vCategory", vacationCategory);
 		map.put("vacationDay", modifiedvacationDay);
 		return map;
 	}

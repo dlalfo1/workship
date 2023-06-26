@@ -68,6 +68,10 @@ input[type="radio"] {
 	gap: 16px;
 }
 
+#starState {
+	font-size: 40px;
+}
+
 .mainContent1, .mainContent2, .mainContent3, .mainContent4 {
 	display: flex;
 	align-items: center;
@@ -90,6 +94,13 @@ input[type="radio"] {
 	font-size: 24px;
 	font-weight: bold;
 	padding-top: 24px;
+}
+
+.sentMailTitle {
+	font-size: 24px;
+	font-weight: bold;
+	padding-top: 24px;
+	padding-left: 130px;	
 }
 
 .recipient, .sender, .mailDateTime {

@@ -185,7 +185,7 @@
 		
        					<th:block th:if="${Category == 'SENT' or Category == 'DRAFTS'}">
        						<div class="mainContent1">
-	       						<div class="mailTitle" th:text="${sentMail.mailTitle}"></div>
+	       						<div class="sentMailTitle" th:text="${sentMail.mailTitle}"></div>
        						</div>
        						
        						<div class="mainContent2">
@@ -279,7 +279,7 @@
 	        							<input type="radio" th:name="mailStar" value="N" id="starState"><label for="starState">☆</label>		        							
 	       							</th:block>
 	       							<th:block th:if="${mailToMe.mailToStar == 'Y'}">
-	       								<input type="radio" th:name="mailStar" value="Y" id="starState"><label for="starState">★</label>	
+	       								<input type="radio" th:name="mailStar" value="Y" id="starState"><label for="starState" style="font-size: 32px; color: #4B49AC;">★</label>	
 	       							</th:block>       							
        							</span>       							
 
