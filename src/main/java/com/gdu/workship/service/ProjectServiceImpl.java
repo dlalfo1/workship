@@ -258,8 +258,7 @@ public class ProjectServiceImpl implements ProjectService {
 			    Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
 			    int page = Integer.parseInt(opt1.orElse("1"));
 			    
-			    int totalRecord = projectMapper.getProjectWCount();
-			    
+			    int totalRecord = projectMapper.getProjectWCount(projectNo);
 			    int recordPerPage = 10;
 			    
 			    Optional<String> opt2 = Optional.ofNullable(request.getParameter("column"));
@@ -270,14 +269,12 @@ public class ProjectServiceImpl implements ProjectService {
 			    
 			    Map<String, Object> map = new HashMap<String, Object>();
 			    
-			    
 			    map.put("projectNo", projectNo);
 			    map.put("column", column);
 			    map.put("query", query);
 			    map.put("recordPerPage", recordPerPage);    
 			    pageUtil.setPageUtil(page, (column.isEmpty() && query.isEmpty()) ? totalRecord : projectMapper.getProjectWSearchCount(map), recordPerPage);
 			    map.put("begin", pageUtil.getBegin());      
-				
 	
 			    List<ProjectWorkDTO> projectWorkList = projectMapper.getProjectWList(map);
 			    model.addAttribute("projectWorkList", projectWorkList);
@@ -285,9 +282,9 @@ public class ProjectServiceImpl implements ProjectService {
 			    model.addAttribute("projectNo", projectNo);
 			    
 			    if(column.isEmpty() || query.isEmpty()) {
-			      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/project/projectWorkList.do"));
+			      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/project/projectWorkList.html?projectNo=" + projectNo));
 			    } else {
-			      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/project/projectWorkList.do?column=" + column + "&query=" + query));
+			      model.addAttribute("pagination", pageUtil.getPagination(request.getContextPath() + "/project/projectWorkList.html?column=" + column + "&query=" + query + "&projectNo=" + projectNo));
 			    }
 			}	
 		
