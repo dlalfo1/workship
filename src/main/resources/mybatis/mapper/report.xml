@@ -148,11 +148,11 @@
               FROM REPORT_BOARD_T R INNER JOIN MEMBER_T M
                 ON R.MEMBER_NO = M.MEMBER_NO
             <where>
-              <if test="column != '' and query != ''">
-                ${column} LIKE CONCAT('%', #{query}, '%')
-              </if>
               <if test="reportState != ''">
-                AND REPORT_STATE = #{reportState}
+                REPORT_STATE = #{reportState}
+              </if>
+              <if test="column != '' and query != ''">
+                AND ${column} LIKE CONCAT('%', #{query}, '%')
               </if>
             </where>) A
   </select>  
