@@ -68,7 +68,6 @@ public class MemberController {
   
   @PostMapping("/member/modifyMember.do")
   public String modifyMember(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
-    System.out.println(memberService.modifyMember(request));
     redirectAttributes.addFlashAttribute("modifyResult", memberService.modifyMember(request));
     return "redirect:/member/member.html";
   }
@@ -79,7 +78,9 @@ public class MemberController {
   
   @PostMapping("/member/removeMember.do")
   public String removeMember(@RequestParam("memberNo") int memberNo, RedirectAttributes redirectAttributes) {
-    redirectAttributes.addFlashAttribute("removeResult", memberService.removeMember(memberNo));
+    int removeResult = memberService.removeMember(memberNo);
+    System.out.println("removeResult" + removeResult);
+    redirectAttributes.addFlashAttribute("removeResult", removeResult);
     return "redirect:/member/member.html";
   }
   
