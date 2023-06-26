@@ -97,14 +97,14 @@
              AND ${column} LIKE CONCAT('%', #{query}, '%')
             </if>
            ) A
-     ORDER BY N.NOTICE_NO DESC
+     ORDER BY A.NOTICE_NO DESC
      LIMIT #{begin}, #{recordPerPage}
   </select>
 
   <select id="getNoticeSearchCount" parameterType="Map" resultType="int">
     SELECT COUNT(N.NOTICE_NO)
       FROM NOTICE_BOARD_T N RIGHT OUTER JOIN MEMBER_T M
-        ON M.MEMBER_NO = N.MEMBER_NO
+        ON M.MEMBER_NO = N.MEMBER_NO883222242
     <where>
       <if test="column != '' and query != ''">
         ${column} LIKE CONCAT('%', #{query}, '%')
@@ -132,7 +132,7 @@
   </select>
   <select id="getNoticeFileList" parameterType="int" resultType="NoticeFileDTO">
     SELECT NOTICE_FILE_NO, NOTICE_NO, NOTICE_FILE_PATH, NOTICE_FILE_ORIGIN_NAME, NOTICE_FILE_SYSTEM_NAME
-      FROM NOTICE_FILE_T
+      FROM NOTICE_FILE_T1
      WHERE NOTICE_NO = #{noticeNo}
   </select>
   
