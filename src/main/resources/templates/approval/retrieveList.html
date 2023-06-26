@@ -200,13 +200,6 @@ input[type="text"] {
                <option value="20">20개 보기</option>
               </select>
             </div>  <!-- /* record-wrapper 끝나는 지점 */ -->
-            <div class="menu-wrapper">
-              <button id="btnAll" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do'" style="background-color: #4B49AC; border: none;">전체</button>
-              <button id="btnProgress" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=1'" style="background-color: rgb(243, 156, 18); border: none;">진행</button>
-              <button id="btnComplete" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=2'" style="background-color: rgb(46, 204, 113); border: none;">완료</button>
-              <button id="btnReject" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=3'" style="background-color: rgb(231, 76, 60); border: none;">반려</button>
-              <button id="btnWait" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=0'" style="background-color: rgb(158, 158, 158); border: none;">대기</button>
-            </div>  <!-- /* record-wrapper 끝나는 지점 */ -->
           </div>
           <div class="list-wrappe">
             <div class="dataTables_wrapper dt-bootstrap4 no-footer">
@@ -224,7 +217,7 @@ input[type="text"] {
                     </tr>
                   </thead>
                   <tbody>
-                    <th:block th:each="approval:${approvalList}">
+                    <th:block th:each="approval:${retrieveList}">
                       <tr th:onclick="|fnDetailApproval(appNo=${approval.approvalNo}, docName=${approval.docName})|"> 
                         <td class="tableBody" th:text="${approval.approvalNo}"> </td> 
                         <th:block th:if="${approval.docName == 1}">
@@ -250,24 +243,9 @@ input[type="text"] {
                         <td class="tableBody" th:text="${approval.docTitle}"></td>
                         <td class="tableBody" th:text="${approval.memberDTO.memberName}">작성자</td>
                         <td class="tableBody" th:text="${#dates.format(approval.createdAt, 'yyyy/MM/dd')}"></td>
-                        <th:block th:if="${approval.approvalStatus == 0}">
+                        <th:block th:if="${approval.approvalStatus == 4}">
                           <td>
-                            <div class="tag-gray">대기</div>
-                          </td>
-                        </th:block>
-                        <th:block th:if="${approval.approvalStatus == 1}">
-                          <td>
-                            <div class="tag-orange">진행</div>
-                          </td>
-                        </th:block>
-                        <th:block th:if="${approval.approvalStatus == 2}">
-                          <td>
-                            <div class="tag-green">완료</div>
-                          </td>
-                        </th:block>
-                        <th:block th:if="${approval.approvalStatus == 3}">
-                          <td>
-                            <div class="tag-red">반려</div>
+                            <div class="tag-gray">회수상태</div>
                           </td>
                         </th:block>
                       </tr>
@@ -315,7 +293,7 @@ input[type="text"] {
         let page = /*[[${page}]]*/ '';  
         let order =/*[[${order}]]*/ '';  
         
-        location.href = '/approval/approvalList.do?columnorder=' + columnorder + '&columnsearch=' + columnsearch+ '&query=' + query + '&order=' + order + '&page=' + page;
+        location.href = '/approval/retrieveList.do?columnorder=' + columnorder + '&columnsearch=' + columnsearch+ '&query=' + query + '&order=' + order + '&page=' + page;
      
       }) 
 
@@ -349,23 +327,15 @@ input[type="text"] {
 
 
   function fnInit(){
-      let addResult = /*[[${addResult}]]*/ '';
+      let addResult = /*[[${retrieveResult}]]*/ '';
       if(addResult !== null) {   
-        if(addResult >= '2'){
-          alert('결재상신이 완료되었습니다.');
+        if(addResult == '1'){
+          alert('문서가 회수되었습니다.');
         } else {
-          alert('결재상신이 실패하였습니다.'); 
+          alert('문서회수 실패하였습니다.'); 
         }
       }  
       
-      let removeResult = /*[[${removeResult}]]*/ '';
-      if(removeResult !== null) { 
-        if(removeResult >= '2'){
-          alert('결재문서가 삭제되었습니다.');
-        } else {
-          alert('결재문서 삭제 실패했습니다.'); 
-        }
-     }
     }
 
    

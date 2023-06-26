@@ -25,8 +25,8 @@
         <ul class="nav flex-coulmn sub-menu">
           <li class="nav-item"> <a class="nav-link" th:href="@{/approval/docList.html}">결재상신</a> </li>
           <li class="nav-item"> <a class="nav-link" th:href="@{/approval/approvalList.do}">결재조회</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/referenceList.html}">참조문서</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/saveList.html}">임시저장문서</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/referenceList.do}">참조문서</a> </li>
+          <li class="nav-item"> <a class="nav-link" th:href="@{/approval/retrieveList.do}">회수문서</a> </li>
         </ul>
       </div>
     </li>
@@ -40,9 +40,13 @@
         <ul class="nav flex-coulmn sub-menu">
           <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendList.do(memberNo=${session.loginMember.memberNo})}">출퇴근기록조회</a> </li>
           <li class="nav-item"> <a class="nav-link" th:href="@{/vacation/vacationList.html}">휴가조회</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendManage.html}">출퇴근기록관리</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/vacation/approvalSearch.do}">휴가신청내역관리</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/vacation/vacationSearch.do}">휴가내역관리</a> </li>
+          
+          <th:block th:if="${session.loginMember.departmentDTO.deptNo == 1}">
+            <li class="nav-item"> <a class="nav-link" th:href="@{/attendance/attendManage.html}">출퇴근기록관리</a> </li>
+            <li class="nav-item"> <a class="nav-link" th:href="@{/vacation/approvalSearch.do}">휴가신청내역관리</a> </li>
+            <li class="nav-item"> <a class="nav-link" th:href="@{/vacation/vacationSearch.do}">휴가내역관리</a> </li>
+          </th:block>
+          
         </ul>
       </div>
     </li>
@@ -66,40 +70,44 @@
       </div>
     </li>
     <li class="nav-item">
-       <a class="nav-link" th:href="@{/calendar/calendar.html}">
-	       <i class="fa-regular fa-calendar menu-icon"></i>
-	       <span class="menu-title">일정관리</span>
-      </a>
-    </li>
-    <li class="nav-item">
       <a class="nav-link" th:href="@{/todolist/todomain.do}">
         <i class="fa-solid fa-list-check menu-icon"></i>
         <span class="menu-title">ToDoList</span>
       </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#member-basic" aria-expanded="false" aria-controls="member-basic">
-        <i class="fa-solid fa-user-gear menu-icon"></i>
-        <span class="menu-title">사원관리</span>
-        <i class="menu-arrow"></i>
-      </a>
-      <div class="collapse" id="member-basic">
-        <ul class="nav flex-coulmn sub-menu">
-          <li class="nav-item"> <a class="nav-link" th:href="@{/member/memberCreate.html}">사원등록</a> </li>
-          <li class="nav-item"> <a class="nav-link" th:href="@{/member/member.html}">사원조회</a> </li>
-        </ul>
-      </div>
-    </li>
-    <li class="nav-item">
-       <a class="nav-link" th:href="@{/department/dept.html}">
-       <i class="fa-solid fa-sitemap menu-icon"></i>
-       <span class="menu-title">부서관리</span>
-      </a>
-    </li>
-    <li class="nav-item">
-       <a class="nav-link" th:href="@{/report/report.html}">
-       <i class="fa-solid fa-triangle-exclamation menu-icon"></i>
-       <span class="menu-title">신고관리</span>
+    
+    <th:block th:if="${session.loginMember.departmentDTO.deptNo == 1}">
+	    <li class="nav-item">
+	      <a class="nav-link" data-toggle="collapse" href="#member-basic" aria-expanded="false" aria-controls="member-basic">
+	        <i class="fa-solid fa-user-gear menu-icon"></i>
+	        <span class="menu-title">사원관리</span>
+	        <i class="menu-arrow"></i>
+	      </a>
+	      <div class="collapse" id="member-basic">
+	        <ul class="nav flex-coulmn sub-menu">
+	          <li class="nav-item"> <a class="nav-link" th:href="@{/member/memberCreate.html}">사원등록</a> </li>
+	          <li class="nav-item"> <a class="nav-link" th:href="@{/member/member.html}">사원조회</a> </li>
+	        </ul>
+	      </div>
+	    </li>
+	    <li class="nav-item">
+	       <a class="nav-link" th:href="@{/department/dept.html}">
+	       <i class="fa-solid fa-sitemap menu-icon"></i>
+	       <span class="menu-title">부서관리</span>
+	      </a>
+	    </li>
+	    <li class="nav-item">
+	       <a class="nav-link" th:href="@{/report/report.html}">
+	       <i class="fa-solid fa-triangle-exclamation menu-icon"></i>
+	       <span class="menu-title">신고관리</span>
+	      </a>
+	    </li>
+    </th:block>
+    
+      <li class="nav-item">
+       <a class="nav-link" th:href="@{/calendar/calendar.html}">
+         <i class="fa-regular fa-calendar menu-icon"></i>
+         <span class="menu-title">일정관리</span>
       </a>
     </li>
   </ul>

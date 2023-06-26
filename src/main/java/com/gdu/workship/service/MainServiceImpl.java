@@ -3,8 +3,10 @@ package com.gdu.workship.service;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Service;
@@ -12,7 +14,9 @@ import org.springframework.ui.Model;
 
 import com.gdu.workship.domain.AttendanceDTO;
 import com.gdu.workship.domain.MemberDTO;
+import com.gdu.workship.domain.TodolistDTO;
 import com.gdu.workship.mapper.AttendanceMapper;
+import com.gdu.workship.mapper.MailMapper;
 import com.gdu.workship.mapper.MainMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,12 @@ public class MainServiceImpl implements MainService {
 		model.addAttribute("noticeList", mainMapper.getRecentNoticeList());
 		AttendanceDTO attendanceToday = attendanceMapper.getAttendanceToday(memberNo);
 		model.addAttribute("attendanceToday", attendanceToday);
+		model.addAttribute("departmentName", loginMemberDTO.getDepartmentDTO().getDeptName());
+		int boardCategory = loginMemberDTO.getDepartmentDTO().getDeptNo();
+		model.addAttribute("deptBoardList", mainMapper.getRecentBoardList(boardCategory));
+		model.addAttribute("mailCount", mainMapper.getMailNoReadCount(loginMemberDTO.getEmailId()));
+		model.addAttribute("todoList", mainMapper.getRecentTodolist(memberNo));
+		model.addAttribute("approvalList", mainMapper.getRecentApprovalList(memberNo));
 	}
 	
 	@Override
@@ -85,6 +95,19 @@ public class MainServiceImpl implements MainService {
 				map.put("result", attendanceMapper.getAttendanceToday(memberNo).getAendtime().toString());
 			}
 		}
+		return map;
+	}
+	
+	@Override
+	public Map<String, Object> getTodoList(HttpServletRequest request) {
+		int memberNo = ((MemberDTO)(request.getSession().getAttribute("loginMember"))).getMemberNo();
+		int todoState = Integer.parseInt(request.getParameter("todoState"));
+		Map<String, Object> parameter = new HashMap<>();
+		parameter.put("memberNo", memberNo);
+		parameter.put("todoState", todoState);
+		List<TodolistDTO> todolist = mainMapper.getTodoListByStatus(parameter);
+		Map<String, Object> map = new HashMap<>();
+		map.put("todolist", todolist);
 		return map;
 	}
 	

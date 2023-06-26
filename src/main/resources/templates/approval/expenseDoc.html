@@ -77,7 +77,6 @@
                       <label class="button-style" for="files" >파일 첨부하기</label> 
                       <input type="file" id="files" name="files" multiple="multiple" onchange="fnFileCheck(this)" hidden="">
                       <button type="button" id="btnReset" class="btn btn-outline-primary btn-fw">모두 삭제</button>
-                      <span>1개 업로드 완료!</span>
                     </div>  
                     <div class="file-list-container" id="filesDrag">
                       <div class="fileDrop open" id="fileDrop">
@@ -125,7 +124,6 @@
     </div>  <!--/* page-body-wrapper(사이드바+본문) 끝나는 지점 */-->
   </div>  <!--/* container-scroller(상단바+사이드바+본문) 끝나는 지점 */-->
   
-  <!--/* footer 영역 */-->
   
 <script>
 
@@ -281,6 +279,7 @@
 
 
 </script>
-
+<!--/* footer 영역 */-->
+<script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
 </body>
 </html>;

@@ -102,31 +102,6 @@
     })
   }
   
-  function fnModifyMember() {
-	  $('#btnModify').on('click', function(event){
-      frm.attr('action', '/member/modifyMember.do');
-      if(verifyName == false){
-        alert('이름을 확인하세요.');
-        event.preventDefault();
-        return;
-      } else if(verifyMobile == false){
-        alert('휴대전화번호를 확인하세요.');
-        event.preventDefault();
-        return;
-      } else if(verifyBirthday == false){
-        alert('생년월일을 확인하세요.');
-        event.preventDefault();
-        return;
-      } else if(verifyPw == false){
-        alert('비밀번호를 확인하세요.');
-        event.preventDefault();
-        return;
-      } 
-      console.log('수정하기::');
-      frm.submit();
-    })      
-  }
-  
   function fnRemoveMember() {
 	  if(confirm('사원 정보를 정말로 삭제하시겠습니까?' + '\n' + '삭제후 필요한 정보만 퇴직 사원으로 저장됩니다.') == false){
 	        return;
@@ -230,6 +205,8 @@
   });
 
   $(function(){
+	  frm = $('#frmDetail');
+	  
     fnPreview();
     
     fnCheckName();
@@ -245,8 +222,6 @@
     $('.dept').val(deptNo).prop("selected", true);
     $('.job').val(jobNo).prop("selected", true);
     $('.status').val(status).prop("selected", true);
-    
-    frm = $('#frmDetail');
   })
 </script>
 <body>
@@ -412,6 +387,37 @@
               </div>
             </div>
           </div>
+          <script>
+            function fnModifyMember() {
+        	    $(document).on('click', '#btnModify' , function(event){
+        	      
+        	      if(verifyName == false){
+        	        alert('이름을 확인하세요.');
+        	        event.preventDefault();
+        	        return;
+        	      } else if(verifyMobile == false){
+        	        alert('휴대전화번호를 확인하세요.');
+        	        event.preventDefault();
+        	        return;
+        	      } else if(verifyBirthday == false){
+        	        alert('생년월일을 확인하세요.');
+        	        event.preventDefault();
+        	        return;
+        	      } else if(verifyPw == false){
+        	        alert('비밀번호를 확인하세요.');
+        	        event.preventDefault();
+        	        return;
+        	      } 
+        	      fnModifyDo();
+        	    })      
+        	  }
+            
+            function fnModifyDo() {
+              console.log('수정하기::');
+              frm.attr('action', '/member/modifyMember.do');
+              frm.submit();
+            }
+          </script>
 
         </div>  <!--/* content-wrapper 끝나는 지점 */-->
       </div>  <!--/* main-panel 끝나는 지점 */-->      
