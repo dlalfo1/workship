@@ -3,53 +3,6 @@
 <head th:replace="~{/layout/header::headFrag('workship 메인페이지')}"></head>
 <link rel="stylesheet" th:href="@{/css/yoobin.css(ver=1.0)}">
 <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
-<style>
-.tag-orange {
-    width : 80px;
-    height : 25px;
-    background-color: rgb(243, 156, 18);
-    margin : auto;
-    color : white;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.tag-red {
-    width : 80px;
-    height : 25px;
-    background-color: rgb(231, 76, 60);
-    margin : auto;
-    color : white;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.tag-green {
-    width : 80px;
-    height : 25px;
-    background-color: rgb(46, 204, 113);
-    margin : auto;
-    color : white;
-    border-radius: 50px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.tag-gray {
-    width : 80px;
-    height : 25px;
-    background-color: rgb(158, 158, 158);
-    margin : auto;
-    color : white;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-</style>
 <body>
 
   <div class="container-scroller">
@@ -84,8 +37,7 @@
                       <p class="card-title text-white">나의 정보</p>                      
                       <div class="row">
                         <div class="col-4">
-                          <img class="rounded-circle" th:src="@{/images/faces/face1.jpg}">
-                        <!-- <img class="rounded-circle" th:src="@{/member/display.do(memberNo=${m.memberNo})}"> -->
+                          <img class="rounded-circle" th:src="@{/member/display.do(memberNo=${session.loginMember.memberNo})}">
                         </div>
                         <div class="col-8 text-white text-center">
                           <h3 th:text="${session.loginMember.memberName}"></h3>
