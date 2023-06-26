@@ -34,7 +34,7 @@ public class ApprovalController {
   private final ApprovalService approvalService;
   
   @GetMapping("/docList.html")
-  public String approvalDocList() {
+  public String approvalMain() {
     return "approval/docList";
   }
   
@@ -159,40 +159,49 @@ public class ApprovalController {
   }  
   
   @GetMapping("/approvalList.do")
-  // 컨트롤러에서 @@RequestParam으로 파라미터에 대한 null처리하기.
-  // pagination에서 사용할 경로를 위해 HttpServletRequest, 속성 저장을 위해 Model을 사용한다.
   public String approvalList(HttpServletRequest request, Model model, HttpSession session) {
     
+    //session에 올라간 recordPerPage 값 날려주기
+    if(request.getHeader("referer").contains("approvalList.do") == false) {
+      request.getSession().removeAttribute("recordPerPage");
+    }
     approvalService.getApprovalList(request, model, session);
-     
      return "approval/approvalList";
+     
   }
   
   // 참조 문서 조회하기
   @GetMapping("/referenceList.do")
   public String referenceList(HttpServletRequest request, Model model, HttpSession session) {
+    
     //session에 올라간 recordPerPage 값 날려주기
     if(request.getHeader("referer").contains("referenceList.do") == false) {
       request.getSession().removeAttribute("recordPerPage");
     }
-    approvalService.getReferencelList(request, model, session);
+    approvalService.getReferenceList(request, model, session);
     return "approval/referenceList";
-    
   }
+  
   @GetMapping(value="/autoComplete.do", produces="application/json")
   @ResponseBody
   public Map<String, Object> autoComplete(HttpServletRequest request, HttpSession session){ 
     
     return approvalService.getAutoComplete(request, session);
-  
     
   } 
+  
   @GetMapping(value="/referenceAutoComplete.do", produces="application/json")
   @ResponseBody
   public Map<String, Object> referenceAutoComplete(HttpServletRequest request, HttpSession session){ 
     
     return approvalService.getReferenceAutoComplete(request, session);
+  } 
+  
+  @GetMapping(value="/retrieveAutoComplete.do", produces="application/json")
+  @ResponseBody
+  public Map<String, Object> retrieveAutoComplete(HttpServletRequest request, HttpSession session){ 
     
+    return approvalService.getReferenceAutoComplete(request, session);
   } 
   
   // 결재하기
@@ -222,8 +231,27 @@ public class ApprovalController {
     return "redirect:/approval/approvalList.do";
   }
   
-  
+ 
+  @GetMapping("/retrieveList.do") // 문서리스트 보여주기
+  public String retrieveList(HttpServletRequest request, Model model, HttpSession session) {
     
+    // session에 올라간 recordPerPage 값 날려주기
+    // if(request.getHeader("referer").contains("retrieveList.do") == false) {
+    // request.getSession().removeAttribute("recordPerPage");
+      
+      approvalService.getRetrieveList(request, model, session);
+      return "approval/retrieveList";
+    }
+    
+
+   @PostMapping("/retrieveApproval.do") // 문서회수하기
+   public String retrieveApproval(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+     
+     redirectAttributes.addFlashAttribute("retrieveResult",approvalService.retrieveApproval(request));
+     
+     return "redirect:/approval/retrieveList.do";
+    }
+
      
   }
   
