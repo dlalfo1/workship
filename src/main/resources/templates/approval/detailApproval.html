@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('workship 문서 상세보기')}"></head>
+<head th:replace="~{/layout/header::headFrag('workship 휴가신청서')}"></head>
 <script th:src="@{/js/bootstrap.min.js}"></script>
 
 <!--/* <link rel="styleshhet" th:href="@{/css/bootstrap.css}"> */-->
@@ -242,9 +242,11 @@
         }
       } else if(approvalCount === 2) {
           if (approvalLines[0].approvalOrder === approvalSequence && loginMemberNo === approvalLines[0].memberDTO.memberNo) {
+   
             $('#submitApproval').attr('action', '/approval/submitApproval.do');
             $('#submitApproval').submit();  
           } else if (approvalLines[1].approvalOrder === approvalSequence && loginMemberNo === approvalLines[1].memberDTO.memberNo) {
+          
               $('#submitApproval').attr('action', '/approval/submitApproval.do');
               $('#submitApproval').submit();  
           } else {
@@ -284,9 +286,11 @@
         }
       } else if(approvalCount === 2) {
           if (approvalLines[0].approvalOrder === approvalSequence && loginMemberNo === approvalLines[0].memberDTO.memberNo) {
+       
             $('#submitApproval').attr('action', '/approval/rejectApproval.do');
             $('#submitApproval').submit();  
           } else if (approvalLines[1].approvalOrder === approvalSequence && loginMemberNo === approvalLines[1].memberDTO.memberNo) {
+           
               $('#submitApproval').attr('action', '/approval/rejectApproval.do');
               $('#submitApproval').submit();  
           } else {

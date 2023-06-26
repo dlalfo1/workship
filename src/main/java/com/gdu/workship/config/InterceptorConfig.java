@@ -28,7 +28,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 		
 		 // 로그인 체크 인터셉터 추가하기
 		// registry.addInterceptor(loginInterceptor).addPathPatterns("");
-		
+		 
 	}
 	
 }
