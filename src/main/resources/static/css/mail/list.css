@@ -43,7 +43,7 @@
 
 .search{
 	display: flex;
-	align-items: flex-end;
+	align-items: center;
 	gap: 4px;
 }
 
@@ -56,6 +56,10 @@
 #column {
 	height: 24px;
 	width: 88px;
+}
+
+#query{
+	border: 1px solid black;
 }
 
 ul {

@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -694,6 +693,12 @@ public class MailServiceImpl implements MailService {
 		responseHeader.setContentLength(zfile.length());
 		
 		return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
+		
+	}
+	
+	@Override
+	public void getMemberList(Map<String, Object> map) {
+		// TODO Auto-generated method stub
 		
 	}
 	

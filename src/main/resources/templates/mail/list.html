@@ -523,9 +523,22 @@
        							</th:block>
        							<option th:value="M.MAIL_TITLE">메일제목</option>
        						</select>
-       						<input list="auto_complete" type="text" th:name="query" th:id="query">       						
-	        				<button><i class="fa-solid fa-magnifying-glass"></i></button>
+       						<input list="auto_complete" type="text" th:name="query" th:id="query">   
+       						<input type="hidden" id="Category" th:value="${Category}">  
+       					<!-- 	<input type="button" id="btnSearch" >  		 -->				
+	        				<i id="btnSearch" class="fa-solid fa-magnifying-glass"></i>
        					</div>
+       					<script th:inline="javascript">
+		       				 $('#query').on('keypress', function(event) {
+		       				    if (event.which === 13 || event.keyCode === 13) {\
+		       				      var column = $('#column').val();
+		       				      var query = $('#query').val();
+		       				      var category = $('#Category').val();
+		       				      location.href = '/mail/list.html?column=' + column + '&query=' + query + '&Category=' + category;
+		       				      return false;
+		       				    }
+		       				  });
+       					</script>
         			</div>
         		</div>
         		

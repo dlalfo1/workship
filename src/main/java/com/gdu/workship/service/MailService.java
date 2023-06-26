@@ -28,4 +28,5 @@ public interface MailService {
 	public int sendMail(MultipartHttpServletRequest multipartRequest, RedirectAttributes redirectAttributes);
 	public ResponseEntity<Resource> attachDownload(int mailFileNo, String userAgent);
 	public ResponseEntity<Resource> attachDownloadAll(int mailNo);	
+	public void getMemberList(Map<String, Object> map);
 }
