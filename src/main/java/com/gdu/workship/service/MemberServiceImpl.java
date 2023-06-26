@@ -1,7 +1,6 @@
 package com.gdu.workship.service;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import com.gdu.workship.util.MyFileUtil;
 import com.gdu.workship.util.PageUtil2;
 
 import lombok.RequiredArgsConstructor;
-import net.coobird.thumbnailator.Thumbnails;
 
 @RequiredArgsConstructor
 @Service
@@ -225,25 +223,6 @@ public class MemberServiceImpl implements MemberService {
         
         file.transferTo(savefile); 
         
-        /* 썸네일(첨부 파일이 이미지인 경우에만 썸네일이 가능) */
-        
-        // 첨부 파일의 Content-Type 확인
-        String contentType = Files.probeContentType(savefile.toPath());  // 이미지 파일의 Content-Type : image/jpeg, image/png, image/gif, ...
-        
-        // DB에 저장할 썸네일 유무 정보 처리
-        boolean hasThumbnail = contentType != null && contentType.startsWith("image");
-        
-        // 첨부 파일의 Content-Type이 이미지로 확인되면 썸네일을 만듬
-        if(hasThumbnail) {
-          
-          // HDD에 썸네일 저장하기 (thumbnailator 디펜던시 사용)
-          File thumbnail = new File(dir, "s_" + fileName);
-          Thumbnails.of(savefile)
-            .size(50, 50)
-            .toFile(thumbnail);
-          
-        }
-        
         member.setProfileFilePath(path);
         member.setProfileFileName(fileName);
         
@@ -333,25 +312,6 @@ public class MemberServiceImpl implements MemberService {
         
         file.transferTo(savefile);
           
-        /* 썸네일(첨부 파일이 이미지인 경우에만 썸네일이 가능) */
-        
-        // 첨부 파일의 Content-Type 확인
-        String contentType = Files.probeContentType(savefile.toPath());  // 이미지 파일의 Content-Type : image/jpeg, image/png, image/gif, ...
-        
-        // DB에 저장할 썸네일 유무 정보 처리
-        boolean hasThumbnail = contentType != null && contentType.startsWith("image");
-        
-        // 첨부 파일의 Content-Type이 이미지로 확인되면 썸네일을 만듬
-        if(hasThumbnail) {
-          
-          // HDD에 썸네일 저장하기 (thumbnailator 디펜던시 사용)
-          File thumbnail = new File(dir, "s_" + fileName);
-          Thumbnails.of(savefile)
-            .size(50, 50)
-            .toFile(thumbnail);
-          
-        }
-        
         member.setProfileFilePath(path);
         member.setProfileFileName(fileName);
         
