@@ -97,7 +97,7 @@
              AND ${column} LIKE CONCAT('%', #{query}, '%')
             </if>
            ) A
-     ORDER BY N.NOTICE_NO DESC
+     ORDER BY A.NOTICE_NO DESC
      LIMIT #{begin}, #{recordPerPage}
   </select>
 
