@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
                 <!--/* 괄호 안에 이름 바꾸면 페이지 타이틀 정해집니다! */-->
-<head th:replace="~{/layout/header::headFrag('workship 참조문서조회')}"></head>
+<head th:replace="~{/layout/header::headFrag('workship 참조문서 조회')}"></head>
 <style>
 .tag-orange{
     width : 80px;
@@ -201,11 +201,11 @@ input[type="text"] {
               </select>
             </div>  <!-- /* record-wrapper 끝나는 지점 */ -->
             <div class="menu-wrapper">
-              <button id="btnAll" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do'" style="background-color: #4B49AC; border: none;">전체</button>
-              <button id="btnProgress" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=1'" style="background-color: rgb(243, 156, 18); border: none;">진행</button>
-              <button id="btnComplete" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=2'" style="background-color: rgb(46, 204, 113); border: none;">완료</button>
-              <button id="btnReject" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=3'" style="background-color: rgb(231, 76, 60); border: none;">반려</button>
-              <button id="btnWait" class="btn btn-secondary btn-sm" onclick="location.href='/approval/approvalList.do?approvalStatus=0'" style="background-color: rgb(158, 158, 158); border: none;">대기</button>
+              <button id="btnAll" class="btn btn-secondary btn-sm" onclick="location.href='/approval/referenceList.do'" style="background-color: #4B49AC; border: none;">전체</button>
+              <button id="btnProgress" class="btn btn-secondary btn-sm" onclick="location.href='/approval/referenceList.do?approvalStatus=1'" style="background-color: rgb(243, 156, 18); border: none;">진행</button>
+              <button id="btnComplete" class="btn btn-secondary btn-sm" onclick="location.href='/approval/referenceList.do?approvalStatus=2'" style="background-color: rgb(46, 204, 113); border: none;">완료</button>
+              <button id="btnReject" class="btn btn-secondary btn-sm" onclick="location.href='/approval/referenceList.do?approvalStatus=3'" style="background-color: rgb(231, 76, 60); border: none;">반려</button>
+              <button id="btnWait" class="btn btn-secondary btn-sm" onclick="location.href='/approval/referenceList.do?approvalStatus=0'" style="background-color: rgb(158, 158, 158); border: none;">대기</button>
             </div>  <!-- /* record-wrapper 끝나는 지점 */ -->
           </div>
           <div class="list-wrappe">
