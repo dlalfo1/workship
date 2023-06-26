@@ -10,7 +10,7 @@ import com.gdu.workship.domain.BoardFileDTO;
 import com.gdu.workship.domain.MemberDTO;
 
 @Mapper
-public interface BoardMapper {
+public interface BoardMapper { 
 	
 	public MemberDTO getMemberByEmail(String emailId);
 	public int getBoardCount();
