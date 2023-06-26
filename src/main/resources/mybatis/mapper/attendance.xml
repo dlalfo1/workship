@@ -157,9 +157,9 @@
   
   <update id="modifyAttendance" parameterType="Map">
     UPDATE ATTENDANCE_T
-       SET ASTARTTIME = #{astarttime}
-         , AENDTIME = #{aendtime}
-         , WORKTIME = TIMEDIFF(#{aendtime}, #{astarttime})
+       SET ASTARTTIME = STR_TO_DATE(#{astarttime}, '%Y-%m-%d')
+         , AENDTIME = STR_TO_DATE(#{aendtime}, '%Y-%m-%d')
+         , WORKTIME = TIMEDIFF(STR_TO_DATE(#{aendtime}, '%Y-%m-%d'), STR_TO_DATE(#{astarttime}, '%Y-%m-%d'))
          , ATTENDANCE = #{attendance}
      WHERE ATTENDANCE_NO = #{attendanceNo}
   </update>
