@@ -266,7 +266,8 @@
 						    					timerProgressShow: true
 						    				})
 						    			} else {
-						    				Swal.fire({
+						    				location.reload();
+						    				/* Swal.fire({
 						    					icon: 'success',
 						    					title: '휴가 정보가 수정되었습니다.',
 						    					confirmButtonText: '확인',
@@ -280,10 +281,10 @@
                         btn.parent().prev().removeClass('invisible');
                         btn.closest('tr').find('select').addClass('invisible');
                         btn.parent().addClass('invisible');
-                        btn.closest('tr').find('span').first().text(resData.vacationCategory);
-                        btn.closest('tr').find('span').first().next().text(resData.vacationStartDate);
-                        btn.closest('tr').find('span').last().text(resData.vacationEndDate);
-                        btn.closest('tr').find('.vacationDay').text(resData.vacationDay);
+                        btn.closest('tr').find('span').first().text(resData.vCategory);
+                        btn.closest('tr').find('span').first().next().text(resData.vStartDate);
+                        btn.closest('tr').find('span').last().text(resData.vEndDate);
+                        btn.closest('tr').find('.vacationDay').text(resData.vacationDay); */
 						    			}
 						    		}
 						    	})
