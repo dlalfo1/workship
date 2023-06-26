@@ -144,8 +144,6 @@
   <select id="prevAndNextBoard" parameterType="int" resultType="BoardDTO">
     SELECT A.BOARD_NO, A.NEXTNO, A.PREVNO
       FROM(SELECT B.BOARD_NO
-              , LAG(B.BOARD_NO, 1, 0) OVER(ORDER BY B.BOARD_NO DESC) AS NEXTNO
-              , LEAD(B.BOARD_NO, 1, 0) OVER(ORDER BY B.BOARD_NO DESC) AS PREVNO
            FROM BOARD_T B INNER JOIN MEMBER_T M
              ON M.MEMBER_NO = B.MEMBER_NO INNER JOIN JOB_T J
              ON M.JOB_NO = J.JOB_NO) A

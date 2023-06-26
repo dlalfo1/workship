@@ -25,7 +25,7 @@ public class AutologinInterceptor implements HandlerInterceptor {
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-    HttpSession session = request.getSession();
+    HttpSession session = request.getSession(); 
     
     if(session != null && session.getAttribute("loginMember") == null) {  // 로그인이 되어 있는가?
       

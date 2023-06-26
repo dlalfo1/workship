@@ -144,10 +144,8 @@
   
   <!-- 이전글, 다음글 -->
   <select id="prevAndNextBoard" parameterType="int" resultType="NoticeDTO">
-    SELECT A.NOTICE_NO, A.NEXTNO, A.PREVNO
+    SELECT A.NOTICE_NO
       FROM(SELECT N.NOTICE_NO
-              , LAG(N.NOTICE_NO, 1, 0) OVER(ORDER BY N.NOTICE_NO DESC) AS NEXTNO
-              , LEAD(N.NOTICE_NO, 1, 0) OVER(ORDER BY N.NOTICE_NO DESC) AS PREVNO
            FROM NOTICE_BOARD_T N INNER JOIN MEMBER_T M
              ON M.MEMBER_NO = N.MEMBER_NO INNER JOIN JOB_T J
              ON M.JOB_NO = J.JOB_NO) A
