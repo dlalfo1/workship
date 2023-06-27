@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardCommentController {
 
 	private final BoardCommentService boardCommentService;
-	  
+	   
 	
 	  @PostMapping(value="/addComment.do", produces="application/json")
 	  @ResponseBody 
