@@ -149,7 +149,7 @@
              ON M.JOB_NO = J.JOB_NO) A
     WHERE A.BOARD_NO = #{boardNo}
   </select>
-  
+   
   
   <insert id="addBoard" useGeneratedKeys="true" keyProperty="boardNo" parameterType="BoardDTO">
     INSERT INTO BOARD_T (
