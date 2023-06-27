@@ -46,7 +46,7 @@ public class MyFileUtil {
 
   // String tempPath 만들기
   public String getTempPath() {
-    return "/storage" + sep + "temp";
+    return "/workship/storage" + sep + "temp";
   }
   
   // String tempfileName 만들기 (zip 파일)

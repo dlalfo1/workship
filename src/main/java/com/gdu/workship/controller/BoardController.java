@@ -20,7 +20,7 @@ import com.gdu.workship.service.BoardService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Controller
+@Controller 
 public class BoardController {
 	
 	private final BoardService boardService;

@@ -104,7 +104,7 @@
   	  	    		${column} LIKE CONCAT('%' , #{query}, '%')
   	  	    	</if>
   	  	    </where>) A
-  		  ORDER BY P.PROJECT_NO ASC
+  		  ORDER BY A.PROJECT_NO ASC
   	  	  LIMIT #{begin}, #{recordPerPage}
   	  </select>
   	  
