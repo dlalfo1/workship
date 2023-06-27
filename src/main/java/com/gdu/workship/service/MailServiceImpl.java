@@ -507,7 +507,9 @@ public class MailServiceImpl implements MailService {
 			} else {
 				mailHasFile = "N";
 			}
+			
 		}
+		
 		/*
 		 * String mailHasFile = (files != null && files.isEmpty() == false) ? "Y" : "N";
 		 */
@@ -602,6 +604,7 @@ public class MailServiceImpl implements MailService {
 				}
 			}
 		}			
+		
 		return sentResult + mailToResult + mailCcResult + mailBccResult + mailFileResult;		
 	}
 	
