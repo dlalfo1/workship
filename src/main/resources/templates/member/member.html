@@ -64,12 +64,13 @@
 	  if(deptNo !== undefined) {
 		  query = deptNo;
 	  }
+    var column = 'D.DEPT_NO';
 	  
 	  new Promise(function(resolve, reject){
       $.ajax({
         type: 'get',
         url: '/member/memberList2.do',
-        data: 'column=D.DEPT_NO' + '&query=' + query + '&page=' + page,
+        data: 'column=' + column + '&query=' + query + '&page=' + page,
         dataType: 'json',
         success: function(resData) {
           $('#pagination').empty();
@@ -98,7 +99,7 @@
           if(pageUtil.endPage == pageUtil.totalPage){
             str2 += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
           } else {
-            str2 += '<li class="page-item"><span class="enable_link" page-link" data-query="' + query + '" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
+            str2 += '<li class="page-item"><span class="enable_link page-link" data-query="' + query + '" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
           }
           str2 += '</ul></nav>';
           console.log(str2);
@@ -114,7 +115,7 @@
   	  $.ajax({
 	      type: 'get',
 	      url: '/member/memberList2.do',
-	      data: 'column=D.DEPT_NO' + '&query=' + query + '&page=' + page,
+	      data: 'column=' + column + '&query=' + query + '&page=' + page,
 	      dataType: 'json',
 	      success: function(resData) {
 	    	  let memberListbody = $('#memberListbody');
@@ -229,7 +230,7 @@
                 if(pageUtil.endPage == pageUtil.totalPage){
                   str2 += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
                 } else {
-                  str2 += '<li class="page-item"><span class="enable_link" page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
+                  str2 += '<li class="page-item"><span class="enable_link page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
                 }
                 str2 += '</ul></nav>';
     	        console.log(str2);

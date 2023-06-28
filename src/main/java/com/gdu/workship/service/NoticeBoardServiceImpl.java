@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URLEncoder;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,14 +138,12 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     System.out.println(noticeBoardMapper.getNoticeByNo(noticeNo));
     model.addAttribute("noticeFileList", noticeBoardMapper.getNoticeFileList(noticeNo));
     
-    // 이전글(prevNo), 다음글(nextNo)
-    int nextNo = noticeBoardMapper.prevAndNextBoard(noticeNo).getNextNo();
-    int prevNo = noticeBoardMapper.prevAndNextBoard(noticeNo).getPrevNo();
-    if(nextNo == 0) nextNo = noticeNo;
-    if(prevNo == 0) prevNo = noticeNo;
-    
-    model.addAttribute("nextNo", nextNo);
-    model.addAttribute("prevNo", prevNo);
+    // 이전글, 다음글
+    model.addAttribute("prevNotice",  noticeBoardMapper.getPrevNotice(noticeNo));
+    model.addAttribute("nextNotice",  noticeBoardMapper.getNextNotice(noticeNo));
+
+    System.out.println(noticeBoardMapper.getNextNotice(noticeNo)+ "-----------------------------------------");
+    System.out.println(noticeBoardMapper.getPrevNotice(noticeNo)+ "-----------------------------------------");
     
   }
   

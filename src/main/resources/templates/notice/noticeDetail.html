@@ -57,40 +57,10 @@
     $('#column').on('change', function(){
       $('#query').val('');
     })
+    fnPrev();
+    fnNext();
     
   })
-  
-  function fnPrev(){
-	  $('#btnPrev').on('click', function(event){
-		  let prevNo = /*[[${prevNo}]]*/ null;
-		  if(prevNo == noticeNo) {
-			  alert('더 이상 이전 글이 없습니다.');
-			  event.preventDefault();
-			  return;
-		  }
-		  if(emailId == noticeEmailId) {
-  		  location.href='/notice/noticeDetail.html?noticeNo=' + prevNo;
-		  } else {
-  		  location.href='/notice/increaseHit.do?noticeNo=' + prevNo;
-		  }
-	  })
-  }
-  
-  function fnNext(){
-    $('#btnNext').on('click', function(){
-      let nextNo = /*[[${nextNo}]]*/ null;
-        if(nextNo == noticeNo) {
-          alert('더 이상 다음 글이 없습니다.');
-          event.preventDefault();
-          return;
-        }
-        if(emailId == noticeEmailId) {
-          location.href='/notice/noticeDetail.html?noticeNo=' + nextNo;
-        } else {
-          location.href='/notice/increaseHit.do?noticeNo=' + nextNo;
-        }
-      })
-  }
   
   function fnList() {
 	  location.href = '/notice/noticeMain.html';
@@ -139,9 +109,62 @@
                   <div class="board-detail" style="float: none; margin: 0 auto; padding: 1px 40px 5px; ">
                     <div class="page-button col m-1">
                       <button type="button" class="btn btn-outline-dark btn-rounded btn-md float-right mx-1" onclick="fnList()">목록</button>
-                      <button type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" id="btnNext">다음</button>
-                      <button type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" id="btnPrev">이전</button>
+                      <th:block th:if="${nextNotice != null}">
+                        <button type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" id="btnNext" th:data-next_notice_no="${nextNotice?.noticeNo}">다음</button>
+                      </th:block>
+                      <th:block th:if="${nextNotice == null}">
+                        <button type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" id="btnNext">다음</button>
+                      </th:block>
+                      <th:block th:if="${prevNotice != null}">
+                        <button type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" id="btnPrev" th:data-prev_notice_no="${prevNotice?.noticeNo}">이전</button>
+                      </th:block>
+                      <th:block th:if="${prevNotice == null}">
+                        <button type="button" class="btn btn-outline-secondary btn-rounded btn-md float-right mx-1" id="btnPrev">이전</button>
+                      </th:block>
+                      
+                      
                     </div>
+                    
+                    <script th:inline="javascript">
+                      function fnPrev(){
+                          $('#btnPrev').on('click', function(event){
+                            let prevNotice = /*[[${prevNotice}]]*/ null;
+                            if(prevNotice == null) {
+                              alert('더 이상 이전 글이 없습니다.');
+                              event.preventDefault();
+                              return;
+                            }
+                            if(emailId == noticeEmailId) {
+                              location.href='/notice/noticeDetail.html?noticeNo=' + $(this).data('prev_notice_no');
+                            } else {
+                              location.href='/notice/increaseHit.do?noticeNo=' + $(this).data('prev_notice_no');
+                            }
+                          })
+                        }
+                        function fnNext(){
+                          $('#btnNext').on('click', function(){
+                            let nextNotice = /*[[${nextNotice}]]*/ null;
+                              if(nextNotice == null) {
+                                alert('더 이상 다음 글이 없습니다.');
+                                event.preventDefault();
+                                return;
+                              }
+                              if(emailId == noticeEmailId) {
+                                location.href='/notice/noticeDetail.html?noticeNo=' + $(this).data('next_notice_no');
+                              } else {
+                                location.href='/notice/increaseHit.do?noticeNo=' + $(this).data('next_notice_no');
+                              }
+                            })
+                        }
+                    
+                      $('.fnNextButton').on('click', function() {
+                          location.href = '/customerCenter/noticeDetail.html?noticeNo=' + $(this).data('next_notice_no');
+                        });
+                        
+                      $('.fnPrevButton').on('click', function() {
+                          location.href = '/customerCenter/noticeDetail.html?noticeNo=' + $(this).data('prev_notice_no');
+                        });
+                    </script>
                     
                     <div style="padding: 20px 30px 15px; border: 1px solid #CED4DA; margin-top: 55px; margin-bottom: 10px;">
                       <div class="content-header">

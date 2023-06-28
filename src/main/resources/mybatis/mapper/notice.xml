@@ -142,15 +142,27 @@
      WHERE NOTICE_FILE_NO = #{noticeFileNo}
   </select>
   
-  <!-- 이전글, 다음글 -->
-  <select id="prevAndNextBoard" parameterType="int" resultType="NoticeDTO">
-    SELECT A.NOTICE_NO
-      FROM(SELECT N.NOTICE_NO
-           FROM NOTICE_BOARD_T N INNER JOIN MEMBER_T M
-             ON M.MEMBER_NO = N.MEMBER_NO INNER JOIN JOB_T J
-             ON M.JOB_NO = J.JOB_NO) A
-    WHERE A.NOTICE_NO = #{noticeNo}
-  </select>
+  <!-- 이전글 -->
+    <select id="getPrevNotice" parameterType="int" resultType="NoticeDTO">
+    <![CDATA[
+      SELECT NOTICE_NO, MEMBER_NO, NOTICE_TITLE, NOTICE_CONTENT, NOTICE_CREATED_AT, NOTICE_MODIFIED_AT, NOTICE_HIT, NOTICE_STATE
+        FROM NOTICE_BOARD_T
+       WHERE NOTICE_NO = (SELECT MAX(NOTICE_NO)
+                             FROM NOTICE_BOARD_T
+                            WHERE NOTICE_NO < ${noticeNo})
+    ]]>
+    </select>
+    
+  <!-- 다음글 -->
+    <select id="getNextNotice" parameterType="int" resultType="NoticeDTO">
+    <![CDATA[
+        SELECT NOTICE_NO, MEMBER_NO, NOTICE_TITLE, NOTICE_CONTENT, NOTICE_CREATED_AT, NOTICE_MODIFIED_AT, NOTICE_HIT, NOTICE_STATE
+          FROM NOTICE_BOARD_T
+         WHERE NOTICE_NO = (SELECT MIN(NOTICE_NO)
+                              FROM NOTICE_BOARD_T
+                             WHERE NOTICE_NO > ${noticeNo})
+    ]]>
+    </select>
   
   <insert id="addNotice" useGeneratedKeys="true" keyProperty="noticeNo" parameterType="NoticeDTO">
     INSERT INTO NOTICE_BOARD_T (

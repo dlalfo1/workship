@@ -49,14 +49,7 @@
                ${column} LIKE CONCAT('%', #{query}, '%')
              </if>
            </where>) A
-    <choose>
-      <when test="coulum != ''">
-        ORDER BY ${column} ASC
-      </when>
-      <otherwise>
-        ORDER BY M.MEMBER_NO ASC
-      </otherwise>
-    </choose>
+    ORDER BY A.MEMBER_NO ASC
     LIMIT #{begin}, #{recordPerPage} 
   </select>
 

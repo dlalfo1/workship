@@ -20,7 +20,9 @@ public interface NoticeBoardMapper {
   public int increaseHit(int noticeNo);
   
   public NoticeDTO getNoticeByNo(int noticeNo);
-  public NoticeDTO prevAndNextBoard(int noticeNo);
+  // 이전글,다음글
+  public NoticeDTO getPrevNotice(int noticeNo);
+  public NoticeDTO getNextNotice(int noticeNo);
   public List<NoticeFileDTO> getNoticeFileList(int noticeNo);
   
   public NoticeFileDTO getNoticeFileByNo(int noticeFileNo);

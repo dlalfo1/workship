@@ -226,7 +226,7 @@
                             if(pageUtil.endPage == pageUtil.totalPage){
                               str2 += '<li class="page-item disabled"><span class="page-link text-secondary">다음</span></li>';
                             } else {
-                              str2 += '<li class="page-item"><span class="enable_link" page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
+                              str2 += '<li class="page-item"><span class="enable_link page-link" data-page="' + (pageUtil.endPage + 1) + '>다음</span></li>';
                             }
                             str2 += '</ul></nav>';
                             
@@ -258,7 +258,7 @@
                                 if(report.boardDTO == null) {
                       	         str += '<td colspan="2"><span style="color: gray; font-style: italic;">삭제된 게시글입니다.</span></td>';
                                 } else {
-                      	         str += '<td class="boardTitle" style="cursor: pointer;" onclick="openInNewTab(' + '\'/notice/noticeDetail.html?noticeNo=1\')">' + report.boardDTO.boardTitle +'</td>';
+                      	         str += '<td class="boardTitle" style="cursor: pointer;" onclick="openInNewTab(' + '\'/notice/noticeDetail.html?noticeNo=2\')">' + report.boardDTO.boardTitle +'</td>';
                                  str += '<td>' + report.boardDTO.memberDTO.memberName +'</a></td>';
                                 }
                                 str += '<td>'   + report.reportContent + '</td>';
