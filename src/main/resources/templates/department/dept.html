@@ -91,7 +91,7 @@
                     		return;
                     	}
                     	if(deptPass == false){
-                        alert('부서명을 확인하세요.')
+                        alert('부서명을 확인하세요.');
                         event.preventDefault();
                         return;
                       }
@@ -142,6 +142,8 @@
                     </tbody>
                   </table>
                   <script>
+                    var deptEditPass = false;
+                  
                     function fnEditDept() {
                     	$(document).on('click', '.btnEdit', function(){
                     		// 부서명을 input 태그로
@@ -197,12 +199,15 @@
                           if(keyupDeptName.length == 0){
                         	  modifyMsg.text('');
                             modifyMsg.attr("style", "display: none;");
+                            deptEditPass = false;
                           } else if(regDept.test(keyupDeptName)){
                             modifyMsg.attr("style", "display: block;");
                             modifyMsg.text('부서명이 정상적으로 작성되었습니다.').css('color', '#0000FF').css('font-size', '8px');
+                            deptEditPass = true;
                           } else {
                             modifyMsg.attr("style", "display: block;");
                             modifyMsg.text('부서명은 한글로 3~9글자까지 가능합니다.').css('color', '#FF0000').css('font-size', '8px');
+                            deptEditPass = false;
                           }
                         })
                     	})
@@ -210,40 +215,48 @@
                     }
                     
                     function fnModify(){
-                    	$(document).on('click', '.btnModify', function(){
-                    		// console.log('inputname : ' + $(this).parent().parent().parent().children('.inputDeptName').find('input').val());
-                    		// 수정용 <input type="text">
-                    		var btnHiddenName = $(this).parent().parent().parent().children('.inputDeptName').find('input');
+                    	$(document).on('click', '.btnModify', function(event){
                     		
-                    		// 수정용 <input type="text"> 의 밸류값(..팀)
-                    		var hiddenName = btnHiddenName.val();
-                    		console.log('hiddenName' + hiddenName);
-                    		
-                    		// 완료 버튼의 형제중 inputHiddenDeptName 과 inputHiddenDeptNo를 찾아준다.
-                    		var inputHiddenDeptName = $(this).parent().find('.inputHiddenDeptName');
-                    		var inputHiddenDeptNo = $(this).parent().find('.inputHiddenDeptNo');
-                    		
-                    		// inputHiddenDeptName의 value에 hiddenName을 넣어준다.
-                    		$(this).next().val(hiddenName);
-                    		var paramDeptName = $(this).next().val();
-                    		var paramDeptNo = inputHiddenDeptNo.val();
-                    		console.log('paramDeptName : ' + paramDeptName);
-                    		console.log('paramDeptNo : ' + paramDeptNo);
-                      	$.ajax({
-                      		type: 'post',
-                      		url: '/department/modifyDept.do',
-                      		data: 'deptNo=' + paramDeptNo + '&deptName=' + paramDeptName,
-                      		dataType: 'json',
-                      		success: function(resData){
-                      			console.log(resData);
-                      			if(resData.modifyResult == 1){
-                              alert('부서명이 수정되었습니다.');
-                            } else {
-                            	alert('부서명 수정을 실패했습니다.\n부서명을 확인해주세요.');
-                            }
-                          	location.href = '/department/dept.html';
-                      		}
-                      	})
+                    		if(deptEditPass == false) {
+                    			alert('부서명을 확인하세요.');
+                    			event.preventDefault();
+                    			return;
+                    		} else {
+                    			
+                      		// console.log('inputname : ' + $(this).parent().parent().parent().children('.inputDeptName').find('input').val());
+                      		// 수정용 <input type="text">
+                      		var btnHiddenName = $(this).parent().parent().parent().children('.inputDeptName').find('input');
+                      		
+                      		// 수정용 <input type="text"> 의 밸류값(..팀)
+                      		var hiddenName = btnHiddenName.val();
+                      		console.log('hiddenName' + hiddenName);
+                      		
+                      		// 완료 버튼의 형제중 inputHiddenDeptName 과 inputHiddenDeptNo를 찾아준다.
+                      		var inputHiddenDeptName = $(this).parent().find('.inputHiddenDeptName');
+                      		var inputHiddenDeptNo = $(this).parent().find('.inputHiddenDeptNo');
+                      		
+                      		// inputHiddenDeptName의 value에 hiddenName을 넣어준다.
+                      		$(this).next().val(hiddenName);
+                      		var paramDeptName = $(this).next().val();
+                      		var paramDeptNo = inputHiddenDeptNo.val();
+                      		console.log('paramDeptName : ' + paramDeptName);
+                      		console.log('paramDeptNo : ' + paramDeptNo);
+                        	$.ajax({
+                        		type: 'post',
+                        		url: '/department/modifyDept.do',
+                        		data: 'deptNo=' + paramDeptNo + '&deptName=' + paramDeptName,
+                        		dataType: 'json',
+                        		success: function(resData){
+                        			console.log(resData);
+                        			if(resData.modifyResult == 1){
+                                alert('부서명이 수정되었습니다.');
+                              } else {
+                              	alert('부서명 수정을 실패했습니다.\n부서명을 확인해주세요.');
+                              }
+                            	location.href = '/department/dept.html';
+                        		}
+                        	})
+                    	  }
                     	})
                     }
                     

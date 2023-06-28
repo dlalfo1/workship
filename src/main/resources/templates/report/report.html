@@ -35,6 +35,7 @@
 <script th:inline="javascript">
   $(function(){
 	  fnRecordPerPage();
+	  fnFormSubmit();
     fnSearchReport();
     fnChangePage();
     fnDeletePost();
@@ -64,7 +65,7 @@
                 <div class="card-body">
                   <p class="card-title">검색</p>
                     <div class="searchWrap mb-3">
-                      <form method="get" id="searchReport" th:action="@{/report/searchReport.do}">
+                      <form method="get" id="searchReport" >
                         <table class="table table-sm table-borderless" style="width: 80%; margin: 0 auto;">
                           <tbody>
                             <tr>
@@ -183,6 +184,14 @@
                       // $('#recordPerPage').val(recordPerPage); 필요없어 보임 ajax라서..?
                       fnSearchReport();
                     })
+                    
+                    function fnFormSubmit() {
+                    	$('#searchReport').on('submit', function(event){
+                    		fnSearchReport();
+                    		event.preventDefault();
+                    		return;
+                    	})
+                    }
                     
                     function fnSearchReport(){
                     	var column = $('#column').val();
