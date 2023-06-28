@@ -84,8 +84,13 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public Map<String, Object> loadMemberList2(HttpServletRequest request) {
 
-    Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
-    int page = Integer.parseInt(opt1.orElse("1"));
+    // Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
+    // int page = Integer.parseInt(opt1.orElse("1"));
+    
+    String strPage = request.getParameter("page");
+    int page = 1;
+    if(strPage != null && strPage.isEmpty() == false) page = Integer.parseInt(strPage);
+    if(page < 1) page = 1;
     int totalRecord = memberMapper.getMemberCount();
     
     int recordPerPage = 10;
@@ -124,8 +129,14 @@ public class MemberServiceImpl implements MemberService {
   
   @Override
   public Map<String, Object> loadRetiredMemberList(HttpServletRequest request) {
-    Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
-    int page = Integer.parseInt(opt1.orElse("1"));
+    
+    // Optional<String> opt1 = Optional.ofNullable(request.getParameter("page"));
+    // int page = Integer.parseInt(opt1.orElse("1"));
+    
+    String strPage = request.getParameter("page");
+    int page = 1;
+    if(strPage != null && strPage.isEmpty() == false) page = Integer.parseInt(strPage);
+    if(page < 1) page = 1;
     int totalRecord = memberMapper.getRetiredMemberCount();
     
     int recordPerPage = 10;
