@@ -1,6 +1,7 @@
 package com.gdu.workship.service;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import com.gdu.workship.util.MyFileUtil;
 import com.gdu.workship.util.PageUtil2;
 
 import lombok.RequiredArgsConstructor;
+import net.coobird.thumbnailator.Thumbnails;
 
 @RequiredArgsConstructor
 @Service
@@ -232,10 +234,24 @@ public class MemberServiceImpl implements MemberService {
 
         File savefile = new File(dir, fileName);
         
-        file.transferTo(savefile); 
+        // file.transferTo(savefile); 
         
-        member.setProfileFilePath(path);
-        member.setProfileFileName(fileName);
+        /* 썸네일(첨부 파일이 이미지인 경우에만 썸네일이 가능) */
+        
+        String contentType = Files.probeContentType(savefile.toPath());  // 이미지 파일의 Content-Type : image/jpeg, image/png, image/gif, ...
+        
+        boolean hasThumbnail = contentType != null && contentType.startsWith("image");
+        
+        if(hasThumbnail) {
+          File thumbnail = new File(dir, "s_" + fileName);
+          Thumbnails.of(savefile)
+            .size(100, 100)
+            .toFile(thumbnail);
+
+          member.setProfileFilePath(path);
+          member.setProfileFileName(fileName);
+        }
+        
         
       } catch(Exception e) {
         e.printStackTrace();
@@ -322,9 +338,23 @@ public class MemberServiceImpl implements MemberService {
         File savefile = new File(dir, fileName);
         
         file.transferTo(savefile);
-          
-        member.setProfileFilePath(path);
-        member.setProfileFileName(fileName);
+        
+        /* 썸네일(첨부 파일이 이미지인 경우에만 썸네일이 가능) */
+        
+        String contentType = Files.probeContentType(savefile.toPath());  // 이미지 파일의 Content-Type : image/jpeg, image/png, image/gif, ...
+        
+        boolean hasThumbnail = contentType != null && contentType.startsWith("image");
+        
+        if(hasThumbnail) {
+          File thumbnail = new File(dir, "s_" + fileName);
+          Thumbnails.of(savefile)
+            .size(100, 100)
+            .toFile(thumbnail);
+
+          member.setProfileFilePath(path);
+          member.setProfileFileName(fileName);
+        }
+        
         
       } catch(Exception e) {
         e.printStackTrace();
@@ -347,7 +377,7 @@ public class MemberServiceImpl implements MemberService {
     ResponseEntity<byte[]> profileImage = null;
     
     try {
-      File thumbnail = new File(profileDTO.getProfileFilePath(), profileDTO.getProfileFileName());
+      File thumbnail = new File(profileDTO.getProfileFilePath(), "s_" + profileDTO.getProfileFileName());
       System.out.println(thumbnail);
       profileImage = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(thumbnail), HttpStatus.OK);
     } catch (Exception e) {

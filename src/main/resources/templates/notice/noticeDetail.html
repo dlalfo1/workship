@@ -170,8 +170,12 @@
                       <div class="content-header">
                         <h3 class="font-weight-bold" th:text="${n.noticeTitle}"></h3>
                         <div class="profile row text-center">
-                          <div class="col-2 profileHead"><span th:text="|${n.MemberDTO.memberName} ${n.memberDTO.JobDTO.jobName}|"></span></div>
-                          <!--/* <div class="col-2 profileHead"><img class="rounded-circle" th:src="@{/member/display.do(memberNo=${n.MemberDTO.memberNo})}" width="30px" height="30px"><span th:text="|${n.MemberDTO.memberName} ${n.memberDTO.JobDTO.jobName}|"></span></div>  */-->
+                          <th:block th:if="${n.MemberDTO.profileFilePath == null}">
+                            <div class="col-2 profileHead"><span th:text="|${n.MemberDTO.memberName} ${n.memberDTO.JobDTO.jobName}|"></span></div>
+                          </th:block>
+                          <th:block th:if="${n.MemberDTO.profileFilePath != null}">
+                            <div class="col-2 profileHead"><img class="rounded-circle" th:src="@{/member/display.do(memberNo=${n.MemberDTO.memberNo})}" width="30px" height="30px"><span th:text="|${n.MemberDTO.memberName} ${n.memberDTO.JobDTO.jobName}|"></span></div>
+                          </th:block>
                           <div class="col-4 profileHead createDate">작성일 : <span th:text="${#dates.format(n.noticeCreatedAt, 'yyyy/MM/dd HH:mm')}"></span></div>
                           <div class="col-4 profileHead modiDate">
                             <th:block th:if="${not #strings.isEmpty(n.noticeModifiedAt)}">
