@@ -56,7 +56,7 @@ public class MemberController {
   
   @PostMapping("/member/addMember.do")
   public String addMember(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes) {
-    redirectAttributes.addFlashAttribute("addReuslt", memberService.addMember(request));
+    redirectAttributes.addFlashAttribute("addResult", memberService.addMember(request));
     return "redirect:/member/member.html";
   }
   

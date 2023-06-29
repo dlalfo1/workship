@@ -234,7 +234,7 @@ public class MemberServiceImpl implements MemberService {
 
         File savefile = new File(dir, fileName);
         
-        // file.transferTo(savefile); 
+        file.transferTo(savefile); 
         
         /* 썸네일(첨부 파일이 이미지인 경우에만 썸네일이 가능) */
         
@@ -250,6 +250,7 @@ public class MemberServiceImpl implements MemberService {
 
           member.setProfileFilePath(path);
           member.setProfileFileName(fileName);
+          savefile.delete();
         }
         
         
@@ -353,6 +354,7 @@ public class MemberServiceImpl implements MemberService {
 
           member.setProfileFilePath(path);
           member.setProfileFileName(fileName);
+          savefile.delete();
         }
         
         
