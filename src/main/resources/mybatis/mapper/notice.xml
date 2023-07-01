@@ -149,7 +149,7 @@
         FROM NOTICE_BOARD_T
        WHERE NOTICE_NO = (SELECT MAX(NOTICE_NO)
                              FROM NOTICE_BOARD_T
-                            WHERE NOTICE_NO < ${noticeNo})
+                            WHERE NOTICE_NO < ${noticeNo} AND NOTICE_STATE = 1)
     ]]>
     </select>
     
@@ -160,7 +160,7 @@
           FROM NOTICE_BOARD_T
          WHERE NOTICE_NO = (SELECT MIN(NOTICE_NO)
                               FROM NOTICE_BOARD_T
-                             WHERE NOTICE_NO > ${noticeNo})
+                             WHERE NOTICE_NO > ${noticeNo} AND NOTICE_STATE = 1)
     ]]>
     </select>
   
